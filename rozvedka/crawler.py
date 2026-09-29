@@ -81,9 +81,15 @@ def _title_for(a) -> str:
         parent = a.find_parent(["li", "tr", "article", "div", "p"])
         if parent:
             t = " ".join(parent.get_text(" ", strip=True).split())[:200]
-    if GENERIC_TITLES.match(t) or len(t) < 4:
-        t = unquote(urlsplit(a["href"]).path.rsplit("/", 1)[-1])
+    if GENERIC_TITLES.match(t) or len(t) < 4 or t.startswith(("/", "http")):
+        t = humanize_filename(a["href"])
     return t[:300]
+
+
+def humanize_filename(url: str) -> str:
+    """'/content/vyrocni-zprava-archivu-bis-2024-web.pdf' -> 'vyrocni zprava archivu bis 2024 web'"""
+    stem = unquote(urlsplit(url).path.rsplit("/", 1)[-1]).rsplit(".", 1)[0]
+    return re.sub(r"[-_+]+", " ", stem).strip() or url
 
 
 def extract(html: str, base: str) -> tuple[list[dict], list[tuple[str, str]]]:
@@ -156,7 +162,7 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
                     sub_docs, _ = extract(r.text, r.url)
                     for d in sub_docs:
                         # a bare filename says little; prefix the title of the page that linked it
-                        if re.fullmatch(r"[\w .%-]+\.pdf", d["title"], re.I) and sub_title:
+                        if d["title"] == humanize_filename(d["url"]) and sub_title:
                             d["title"] = f"{sub_title} – {d['title']}"
                     docs += sub_docs
             except Exception as e:  # noqa: BLE001 - one bad sub-page must not stop the crawl
