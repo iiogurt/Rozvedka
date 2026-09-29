@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Sources · Rozvedka{% endblock %}
+{% block main %}
+<div class="summary">
+  <span><b>{{ sources|length }}</b> sources</span>
+  <form method="post" action="/jobs/sync" class="inline"><button title="Reload sources/registry.yaml">Reload registry</button></form>
+  <form method="post" action="/jobs/crawl" class="inline"><button title="Crawl every source (slow)">Crawl all</button></form>
+</div>
+
+{% set ns = namespace(cur='') %}
+{% for s in sources %}
+  {% if s.country != ns.cur %}{% set ns.cur = s.country %}<h2>{{ COUNTRY_NAMES.get(s.country, s.country) }}</h2>{% endif %}
+  <section class="source">
+    <div class="shead">
+      <div>
+        <b>{{ s.agency }}</b> <span class="muted">{{ s.full_name }}</span><br>
+        <span class="tag">{{ TYPE_NAMES.get(s.type, s.type) }}</span>
+        <span class="tag">{{ s.frequency }}</span>
+        <span class="tag acc-{{ s.access }}">{{ s.access }}</span>
+        <a href="/?source={{ s.id }}">{{ s.n_docs }} documents</a> · {{ s.n_ok or 0 }} downloaded
+        {% if s.notes %}<div class="note">{{ s.notes }}</div>{% endif %}
+      </div>
+      <form method="post" action="/jobs/crawl" class="inline">
+        <input type="hidden" name="country" value="{{ s.country }}"><input type="hidden" name="agency" value="{{ s.agency }}">
+        <button>Crawl</button></form>
+    </div>
+    <ul class="pages">
+      {% for p in pages.get(s.id, []) %}
+      <li><span class="lang">{{ p.lang }}</span> <span class="kind">{{ p.kind }}</span>
+        <a href="{{ p.url }}" target="_blank" rel="noopener">{{ p.url }}</a>
+        {% if not p.verified %}<span class="warn" title="bot-protected – open in a browser">⚠</span>{% endif %}
+        {% if p.last_status %}<span class="muted"> — {{ p.last_status }} ({{ p.last_crawled }})</span>{% endif %}</li>
+      {% endfor %}
+    </ul>
+    <details class="add"><summary>Add a document by URL</summary>
+      <form method="post" action="/add">
+        <input type="hidden" name="source_id" value="{{ s.id }}">
+        <input name="url" placeholder="https://… .pdf" required size="50">
+        <input name="title" placeholder="Title">
+        <input name="lang" placeholder="lang" size="3"><input name="year" placeholder="year" size="5">
+        <label class="chk"><input type="checkbox" name="fetch_now" value="1" checked> download now</label>
+        <button>Add</button>
+      </form></details>
+  </section>
+{% endfor %}
+{% endblock %}

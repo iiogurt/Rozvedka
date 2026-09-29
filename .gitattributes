@@ -1,0 +1,6 @@
+# Normalise line endings; treat binaries as binary
+* text=auto eol=lf
+*.pdf binary
+*.png binary
+*.jpg binary
+*.db  binary

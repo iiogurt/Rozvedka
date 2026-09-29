@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Rozvedka{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/">Rozvedka</a>
+  <nav>
+    <a href="/" class="{{ 'on' if request.url.path == '/' }}">Documents</a>
+    <a href="/sources" class="{{ 'on' if request.url.path == '/sources' }}">Sources</a>
+  </nav>
+</header>
+{% if jobs %}
+<section class="jobs">
+  {% for name, st in jobs.items() %}<div><b>{{ name }}</b> — {{ st }}</div>{% endfor %}
+</section>
+{% endif %}
+<main>{% block main %}{% endblock %}</main>
+</body>
+</html>

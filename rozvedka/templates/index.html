@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block main %}
+<form class="filters" method="get" action="/">
+  <input type="search" name="q" value="{{ f.q }}" placeholder="Search title, agency…">
+  <select name="country"><option value="">All countries</option>
+    {% for r in facets.country %}<option value="{{ r[0] }}" {{ 'selected' if f.country == r[0] }}>{{ COUNTRY_NAMES.get(r[0], r[0]) }}</option>{% endfor %}
+  </select>
+  <select name="type"><option value="">All agency types</option>
+    {% for r in facets.type %}<option value="{{ r[0] }}" {{ 'selected' if f.type == r[0] }}>{{ TYPE_NAMES.get(r[0], r[0]) }}</option>{% endfor %}
+  </select>
+  <select name="lang"><option value="">All languages</option>
+    {% for r in facets.lang %}<option value="{{ r[0] }}" {{ 'selected' if f.lang == r[0] }}>{{ r[0] }}</option>{% endfor %}
+  </select>
+  <select name="year"><option value="">All years</option>
+    {% for r in facets.year %}<option value="{{ r[0] }}" {{ 'selected' if f.year|string == r[0]|string }}>{{ r[0] }}</option>{% endfor %}
+  </select>
+  <select name="status"><option value="">Any status</option>
+    {% for s in ['downloaded','new','failed'] %}<option value="{{ s }}" {{ 'selected' if f.status == s }}>{{ s }}</option>{% endfor %}
+  </select>
+  <label class="chk"><input type="checkbox" name="show_hidden" value="1" {{ 'checked' if f.show_hidden }}> hidden too</label>
+  <button>Filter</button>
+  <a class="reset" href="/">Reset</a>
+</form>
+
+<div class="summary">
+  <span><b>{{ total }}</b> documents match</span>
+  <span class="muted">library: {{ counts.get('downloaded', 0) }} downloaded · {{ counts.get('new', 0) }} waiting · {{ counts.get('failed', 0) }} failed</span>
+  <form method="post" action="/jobs/download" class="inline">
+    <input type="hidden" name="country" value="{{ f.country }}">
+    <button title="Download all waiting documents{{ ' for ' ~ f.country if f.country }}">Download waiting{{ ' (' ~ f.country ~ ')' if f.country }}</button>
+  </form>
+</div>
+
+<div class="tablewrap">
+<table class="docs">
+  <thead><tr><th>Year</th><th>Source</th><th>Title</th><th>Lang</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for d in docs %}
+    <tr class="{{ 'hidden' if d.hidden }}">
+      <td class="num">{{ d.year or '—' }}</td>
+      <td><a href="/?{{ qs(source=d.source_id, page=1) }}"><span class="cc">{{ d.country }}</span> {{ d.agency }}</a></td>
+      <td class="title">
+        {% if d.local_path %}<a href="/doc/{{ d.id }}" target="_blank">{{ d.title }}</a>{% else %}{{ d.title }}{% endif %}
+        <div class="meta"><a href="{{ d.url }}" target="_blank" rel="noopener">original ↗</a>
+          {% if d.pages_count %} · {{ d.pages_count }} pages{% endif %}
+          {% if d.size %} · {{ (d.size / 1048576) | round(1) }} MB{% endif %}
+          {% if d.origin != 'crawl' %} · {{ d.origin }}{% endif %}
+          {% if d.error %} · <span class="err">{{ d.error }}</span>{% endif %}</div>
+      </td>
+      <td><span class="lang">{{ d.lang or '?' }}</span></td>
+      <td><span class="st st-{{ d.status }}">{{ d.status }}</span></td>
+      <td class="actions">
+        {% if d.status != 'downloaded' %}
+        <form method="post" action="/doc/{{ d.id }}/download"><button title="Download now">⬇</button></form>
+        {% endif %}
+        <form method="post" action="/doc/{{ d.id }}/hide"><input type="hidden" name="hidden" value="{{ 0 if d.hidden else 1 }}">
+          <button title="{{ 'Unhide' if d.hidden else 'Hide (not relevant)' }}">{{ '↺' if d.hidden else '✕' }}</button></form>
+        <details><summary title="Edit">✎</summary>
+          <form method="post" action="/doc/{{ d.id }}/edit" class="edit">
+            <input name="title" value="{{ d.title }}"><input name="lang" value="{{ d.lang or '' }}" size="3" placeholder="lang">
+            <input name="year" value="{{ d.year or '' }}" size="5" placeholder="year"><button>Save</button>
+          </form></details>
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6" class="empty">No documents match. Crawl sources on the <a href="/sources">Sources</a> page.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+{% if pages > 1 %}
+<nav class="pager">
+  {% if page > 1 %}<a href="/?{{ qs(page=page-1) }}">← prev</a>{% endif %}
+  <span>page {{ page }} / {{ pages }}</span>
+  {% if page < pages %}<a href="/?{{ qs(page=page+1) }}">next →</a>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

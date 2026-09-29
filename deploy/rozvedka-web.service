@@ -1,0 +1,15 @@
+# systemd user unit – install with: systemctl --user link "$PWD/deploy/rozvedka-web.service"
+# Assumes the project lives in ~/Documents/Projects/Rozvedka; adjust the paths below otherwise.
+[Unit]
+Description=Rozvedka security reports portal
+After=network-online.target
+
+[Service]
+WorkingDirectory=%h/Documents/Projects/Rozvedka
+ExecStart=%h/Documents/Projects/Rozvedka/.venv/bin/python -m rozvedka serve --host 0.0.0.0 --port 8080
+Restart=on-failure
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=default.target

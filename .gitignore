@@ -1,0 +1,37 @@
+# ── Generated data: downloaded reports (third-party documents, large) and the local catalogue ──
+/data/
+*.part
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ── Secrets & local configuration (never commit) ──
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets.*
+*.secret
+
+# ── Editors / OS ──
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# ── Logs & scratch ──
+*.log
+/tmp/

@@ -1,0 +1,9 @@
+# Direct dependencies, pinned. Install: python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+beautifulsoup4==4.15.0
+fastapi==0.141.1
+httpx==0.28.1
+Jinja2==3.1.6
+pypdf==6.19.0
+python-multipart==0.0.32
+PyYAML==6.0.3
+uvicorn[standard]==0.54.0
