@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+  <!-- Simplified NATO flag: white compass rose on NATO blue (drawn for Rozvedka) -->
+  <rect width="640" height="480" fill="#004990"/>
+  <g stroke="#fff" stroke-width="7">
+    <line x1="320" y1="40" x2="320" y2="130"/>
+    <line x1="320" y1="350" x2="320" y2="440"/>
+    <line x1="80" y1="240" x2="210" y2="240"/>
+    <line x1="430" y1="240" x2="560" y2="240"/>
+  </g>
+  <circle cx="320" cy="240" r="72" fill="none" stroke="#fff" stroke-width="7"/>
+  <path fill="#fff" d="M320 140 L345 240 L320 240 Z M320 340 L295 240 L320 240 Z M220 240 L320 215 L320 240 Z M420 240 L320 265 L320 240 Z"/>
+  <path fill="#004990" stroke="#fff" stroke-width="3" d="M320 140 L295 240 L320 240 Z M320 340 L345 240 L320 240 Z M220 240 L320 265 L320 240 Z M420 240 L320 215 L320 240 Z"/>
+</svg>
