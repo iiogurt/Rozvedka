@@ -12,6 +12,10 @@
     <p class="muted small">Pins sit on the publicly listed headquarters or contact address.
       <span class="pin-key"><span class="dot solid"></span> exact building</span>
       <span class="pin-key"><span class="dot hollow"></span> street or city only</span></p>
+    <div class="views" role="group" aria-label="Zoom to region">
+      <button type="button" data-view="world">World</button><button type="button" data-view="europe">Europe</button>
+      <button type="button" data-view="americas">North America</button><button type="button" data-view="asia">Asia-Pacific</button>
+    </div>
     <fieldset class="types">
       <legend>Agency types</legend>
       {% for key, name in TYPE_NAMES.items() %}

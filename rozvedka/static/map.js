@@ -131,6 +131,7 @@
       el.textContent = `(${agencies.filter((a) => a.type === el.dataset.type).length})`;
     }
     render();
+    if (!window.location.hash) map.fitBounds(L.latLngBounds(markers.map(({ m }) => m.getLatLng())), { padding: [30, 30] });
     focusFromHash();
     try { await loadCountries(data.countries); } catch (e) { console.warn("country shapes unavailable", e); }
   });
@@ -143,6 +144,11 @@
     if (hit) cluster.zoomToShowLayer(hit.m, () => { map.setView(hit.m.getLatLng(), Math.max(map.getZoom(), 12)); hit.m.openPopup(); });
   }
   window.addEventListener("hashchange", focusFromHash);
+
+  const VIEWS = { world: [[-47, -130], [66, 178]], europe: [[34, -12], [71, 35]], americas: [[24, -128], [60, -52]],
+                  asia: [[-47, 110], [46, 180]] };
+  document.querySelectorAll("[data-view]").forEach((b) =>
+    b.addEventListener("click", () => map.fitBounds(VIEWS[b.dataset.view], { padding: [10, 10] })));
 
   document.querySelectorAll("input[name=type]").forEach((i) => i.addEventListener("change", render));
   document.getElementById("find").addEventListener("input", render);

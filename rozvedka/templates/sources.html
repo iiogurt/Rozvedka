@@ -8,13 +8,16 @@
 </div>
 
 <nav class="flagbar" aria-label="Jump to country">
-  {% for country, items in groups %}
+  {% for region, countries in regions %}{% if not loop.first %}<span class="flagsep" aria-hidden="true"></span>{% endif %}
+  {% for country, items in countries %}
   <a href="#c-{{ country }}" title="{{ COUNTRY_NAMES.get(country, country) }} ({{ items|length }})">
     <img src="{{ flag_url(country) }}" alt="" width="28" height="21"><span>{{ country }}</span></a>
-  {% endfor %}
+  {% endfor %}{% endfor %}
 </nav>
 
-{% for country, items in groups %}
+{% for region, countries in regions %}
+<h2 class="region">{{ region }}</h2>
+{% for country, items in countries %}
 <section class="country" id="c-{{ country }}">
   <h2><img class="flag" src="{{ flag_url(country) }}" alt="" width="32" height="24">
     {{ COUNTRY_NAMES.get(country, country) }} <span class="muted">· {{ items|length }}</span></h2>
@@ -42,7 +45,7 @@
     <div class="card-links">
       {% if s.homepage %}<a href="{{ s.homepage }}" target="_blank" rel="noopener">⌂ {{ s.homepage.split('//')[1].rstrip('/') }}</a>{% endif %}
       <a href="/?source={{ s.id }}"><b>{{ s.n_docs }}</b> documents · {{ s.n_ok or 0 }} downloaded</a>
-      {% if s.lat is not none %}<a href="/map#s-{{ s.id }}" title="{{ s.hq_address }}">📍 map</a>{% endif %}
+      {% if s.lat is not none %}<a href="/map#s-{{ s.id }}" title="{{ s.hq_address }}">◉ on map</a>{% endif %}
     </div>
     <details class="more"><summary>Report pages ({{ pages.get(s.id, [])|length }}) · crawl · add document</summary>
       <ul class="pages">
@@ -71,5 +74,6 @@
   {% endfor %}
   </div>
 </section>
+{% endfor %}
 {% endfor %}
 {% endblock %}
