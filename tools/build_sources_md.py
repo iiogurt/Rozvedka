@@ -1,12 +1,12 @@
 """Render sources/registry.yaml as a readable Markdown overview (sources/sources.md)."""
+import sys
+from pathlib import Path
+
 import yaml
-NAMES = {"CZ":"Czechia","SK":"Slovakia","PL":"Poland","DE":"Germany","AT":"Austria","EE":"Estonia","LV":"Latvia",
- "LT":"Lithuania","FI":"Finland","SE":"Sweden","DK":"Denmark","NL":"Netherlands","BE":"Belgium","FR":"France",
- "IT":"Italy","ES":"Spain","PT":"Portugal","HU":"Hungary","RO":"Romania","BG":"Bulgaria","HR":"Croatia",
- "SI":"Slovenia","GR":"Greece","CY":"Cyprus","LU":"Luxembourg","IE":"Ireland","MT":"Malta",
- "EU":"European Union bodies","NATO":"NATO","OTHER":"International",
- "GB":"United Kingdom","NO":"Norway","CH":"Switzerland","US":"United States","CA":"Canada","AU":"Australia",
- "NZ":"New Zealand","JP":"Japan","KR":"South Korea","TW":"Taiwan"}
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from rozvedka import countries  # noqa: E402
+
+NAMES = countries.names()
 srcs = yaml.safe_load(open("sources/registry.yaml"))
 out = ["# Rozvedka – official security report sources\n",
        f"Generated from `sources/registry.yaml` — {len(srcs)} sources, {sum(len(s['pages']) for s in srcs)} pages.\n",
@@ -16,7 +16,9 @@ cur = None
 for s in srcs:
     if s["country"] != cur:
         cur = s["country"]
-        out += [f"\n## {NAMES.get(cur, cur)}\n", "| Agency | What they publish | Reports | Links |", "|---|---|---|---|"]
+        tags = " · ".join(f"{countries.coalitions()[k]['short']} ({y})" for k, y in countries.memberships(cur).items())
+        out += [f"\n## {NAMES.get(cur, cur)}\n", *([f"_{tags}_\n"] if tags else []),
+                "| Agency | What they publish | Reports | Links |", "|---|---|---|---|"]
     links = " · ".join(f"[{p['lang']} {p['kind']}{' ⚠' if p.get('verified') is False else ''}]({p['url']})" for p in s["pages"])
     if s.get("url_pattern"):
         up = s["url_pattern"]; links += f"<br>pattern: `{up['template']}` {up['years'][0]}–{up['years'][1]}"
