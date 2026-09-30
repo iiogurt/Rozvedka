@@ -14,11 +14,14 @@ cur = None
 for s in srcs:
     if s["country"] != cur:
         cur = s["country"]
-        out += [f"\n## {NAMES.get(cur, cur)}\n", "| Agency | Type | Reports | Links |", "|---|---|---|---|"]
+        out += [f"\n## {NAMES.get(cur, cur)}\n", "| Agency | What they publish | Reports | Links |", "|---|---|---|---|"]
     links = " · ".join(f"[{p['lang']} {p['kind']}{' ⚠' if p.get('verified') is False else ''}]({p['url']})" for p in s["pages"])
     if s.get("url_pattern"):
         up = s["url_pattern"]; links += f"<br>pattern: `{up['template']}` {up['years'][0]}–{up['years'][1]}"
     notes = f"<br>_{s['notes']}_" if s.get("notes") else ""
-    out.append(f"| **{s['agency']}**<br>{s['full_name']} | {s['type']} | {', '.join(s['report_types'])}{notes} | {links} |")
+    home = f"<br>[{s['homepage'].split('//')[1].rstrip('/')}]({s['homepage']})" if s.get("homepage") else ""
+    local = f"<br>_{s['name_local']}_" if s.get("name_local") and s.get("name_local") != s.get("name_en") else ""
+    out.append(f"| **{s['agency']}** – {s.get('name_en', '')}{local}{home} | {s.get('description', '')} | "
+               f"{', '.join(s['report_types'])}{notes} | {links} |")
 open("sources/sources.md", "w").write("\n".join(out) + "\n")
 print("wrote sources/sources.md")

@@ -15,7 +15,10 @@
 # ════════════════════════ CZECHIA ════════════════════════
 - country: CZ
   agency: BIS
-  full_name: Bezpečnostní informační služba
+  name_local: "Bezpečnostní informační služba"
+  name_en: "Security Information Service"
+  homepage: "https://www.bis.cz/"
+  description: "Czech civil counter-intelligence and security service. Annual reports cover Russian and Chinese espionage and influence operations, extremism, terrorism, proliferation and threats to the economy and critical infrastructure."
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -27,7 +30,10 @@
 
 - country: CZ
   agency: VZ
-  full_name: Vojenské zpravodajství
+  name_local: "Vojenské zpravodajství"
+  name_en: "Military Intelligence"
+  homepage: "https://vzcr.gov.cz/"
+  description: "Czech military intelligence (foreign and military counter-intelligence). Public reports (2004–2023) describe the military-political situation abroad, threats to the armed forces and defence cyber security."
   type: intelligence-military
   access: auto
   frequency: discontinued
@@ -39,7 +45,10 @@
 
 - country: CZ
   agency: NÚKIB
-  full_name: Národní úřad pro kybernetickou a informační bezpečnost
+  name_local: "Národní úřad pro kybernetickou a informační bezpečnost"
+  name_en: "National Cyber and Information Security Agency"
+  homepage: "https://nukib.gov.cz/"
+  description: "Czech national cyber-security authority and government CERT. Annual reports on the state of cyber security, threat assessments, warnings and guidance for critical infrastructure."
   type: cyber
   access: auto
   frequency: yearly
@@ -50,7 +59,10 @@
 
 - country: CZ
   agency: HZS ČR
-  full_name: Hasičský záchranný sbor ČR
+  name_local: "Hasičský záchranný sbor České republiky"
+  name_en: "Fire Rescue Service of the Czech Republic"
+  homepage: "https://hzscr.gov.cz/"
+  description: "National fire and rescue service, core of the Integrated Rescue System and civil protection. Statistical yearbooks on fires, floods, accidents, disasters and emergency response."
   type: civil-protection
   access: manual
   frequency: yearly
@@ -61,7 +73,10 @@
 
 - country: CZ
   agency: MV ČR
-  full_name: Ministerstvo vnitra – zprávy o extremismu
+  name_local: "Ministerstvo vnitra České republiky"
+  name_en: "Ministry of the Interior of the Czech Republic"
+  homepage: "https://mv.gov.cz/"
+  description: "Czech interior ministry. Annual reports on extremism and prejudicial hatred, plus internal-security strategy documents."
   type: police-ct
   access: manual
   frequency: yearly
@@ -73,7 +88,10 @@
 # ════════════════════════ SLOVAKIA ════════════════════════
 - country: SK
   agency: SIS
-  full_name: Slovenská informačná služba
+  name_local: "Slovenská informačná služba"
+  name_en: "Slovak Information Service"
+  homepage: "https://www.sis.gov.sk/"
+  description: "Slovak civil intelligence service (domestic and foreign). Activity reports summarise foreign intelligence activity, extremism, terrorism, economic security and cyber threats."
   type: intelligence-civil
   access: tls-lenient
   frequency: yearly
@@ -83,7 +101,10 @@
 
 - country: SK
   agency: NBÚ
-  full_name: Národný bezpečnostný úrad (SK-CERT)
+  name_local: "Národný bezpečnostný úrad"
+  name_en: "National Security Authority"
+  homepage: "https://www.nbu.gov.sk/"
+  description: "Protects classified information and runs national cyber security (SK-CERT). Annual reports on cyber incidents and the state of cyber security in Slovakia."
   type: cyber
   access: manual
   notes: "Page content hidden behind a loading screen, also in a headless browser – add reports manually."
@@ -95,7 +116,10 @@
 # ════════════════════════ POLAND ════════════════════════
 - country: PL
   agency: ABW
-  full_name: Agencja Bezpieczeństwa Wewnętrznego
+  name_local: "Agencja Bezpieczeństwa Wewnętrznego"
+  name_en: "Internal Security Agency"
+  homepage: "https://www.abw.gov.pl/"
+  description: "Polish counter-intelligence and internal security service. Reports cover espionage, sabotage, terrorism, hybrid threats and government cyber security (CSIRT GOV)."
   type: intelligence-civil
   access: auto
   frequency: periodic
@@ -105,7 +129,10 @@
 
 - country: PL
   agency: RCB
-  full_name: Rządowe Centrum Bezpieczeństwa
+  name_local: "Rządowe Centrum Bezpieczeństwa"
+  name_en: "Government Centre for Security"
+  homepage: "https://www.gov.pl/web/rcb"
+  description: "Crisis-management centre of the Polish government. Publishes the report on threats to national security and preparedness guidance for citizens."
   type: civil-protection
   access: auto
   frequency: periodic
@@ -115,7 +142,10 @@
 
 - country: PL
   agency: CERT Polska
-  full_name: CERT Polska (NASK)
+  name_local: "CERT Polska (NASK)"
+  name_en: "CERT Polska"
+  homepage: "https://cert.pl/"
+  description: "Polish national CSIRT run by the NASK research institute. Annual reports on cyber incidents, phishing, malware and attacks on Polish internet users."
   type: cyber
   access: auto
   frequency: yearly
@@ -127,7 +157,10 @@
 # ════════════════════════ GERMANY ════════════════════════
 - country: DE
   agency: BfV
-  full_name: Bundesamt für Verfassungsschutz
+  name_local: "Bundesamt für Verfassungsschutz"
+  name_en: "Federal Office for the Protection of the Constitution"
+  homepage: "https://www.verfassungsschutz.de/"
+  description: "German domestic intelligence service. The annual Verfassungsschutzbericht covers right- and left-wing extremism, Islamism, espionage, sabotage, cyber attacks and proliferation."
   type: intelligence-civil
   access: browser-ua
   frequency: yearly
@@ -142,7 +175,10 @@
 
 - country: DE
   agency: BMI
-  full_name: Bundesministerium des Innern – Verfassungsschutzbericht
+  name_local: "Bundesministerium des Innern"
+  name_en: "Federal Ministry of the Interior"
+  homepage: "https://www.bmi.bund.de/"
+  description: "German federal interior ministry, responsible for internal security and civil protection. Publishes the Verfassungsschutzbericht with BfV and national security-policy documents."
   type: intelligence-civil
   access: manual
   frequency: yearly
@@ -152,7 +188,10 @@
 
 - country: DE
   agency: BSI
-  full_name: Bundesamt für Sicherheit in der Informationstechnik
+  name_local: "Bundesamt für Sicherheit in der Informationstechnik"
+  name_en: "Federal Office for Information Security"
+  homepage: "https://www.bsi.bund.de/"
+  description: "Germany's national cyber-security authority. The annual report 'The State of IT Security in Germany' covers threat actors, ransomware, vulnerabilities and critical infrastructure."
   type: cyber
   access: auto
   frequency: yearly
@@ -163,7 +202,10 @@
 
 - country: DE
   agency: BBK
-  full_name: Bundesamt für Bevölkerungsschutz und Katastrophenhilfe
+  name_local: "Bundesamt für Bevölkerungsschutz und Katastrophenhilfe"
+  name_en: "Federal Office of Civil Protection and Disaster Assistance"
+  homepage: "https://www.bbk.bund.de/"
+  description: "German federal civil-protection agency. Risk analyses (floods, pandemics, power blackouts, heat), critical-infrastructure protection and citizen preparedness advice."
   type: civil-protection
   access: auto
   frequency: periodic
@@ -173,7 +215,10 @@
 
 - country: DE
   agency: BKA
-  full_name: Bundeskriminalamt – Lagebilder
+  name_local: "Bundeskriminalamt"
+  name_en: "Federal Criminal Police Office"
+  homepage: "https://www.bka.de/"
+  description: "German federal criminal police. National situation reports (Bundeslagebilder) on organised crime, cybercrime, corruption, human trafficking and politically motivated crime."
   type: police-ct
   access: browser-ua
   frequency: yearly
@@ -184,7 +229,10 @@
 # ════════════════════════ AUSTRIA ════════════════════════
 - country: AT
   agency: DSN
-  full_name: Direktion Staatsschutz und Nachrichtendienst
+  name_local: "Direktion Staatsschutz und Nachrichtendienst"
+  name_en: "Directorate State Protection and Intelligence Service"
+  homepage: "https://www.dsn.gv.at/"
+  description: "Austrian domestic intelligence and state-protection service. The annual Verfassungsschutzbericht covers extremism, terrorism, espionage and cyber threats."
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -194,7 +242,10 @@
 
 - country: AT
   agency: BMLV
-  full_name: Bundesministerium für Landesverteidigung – Sicherheitspolitik (Risikobild)
+  name_local: "Bundesministerium für Landesverteidigung"
+  name_en: "Federal Ministry of Defence"
+  homepage: "https://www.bundesheer.at/"
+  description: "Austrian defence ministry. The annual Risikobild (Risk Monitor) assesses the international security environment and the risks it poses to Austria and Europe."
   type: intelligence-military
   access: auto
   frequency: yearly
@@ -206,7 +257,10 @@
 # ════════════════════════ ESTONIA ════════════════════════
 - country: EE
   agency: KAPO
-  full_name: Kaitsepolitseiamet (Internal Security Service)
+  name_local: "Kaitsepolitseiamet"
+  name_en: "Estonian Internal Security Service"
+  homepage: "https://kapo.ee/"
+  description: "Estonian counter-intelligence and security police. Annual reviews describe Russian intelligence and influence activities, extremism, terrorism and economic security, with concrete case examples."
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -218,7 +272,10 @@
 
 - country: EE
   agency: VLA
-  full_name: Välisluureamet (Foreign Intelligence Service)
+  name_local: "Välisluureamet"
+  name_en: "Estonian Foreign Intelligence Service"
+  homepage: "https://www.valisluureamet.ee/"
+  description: "Estonia's foreign intelligence service. The annual 'International Security and Estonia' report analyses Russia's military, politics, economy and influence operations, and China."
   type: intelligence-military
   access: auto
   frequency: yearly
@@ -234,7 +291,10 @@
 
 - country: EE
   agency: RIA
-  full_name: Riigi Infosüsteemi Amet (Information System Authority, CERT-EE)
+  name_local: "Riigi Infosüsteemi Amet"
+  name_en: "Estonian Information System Authority"
+  homepage: "https://www.ria.ee/"
+  description: "Estonian cyber-security authority and home of CERT-EE. Cyber security yearbooks, threat assessments and studies on the security of the digital state."
   type: cyber
   access: auto
   frequency: yearly
@@ -246,7 +306,10 @@
 # ════════════════════════ LATVIA ════════════════════════
 - country: LV
   agency: VDD
-  full_name: Valsts drošības dienests (State Security Service)
+  name_local: "Valsts drošības dienests"
+  name_en: "State Security Service"
+  homepage: "https://vdd.gov.lv/"
+  description: "Latvian counter-intelligence and internal security service. Annual reports on Russian intelligence and influence, extremism, terrorism and protection of the constitutional order."
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -257,7 +320,10 @@
 
 - country: LV
   agency: SAB
-  full_name: Satversmes aizsardzības birojs (Constitution Protection Bureau)
+  name_local: "Satversmes aizsardzības birojs"
+  name_en: "Constitution Protection Bureau"
+  homepage: "https://www.sab.gov.lv/"
+  description: "Latvian foreign intelligence service and national cyber-security coordinator. Annual reports and analytical reports on Russia and threats to Western countries."
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -268,7 +334,10 @@
 
 - country: LV
   agency: MIDD
-  full_name: Militārās izlūkošanas un drošības dienests
+  name_local: "Militārās izlūkošanas un drošības dienests"
+  name_en: "Defence Intelligence and Security Service"
+  homepage: "https://www.midd.gov.lv/"
+  description: "Latvian military intelligence. Annual threat assessments on Russia's armed forces, hybrid activity, sabotage and information operations against Latvia."
   type: intelligence-military
   access: auto
   frequency: yearly
@@ -280,7 +349,10 @@
 # ════════════════════════ LITHUANIA ════════════════════════
 - country: LT
   agency: VSD + AOTD
-  full_name: Valstybės saugumo departamentas & Antrasis operatyvinių tarnybų departamentas – National Threat Assessment
+  name_local: "Valstybės saugumo departamentas; Antrasis operatyvinių tarnybų departamentas"
+  name_en: "State Security Department; Defence Intelligence and Security Service"
+  homepage: "https://www.vsd.lt/"
+  description: "Lithuania's civil and military intelligence services. Their joint annual National Threat Assessment covers Russia, Belarus, China, military threats, cyber and influence operations."
   type: intelligence-civil
   access: manual
   frequency: yearly
@@ -292,7 +364,10 @@
 
 - country: LT
   agency: NKSC
-  full_name: Nacionalinis kibernetinio saugumo centras
+  name_local: "Nacionalinis kibernetinio saugumo centras"
+  name_en: "National Cyber Security Centre"
+  homepage: "https://www.nksc.lt/"
+  description: "Lithuanian national cyber-security authority under the Ministry of National Defence. Annual national cyber-security status reports."
   type: cyber
   access: manual
   frequency: yearly
@@ -303,7 +378,10 @@
 # ════════════════════════ FINLAND ════════════════════════
 - country: FI
   agency: Supo
-  full_name: Suojelupoliisi (Finnish Security and Intelligence Service)
+  name_local: "Suojelupoliisi"
+  name_en: "Finnish Security and Intelligence Service"
+  homepage: "https://supo.fi/"
+  description: "Finnish security and intelligence service. The annual National Security Overview covers state espionage and influence, terrorism and threats to critical infrastructure."
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -315,7 +393,10 @@
 
 - country: FI
   agency: Traficom NCSC-FI
-  full_name: Kyberturvallisuuskeskus (National Cyber Security Centre Finland)
+  name_local: "Kyberturvallisuuskeskus (Liikenne- ja viestintävirasto Traficom)"
+  name_en: "National Cyber Security Centre Finland"
+  homepage: "https://www.kyberturvallisuuskeskus.fi/"
+  description: "Finland's national cyber-security centre within Traficom. Annual cyber-security reviews, weekly reviews and 'cyber weather' situation reports."
   type: cyber
   access: auto
   frequency: yearly
@@ -325,7 +406,10 @@
 
 - country: FI
   agency: Turvallisuuskomitea
-  full_name: The Security Committee
+  name_local: "Turvallisuuskomitea"
+  name_en: "The Security Committee"
+  homepage: "https://turvallisuuskomitea.fi/"
+  description: "Finnish government body for comprehensive security. Publishes the Security Strategy for Society and preparedness guidance based on the Finnish comprehensive-security model."
   type: civil-protection
   access: auto
   frequency: periodic
@@ -338,7 +422,10 @@
 # ════════════════════════ SWEDEN ════════════════════════
 - country: SE
   agency: Säpo
-  full_name: Säkerhetspolisen (Swedish Security Service)
+  name_local: "Säkerhetspolisen"
+  name_en: "Swedish Security Service"
+  homepage: "https://www.sakerhetspolisen.se/"
+  description: "Swedish security and counter-intelligence service. The annual assessment covers foreign powers' espionage and influence, violent extremism, terrorism and protective security."
   type: intelligence-civil
   access: manual
   frequency: yearly
@@ -349,7 +436,10 @@
 
 - country: SE
   agency: MUST
-  full_name: Militära underrättelse- och säkerhetstjänsten
+  name_local: "Militära underrättelse- och säkerhetstjänsten"
+  name_en: "Military Intelligence and Security Service"
+  homepage: "https://www.forsvarsmakten.se/"
+  description: "Swedish military intelligence within the Armed Forces. Annual overviews of the military threat, Russia, hybrid activity and security threats to Swedish defence."
   type: intelligence-military
   access: auto
   frequency: yearly
@@ -359,7 +449,10 @@
 
 - country: SE
   agency: MCF (ex-MSB)
-  full_name: Myndigheten för civilt försvar (formerly MSB)
+  name_local: "Myndigheten för civilt försvar"
+  name_en: "Swedish Civil Defence and Resilience Agency"
+  homepage: "https://www.mcf.se/"
+  description: "Swedish civil-defence and emergency-preparedness agency (formerly MSB). National risk and capability assessments and crisis-preparedness guidance such as 'In case of crisis or war'."
   type: civil-protection
   access: auto
   frequency: yearly
@@ -371,7 +464,10 @@
 # ════════════════════════ DENMARK ════════════════════════
 - country: DK
   agency: PET
-  full_name: Politiets Efterretningstjeneste (incl. Center for Terroranalyse)
+  name_local: "Politiets Efterretningstjeneste"
+  name_en: "Danish Security and Intelligence Service"
+  homepage: "https://pet.dk/"
+  description: "Danish domestic security and intelligence service. Its Centre for Terror Analysis issues the annual terror threat assessment; PET also publishes espionage threat assessments."
   type: intelligence-civil
   access: manual
   frequency: yearly
@@ -381,7 +477,10 @@
 
 - country: DK
   agency: FE
-  full_name: Forsvarets Efterretningstjeneste
+  name_local: "Forsvarets Efterretningstjeneste"
+  name_en: "Danish Defence Intelligence Service"
+  homepage: "https://www.fe-ddis.dk/"
+  description: "Danish foreign and military intelligence. The annual Intelligence Outlook covers Russia, China, the Arctic, terrorism and cyber threats against Denmark."
   type: intelligence-military
   access: auto
   frequency: yearly
@@ -393,7 +492,10 @@
 
 - country: DK
   agency: SAMSIK (ex-CFCS)
-  full_name: Styrelsen for Samfundssikkerhed (cyber threat assessments, national risk picture)
+  name_local: "Styrelsen for Samfundssikkerhed"
+  name_en: "Danish Resilience Agency"
+  homepage: "https://samsik.dk/"
+  description: "Danish resilience agency (incl. the former Centre for Cyber Security). Cyber threat assessments, the National Risk Picture and total-defence preparedness material."
   type: cyber
   access: auto
   frequency: yearly
@@ -405,7 +507,10 @@
 
 - country: DK
   agency: BRS
-  full_name: Beredskabsstyrelsen (Danish Emergency Management Agency)
+  name_local: "Beredskabsstyrelsen"
+  name_en: "Danish Emergency Management Agency"
+  homepage: "https://www.brs.dk/"
+  description: "Danish emergency-management agency. National risk profile, rescue-service statistics, research and preparedness publications."
   type: civil-protection
   access: auto
   frequency: periodic
@@ -418,7 +523,10 @@
 # ════════════════════════ NETHERLANDS ════════════════════════
 - country: NL
   agency: AIVD
-  full_name: Algemene Inlichtingen- en Veiligheidsdienst
+  name_local: "Algemene Inlichtingen- en Veiligheidsdienst"
+  name_en: "General Intelligence and Security Service"
+  homepage: "https://www.aivd.nl/"
+  description: "Dutch civil intelligence and security service. Annual reports cover state actors (Russia, China, Iran), terrorism, extremism and cyber espionage."
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -430,7 +538,10 @@
 
 - country: NL
   agency: MIVD
-  full_name: Militaire Inlichtingen- en Veiligheidsdienst
+  name_local: "Militaire Inlichtingen- en Veiligheidsdienst"
+  name_en: "Defence Intelligence and Security Service"
+  homepage: "https://www.defensie.nl/onderwerpen/militaire-inlichtingen-en-veiligheid"
+  description: "Dutch military intelligence. Annual reports on military threats, Russia and the war in Ukraine, China and threats against the defence sector."
   type: intelligence-military
   access: auto
   frequency: yearly
@@ -441,7 +552,10 @@
 
 - country: NL
   agency: NCTV
-  full_name: Nationaal Coördinator Terrorismebestrijding en Veiligheid
+  name_local: "Nationaal Coördinator Terrorismebestrijding en Veiligheid"
+  name_en: "National Coordinator for Security and Counterterrorism"
+  homepage: "https://www.nctv.nl/"
+  description: "Coordinates Dutch counter-terrorism, cyber security and crisis management. Publishes the Terrorist Threat Assessment Netherlands (DTN) and the Cyber Security Assessment Netherlands (CSBN)."
   type: police-ct
   access: auto
   frequency: periodic
@@ -452,7 +566,10 @@
 
 - country: NL
   agency: NCSC-NL
-  full_name: Nationaal Cyber Security Centrum
+  name_local: "Nationaal Cyber Security Centrum"
+  name_en: "National Cyber Security Centre"
+  homepage: "https://www.ncsc.nl/"
+  description: "Dutch national cyber-security centre for government and vital sectors. Security advisories, threat information and guidance."
   type: cyber
   access: auto
   frequency: periodic
@@ -463,7 +580,10 @@
 # ════════════════════════ BELGIUM ════════════════════════
 - country: BE
   agency: VSSE
-  full_name: Veiligheid van de Staat / Sûreté de l'État
+  name_local: "Veiligheid van de Staat / Sûreté de l'État"
+  name_en: "State Security Service"
+  homepage: "https://www.vsse.be/"
+  description: "Belgian civil intelligence service. Its public intelligence report covers espionage, foreign interference, extremism, terrorism and proliferation."
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -475,7 +595,10 @@
 
 - country: BE
   agency: OCAD/OCAM/CUTA
-  full_name: Coördinatieorgaan voor de dreigingsanalyse
+  name_local: "Coördinatieorgaan voor de dreigingsanalyse / Organe de coordination pour l'analyse de la menace"
+  name_en: "Coordination Unit for Threat Analysis"
+  homepage: "https://cuta.belgium.be/"
+  description: "Belgian threat-assessment body that sets the national terror threat level. Annual reports and analyses of terrorism and violent extremism."
   type: police-ct
   access: tls-lenient
   frequency: yearly
@@ -488,7 +611,10 @@
 
 - country: BE
   agency: CCB
-  full_name: Centre for Cybersecurity Belgium
+  name_local: "Centrum voor Cybersecurity België / Centre pour la Cybersécurité Belgique"
+  name_en: "Centre for Cybersecurity Belgium"
+  homepage: "https://ccb.belgium.be/"
+  description: "Belgian national cyber-security authority (CERT.be). Annual reports and key figures on cyber threats, phishing and incidents in Belgium."
   type: cyber
   access: manual
   frequency: yearly
@@ -502,7 +628,10 @@
 # ════════════════════════ FRANCE ════════════════════════
 - country: FR
   agency: SGDSN
-  full_name: Secrétariat général de la défense et de la sécurité nationale
+  name_local: "Secrétariat général de la défense et de la sécurité nationale"
+  name_en: "General Secretariat for National Defence and Security"
+  homepage: "https://www.sgdsn.gouv.fr/"
+  description: "Supports the French Prime Minister on defence and national security. National Strategic Review, national resilience and crisis-management documents."
   type: civil-protection
   access: auto
   frequency: periodic
@@ -512,7 +641,10 @@
 
 - country: FR
   agency: ANSSI
-  full_name: Agence nationale de la sécurité des systèmes d'information
+  name_local: "Agence nationale de la sécurité des systèmes d'information"
+  name_en: "National Cybersecurity Agency of France"
+  homepage: "https://cyber.gouv.fr/"
+  description: "French national cyber-security authority. The annual 'Panorama de la cybermenace' and CERT-FR threat reports cover state-sponsored attacks, ransomware and threats by sector."
   type: cyber
   access: auto
   frequency: yearly
@@ -525,7 +657,10 @@
 
 - country: FR
   agency: VIGINUM
-  full_name: VIGINUM (SGDSN – foreign digital interference)
+  name_local: "Service de vigilance et de protection contre les ingérences numériques étrangères"
+  name_en: "Service for Vigilance and Protection against Foreign Digital Interference"
+  homepage: "https://www.sgdsn.gouv.fr/"
+  description: "French agency detecting foreign information-manipulation campaigns. Technical reports on specific disinformation operations targeting France and Europe."
   type: intelligence-civil
   access: auto
   frequency: periodic
@@ -536,7 +671,10 @@
 # ════════════════════════ ITALY ════════════════════════
 - country: IT
   agency: DIS / Sistema di informazione
-  full_name: Sistema di informazione per la sicurezza della Repubblica (DIS, AISE, AISI)
+  name_local: "Sistema di informazione per la sicurezza della Repubblica"
+  name_en: "Intelligence System for the Security of the Republic"
+  homepage: "https://www.sicurezzanazionale.gov.it/"
+  description: "Italy's intelligence community (DIS, AISE, AISI). The annual report to Parliament covers geopolitics, terrorism, cyber threats, economic security and hybrid threats."
   type: intelligence-civil
   access: browser-js
   frequency: yearly
@@ -551,7 +689,10 @@
 
 - country: IT
   agency: ACN
-  full_name: Agenzia per la Cybersicurezza Nazionale
+  name_local: "Agenzia per la Cybersicurezza Nazionale"
+  name_en: "National Cybersecurity Agency"
+  homepage: "https://www.acn.gov.it/"
+  description: "Italian national cyber-security authority (home of CSIRT Italia). Annual report to Parliament and operational summaries of the cyber threat."
   type: cyber
   access: auto
   frequency: yearly
@@ -563,7 +704,10 @@
 
 - country: IT
   agency: Protezione Civile
-  full_name: Dipartimento della Protezione Civile
+  name_local: "Dipartimento della Protezione Civile"
+  name_en: "Civil Protection Department"
+  homepage: "https://www.protezionecivile.gov.it/"
+  description: "Italian national civil-protection department. Publications on seismic, volcanic, hydro-geological and other risks, emergency planning and citizen preparedness."
   type: civil-protection
   access: auto
   frequency: periodic
@@ -574,7 +718,10 @@
 # ════════════════════════ SPAIN ════════════════════════
 - country: ES
   agency: DSN
-  full_name: Departamento de Seguridad Nacional
+  name_local: "Departamento de Seguridad Nacional"
+  name_en: "Department of National Security"
+  homepage: "https://www.dsn.gob.es/"
+  description: "Supports the Spanish Prime Minister on national security. The Annual National Security Report reviews all national-security areas, from terrorism and cyber to pandemics and climate."
   type: civil-protection
   access: auto
   frequency: yearly
@@ -587,7 +734,10 @@
 
 - country: ES
   agency: CCN-CERT
-  full_name: Centro Criptológico Nacional (CNI)
+  name_local: "Centro Criptológico Nacional – CERT"
+  name_en: "National Cryptologic Centre – CERT"
+  homepage: "https://www.ccn-cert.cni.es/"
+  description: "Spanish governmental CERT attached to the intelligence service CNI. Annual 'Cyber Threats and Trends' report and security guides."
   type: cyber
   access: manual
   frequency: yearly
@@ -597,7 +747,10 @@
 
 - country: ES
   agency: Ministerio del Interior
-  full_name: Ministerio del Interior – Anuarios estadísticos
+  name_local: "Ministerio del Interior"
+  name_en: "Ministry of the Interior"
+  homepage: "https://www.interior.gob.es/"
+  description: "Spanish interior ministry. Statistical yearbooks and crime reports, including hate crime and cybercrime."
   type: police-ct
   access: manual
   frequency: yearly
@@ -608,7 +761,10 @@
 # ════════════════════════ PORTUGAL ════════════════════════
 - country: PT
   agency: SSI
-  full_name: Sistema de Segurança Interna – Relatório Anual de Segurança Interna (RASI)
+  name_local: "Sistema de Segurança Interna"
+  name_en: "Internal Security System"
+  homepage: "https://www.ssi.gov.pt/"
+  description: "Coordinates Portugal's internal-security forces. The Annual Internal Security Report (RASI) covers crime, terrorism, extremism, cybercrime and civil protection."
   type: police-ct
   access: auto
   frequency: yearly
@@ -619,7 +775,10 @@
 
 - country: PT
   agency: CNCS
-  full_name: Centro Nacional de Cibersegurança – Observatório
+  name_local: "Centro Nacional de Cibersegurança"
+  name_en: "National Cybersecurity Centre"
+  homepage: "https://www.cncs.gov.pt/"
+  description: "Portuguese national cyber-security authority. Its observatory publishes the annual 'Risks & Conflicts' report on cyber threats to Portugal."
   type: cyber
   access: manual
   frequency: yearly
@@ -630,7 +789,10 @@
 # ════════════════════════ HUNGARY ════════════════════════
 - country: HU
   agency: NBSZ NKI
-  full_name: Nemzetbiztonsági Szakszolgálat – Nemzeti Kibervédelmi Intézet
+  name_local: "Nemzetbiztonsági Szakszolgálat – Nemzeti Kibervédelmi Intézet"
+  name_en: "Special Service for National Security – National Cyber Security Center"
+  homepage: "https://nki.gov.hu/"
+  description: "Hungarian national cyber-security centre (NCSC-HU). Analyses and threat assessments of cyber incidents affecting Hungary."
   type: cyber
   access: auto
   frequency: monthly
@@ -640,9 +802,13 @@
     - {lang: hu, kind: archive, url: "https://nki.gov.hu/it-biztonsag/elemzesek/"}
 
 # ════════════════════════ ROMANIA ════════════════════════
+# (Foreign Intelligence Service SIE publishes no public reports.)
 - country: RO
   agency: SRI
-  full_name: Serviciul Român de Informații
+  name_local: "Serviciul Român de Informații"
+  name_en: "Romanian Intelligence Service"
+  homepage: "https://www.sri.ro/"
+  description: "Romanian domestic intelligence service. Activity reports (last public edition covers 2020) on espionage, terrorism, cyber threats and economic security."
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -651,19 +817,13 @@
   pages:
     - {lang: ro, kind: archive, url: "https://www.sri.ro/rapoarte-de-activitate"}
 
-- country: RO
-  agency: SRR
-  full_name: Serviciul de Informații Externe
-  type: intelligence-military
-  access: auto
-  frequency: yearly
-  report_types: [activity report]
-  pages:
-    - {lang: ro+en, kind: archive, url: "https://www.srr.ro/informatii-publice/rapoarte/"}
 
 - country: RO
   agency: DNSC
-  full_name: Directoratul Național de Securitate Cibernetică
+  name_local: "Directoratul Național de Securitate Cibernetică"
+  name_en: "National Cyber Security Directorate"
+  homepage: "https://www.dnsc.ro/"
+  description: "Romanian national cyber-security authority and CERT. Annual activity reports and cyber risk assessments."
   type: cyber
   access: manual
   frequency: yearly
@@ -674,7 +834,10 @@
 # ════════════════════════ BULGARIA ════════════════════════
 - country: BG
   agency: ДАНС / DANS
-  full_name: Държавна агенция „Национална сигурност“
+  name_local: "Държавна агенция „Национална сигурност“"
+  name_en: "State Agency for National Security"
+  homepage: "https://www.dans.bg/"
+  description: "Bulgarian counter-intelligence and national-security agency. Annual activity reports cover foreign intelligence activity, hybrid threats, terrorism, radicalisation and economic security."
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -687,7 +850,10 @@
 # ════════════════════════ CROATIA ════════════════════════
 - country: HR
   agency: SOA
-  full_name: Sigurnosno-obavještajna agencija
+  name_local: "Sigurnosno-obavještajna agencija"
+  name_en: "Security and Intelligence Agency"
+  homepage: "https://www.soa.hr/"
+  description: "Croatian security and intelligence service. Public reports describe the security environment, foreign intelligence activity, terrorism, extremism and cyber threats."
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -700,7 +866,10 @@
 # ════════════════════════ SLOVENIA ════════════════════════
 - country: SI
   agency: SOVA
-  full_name: Slovenska obveščevalno-varnostna agencija
+  name_local: "Slovenska obveščevalno-varnostna agencija"
+  name_en: "Slovenian Intelligence and Security Agency"
+  homepage: "https://www.gov.si/drzavni-organi/vladne-sluzbe/slovenska-obvescevalno-varnostna-agencija/"
+  description: "Slovenian civil intelligence and security agency. Annual activity summaries on the security situation, terrorism, extremism, cyber and hybrid threats."
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -710,7 +879,10 @@
 
 - country: SI
   agency: SI-CERT
-  full_name: Slovenian national CERT
+  name_local: "SI-CERT (Nacionalni odzivni center za kibernetsko varnost)"
+  name_en: "Slovenian Computer Emergency Response Team"
+  homepage: "https://www.cert.si/"
+  description: "Slovenian national CERT. Annual reports on cyber incidents, fraud and threats handled in Slovenia."
   type: cyber
   access: auto
   frequency: yearly
@@ -721,7 +893,10 @@
 # ════════════════════════ GREECE ════════════════════════
 - country: GR
   agency: NCSA
-  full_name: National Cybersecurity Authority
+  name_local: "Εθνική Αρχή Κυβερνοασφάλειας"
+  name_en: "National Cybersecurity Authority"
+  homepage: "https://cyber.gov.gr/"
+  description: "Greek national cyber-security authority. National cyber-security strategy, handbooks and guidance."
   type: cyber
   access: auto
   frequency: periodic
@@ -733,7 +908,10 @@
 # ════════════════════════ CYPRUS ════════════════════════
 - country: CY
   agency: DSA
-  full_name: Digital Security Authority
+  name_local: "Αρχή Ψηφιακής Ασφάλειας"
+  name_en: "Digital Security Authority"
+  homepage: "https://dsa.cy/"
+  description: "Cypriot national cyber-security authority (CSIRT-CY). Annual reports on cyber incidents and national cyber security."
   type: cyber
   access: auto
   frequency: yearly
@@ -744,7 +922,10 @@
 # ════════════════════════ LUXEMBOURG ════════════════════════
 - country: LU
   agency: SRE
-  full_name: Service de renseignement de l'État – parliamentary oversight
+  name_local: "Service de renseignement de l'État"
+  name_en: "State Intelligence Service"
+  homepage: "https://sre.gouvernement.lu/"
+  description: "Luxembourg's intelligence service. Public information is mainly the annual report of the parliamentary oversight commission."
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -754,7 +935,10 @@
 
 - country: LU
   agency: HCPN
-  full_name: Haut-Commissariat à la Protection nationale
+  name_local: "Haut-Commissariat à la Protection nationale"
+  name_en: "High Commission for National Protection"
+  homepage: "https://hcpn.gouvernement.lu/"
+  description: "Luxembourg's crisis-management and national-protection body. Publications on crisis preparedness, critical infrastructure and national risk."
   type: civil-protection
   access: auto
   frequency: periodic
@@ -765,7 +949,10 @@
 # ════════════════════════ IRELAND ════════════════════════
 - country: IE
   agency: Dept. of the Taoiseach
-  full_name: National (Strategic) Risk Assessment
+  name_local: "Roinn an Taoisigh"
+  name_en: "Department of the Taoiseach"
+  homepage: "https://www.gov.ie/en/department-of-the-taoiseach/"
+  description: "Irish Prime Minister's department. The National Risk Assessment identifies strategic geopolitical, economic, social, environmental and technological risks for Ireland."
   type: civil-protection
   access: auto
   frequency: yearly
@@ -776,7 +963,10 @@
 
 - country: IE
   agency: NCSC-IE
-  full_name: National Cyber Security Centre Ireland
+  name_local: "An tIonad Náisiúnta Cibearshlándála"
+  name_en: "National Cyber Security Centre"
+  homepage: "https://www.ncsc.gov.ie/"
+  description: "Irish national cyber-security centre. National Cyber Risk Assessment, advisories and guidance."
   type: cyber
   access: auto
   frequency: periodic
@@ -786,7 +976,10 @@
 
 - country: IE
   agency: OEP
-  full_name: Office of Emergency Planning
+  name_local: "An Oifig um Pleanáil Éigeandála"
+  name_en: "Office of Emergency Planning"
+  homepage: "https://www.gov.ie/en/office-of-emergency-planning/"
+  description: "Irish government office coordinating national emergency planning. Emergency-planning frameworks and public preparedness material."
   type: civil-protection
   access: auto
   frequency: periodic
@@ -799,7 +992,10 @@
 # ════════════════════════ EU BODIES ════════════════════════
 - country: EU
   agency: Europol
-  full_name: European Union Agency for Law Enforcement Cooperation
+  name_local: "European Union Agency for Law Enforcement Cooperation"
+  name_en: "Europol"
+  homepage: "https://www.europol.europa.eu/"
+  description: "EU law-enforcement agency. Flagship reports: TE-SAT (terrorism situation and trends), IOCTA (internet-organised crime) and EU SOCTA (serious and organised crime threat assessment)."
   type: eu-body
   access: browser-js
   frequency: yearly
@@ -812,7 +1008,10 @@
 
 - country: EU
   agency: ENISA
-  full_name: EU Agency for Cybersecurity
+  name_local: "European Union Agency for Cybersecurity"
+  name_en: "ENISA"
+  homepage: "https://www.enisa.europa.eu/"
+  description: "EU cyber-security agency. The annual ENISA Threat Landscape and sector threat reports describe prime cyber threats, actors and trends in Europe."
   type: eu-body
   access: auto
   frequency: yearly
@@ -823,7 +1022,10 @@
 
 - country: EU
   agency: EEAS
-  full_name: European External Action Service
+  name_local: "European External Action Service"
+  name_en: "European External Action Service"
+  homepage: "https://www.eeas.europa.eu/"
+  description: "EU diplomatic service. Annual reports on Foreign Information Manipulation and Interference (FIMI), the EU's strategic outlook and activity reports."
   type: eu-body
   access: auto
   frequency: yearly
@@ -834,7 +1036,10 @@
 
 - country: EU
   agency: Frontex
-  full_name: European Border and Coast Guard Agency
+  name_local: "European Border and Coast Guard Agency"
+  name_en: "Frontex"
+  homepage: "https://www.frontex.europa.eu/"
+  description: "EU border agency. Annual risk analyses on irregular migration, cross-border crime and security at the EU's external borders."
   type: eu-body
   access: auto
   frequency: yearly
@@ -845,7 +1050,10 @@
 
 - country: EU
   agency: ECDC
-  full_name: European Centre for Disease Prevention and Control
+  name_local: "European Centre for Disease Prevention and Control"
+  name_en: "ECDC"
+  homepage: "https://www.ecdc.europa.eu/"
+  description: "EU public-health agency. Epidemiological reports, rapid risk assessments and preparedness guidance on infectious-disease threats."
   type: eu-body
   access: auto
   frequency: periodic
@@ -856,7 +1064,10 @@
 
 - country: EU
   agency: DG ECHO
-  full_name: EU Civil Protection – disaster risk overviews
+  name_local: "Directorate-General for European Civil Protection and Humanitarian Aid Operations"
+  name_en: "DG ECHO – EU Civil Protection"
+  homepage: "https://civil-protection-humanitarian-aid.ec.europa.eu/"
+  description: "European Commission service for civil protection. Overviews of natural and man-made disaster risks in the EU and the Union Civil Protection Mechanism."
   type: eu-body
   access: auto
   frequency: periodic
@@ -866,7 +1077,10 @@
 
 - country: EU
   agency: JRC DRMKC
-  full_name: Joint Research Centre – Disaster Risk Management Knowledge Centre
+  name_local: "Joint Research Centre – Disaster Risk Management Knowledge Centre"
+  name_en: "JRC Disaster Risk Management Knowledge Centre"
+  homepage: "https://drmkc.jrc.ec.europa.eu/"
+  description: "European Commission science service for disaster risk. 'Science for Disaster Risk Management' flagship reports and risk-data resources."
   type: eu-body
   access: manual
   notes: "Site answers with a bot-challenge page – add reports manually."
@@ -877,7 +1091,10 @@
 
 - country: EU
   agency: EUISS
-  full_name: EU Institute for Security Studies
+  name_local: "European Union Institute for Security Studies"
+  name_en: "EUISS"
+  homepage: "https://www.iss.europa.eu/"
+  description: "EU agency for foreign, security and defence policy analysis. Chaillot Papers, briefs and foresight reports on geopolitics and security."
   type: eu-body
   access: auto
   frequency: periodic
@@ -887,7 +1104,10 @@
 
 - country: EU
   agency: Hybrid CoE
-  full_name: European Centre of Excellence for Countering Hybrid Threats
+  name_local: "European Centre of Excellence for Countering Hybrid Threats"
+  name_en: "Hybrid CoE"
+  homepage: "https://www.hybridcoe.fi/"
+  description: "EU–NATO centre of excellence in Helsinki. Research reports and working papers on hybrid threats, information influence and resilience."
   type: eu-body
   access: auto
   frequency: periodic
@@ -897,7 +1117,10 @@
 
 - country: EU
   agency: EU Preparedness
-  full_name: European Commission – Preparedness Union Strategy / Niinistö report
+  name_local: "European Commission – Preparedness Union Strategy"
+  name_en: "European Commission – Preparedness Union"
+  homepage: "https://commission.europa.eu/"
+  description: "European Commission documents on civil and military preparedness, incl. the Niinistö report 'Safer Together' and the Preparedness Union Strategy."
   type: eu-body
   access: auto
   frequency: once
@@ -908,7 +1131,10 @@
 # ════════════════════════ NATO ════════════════════════
 - country: NATO
   agency: NATO
-  full_name: NATO – Secretary General's Annual Report
+  name_local: "North Atlantic Treaty Organization / Organisation du Traité de l'Atlantique Nord"
+  name_en: "NATO"
+  homepage: "https://www.nato.int/"
+  description: "The North Atlantic Alliance. The Secretary General's Annual Report reviews Allied defence spending, deterrence, operations and the security environment."
   type: nato
   access: auto
   frequency: yearly
@@ -919,7 +1145,10 @@
 
 - country: NATO
   agency: StratCom CoE
-  full_name: NATO Strategic Communications Centre of Excellence (Riga)
+  name_local: "NATO Strategic Communications Centre of Excellence"
+  name_en: "NATO StratCom CoE"
+  homepage: "https://stratcomcoe.org/"
+  description: "NATO-accredited centre of excellence in Riga. Research on disinformation, information influence, social-media manipulation and strategic communications."
   type: nato
   access: auto
   frequency: periodic
@@ -930,7 +1159,10 @@
 
 - country: NATO
   agency: CCDCOE
-  full_name: NATO Cooperative Cyber Defence Centre of Excellence (Tallinn)
+  name_local: "NATO Cooperative Cyber Defence Centre of Excellence"
+  name_en: "NATO CCDCOE"
+  homepage: "https://ccdcoe.org/"
+  description: "NATO-accredited cyber-defence centre in Tallinn. Research on cyber law (Tallinn Manual), national cyber-security organisation, cyber conflict and exercises."
   type: nato
   access: auto
   frequency: periodic
@@ -941,7 +1173,10 @@
 # ════════════════════════ OTHER (outside EU/NATO scope, from user's collection) ════════════════════════
 - country: OTHER
   agency: IPCC
-  full_name: Intergovernmental Panel on Climate Change
+  name_local: "Intergovernmental Panel on Climate Change"
+  name_en: "IPCC"
+  homepage: "https://www.ipcc.ch/"
+  description: "UN body assessing climate-change science. Assessment and special reports on climate impacts, adaptation and risks – a key basis for disaster preparedness."
   type: other
   access: auto
   frequency: periodic
@@ -953,7 +1188,10 @@
 
 - country: OTHER
   agency: DIA
-  full_name: US Defense Intelligence Agency
+  name_local: "Defense Intelligence Agency"
+  name_en: "US Defense Intelligence Agency"
+  homepage: "https://www.dia.mil/"
+  description: "US military intelligence agency. Military-power reports on China, Russia, Iran and North Korea, and worldwide threat assessments."
   type: other
   access: manual
   frequency: periodic
@@ -963,7 +1201,10 @@
 
 - country: OTHER
   agency: ODNI
-  full_name: US Office of the Director of National Intelligence
+  name_local: "Office of the Director of National Intelligence"
+  name_en: "US Office of the Director of National Intelligence"
+  homepage: "https://www.dni.gov/"
+  description: "Head of the US intelligence community. The Annual Threat Assessment and the Global Trends foresight reports."
   type: other
   access: auto
   frequency: yearly
