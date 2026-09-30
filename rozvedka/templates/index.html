@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 {% block main %}
 <form class="filters" method="get" action="/">
-  <input type="search" name="q" value="{{ f.q }}" placeholder="Search title, agency…">
+  <input type="search" name="q" value="{{ f.q }}" placeholder="Search titles and full text…" title='Searches inside the reports. Use "quotes" for phrases.'>
+  {% for t in f.topic %}<input type="hidden" name="topic" value="{{ t }}">{% endfor %}
+  <select name="topic" aria-label="Add topic filter" onchange="this.form.submit()">
+    <option value="">+ Topic…</option>
+    {% for ckey, cat in CATEGORIES.items() %}<optgroup label="{{ cat.name }}">
+      {% for tkey in cat.topics %}{% if tkey not in f.topic %}<option value="{{ tkey }}">{{ TOPICS[tkey].name }} ({{ topic_counts.get(tkey, 0) }})</option>{% endif %}{% endfor %}
+    </optgroup>{% endfor %}
+  </select>
   <select name="country"><option value="">All countries</option>
     {% for r in facets.country %}<option value="{{ r[0] }}" {{ 'selected' if f.country == r[0] }}>{{ COUNTRY_NAMES.get(r[0], r[0]) }}</option>{% endfor %}
   </select>
@@ -25,8 +32,15 @@
   <a class="reset" href="/">Reset</a>
 </form>
 
+{% if f.topic %}<div class="chosen-topics">
+  <span class="muted small">Topics (all must match):</span>
+  {% for t in f.topic %}<a class="topic-chip on" href="/?{{ qs(topic=f.topic|reject('equalto', t)|list, page=1) }}" title="Remove">{{ TOPICS[t].name }} ✕</a>{% endfor %}
+</div>{% endif %}
 <div class="summary">
   <span><b>{{ total }}</b> documents match</span>
+  {% if f.topic or f.q %}<span class="muted small">sorted by
+    {% if f.sort == 'year' %}<a href="/?{{ qs(sort='relevance', page=1) }}">relevance</a> · <b>year</b>
+    {% else %}<b>relevance</b> · <a href="/?{{ qs(sort='year', page=1) }}">year</a>{% endif %}</span>{% endif %}
   <span class="muted">library: {{ counts.get('downloaded', 0) }} downloaded · {{ counts.get('new', 0) }} waiting · {{ counts.get('failed', 0) }} failed</span>
   <form method="post" action="/jobs/download" class="inline">
     <input type="hidden" name="country" value="{{ f.country }}">
@@ -52,6 +66,10 @@
           {% if d.size %} · {{ (d.size / 1048576) | round(1) }} MB{% endif %}
           {% if d.origin != 'crawl' %} · {{ d.origin }}{% endif %}
           {% if d.error %} · <span class="err">{{ d.error }}</span>{% endif %}</div>
+        {% if d.snippet %}<div class="snippet">{{ d.snippet | safe }}</div>{% endif %}
+        {% if d.topics %}<div class="doc-topics">{% for t in d.topics[:5] %}<a class="topic-chip{{ ' on' if t in f.topic }}"
+          href="/?{{ qs(topic=(f.topic + [t]) if t not in f.topic else f.topic, page=1) }}" title="{{ TOPICS[t].category_name if t in TOPICS else '' }}">{{ TOPICS[t].name if t in TOPICS else t }}</a>{% endfor %}
+          {% if d.topics|length > 5 %}<span class="muted small">+{{ d.topics|length - 5 }}</span>{% endif %}</div>{% endif %}
       </td>
       <td><span class="lang">{{ d.lang or '?' }}</span></td>
       <td><span class="st st-{{ d.status }}">{{ d.status }}</span></td>

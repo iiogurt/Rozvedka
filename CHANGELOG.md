@@ -10,6 +10,22 @@ Each release is tagged `v<version>` on `main` (e.g. `v0.6.0`). The version shown
 
 ## [Unreleased]
 
+## [0.8.0] – 2026-09-30
+
+### Added
+- Topic index: 64 topics in 9 categories, with 3,800+ keywords in 28 languages (`sources/topics.yaml`). The
+  categories are extremism & terrorism, state threats, war & geopolitics, cyber, crime, migration, disasters &
+  climate, resilience & preparedness, and governance. Examples: right-wing extremism, Russia, China,
+  disinformation, sabotage, ransomware, floods, energy security, civil defence.
+- `index-topics` extracts each report's text (`pdftotext`, first 150 pages) into a full-text index and tags the
+  report with its topics. A topic is assigned when the title matches, or when several different keywords appear
+  often enough for the document's length. Changing `topics.yaml` re-classifies from the stored text without
+  downloading again. The weekly update runs it automatically.
+- Documents list: topic filter (several topics = all must match), topic tags on every document, relevance sorting,
+  and full-text search inside the reports with highlighted snippets.
+- Topics page (`/topics`): every topic with its document, agency and country counts and year range.
+- Map: topic filter. Country shading and agency counts then include only reports on that topic.
+
 ## [0.7.0] – 2026-09-30
 
 ### Added
@@ -99,7 +115,8 @@ Each release is tagged `v<version>` on `main` (e.g. `v0.6.0`). The version shown
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/iiogurt/Rozvedka/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/iiogurt/Rozvedka/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/iiogurt/Rozvedka/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/iiogurt/Rozvedka/compare/v0.4.0...v0.5.0

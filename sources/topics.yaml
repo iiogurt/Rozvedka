@@ -1,0 +1,1483 @@
+# Rozvedka topic taxonomy – which subjects a report covers.
+#
+# Structure: categories → topics → terms per language.
+# Term syntax (matching is case- and accent-insensitive; ß=ss, ø=o, æ=ae, ł=l, đ=d):
+#   word        whole word only                     e.g.  isis
+#   stem*       word starting with the stem         e.g.  extremis*   → extremism, extremist, extremistische
+#   two words   phrase; tokens may carry *          e.g.  "far right", "pravicov* extremis*"
+#   CJK terms (Japanese/Chinese/Korean) match as plain substrings.
+# All languages are applied to every document (reports mix languages; English terms appear everywhere).
+#
+# Assignment (rozvedka/topics.py): a topic is assigned when the title matches, or the text contains at least
+# 2 different terms and enough hits for its length. Editing this file and running `index-topics` re-classifies
+# every document from the stored text – nothing is downloaded again.
+
+version: 2
+
+categories:
+
+  # ─────────────────────────────── EXTREMISM & TERRORISM ───────────────────────────────
+  extremism:
+    name: "Extremism & terrorism"
+    topics:
+      right-wing-extremism:
+        name: "Right-wing extremism"
+        terms:
+          en: ["right-wing extrem*", "right wing extrem*", "far-right", "far right", "extreme right", "neo-nazi*", "neonazi*", "white supremac*", "white power", "accelerationis*", "national socialis*", "identitarian*", "great replacement", "ethno-nationalis*", "ethnonationalis*", "atomwaffen", "blood and honour", "combat 18", "siege culture", "terrorgram", "active club*"]
+          de: ["rechtsextrem*", "neonazi*", "rechtsterror*", "volksverhetz*", "identitäre bewegung", "neue rechte"]
+          fr: ["extrême droite", "extreme-droite", "ultradroite", "ultra-droite", "néonazi*", "suprémaciste*"]
+          nl: ["rechts-extremis*", "rechtsextremis*", "extreemrechts", "extreem-rechts"]
+          cs: ["pravicov* extremis*", "krajní pravic*", "krajne pravicov*", "neonacis*", "neonacist*"]
+          sk: ["pravicov* extrémiz*", "krajná pravic*", "neonacis*", "neonacist*"]
+          pl: ["prawicow* ekstremi*", "skrajn* prawic*", "neonazi*", "neofaszy*"]
+          sv: ["högerextrem*", "vit makt", "nazis*"]
+          da: ["højreekstrem*"]
+          nb: ["høyreekstrem*"]
+          fi: ["äärioikeisto*", "oikeistoekstrem*", "uusnatsi*"]
+          et: ["paremäärmuslus*", "paremäärmusl*"]
+          lv: ["labējo ekstrēmism*", "labēj* radikāl*"]
+          lt: ["dešiniųjų ekstremizm*", "kraštutin* dešin*"]
+          es: ["extrema derecha", "ultraderecha", "neonazi*"]
+          it: ["estrema destra", "neofascis*"]
+          pt: ["extrema-direita", "extrema direita"]
+          ro: ["extremism de dreapta", "extremismul de dreapta", "extrema dreaptă", "neonazist*"]
+          bg: ["десен екстремизъм", "десния екстремизъм", "крайнодесн*", "неонацист*"]
+          ru: ["правый экстремизм", "ультраправ*", "неонацист*"]
+          hr: ["desni ekstremizam", "desnog ekstremizma", "neonacist*"]
+          sl: ["desni ekstremizem", "skrajn* desnic*", "neonacist*"]
+          hu: ["szélsőjobb*", "jobboldali szélsős*"]
+          el: ["ακροδεξι*", "νεοναζ*"]
+          ja: ["右翼", "極右", "右派系"]
+
+      left-wing-extremism:
+        name: "Left-wing extremism"
+        terms:
+          en: ["left-wing extrem*", "left wing extrem*", "far-left", "far left", "extreme left", "militant left", "anarchis*", "autonomous scene", "antifa"]
+          de: ["linksextrem*", "autonome szene", "anarchist*", "linksterror*"]
+          fr: ["extrême gauche", "ultragauche", "ultra-gauche", "anarcho-autonome*"]
+          nl: ["links-extremis*", "linksextremis*", "extreemlinks"]
+          cs: ["levicov* extremis*", "krajní levic*", "anarchis*"]
+          sk: ["ľavicov* extrémiz*", "anarchis*"]
+          pl: ["lewicow* ekstremi*", "skrajn* lewic*"]
+          sv: ["vänsterextrem*", "autonoma miljön"]
+          da: ["venstreekstrem*"]
+          nb: ["venstreekstrem*"]
+          fi: ["äärivasemmisto*", "vasemmistoekstrem*"]
+          es: ["extrema izquierda", "ultraizquierda"]
+          it: ["estrema sinistra", "anarco-insurrezional*"]
+          ro: ["extremism de stânga", "extrema stângă"]
+          bg: ["ляв екстремизъм", "крайнолев*"]
+          hu: ["szélsőbal*"]
+          el: ["ακροαριστερ*", "αναρχικ*"]
+          ja: ["極左", "過激派"]
+
+      islamist-extremism:
+        name: "Islamist extremism & jihadism"
+        terms:
+          en: ["islamis*", "jihad*", "salafi*", "islamic state", "isis", "isil", "daesh", "da'esh", "al-qaeda", "al qaeda", "al-qaida", "iskp", "iswap", "hayat tahrir", "hamas", "hezbollah", "hizbollah", "muslim brotherhood", "caliphate", "foreign terrorist fighter*", "foreign fighter*"]
+          de: ["islamismus", "islamistisch*", "dschihad*", "salafis*", "muslimbruderschaft", "islamischer staat"]
+          fr: ["islamisme", "islamiste*", "djihad*", "salafis*", "frères musulmans", "état islamique"]
+          nl: ["islamisme", "jihadis*", "moslimbroederschap"]
+          cs: ["islamis*", "džihád*", "islámský stát", "islámsk* extremis*"]
+          sk: ["islamiz*", "džihád*", "islamský štát"]
+          pl: ["islamiz*", "dżihad*", "państwo islamskie"]
+          sv: ["islamis*", "jihadis*", "våldsbejakande islamis*"]
+          da: ["islamis*", "militant islamis*"]
+          nb: ["islamis*", "ekstrem islamis*"]
+          fi: ["islamis*", "jihadis*", "isis-", "radikaali-islam*"]
+          et: ["islamis*", "džihad*"]
+          es: ["yihad*", "islamis*", "estado islámico"]
+          it: ["jihadis*", "islamis*", "stato islamico"]
+          ro: ["islamis*", "jihadis*", "statul islamic"]
+          bg: ["ислямист*", "джихад*", "ислямска държава"]
+          ru: ["исламист*", "джихад*", "игил"]
+          hr: ["islamist*", "džihad*"]
+          sl: ["islamist*", "džihad*"]
+          hu: ["iszlamist*", "dzsihad*", "iszlám állam"]
+          ja: ["イスラム過激", "ジハード", "ＩＳＩＬ", "ISIL", "アル・カーイダ"]
+
+      terrorism:
+        name: "Terrorism & counter-terrorism"
+        terms:
+          en: ["terroris*", "terror attack*", "terrorist attack*", "counter-terroris*", "counterterroris*", "terror threat", "threat level", "attack plot*", "lone actor*", "lone wolf", "lone-wolf", "vehicle ramming", "improvised explosive"]
+          de: ["terroris*", "terroranschlag*", "anschlag*", "gefährdungslage", "terrorabwehr"]
+          fr: ["terroris*", "attentat*", "menace terroriste", "antiterroris*"]
+          nl: ["terroris*", "aanslag*", "dreigingsniveau", "terrorismebestrijding"]
+          cs: ["terorism*", "teroristick*", "teroristický útok"]
+          sk: ["terorizm*", "teroristick*"]
+          pl: ["terroryzm*", "terrorysty*", "zamach*"]
+          sv: ["terrorism*", "terrorattentat*", "terrorhot*"]
+          da: ["terror*", "terrortrussel*"]
+          nb: ["terror*", "terrortrussel*", "terrorangrep*"]
+          fi: ["terrorism*", "terrori-isku*", "terroriuhka*"]
+          et: ["terrorism*", "terrorirünna*", "terroriohu*"]
+          lv: ["terorism*", "teroristu", "teroraktu"]
+          lt: ["terorizm*", "teroro"]
+          es: ["terroris*", "atentado*", "antiterroris*"]
+          it: ["terroris*", "attentat*"]
+          pt: ["terroris*", "atentado*"]
+          ro: ["terorism*", "terorist*", "atentat*"]
+          bg: ["тероризъм", "терорист*", "терористичн*"]
+          ru: ["терроризм*", "террорист*", "теракт*"]
+          hr: ["terorizam", "terorist*", "teroristički"]
+          sl: ["terorizem", "terorist*"]
+          hu: ["terroriz*", "terrortámad*", "terrorfenyeget*"]
+          el: ["τρομοκρατ*"]
+          ja: ["テロ", "テロリズム", "爆弾"]
+
+      radicalisation:
+        name: "Radicalisation & online extremism"
+        terms:
+          en: ["radicalis*", "radicaliz*", "deradicalis*", "online propaganda", "extremist propaganda", "extremist content", "violent extremis*", "prevent strategy", "exit programme", "youth radicalis*", "online ecosystem*", "gamification"]
+          de: ["radikalisier*", "deradikalisier*", "extremistische propaganda"]
+          fr: ["radicalis*", "déradicalis*", "propagande"]
+          nl: ["radicaliser*", "deradicaliser*"]
+          cs: ["radikalizac*", "deradikalizac*", "propagand*"]
+          sk: ["radikalizáci*"]
+          pl: ["radykalizac*", "deradykalizac*"]
+          sv: ["radikaliser*", "våldsbejakande extremism"]
+          da: ["radikaliser*"]
+          nb: ["radikaliser*", "voldelig ekstremisme"]
+          fi: ["radikalisoitu*", "radikalisoitum*", "väkivaltainen ekstremismi"]
+          et: ["radikaliseeru*", "vägivaldne äärmuslus"]
+          es: ["radicalización"]
+          it: ["radicalizzazion*"]
+          ro: ["radicalizar*"]
+          bg: ["радикализац*"]
+          ru: ["радикализац*"]
+          hr: ["radikalizacij*"]
+          sl: ["radikalizacij*"]
+          hu: ["radikalizáló*"]
+
+      anti-government-extremism:
+        name: "Anti-government & conspiracy-driven extremism"
+        terms:
+          en: ["sovereign citizen*", "anti-government", "anti-state", "conspiracy theor*", "conspiracy narrative*", "qanon", "anti-vaccin*", "anti-authority", "freemen", "delegitimis*", "delegitimiz*"]
+          de: ["reichsbürger*", "selbstverwalter*", "delegitimierung des staates", "verschwörungs*", "querdenk*", "staatsfeind*"]
+          fr: ["complotis*", "théorie du complot", "antisystème", "souverainiste* radicaux"]
+          nl: ["complotdenk*", "anti-institutione*", "soevereinen"]
+          cs: ["konspirac*", "protistátní", "protisystémov*"]
+          sk: ["konšpirác*", "protištátn*"]
+          pl: ["teori* spiskow*", "antysystem*"]
+          sv: ["konspirationsteori*", "antidemokrat*", "suveräna medborgare"]
+          da: ["konspirationsteori*", "antidemokratisk*"]
+          nb: ["konspirasjonsteori*", "antistatlig*", "antidemokratisk*"]
+          fi: ["salaliittoteor*", "hallinnonvastai*"]
+          et: ["vandenõuteoor*", "riigivastas*"]
+          ro: ["teori* conspira*", "antisistem"]
+          bg: ["конспиратив*", "антисистемн*"]
+          hu: ["összeesküvés-elmélet*"]
+
+      antisemitism:
+        name: "Antisemitism & hate crime"
+        terms:
+          en: ["antisemiti*", "anti-semiti*", "anti-jewish", "hate crime*", "hate speech", "islamophob*", "anti-muslim", "racially motivated", "xenophob*", "holocaust denial"]
+          de: ["antisemiti*", "judenfeind*", "hasskriminalität", "hassrede", "muslimfeind*", "fremdenfeind*", "rassis*"]
+          fr: ["antisémiti*", "haine", "discours de haine", "xénophob*", "racis*"]
+          nl: ["antisemitis*", "jodenhaat", "haatzaaien", "discriminatie"]
+          cs: ["antisemitis*", "nenávistn*", "xenofob*", "rasis*", "předsudečn* nenávist*"]
+          sk: ["antisemitiz*", "nenávistn*", "xenofób*"]
+          pl: ["antysemity*", "mowa nienawiści", "przestępstw* z nienawiści"]
+          sv: ["antisemitism*", "hatbrott*", "främlingsfientl*"]
+          da: ["antisemitis*", "hadforbrydelse*"]
+          nb: ["antisemittis*", "hatkriminalitet*", "hatefulle ytringer"]
+          fi: ["antisemitis*", "viharikos*", "vihapuhe*"]
+          et: ["antisemitism*", "vihakõne*"]
+          es: ["antisemitis*", "delito* de odio", "discurso de odio"]
+          it: ["antisemitis*", "crimini d'odio"]
+          ro: ["antisemitism*", "discurs* instigator* la ură", "infracțiuni motivate de ură"]
+          bg: ["антисемитиз*", "език на омразата", "престъпления от омраза"]
+          hu: ["antiszemit*", "gyűlölet-bűncselekmény*"]
+
+      terrorist-financing:
+        name: "Terrorist financing"
+        terms:
+          en: ["terrorist financing", "terrorism financing", "financing of terrorism", "terror financing", "hawala", "cft"]
+          de: ["terrorismusfinanzierung"]
+          fr: ["financement du terrorisme"]
+          nl: ["terrorismefinanciering"]
+          cs: ["financování terorismu"]
+          sk: ["financovani* terorizmu"]
+          pl: ["finansowani* terroryzmu"]
+          sv: ["finansiering av terrorism", "terrorismfinansiering"]
+          es: ["financiación del terrorismo"]
+          it: ["finanziamento del terrorismo"]
+          ro: ["finanțarea terorismului"]
+          bg: ["финансиране на тероризма"]
+
+  # ─────────────────────────────── STATE THREATS ───────────────────────────────
+  state-threats:
+    name: "State threats & hybrid activity"
+    topics:
+      russia:
+        name: "Russia – intelligence, influence & hybrid activity"
+        terms:
+          en: ["russia*", "kremlin", "putin", "moscow", "fsb", "gru", "svr", "wagner group", "africa corps", "rossotrudnichestvo", "russkiy mir", "russian world", "doppelganger", "doppelgänger", "storm-1516", "pravda network", "shadow fleet"]
+          de: ["russland", "russisch*", "kreml*", "moskau"]
+          fr: ["russie", "russe*", "kremlin", "moscou"]
+          nl: ["rusland", "russisch*", "kremlin"]
+          cs: ["rusk*", "rusko", "ruska", "kreml*", "moskv*"]
+          sk: ["rusk*", "rusko", "kremeľ*", "moskv*"]
+          pl: ["rosj*", "rosyjsk*", "kreml*", "moskw*"]
+          sv: ["ryssland", "rysk*", "kreml*"]
+          da: ["rusland", "russisk*"]
+          nb: ["russland", "russisk*"]
+          fi: ["venäj*", "kreml*", "moskov*"]
+          et: ["venemaa*", "vene föderatsioon*", "kreml*", "moskva"]
+          lv: ["krievij*", "kremļ*", "maskav*"]
+          lt: ["rusij*", "rusijos", "kreml*", "maskv*"]
+          es: ["rusia", "ruso*", "rusa*", "kremlin"]
+          it: ["russia", "russ*", "cremlino"]
+          pt: ["rússia", "russo*"]
+          ro: ["rusia", "rusiei", "federația rusă", "federației ruse", "rusesc*", "ruse", "moscova", "kremlin*"]
+          bg: ["русия", "руск*", "кремъл*"]
+          ru: ["россия", "российск*", "кремл*", "путин*"]
+          hr: ["rusij*", "rusk*"]
+          sl: ["rusij*", "rusk*"]
+          hu: ["oroszorsz*", "orosz", "kreml*"]
+          el: ["ρωσ*"]
+          ja: ["ロシア"]
+          ko: ["러시아"]
+          zh: ["俄罗斯", "俄羅斯"]
+
+      china:
+        name: "China – intelligence, influence & technology"
+        terms:
+          en: ["china", "chinese", "prc", "beijing", "ccp", "chinese communist party", "people's liberation army", "united front", "mss", "belt and road", "confucius institute*", "xi jinping", "salt typhoon", "volt typhoon"]
+          de: ["china", "chinesisch*", "peking", "volksrepublik china"]
+          fr: ["chine", "chinois*", "pékin"]
+          nl: ["china", "chinees", "chinese"]
+          cs: ["čín*", "čína", "čínsk*", "peking*"]
+          sk: ["čín*", "čínsk*"]
+          pl: ["chin*", "chińsk*", "pekin*"]
+          sv: ["kina", "kinesisk*"]
+          da: ["kina", "kinesisk*"]
+          nb: ["kina", "kinesisk*"]
+          fi: ["kiina*", "kiinalai*"]
+          et: ["hiina*"]
+          lv: ["ķīn*"]
+          lt: ["kinij*", "kinijos"]
+          es: ["china", "chino*", "china*"]
+          it: ["cina", "cinese", "cinesi"]
+          ro: ["china", "chinez*"]
+          bg: ["китай", "китайск*"]
+          ru: ["китай", "китайск*"]
+          hu: ["kína", "kínai"]
+          ja: ["中国", "中華人民共和国", "中共"]
+          ko: ["중국"]
+          zh: ["中共", "中國", "解放軍", "統戰"]
+
+      iran:
+        name: "Iran"
+        terms:
+          en: ["iran*", "tehran", "irgc", "revolutionary guard*", "quds force", "ministry of intelligence and security"]
+          de: ["iran*", "teheran", "revolutionsgarde*"]
+          fr: ["iran*", "téhéran", "gardiens de la révolution"]
+          nl: ["iran*", "revolutionaire garde"]
+          cs: ["írán*"]
+          sk: ["irán*"]
+          pl: ["iran*"]
+          sv: ["iran*", "revolutionsgardet"]
+          da: ["iran*"]
+          nb: ["iran*"]
+          fi: ["iran*"]
+          et: ["iraan*"]
+          es: ["irán", "iraní*"]
+          it: ["iran*"]
+          ro: ["iran*"]
+          bg: ["иран*"]
+          ru: ["иран*"]
+          ja: ["イラン"]
+
+      north-korea:
+        name: "North Korea"
+        terms:
+          en: ["north korea*", "dprk", "pyongyang", "lazarus group", "kim jong"]
+          de: ["nordkorea*"]
+          fr: ["corée du nord", "nord-coréen*"]
+          nl: ["noord-korea*"]
+          cs: ["severní kore*", "kldr"]
+          pl: ["korea północna", "korei północnej"]
+          sv: ["nordkorea*"]
+          nb: ["nord-korea*"]
+          fi: ["pohjois-korea*"]
+          es: ["corea del norte", "norcorean*"]
+          ro: ["coreea de nord"]
+          bg: ["северна корея"]
+          ja: ["北朝鮮"]
+          ko: ["북한"]
+
+      belarus:
+        name: "Belarus"
+        terms:
+          en: ["belarus*", "lukashenk*", "minsk"]
+          de: ["belarus*", "weißrussland"]
+          fr: ["biélorussie", "bélarus"]
+          cs: ["bělorus*"]
+          sk: ["bielorus*"]
+          pl: ["białoru*"]
+          fi: ["valko-venäj*"]
+          et: ["valgevene*"]
+          lv: ["baltkrievij*"]
+          lt: ["baltarusij*"]
+          ro: ["belarus*"]
+          ru: ["беларус*", "белорус*"]
+
+      espionage:
+        name: "Espionage & counter-intelligence"
+        terms:
+          en: ["espionage", "spying", "spies", "intelligence officer*", "counter-intelligence", "counterintelligence", "recruitment attempt*", "illegals", "diplomatic cover", "agent network*", "covert operation*"]
+          de: ["spionage", "spionageabwehr", "agententätigkeit", "agenten", "anwerbungsversuch*"]
+          fr: ["espionnage", "contre-espionnage", "renseignement étranger"]
+          nl: ["spionage", "contraspionage", "inlichtingenofficier*"]
+          cs: ["špionáž*", "kontrarozvědk*", "zpravodajsk* důstojník*"]
+          sk: ["špionáž*", "kontrarozviedk*"]
+          pl: ["szpiegost*", "szpieg*", "kontrwywiad*"]
+          sv: ["spionage", "säkerhetshotande verksamhet", "underrättelseofficer*"]
+          da: ["spionage", "efterretningsvirksomhed"]
+          nb: ["spionasje", "etterretningsvirksomhet", "etterretningsoffiser*"]
+          fi: ["vakoilu*", "vakoil*"]
+          et: ["spionaaž*", "vastuluure*"]
+          lv: ["spiegošan*", "spiegu"]
+          lt: ["šnipinėjim*", "šnip*"]
+          es: ["espionaje", "contrainteligencia"]
+          it: ["spionaggio", "controspionaggio"]
+          ro: ["spionaj*", "contraspionaj*"]
+          bg: ["шпионаж*", "контраразузнав*"]
+          ru: ["шпионаж*", "шпион*"]
+          hr: ["špijunaž*"]
+          sl: ["vohunjenj*"]
+          hu: ["kémked*", "kémtevékenység*"]
+          ja: ["スパイ", "諜報"]
+
+      foreign-interference:
+        name: "Foreign interference & influence operations"
+        terms:
+          en: ["foreign interference", "influence operation*", "influence activit*", "malign influence", "information manipulation", "fimi", "proxies", "agents of influence", "covert influence", "united front work"]
+          de: ["einflussnahme", "einflussoperation*", "ausländische einmischung", "informationsmanipulation"]
+          fr: ["ingérence*", "opération* d'influence", "influence étrangère", "manipulation de l'information"]
+          nl: ["ongewenste inmenging", "beïnvloeding*", "heimelijke beïnvloeding"]
+          cs: ["vlivov* operac*", "zahraniční vliv*", "vměšován*", "ovlivňov*"]
+          sk: ["vplyvov* operáci*", "zahraničn* vplyv*"]
+          pl: ["operacj* wpływu", "ingerencj*", "wpływ* obc*"]
+          sv: ["påverkansoperation*", "otillbörlig påverkan", "informationspåverkan", "påverkanskampanj*"]
+          da: ["påvirkningsoperation*", "påvirkningskampagne*"]
+          nb: ["påvirkningsoperasjon*", "påvirkningsvirksomhet", "påvirkningskampanj*"]
+          fi: ["vaikuttamis*", "informaatiovaikuttami*"]
+          et: ["mõjutustegevus*", "mõjutusoperatsioon*"]
+          lv: ["ietekmes operācij*", "ietekmēšan*"]
+          lt: ["įtakos operacij*", "įtakos veikl*"]
+          es: ["injerencia*", "operaciones de influencia"]
+          it: ["ingerenz*", "operazioni di influenza"]
+          ro: ["operațiuni de influență", "ingerinț*", "influență străină"]
+          bg: ["чуждо влияние", "операции за влияние", "хибридно влияние"]
+          ru: ["операции влияния"]
+          hu: ["befolyásolási művelet*", "külföldi befolyás*"]
+          ja: ["影響工作", "認知戦"]
+          zh: ["認知作戰", "認知戰"]
+
+      disinformation:
+        name: "Disinformation & propaganda"
+        terms:
+          en: ["disinformation", "misinformation", "propaganda", "fake news", "deepfake*", "deep fake*", "information warfare", "narrative*", "bot network*", "troll farm*", "inauthentic behaviour", "coordinated inauthentic", "cognitive warfare"]
+          de: ["desinformation*", "propaganda", "falschinformation*", "informationskrieg*"]
+          fr: ["désinformation", "propagande", "infox", "guerre informationnelle"]
+          nl: ["desinformatie", "propaganda", "nepnieuws"]
+          cs: ["dezinformac*", "propagand*", "informační válk*"]
+          sk: ["dezinformáci*", "propagand*"]
+          pl: ["dezinformac*", "propagand*", "wojn* informacyjn*"]
+          sv: ["desinformation", "propaganda", "informationskrig*"]
+          da: ["desinformation", "propaganda"]
+          nb: ["desinformasjon", "propaganda"]
+          fi: ["disinformaatio*", "propaganda*", "valeuutis*"]
+          et: ["desinformatsioon*", "propaganda*", "valeinfo*"]
+          lv: ["dezinformācij*", "propagand*"]
+          lt: ["dezinformacij*", "propagand*"]
+          es: ["desinformación", "propaganda", "bulos"]
+          it: ["disinformazion*", "propaganda"]
+          pt: ["desinformação", "propaganda"]
+          ro: ["dezinformar*", "propagand*", "știri false"]
+          bg: ["дезинформац*", "пропаганд*"]
+          ru: ["дезинформац*", "пропаганд*"]
+          hr: ["dezinformacij*", "propagand*"]
+          sl: ["dezinformacij*", "propagand*"]
+          hu: ["dezinformáci*", "propaganda*", "álhír*"]
+          el: ["παραπληροφόρησ*", "προπαγάνδα"]
+          ja: ["偽情報", "誤情報", "プロパガンダ", "ディスインフォメーション"]
+          zh: ["假訊息", "虛假信息", "認知作戰"]
+
+      election-interference:
+        name: "Election interference & democratic processes"
+        terms:
+          en: ["election interference", "electoral interference", "election security", "electoral process*", "election campaign*", "elections", "referendum", "voter*"]
+          de: ["wahlbeeinflussung", "wahlen", "bundestagswahl", "europawahl", "wahlkampf"]
+          fr: ["ingérence électorale", "élections", "élection présidentielle", "scrutin"]
+          nl: ["verkiezing*"]
+          cs: ["volb*", "volební*", "ovlivňování voleb"]
+          sk: ["voľb*", "volebn*"]
+          pl: ["wybor*", "wyborcz*"]
+          sv: ["val till", "valet", "valpåverkan", "riksdagsval*"]
+          da: ["valg", "folketingsvalg*"]
+          nb: ["stortingsvalg*", "valgpåvirkning"]
+          fi: ["vaalit", "vaaleihin", "vaalivaikuttami*"]
+          et: ["valimis*", "valimiste"]
+          lv: ["vēlēšan*"]
+          lt: ["rinkim*"]
+          es: ["elecciones", "electoral"]
+          it: ["elezioni", "elettoral*"]
+          ro: ["alegeri*", "electoral*", "prezidențiale"]
+          bg: ["избори*", "изборн*"]
+          hu: ["választás*"]
+          ja: ["選挙"]
+
+      sabotage:
+        name: "Sabotage & physical attacks on infrastructure"
+        terms:
+          en: ["sabotage", "arson attack*", "saboteur*", "undersea cable*", "subsea cable*", "pipeline damage", "rail sabotage", "vandalism of infrastructure", "cable cut*", "balticconnector", "eagle s"]
+          de: ["sabotage", "brandanschlag*", "unterseekabel", "seekabel"]
+          fr: ["sabotage*", "câble* sous-marin*", "incendie criminel"]
+          nl: ["sabotage", "onderzeekabel*"]
+          cs: ["sabotáž*", "žhářsk* útok*", "podmořsk* kabel*"]
+          sk: ["sabotáž*"]
+          pl: ["sabota*", "podpalen*", "kabl* podmorsk*"]
+          sv: ["sabotage", "sjökabel*", "undervattenskabel*"]
+          da: ["sabotage", "søkabel*"]
+          nb: ["sabotasje", "sjøkabel*", "undersjøisk* kabl*"]
+          fi: ["sabotaa*", "merikaapel*"]
+          et: ["sabotaaž*", "merekaabl*"]
+          lv: ["sabotāž*", "zemūdens kabe*"]
+          lt: ["sabotaž*", "padeg*"]
+          es: ["sabotaje*", "cables submarinos"]
+          it: ["sabotaggi*", "cavi sottomarini"]
+          ro: ["sabotaj*", "cabluri submarine"]
+          bg: ["саботаж*", "диверси*"]
+          ru: ["саботаж*", "диверси*"]
+          hu: ["szabotázs*"]
+          ja: ["破壊工作", "海底ケーブル"]
+
+      hybrid-threats:
+        name: "Hybrid threats & grey-zone activity"
+        terms:
+          en: ["hybrid threat*", "hybrid warfare", "hybrid attack*", "hybrid campaign*", "hybrid activit*", "grey zone", "gray zone", "below the threshold", "hybrid coe"]
+          de: ["hybride bedrohung*", "hybride kriegsführung", "hybride angriff*", "grauzone"]
+          fr: ["menace* hybride*", "guerre hybride", "zone grise"]
+          nl: ["hybride dreiging*", "hybride oorlogvoering"]
+          cs: ["hybridní hrozb*", "hybridní válk*", "hybridní působení", "hybridní*"]
+          sk: ["hybridn* hrozb*", "hybridn* vojn*"]
+          pl: ["zagrożeni* hybrydow*", "wojn* hybrydow*", "hybrydow*"]
+          sv: ["hybridhot*", "hybridkrigföring", "gråzon*"]
+          da: ["hybride trussel*", "hybrid krigsførelse"]
+          nb: ["hybride trussel*", "sammensatte trusler", "hybrid krigføring"]
+          fi: ["hybridiuhk*", "hybridivaikuttami*", "hybridisota*"]
+          et: ["hübriidoht*", "hübriidrünna*", "hübriidsõj*"]
+          lv: ["hibrīdapdraudējum*", "hibrīdkar*", "hibrīddraud*"]
+          lt: ["hibridin* grėsm*", "hibridin* atak*"]
+          es: ["amenazas híbridas", "guerra híbrida", "zona gris"]
+          it: ["minacce ibride", "guerra ibrida"]
+          ro: ["amenințări hibride", "război hibrid", "hibrid*"]
+          bg: ["хибридни заплахи", "хибридна война", "хибридн*"]
+          hu: ["hibrid fenyeget*", "hibrid hadvisel*"]
+          ja: ["ハイブリッド戦", "グレーゾーン"]
+
+      transnational-repression:
+        name: "Transnational repression & diaspora targeting"
+        terms:
+          en: ["transnational repression", "diaspora", "dissident*", "overseas police station*", "exiled", "coercion of diaspora"]
+          de: ["transnationale repression", "diaspora", "dissident*", "regimekritiker*"]
+          fr: ["répression transnationale", "diaspora", "dissident*", "opposants"]
+          nl: ["transnationale repressie", "diaspora"]
+          cs: ["transnacionální represe", "diaspor*", "disident*"]
+          pl: ["represj* transnarodow*", "diaspor*", "dysydent*"]
+          sv: ["flyktingspionage", "transnationell repression", "diaspora", "dissident*"]
+          da: ["diaspora", "systemkritiker*"]
+          nb: ["flyktningspionasje", "transnasjonal undertrykkelse", "diaspora", "dissident*"]
+          fi: ["diaspora*", "toisinajattelij*"]
+          et: ["diaspora*", "dissident*"]
+
+      proliferation:
+        name: "Proliferation, WMD & export control"
+        terms:
+          en: ["proliferation", "non-proliferation", "weapons of mass destruction", "wmd", "dual-use", "dual use", "export control*", "sanctions evasion", "procurement network*", "missile programme*", "nuclear programme*", "chemical weapon*", "biological weapon*"]
+          de: ["proliferation", "massenvernichtungswaffe*", "dual-use", "exportkontroll*", "sanktionsumgehung"]
+          fr: ["prolifération", "armes de destruction massive", "biens à double usage", "contrôle des exportations"]
+          nl: ["proliferatie", "massavernietigingswapen*", "exportcontrole"]
+          cs: ["proliferac*", "zbraně hromadného ničení", "zbraní hromadného ničení", "dvojí použití", "dvojího užití"]
+          sk: ["proliferáci*", "zbrane hromadného ničenia"]
+          pl: ["proliferac*", "broń masowego rażenia", "podwójnego zastosowania"]
+          sv: ["spridning av massförstörelsevapen", "massförstörelsevapen", "produkter med dubbla användningsområden"]
+          da: ["masseødelæggelsesvåben", "spredning af masseødelæggelsesvåben"]
+          nb: ["masseødeleggelsesvåpen", "flerbruksvarer", "eksportkontroll"]
+          fi: ["joukkotuhoase*", "kaksikäyttö*"]
+          et: ["massihävitusrelv*", "kahese kasutusega"]
+          es: ["proliferación", "armas de destrucción masiva", "doble uso"]
+          it: ["proliferazione", "armi di distruzione di massa", "duplice uso"]
+          ro: ["proliferar*", "arme de distrugere în masă", "dublă utilizare"]
+          bg: ["разпространение на оръжия за масово унищожение", "оръжия за масово унищожение"]
+          ja: ["大量破壊兵器", "不拡散", "輸出管理"]
+
+      economic-security:
+        name: "Economic security, investment screening & tech transfer"
+        terms:
+          en: ["economic security", "economic espionage", "industrial espionage", "investment screening", "foreign direct investment", "fdi screening", "technology transfer", "knowledge security", "research security", "intellectual property theft", "strategic dependenc*", "economic coercion"]
+          de: ["wirtschaftsschutz", "wirtschaftsspionage", "investitionsprüfung", "technologietransfer", "wissenssicherheit", "know-how-abfluss"]
+          fr: ["sécurité économique", "espionnage économique", "intelligence économique", "filtrage des investissements"]
+          nl: ["economische veiligheid", "kennisveiligheid", "investeringstoets*"]
+          cs: ["ekonomick* bezpečnost*", "hospodářsk* špionáž*", "prověřování investic", "zahraniční investic*"]
+          sk: ["ekonomick* bezpečnos*", "hospodársk* špionáž*"]
+          pl: ["bezpieczeństw* ekonomiczn*", "szpiegostw* gospodarcz*"]
+          sv: ["ekonomisk säkerhet", "industrispionage", "investeringsgranskning"]
+          da: ["økonomisk sikkerhed", "investeringsscreening"]
+          nb: ["økonomisk sikkerhet", "industrispionasje", "kunnskapsoverføring"]
+          fi: ["taloudellinen turvallisuus", "teollisuusvakoilu*"]
+          et: ["majandusjulgeolek*", "majandusluure*"]
+          es: ["seguridad económica", "espionaje industrial"]
+          it: ["sicurezza economica", "golden power", "spionaggio industriale"]
+          ro: ["securitate economică", "securitatea economică", "spionaj economic"]
+          bg: ["икономическа сигурност", "икономически шпионаж"]
+          ja: ["経済安全保障", "技術流出", "経済的威圧"]
+
+      insider-threat:
+        name: "Insider threats & protective security"
+        terms:
+          en: ["insider threat*", "insider risk*", "security clearance*", "vetting", "protective security", "personnel security", "classified information", "leak of classified"]
+          de: ["innentäter*", "sicherheitsüberprüfung*", "geheimschutz", "verschlusssache*"]
+          fr: ["menace interne", "habilitation*", "secret de la défense"]
+          nl: ["insider*", "veiligheidsonderzoek*", "screening"]
+          cs: ["bezpečnostní prověrk*", "utajovan* informac*", "insider*"]
+          sk: ["bezpečnostn* previerk*", "utajovan* skutočnost*"]
+          pl: ["poświadczeni* bezpieczeństwa", "informacj* niejawn*"]
+          sv: ["säkerhetsskydd", "säkerhetsprövning", "insiderhot*", "insider*"]
+          da: ["sikkerhedsgodkendelse*", "insidertrussel*"]
+          nb: ["forebyggende sikkerhet", "sikkerhetsklarering*", "innsidetrussel*", "innsider*"]
+          fi: ["turvallisuusselvity*", "sisäpiiriuhk*"]
+          et: ["julgeolekukontroll*", "salastatud teab*", "riigisaladus*"]
+          lv: ["valsts noslēpum*"]
+          lt: ["įslaptint* informacij*"]
+          ro: ["informații clasificate", "certificat de securitate"]
+          bg: ["класифицирана информация"]
+
+  # ─────────────────────────────── MILITARY & GEOPOLITICS ───────────────────────────────
+  geopolitics:
+    name: "War, defence & geopolitics"
+    topics:
+      war-in-ukraine:
+        name: "War in Ukraine"
+        terms:
+          en: ["ukrain*", "kyiv", "kiev", "donbas*", "crimea*", "zaporizhzhia", "kharkiv", "war of aggression", "full-scale invasion", "full scale invasion"]
+          de: ["ukraine*", "angriffskrieg", "krim"]
+          fr: ["ukrain*", "guerre d'agression", "crimée"]
+          nl: ["oekraïn*", "oekrain*"]
+          cs: ["ukrajin*", "krym*", "válk* na ukrajině"]
+          sk: ["ukrajin*", "krym*"]
+          pl: ["ukrain*", "krym*"]
+          sv: ["ukraina*", "krim"]
+          da: ["ukraine*"]
+          nb: ["ukraina*"]
+          fi: ["ukrain*", "krim*"]
+          et: ["ukraina*", "krimm*"]
+          lv: ["ukrain*", "krim*"]
+          lt: ["ukrain*", "kryme"]
+          es: ["ucrania*", "crimea"]
+          it: ["ucrain*", "crimea"]
+          pt: ["ucrânia*"]
+          ro: ["ucrain*", "crimeea"]
+          bg: ["украйн*", "крим*"]
+          ru: ["украин*", "крым*", "сво"]
+          hr: ["ukrajin*"]
+          sl: ["ukrajin*"]
+          hu: ["ukrajn*"]
+          el: ["ουκραν*"]
+          ja: ["ウクライナ"]
+          ko: ["우크라이나"]
+
+      nato-deterrence:
+        name: "NATO, collective defence & deterrence"
+        terms:
+          en: ["nato", "north atlantic", "article 5", "collective defence", "collective defense", "deterrence", "forward presence", "eastern flank", "defence spending", "defense spending", "military mobility"]
+          de: ["nato", "bündnisverteidigung", "abschreckung", "ostflanke", "verteidigungsausgaben"]
+          fr: ["otan", "dissuasion", "défense collective", "flanc est"]
+          nl: ["navo", "afschrikking", "bondgenootschappelijk*"]
+          cs: ["nato", "severoatlantick*", "odstrašen*", "kolektivní obran*"]
+          sk: ["nato", "odstrašen*", "kolektívn* obran*"]
+          pl: ["nato", "odstraszani*", "flank* wschodni*"]
+          sv: ["nato", "avskräckning", "kollektivt försvar"]
+          da: ["nato", "afskrækkelse"]
+          nb: ["nato", "avskrekking", "alliert*"]
+          fi: ["nato*", "pelote*", "yhteinen puolustus"]
+          et: ["nato", "heidutus*", "kollektiivkaitse"]
+          lv: ["nato", "atturēšan*"]
+          lt: ["nato", "atgrasym*"]
+          es: ["otan", "disuasión", "defensa colectiva"]
+          it: ["nato", "deterrenza"]
+          ro: ["nato", "descurajare", "flancul estic"]
+          bg: ["нато", "възпиране"]
+          ru: ["нато"]
+          hu: ["nato", "elrettentés*"]
+          ja: ["ＮＡＴＯ", "NATO", "抑止"]
+
+      military-threat:
+        name: "Military threat, armed forces & capabilities"
+        terms:
+          en: ["armed forces", "military exercise*", "military build-up", "military buildup", "force posture", "mobilisation", "mobilization", "conscription", "ground forces", "air defence", "air defense", "missile*", "armed attack", "military capabilit*", "large-scale war"]
+          de: ["streitkräfte", "militärisch*", "manöver", "mobilmachung", "wehrpflicht", "luftverteidigung", "raketen*"]
+          fr: ["forces armées", "militaire*", "exercice* militaire*", "missile*", "défense aérienne"]
+          nl: ["krijgsmacht", "strijdkrachten", "militair*", "raket*"]
+          cs: ["ozbrojen* sil*", "vojensk*", "armád*", "rakety", "protivzdušn*"]
+          sk: ["ozbrojen* sil*", "vojensk*", "armád*"]
+          pl: ["sił* zbrojn*", "wojskow*", "armi*", "rakiet*"]
+          sv: ["försvarsmakt*", "militär*", "väpnade styrkor", "luftvärn*"]
+          da: ["forsvaret", "militær*", "væbnede styrker"]
+          nb: ["forsvaret", "militær*", "væpnede styrker", "styrkeoppbygging"]
+          fi: ["asevoim*", "sotilaallis*", "puolustusvoim*", "ohjus*"]
+          et: ["relvajõud*", "sõjaväe*", "sõjalis*", "kaitseväe*", "rakett*"]
+          lv: ["bruņot* spēk*", "militār*"]
+          lt: ["ginkluot* pajėg*", "karin*"]
+          es: ["fuerzas armadas", "militar*", "misil*"]
+          it: ["forze armate", "militar*", "missil*"]
+          ro: ["forțe armate", "militar*", "rachet*"]
+          bg: ["въоръжени сили", "военн*", "ракет*"]
+          ru: ["вооруж* сил*", "военн*", "ракет*"]
+          hu: ["fegyveres erő*", "katonai", "rakét*"]
+          ja: ["軍事", "ミサイル", "人民解放軍", "自衛隊"]
+          ko: ["군사", "미사일"]
+          zh: ["軍事", "解放軍", "飛彈"]
+
+      nuclear:
+        name: "Nuclear weapons & nuclear threats"
+        terms:
+          en: ["nuclear weapon*", "nuclear arsenal", "nuclear deterren*", "nuclear threat*", "nuclear doctrine", "tactical nuclear", "nuclear-capable", "nuclear test*"]
+          de: ["atomwaffe*", "kernwaffe*", "nukleare abschreckung", "nuklearwaffe*"]
+          fr: ["arme* nucléaire*", "dissuasion nucléaire"]
+          nl: ["kernwapen*", "nucleaire wapens"]
+          cs: ["jadern* zbra*", "jaderné odstrašení"]
+          sk: ["jadrov* zbra*"]
+          pl: ["broń jądrow*", "broni jądrowej", "odstraszani* nuklearn*"]
+          sv: ["kärnvapen*"]
+          da: ["atomvåben"]
+          nb: ["atomvåpen", "kjernevåpen"]
+          fi: ["ydinase*"]
+          et: ["tuumarelv*"]
+          lv: ["kodolieroč*"]
+          lt: ["branduolin* ginkl*"]
+          es: ["armas nucleares", "arma nuclear"]
+          it: ["armi nucleari"]
+          ro: ["arme nucleare", "arma nucleară"]
+          bg: ["ядрени оръжия", "ядрено оръжие"]
+          ru: ["ядерн* оружи*"]
+          ja: ["核兵器", "核戦力", "核実験"]
+
+      arctic-high-north:
+        name: "Arctic & High North"
+        terms:
+          en: ["arctic", "high north", "svalbard", "greenland", "kola peninsula", "northern fleet", "barents"]
+          de: ["arktis", "grönland"]
+          fr: ["arctique", "groenland"]
+          da: ["arktis", "grønland", "nordatlanten"]
+          nb: ["arktis", "nordområdene", "svalbard", "kola", "nordflåten"]
+          sv: ["arktis"]
+          fi: ["arktis*", "arktinen", "kuolan"]
+          is: ["norðurslóð*"]
+          ru: ["арктик*", "северный флот"]
+
+      baltic-sea:
+        name: "Baltic Sea & Nordic-Baltic security"
+        terms:
+          en: ["baltic sea", "baltic states", "kaliningrad", "suwałki", "suwalki", "gotland", "baltic sentry", "nordic-baltic"]
+          de: ["ostsee", "baltikum", "baltische staaten"]
+          fr: ["mer baltique", "pays baltes"]
+          nl: ["oostzee", "baltische staten"]
+          cs: ["baltsk* moř*", "pobaltí", "kaliningrad*"]
+          pl: ["bałtyk*", "morze bałtyckie", "kaliningrad*", "przesmyk suwalski"]
+          sv: ["östersjön", "baltikum", "gotland"]
+          da: ["østersøen"]
+          nb: ["østersjøen"]
+          fi: ["itämer*", "baltian mai*"]
+          et: ["läänemere*", "läänemeri", "balti riig*", "kaliningrad*"]
+          lv: ["baltijas jūr*", "baltijas valst*", "kaļiņingrad*"]
+          lt: ["baltijos jūr*", "baltijos valstyb*", "karaliauč*", "kaliningrad*"]
+          ru: ["балтийск*", "калининград*"]
+
+      middle-east:
+        name: "Middle East & North Africa"
+        terms:
+          en: ["middle east", "israel*", "gaza", "west bank", "october 7", "7 october", "syria*", "lebanon", "iraq*", "yemen*", "houthi*", "red sea", "libya*", "sahel", "north africa"]
+          de: ["nahost*", "naher osten", "israel*", "gaza*", "syrien", "libanon", "jemen", "huthi*", "sahel"]
+          fr: ["moyen-orient", "proche-orient", "israël", "gaza", "syrie", "liban", "yémen", "houthis", "sahel"]
+          nl: ["midden-oosten", "israël", "gaza", "syrië"]
+          cs: ["blízk* východ*", "izrael*", "pásm* gaz*", "sýri*", "jemen*"]
+          pl: ["bliski wschód", "bliskim wschodzie", "izrael*", "strefie gazy", "syri*"]
+          sv: ["mellanöstern", "israel*", "gaza"]
+          da: ["mellemøsten"]
+          nb: ["midtøsten", "israel*", "gaza"]
+          fi: ["lähi-itä*", "israel*", "gaza*"]
+          et: ["lähis-ida*", "iisrael*", "gaza*"]
+          es: ["oriente medio", "oriente próximo", "israel*", "gaza"]
+          it: ["medio oriente", "israel*", "gaza"]
+          ro: ["orientul mijlociu", "israel*", "gaza"]
+          bg: ["близкия изток", "близкият изток", "израел*", "газа"]
+          ja: ["中東", "イスラエル", "ガザ"]
+
+      indo-pacific:
+        name: "Indo-Pacific, Taiwan Strait & Korean Peninsula"
+        terms:
+          en: ["indo-pacific", "indo pacific", "taiwan", "taiwan strait", "south china sea", "east china sea", "korean peninsula", "senkaku", "first island chain", "quad", "pacific islands"]
+          de: ["indopazifik", "indo-pazifik", "taiwan", "südchinesisch* meer"]
+          fr: ["indo-pacifique", "taïwan", "mer de chine"]
+          nl: ["indo-pacific", "taiwan"]
+          cs: ["indopacifi*", "tchaj-wan*", "tchajwan*"]
+          pl: ["indo-pacyfik*", "tajwan*"]
+          sv: ["indopacifi*", "taiwan"]
+          nb: ["indo-stillehav*", "taiwan"]
+          fi: ["indopasifi*", "taiwan*"]
+          et: ["indo-vaikse ookeani", "taiwan*"]
+          es: ["indopacífico", "taiwán"]
+          ja: ["台湾", "インド太平洋", "尖閣", "南シナ海", "東シナ海", "朝鮮半島"]
+          ko: ["인도태평양", "대만", "한반도"]
+          zh: ["台海", "臺灣", "台灣", "印太", "南海"]
+
+      drones-and-new-warfare:
+        name: "Drones, space & emerging military technology"
+        terms:
+          en: ["drone*", "uav*", "unmanned aerial", "unmanned system*", "counter-drone", "space security", "anti-satellite", "satellite*", "gnss jamming", "gps jamming", "gnss spoofing", "electronic warfare", "hypersonic*"]
+          de: ["drohne*", "weltraum*", "satellit*", "gps-störung*", "elektronische kampfführung", "hyperschall*"]
+          fr: ["drone*", "espace extra-atmosphérique", "satellite*", "brouillage gps", "guerre électronique", "hypersonique*"]
+          nl: ["drone*", "satelliet*", "gps-verstoring*"]
+          cs: ["dron*", "bezpilotn*", "druži*", "rušení gps", "elektronick* boj*"]
+          sk: ["dron*", "bezpilotn*"]
+          pl: ["dron*", "bezzałogow*", "satelit*", "zakłócani* gps"]
+          sv: ["drönar*", "satellit*", "gps-störning*", "störning av gnss"]
+          da: ["drone*", "satellit*"]
+          nb: ["drone*", "droner", "satellitt*", "gps-forstyrr*", "gnss-forstyrr*"]
+          fi: ["drooni*", "lennokk*", "satelliit*", "gps-häirin*"]
+          et: ["droon*", "mehitamata", "satelliit*", "gps-segaj*"]
+          lv: ["dron*", "bezpilota"]
+          lt: ["dron*", "bepiloč*"]
+          es: ["dron*", "satélite*"]
+          it: ["droni", "drone", "satellit*"]
+          ro: ["dron*", "satelit*"]
+          bg: ["дрон*", "безпилотн*", "сателит*"]
+          ru: ["беспилотник*", "дрон*"]
+          hu: ["drón*"]
+          ja: ["ドローン", "無人機", "宇宙", "衛星", "極超音速"]
+
+      defence-industry:
+        name: "Defence industry & procurement"
+        terms:
+          en: ["defence industr*", "defense industr*", "arms industry", "ammunition production", "defence procurement", "defense procurement", "arms export*", "military aid", "arms deliver*"]
+          de: ["rüstungsindustrie", "verteidigungsindustrie", "munitionsproduktion", "rüstungsexport*", "waffenlieferung*"]
+          fr: ["industrie de défense", "btid", "exportations d'armement", "munitions"]
+          nl: ["defensie-industrie", "wapenexport*"]
+          cs: ["obrann* průmysl*", "zbrojní průmysl*", "munic*", "vojensk* pomoc*"]
+          pl: ["przemysł* zbrojeniow*", "przemysł* obronn*", "amunicj*"]
+          sv: ["försvarsindustri*", "ammunitionsproduktion"]
+          nb: ["forsvarsindustri*", "ammunisjon*"]
+          fi: ["puolustusteollisuu*"]
+          et: ["kaitsetööstus*", "laskemoon*"]
+          es: ["industria de defensa"]
+          it: ["industria della difesa"]
+          ro: ["industri* de apărare", "muniți*"]
+          ja: ["防衛産業", "防衛装備"]
+
+  # ─────────────────────────────── CYBER ───────────────────────────────
+  cyber:
+    name: "Cyber security"
+    topics:
+      ransomware:
+        name: "Ransomware & extortion"
+        terms:
+          en: ["ransomware", "ransom", "double extortion", "data leak site*", "lockbit", "akira", "blackcat", "alphv", "qilin", "black basta", "clop", "cl0p", "conti", "raas"]
+          de: ["ransomware", "erpressungssoftware", "lösegeld*", "erpressung*"]
+          fr: ["rançongiciel*", "ransomware", "rançon*"]
+          nl: ["ransomware", "gijzelsoftware", "losgeld"]
+          cs: ["ransomware", "vyděračsk*", "výkupn*"]
+          sk: ["ransomware", "vydieračsk*"]
+          pl: ["ransomware", "okup*"]
+          sv: ["ransomware", "utpressningsprogram*", "lösensumm*"]
+          da: ["ransomware", "løsesum*"]
+          nb: ["løsepengevirus", "ransomware", "løsepenge*"]
+          fi: ["kiristyshaittaohjelm*", "ransomware", "lunnasohjelm*"]
+          et: ["lunavara*", "ransomware"]
+          es: ["ransomware", "secuestro de datos"]
+          it: ["ransomware", "riscatto"]
+          ro: ["ransomware", "răscumpăr*"]
+          bg: ["рансъмуер", "ransomware", "откуп*"]
+          ja: ["ランサムウェア", "身代金"]
+
+      state-cyber:
+        name: "State-sponsored cyber operations & APTs"
+        terms:
+          en: ["apts", "apt group*", "apt actor*", "advanced persistent threat*", "state-sponsored", "state sponsored", "nation-state actor*", "state actor*", "cyber espionage", "cyber-espionage", "fancy bear", "cozy bear", "sandworm", "apt28", "apt29", "turla", "volt typhoon", "salt typhoon", "kimsuky", "lazarus", "laundry bear", "cyber operation*"]
+          de: ["staatlich gesteuert*", "cyberspionage", "staatliche akteure", "cyberoperation*"]
+          fr: ["cyberespionnage", "acteurs étatiques", "mode opératoire*", "attaquants étatiques"]
+          nl: ["statelijke actor*", "cyberspionage", "statelijke hackers"]
+          cs: ["kybernetick* špionáž*", "státní aktér*", "státem podporovan*", "apt skupin*"]
+          sk: ["kybernetick* špionáž*", "štátn* aktér*"]
+          pl: ["cyberszpiegost*", "grup* apt", "podmiot* państwow*"]
+          sv: ["statsunderstödd*", "cyberspionage", "statliga aktörer"]
+          da: ["statsstøttet*", "cyberspionage", "statslige aktører"]
+          nb: ["statlige aktører", "digital spionasje", "statsstøttet*"]
+          fi: ["valtiollis* toimij*", "kybervakoilu*"]
+          et: ["küberspionaaž*", "riiklik* ründaj*", "riiklikud toimijad"]
+          es: ["ciberespionaje", "actores estatales", "patrocinado por estados"]
+          it: ["cyberspionaggio", "attori statali"]
+          ro: ["spionaj cibernetic", "actori statali", "grupări apt"]
+          bg: ["кибершпионаж", "държавни актьори"]
+          ja: ["サイバー攻撃", "国家主体", "サイバー諜報", "APT"]
+
+      ddos-hacktivism:
+        name: "DDoS & hacktivism"
+        terms:
+          en: ["ddos", "denial of service", "denial-of-service", "hacktivis*", "noname057", "killnet", "defacement*"]
+          de: ["ddos", "überlastungsangriff*", "hacktivis*"]
+          fr: ["ddos", "déni de service", "hacktivis*"]
+          nl: ["ddos", "hacktivis*"]
+          cs: ["ddos", "odepření služby", "hacktivis*"]
+          sk: ["ddos", "hacktivis*"]
+          pl: ["ddos", "haktywi*"]
+          sv: ["ddos", "överbelastningsattack*", "hacktivis*"]
+          da: ["ddos", "hacktivis*"]
+          nb: ["ddos", "tjenestenekt*", "hacktivis*"]
+          fi: ["palvelunestohyökkäy*", "ddos", "hakti*"]
+          et: ["ummistusrünn*", "ddos", "häktivis*", "hacktivis*"]
+          lv: ["ddos", "hakeraktivis*"]
+          lt: ["ddos", "haktyvist*"]
+          ro: ["ddos", "hacktivis*"]
+          bg: ["ddos", "хактивис*"]
+
+      cybercrime-fraud:
+        name: "Cybercrime, fraud & phishing"
+        terms:
+          en: ["cybercrime", "cyber crime", "cyber-crime", "online fraud", "phishing", "smishing", "vishing", "scam*", "business email compromise", "bec", "identity theft", "investment fraud", "romance scam*", "money mule*", "infostealer*", "malware"]
+          de: ["cyberkriminalität", "cybercrime", "phishing", "betrug*", "internetbetrug", "schadsoftware"]
+          fr: ["cybercriminalité", "hameçonnage", "phishing", "escroquerie*", "fraude*", "logiciel* malveillant*"]
+          nl: ["cybercriminaliteit", "phishing", "oplichting", "fraude", "malware"]
+          cs: ["kybernetick* kriminalit*", "podvod*", "phishing*", "škodliv* kód*", "malware"]
+          sk: ["kybernetick* kriminalit*", "podvod*", "phishing*"]
+          pl: ["cyberprzestęp*", "oszust*", "phishing*", "złośliw* oprogramowan*"]
+          sv: ["it-brott*", "bedrägeri*", "nätfiske", "phishing", "skadlig kod"]
+          da: ["it-kriminalitet", "svindel", "phishing"]
+          nb: ["datakriminalitet", "svindel", "phishing", "skadevare*"]
+          fi: ["kyberrikol*", "tietojenkalastelu*", "huijau*", "petos*", "haittaohjelm*"]
+          et: ["küberkuritegevus*", "õngitsus*", "pettus*", "pahavara*"]
+          lv: ["kibernoziedz*", "krāpšan*", "pikšķerēšan*"]
+          lt: ["elektronin* sukčiav*", "sukčiavim*", "kibernetin* nusikalt*"]
+          es: ["ciberdelincuencia", "ciberdelito*", "fraude*", "estafa*", "phishing"]
+          it: ["criminalità informatica", "truffe", "frode", "phishing"]
+          ro: ["criminalitate informatică", "fraud*", "înșelăciun*", "phishing"]
+          bg: ["киберпрестъпност*", "измам*", "фишинг"]
+          hu: ["kiberbűnözés*", "csalás*", "adathalász*"]
+          ja: ["サイバー犯罪", "フィッシング", "詐欺"]
+
+      vulnerabilities:
+        name: "Software vulnerabilities, supply chain & incident response"
+        # IT-specific terms only: "vulnerability" alone also means social or flood vulnerability
+        terms:
+          en: ["zero-day", "zero day", "0-day", "cve", "exploited vulnerabilit*", "software vulnerabilit*", "security vulnerabilit*", "critical vulnerabilit*", "unpatched", "patching", "security patch*", "security update*", "exploit kit*", "proof-of-concept exploit", "supply chain attack*", "software supply chain", "incident response", "incident handling", "csirt", "cert-eu", "security advisory", "security advisories", "edge device*", "vpn appliance*", "remote code execution"]
+          de: ["sicherheitslücke*", "schwachstellen in software", "zero-day", "sicherheitsupdate*", "patch-management", "softwarelieferkette", "vorfallsbearbeitung", "cert-bund"]
+          fr: ["faille* de sécurité", "vulnérabilité* critique*", "correctif* de sécurité", "mise* à jour de sécurité", "réponse à incident*", "cert-fr"]
+          nl: ["kwetsbaarheden in software", "beveiligingsupdate*", "beveiligingslek*"]
+          cs: ["bezpečnostní zranitelnost*", "kritick* zranitelnost*", "zranitelnost* softwar*", "bezpečnostní aktualizac*", "řešení incident*", "govcert"]
+          sk: ["bezpečnostn* zraniteľnos*", "kritick* zraniteľnos*", "riešeni* incident*"]
+          pl: ["podatnoś* oprogramowania", "krytyczn* podatnoś*", "łatk* bezpieczeństwa", "obsług* incydent*"]
+          sv: ["säkerhetsbrist*", "säkerhetsuppdatering*", "incidenthantering"]
+          da: ["sikkerhedshul*", "sikkerhedsopdatering*"]
+          nb: ["sikkerhetshull", "sikkerhetsoppdatering*", "hendelseshåndtering"]
+          fi: ["tietoturvahaavoittuvuu*", "tietoturvapäivity*", "haavoittuvuustiedot*"]
+          et: ["turvanõrkus*", "turvauuendus*", "intsidentide käsitle*"]
+          es: ["vulnerabilidades críticas", "parches de seguridad", "gestión de incidentes"]
+          it: ["vulnerabilità critiche", "aggiornamenti di sicurezza", "gestione degli incidenti"]
+          ro: ["vulnerabilități critice", "actualizări de securitate", "gestionarea incidentelor"]
+          bg: ["критични уязвимости", "обновления за сигурност"]
+          ja: ["ゼロデイ", "脆弱性情報", "セキュリティパッチ"]
+
+      critical-infrastructure-cyber:
+        name: "Cyber threats to critical infrastructure & OT"
+        terms:
+          en: ["critical infrastructure", "critical national infrastructure", "operational technology", "ics", "scada", "industrial control system*", "energy sector", "water utilit*", "nis2", "nis 2", "essential entit*", "essential service*"]
+          de: ["kritische infrastruktur*", "kritis", "betreiber kritischer", "nis2", "leittechnik"]
+          fr: ["infrastructure* critique*", "opérateur* d'importance vitale", "oiv", "nis 2", "nis2", "systèmes industriels"]
+          nl: ["vitale infrastructuur", "vitale aanbieders", "nis2"]
+          cs: ["kritick* infrastruktur*", "nis2", "průmyslov* řídic* systém*", "základní služb*"]
+          sk: ["kritick* infraštruktúr*", "základn* služb*"]
+          pl: ["infrastruktur* krytyczn*", "usług* kluczow*", "nis2"]
+          sv: ["samhällsviktig verksamhet", "kritisk infrastruktur", "nis2", "styrsystem*"]
+          da: ["kritisk infrastruktur", "samfundskritisk*", "nis2"]
+          nb: ["kritisk infrastruktur", "samfunnskritisk*", "industrielle kontrollsystemer"]
+          fi: ["kriittinen infrastruktuuri", "kriittis* infrastruktuur*", "huoltovarmuuskriittis*", "nis2"]
+          et: ["elutähtsa* teenus*", "kriitiline taristu", "nis2"]
+          lv: ["kritisk* infrastruktūr*"]
+          lt: ["ypatingos svarbos infrastruktūr*", "kritin* infrastruktūr*"]
+          es: ["infraestructuras críticas", "servicios esenciales", "nis2"]
+          it: ["infrastrutture critiche", "servizi essenziali", "perimetro di sicurezza nazionale cibernetica"]
+          ro: ["infrastructur* critic*", "servicii esențiale", "nis2"]
+          bg: ["критична инфраструктура", "критичната инфраструктура"]
+          hu: ["kritikus infrastruktúr*"]
+          ja: ["重要インフラ", "制御システム"]
+
+      ai-and-emerging-tech:
+        name: "Artificial intelligence & emerging technology"
+        terms:
+          en: ["artificial intelligence", "generative ai", "large language model*", "llm*", "machine learning", "quantum computing", "post-quantum", "quantum-safe", "ai-generated", "ai-enabled"]
+          de: ["künstliche intelligenz", "ki-gestützt*", "generative ki", "quantencomputer*", "post-quanten*"]
+          fr: ["intelligence artificielle", "ia générative", "cryptographie post-quantique", "informatique quantique"]
+          nl: ["kunstmatige intelligentie", "generatieve ai", "quantumcomput*"]
+          cs: ["umělá inteligence", "umělé inteligence", "umělou inteligenci", "kvantov*"]
+          sk: ["umel* inteligenci*", "kvantov*"]
+          pl: ["sztuczn* inteligencj*", "kwantow*"]
+          sv: ["artificiell intelligens", "ai-genererad*", "kvantdator*"]
+          da: ["kunstig intelligens"]
+          nb: ["kunstig intelligens", "kvantedatamaskin*"]
+          fi: ["tekoäly*", "kvanttitieto*", "kvanttilaskenta"]
+          et: ["tehisintellekt*", "tehisaru*", "kvantarvut*"]
+          lv: ["mākslīg* intelekt*"]
+          lt: ["dirbtin* intelekt*"]
+          es: ["inteligencia artificial", "ia generativa", "computación cuántica"]
+          it: ["intelligenza artificiale"]
+          ro: ["inteligenț* artificial*", "inteligenta artificiala"]
+          bg: ["изкуствен интелект"]
+          hu: ["mesterséges intelligenci*"]
+          ja: ["人工知能", "ＡＩ", "生成AI", "量子"]
+
+  # ─────────────────────────────── CRIME ───────────────────────────────
+  crime:
+    name: "Organised crime & illicit flows"
+    topics:
+      organised-crime:
+        name: "Organised crime & criminal networks"
+        terms:
+          en: ["organised crime", "organized crime", "criminal network*", "criminal group*", "mafia*", "cartel*", "outlaw motorcycle", "gang*", "criminal infiltration", "violence as a service"]
+          de: ["organisierte kriminalität", "clankriminalität", "mafia*", "rockerkriminalität", "kriminelle netzwerke"]
+          fr: ["criminalité organisée", "crime organisé", "réseaux criminels", "mafia*"]
+          nl: ["georganiseerde criminaliteit", "ondermijning", "criminele netwerken"]
+          cs: ["organizovan* zločin*", "organizovan* kriminalit*", "zločinn* skupin*", "mafi*"]
+          sk: ["organizovan* zločin*", "organizovan* kriminalit*"]
+          pl: ["przestępczoś* zorganizowan*", "grup* przestępcz*", "mafi*"]
+          sv: ["organiserad brottslighet", "kriminella nätverk", "gängkriminalitet", "gängvåld"]
+          da: ["organiseret kriminalitet", "bandekriminalitet"]
+          nb: ["organisert kriminalitet", "kriminelle nettverk", "gjengkriminalitet"]
+          fi: ["järjestäytyn* rikollisuu*", "rikollisjärjest*", "katujengi*"]
+          et: ["organiseeritud kuritegevus*", "kuritegelik* ühendus*"]
+          lv: ["organizēt* noziedzīb*"]
+          lt: ["organizuot* nusikalstamum*"]
+          es: ["crimen organizado", "delincuencia organizada", "cártel*"]
+          it: ["criminalità organizzata", "mafia*", "'ndrangheta", "camorra"]
+          pt: ["criminalidade organizada", "crime organizado"]
+          ro: ["criminalitat* organizat*", "crimă organizată", "grupări infracționale"]
+          bg: ["организирана престъпност", "организираната престъпност"]
+          ru: ["организованн* преступн*"]
+          hr: ["organizirani kriminal"]
+          sl: ["organizirana kriminaliteta"]
+          hu: ["szervezett bűnözés*"]
+          ja: ["組織犯罪", "暴力団"]
+
+      drug-trafficking:
+        name: "Drug trafficking"
+        terms:
+          en: ["drug trafficking", "drug smuggling", "narcotics", "cocaine", "heroin", "fentanyl", "synthetic opioid*", "methamphetamine", "cannabis", "synthetic drugs", "captagon"]
+          de: ["drogenhandel", "rauschgift*", "betäubungsmittel*", "kokain", "heroin", "fentanyl"]
+          fr: ["trafic de stupéfiants", "stupéfiants", "cocaïne", "narcotrafic*"]
+          nl: ["drugshandel", "drugssmokkel", "cocaïne", "synthetische drugs"]
+          cs: ["drogov* trh*", "omamn* látk*", "pervitin", "kokain*", "drogov* kriminalit*"]
+          sk: ["drogov*", "omamn* látk*"]
+          pl: ["narkoty*", "handel narkotykami", "kokain*"]
+          sv: ["narkotika*", "kokain"]
+          da: ["narkotika*", "kokain"]
+          nb: ["narkotika*", "kokain"]
+          fi: ["huumausai*", "huumekauppa*", "kokaiini*"]
+          et: ["narkootik*", "uimasti*", "kokaiin*"]
+          es: ["narcotráfico", "tráfico de drogas", "cocaína", "estupefacientes"]
+          it: ["traffico di stupefacenti", "narcotraffico", "cocaina"]
+          pt: ["tráfico de droga", "tráfico de estupefacientes", "cocaína"]
+          ro: ["trafic de droguri", "droguri", "cocain*"]
+          bg: ["наркотрафик*", "наркотици", "кокаин"]
+          hu: ["kábítószer*"]
+          ja: ["薬物", "覚醒剤"]
+
+      human-trafficking-smuggling:
+        name: "Human trafficking & migrant smuggling"
+        terms:
+          en: ["human trafficking", "trafficking in human beings", "trafficking in persons", "migrant smuggling", "people smuggling", "smuggling network*", "forced labour", "sexual exploitation", "labour exploitation"]
+          de: ["menschenhandel", "schleusung*", "schleuser*", "arbeitsausbeutung"]
+          fr: ["traite des êtres humains", "trafic de migrants", "passeurs", "exploitation sexuelle"]
+          nl: ["mensenhandel", "mensensmokkel"]
+          cs: ["obchod* s lidmi", "převaděč*", "nelegální migrac*"]
+          sk: ["obchodovani* s ľuďmi", "prevádzač*"]
+          pl: ["handel ludźmi", "przemyt* migrant*", "przemytnic*"]
+          sv: ["människohandel", "människosmuggling"]
+          da: ["menneskehandel", "menneskesmugling"]
+          nb: ["menneskehandel", "menneskesmugling"]
+          fi: ["ihmiskaupp*", "ihmissalakuljet*"]
+          et: ["inimkaubandus*", "inimsmugeldam*"]
+          es: ["trata de seres humanos", "tráfico de migrantes", "trata de personas"]
+          it: ["tratta di esseri umani", "traffico di migranti"]
+          pt: ["tráfico de seres humanos", "auxílio à imigração ilegal"]
+          ro: ["trafic de persoane", "traficul de persoane", "trafic de migranți"]
+          bg: ["трафик на хора", "каналджи*"]
+          hu: ["emberkereskedelem*", "embercsempész*"]
+
+      money-laundering-corruption:
+        name: "Money laundering, corruption & illicit finance"
+        terms:
+          en: ["money laundering", "anti-money laundering", "aml", "illicit finance", "illicit financial flows", "corruption", "bribery", "shell compan*", "beneficial owner*", "tax fraud", "vat fraud", "cryptocurrenc*", "crypto-asset*"]
+          de: ["geldwäsche", "korruption", "bestechung", "steuerhinterziehung", "kryptowährung*"]
+          fr: ["blanchiment", "corruption", "fraude fiscale", "cryptomonnaie*", "crypto-actifs"]
+          nl: ["witwassen", "corruptie", "omkoping", "cryptovaluta"]
+          cs: ["praní špinavých peněz", "legalizac* výnosů", "korupc*", "úplatk*", "kryptoměn*"]
+          sk: ["legalizáci* príjmov", "korupci*", "kryptomen*"]
+          pl: ["pranie pieniędzy", "prania pieniędzy", "korupc*", "łapówk*", "kryptowalut*"]
+          sv: ["penningtvätt", "korruption", "mutor", "kryptovalut*"]
+          da: ["hvidvask*", "korruption", "bestikkelse"]
+          nb: ["hvitvasking", "korrupsjon", "kryptovaluta"]
+          fi: ["rahanpesu*", "korruptio*", "lahjonta*", "kryptovaluut*"]
+          et: ["rahapesu*", "korruptsioon*", "krüptovara*", "krüptoraha*"]
+          lv: ["noziedzīgi iegūtu līdzekļu legalizācij*", "korupcij*"]
+          lt: ["pinigų plovim*", "korupcij*"]
+          es: ["blanqueo de capitales", "corrupción", "cohecho", "criptomoneda*"]
+          it: ["riciclaggio", "corruzione"]
+          pt: ["branqueamento de capitais", "corrupção"]
+          ro: ["spălare* banilor", "corupți*", "mită"]
+          bg: ["изпиране на пари", "корупция"]
+          hu: ["pénzmosás*", "korrupció*"]
+          ja: ["マネー・ローンダリング", "資金洗浄", "暗号資産"]
+
+      firearms-explosives:
+        name: "Firearms & explosives trafficking"
+        terms:
+          en: ["firearms trafficking", "illegal firearms", "illicit weapons", "weapons trafficking", "3d-printed weapon*", "3d printed firearm*", "explosives", "hand grenade*"]
+          de: ["waffenhandel", "illegale waffen", "sprengstoff*", "3d-druck-waffe*"]
+          fr: ["trafic d'armes", "armes illégales", "explosifs"]
+          nl: ["wapenhandel", "illegale wapens", "explosieven"]
+          cs: ["nelegální zbra*", "obchod* se zbraněmi", "výbušnin*"]
+          pl: ["nielegaln* broń", "handel broni*", "materiał* wybuchow*"]
+          sv: ["illegala vapen", "vapensmuggling", "sprängämne*", "sprängningar"]
+          da: ["ulovlige våben", "sprængstof*"]
+          nb: ["ulovlige våpen", "sprengstoff*"]
+          fi: ["laittom* asei*", "räjähty*"]
+          et: ["ebaseaduslik* relv*", "lõhkeain*"]
+          es: ["tráfico de armas", "explosivos"]
+          it: ["traffico di armi", "esplosivi"]
+          ro: ["trafic de arme", "explozibil*"]
+          bg: ["трафик на оръжия", "взривни вещества"]
+
+      child-exploitation:
+        name: "Online child sexual exploitation"
+        terms:
+          en: ["child sexual abuse", "child sexual exploitation", "csam", "grooming", "sextortion", "online sexual abuse"]
+          de: ["kinderpornograf*", "sexueller missbrauch von kindern", "cybergrooming", "sextortion"]
+          fr: ["pédocriminalité", "pédopornograph*", "exploitation sexuelle des enfants", "sextorsion"]
+          nl: ["kinderporno*", "seksueel misbruik van kinderen", "grooming", "sextortion"]
+          cs: ["dětsk* pornograf*", "sexuální zneužívání dětí", "grooming"]
+          pl: ["pornografi* dziecięc*", "wykorzystywani* seksualn* dzieci", "grooming"]
+          sv: ["sexuella övergrepp mot barn", "grooming", "sextortion"]
+          nb: ["seksuelle overgrep mot barn", "grooming"]
+          fi: ["lasten seksuaalinen hyväksikäyttö", "grooming"]
+          es: ["abuso sexual infantil", "explotación sexual infantil"]
+          it: ["pedopornografia", "abuso sessuale su minori"]
+          ro: ["pornografie infantilă", "abuz sexual asupra minorilor"]
+
+  # ─────────────────────────────── MIGRATION & BORDERS ───────────────────────────────
+  migration:
+    name: "Migration & borders"
+    topics:
+      irregular-migration:
+        name: "Irregular migration & border security"
+        terms:
+          en: ["irregular migration", "illegal migration", "irregular border crossing*", "border crossing*", "external border*", "border control*", "asylum", "migration route*", "mediterranean route", "balkan route", "migrants"]
+          de: ["irreguläre migration", "illegale migration", "grenzübertritt*", "außengrenze*", "grenzkontroll*", "asyl*", "balkanroute"]
+          fr: ["migration irrégulière", "immigration irrégulière", "franchissement* irrégulier*", "frontières extérieures", "asile", "route des balkans"]
+          nl: ["irreguliere migratie", "illegale migratie", "buitengrens*", "asiel*"]
+          cs: ["nelegální migrac*", "nelegální migrant*", "neregulérní migrac*", "vnější hranic*", "azyl*", "balkánsk* trasa"]
+          sk: ["nelegáln* migráci*", "neregulárn* migráci*", "azyl*"]
+          pl: ["nielegaln* migrac*", "nieregularn* migrac*", "przekroczen* granic*", "granic* zewnętrzn*", "azyl*"]
+          sv: ["irreguljär migration", "olaglig migration", "gränskontroll*", "asyl*"]
+          da: ["irregulær migration", "grænsekontrol*", "asyl*"]
+          nb: ["irregulær migrasjon", "grensekontroll*", "asyl*"]
+          fi: ["laiton maahantulo", "laittom* maahantul*", "rajanylit*", "turvapaik*"]
+          et: ["ebaseaduslik ränne", "ebaseadusli* piiriület*", "välispiir*", "varjupaig*"]
+          lv: ["nelegāl* migrācij*", "robežšķērsotāj*", "patvērum*"]
+          lt: ["neteisėt* migracij*", "neteisėt* migrant*", "prieglobst*"]
+          es: ["migración irregular", "inmigración irregular", "cruces irregulares", "fronteras exteriores", "asilo"]
+          it: ["migrazione irregolare", "immigrazione irregolare", "sbarchi", "frontiere esterne", "asilo"]
+          pt: ["imigração ilegal", "imigração irregular", "asilo"]
+          ro: ["migrație ilegală", "migrația ilegală", "migrației ilegale", "frontier* extern*", "azil"]
+          bg: ["нелегална миграция", "незаконна миграция", "мигрант*", "бежан*"]
+          hr: ["nezakonit* migracij*", "ilegaln* migracij*"]
+          sl: ["nezakonit* migracij*", "nedovoljen* prehod*"]
+          hu: ["illegális migráció*", "illegális bevándorl*", "határvédelem*"]
+          el: ["παράτυπη μετανάστευση", "μεταναστευτικ*"]
+          ja: ["不法入国", "密入国"]
+
+      instrumentalised-migration:
+        name: "Instrumentalised migration"
+        terms:
+          en: ["instrumentalis* migration", "instrumentaliz* migration", "weaponis* migration", "weaponiz* migration", "instrumentalisation of migrants", "state-sponsored migration"]
+          de: ["instrumentalisierung von migration", "instrumentalisierte migration"]
+          fr: ["instrumentalisation des migrations", "instrumentalisation migratoire"]
+          cs: ["instrumentalizac* migrac*"]
+          pl: ["instrumentalizac* migrac*", "presj* migracyjn*"]
+          fi: ["välineellistet* maahantul*", "välineellistetty maahantulo"]
+          et: ["rände instrumentaliseeri*", "hübriidrünnak* piiril"]
+          lv: ["migrācijas instrumentalizācij*"]
+          lt: ["migracijos instrumentalizavim*"]
+
+  # ─────────────────────────────── DISASTERS & HAZARDS ───────────────────────────────
+  hazards:
+    name: "Disasters, hazards & climate"
+    topics:
+      climate-change:
+        name: "Climate change"
+        terms:
+          en: ["climate change", "global warming", "climate risk*", "climate impact*", "adaptation", "greenhouse gas*", "emissions", "sea level rise", "sea-level rise", "tipping point*", "paris agreement", "net zero", "1.5 °c", "1.5°c"]
+          de: ["klimawandel", "erderwärmung", "klimaanpassung", "treibhausgas*", "klimarisik*"]
+          fr: ["changement climatique", "réchauffement climatique", "adaptation au changement", "gaz à effet de serre"]
+          nl: ["klimaatverandering", "klimaatadaptatie", "broeikasgas*", "zeespiegelstijging"]
+          cs: ["změn* klimatu", "klimatick* změn*", "adaptac*", "skleníkov* plyn*"]
+          sk: ["zmen* klímy", "klimatick* zmen*"]
+          pl: ["zmian* klimatu", "zmian* klimatyczn*", "adaptac*"]
+          sv: ["klimatförändring*", "klimatanpassning"]
+          da: ["klimaforandring*", "klimatilpasning"]
+          nb: ["klimaendring*", "klimatilpasning"]
+          fi: ["ilmastonmuuto*", "ilmastonmuutoks*", "sopeutumi*"]
+          et: ["kliimamuutus*", "kliimamuutuste"]
+          lv: ["klimata pārmaiņ*"]
+          lt: ["klimato kait*"]
+          es: ["cambio climático", "calentamiento global", "adaptación"]
+          it: ["cambiamento climatico", "cambiamenti climatici"]
+          pt: ["alterações climáticas", "mudanças climáticas"]
+          ro: ["schimbări* climatic*", "încălzire* global*"]
+          bg: ["изменение на климата", "климатични промени"]
+          hu: ["klímaváltozás*", "éghajlatváltozás*"]
+          el: ["κλιματική αλλαγή", "κλιματικής αλλαγής"]
+          ja: ["気候変動", "地球温暖化"]
+
+      floods-storms:
+        name: "Floods, storms & extreme weather"
+        terms:
+          en: ["flood*", "flash flood*", "storm*", "extreme weather", "heavy rain*", "hurricane*", "typhoon*", "cyclone*", "storm surge", "landslide*"]
+          de: ["hochwasser", "überschwemmung*", "sturzflut*", "starkregen", "unwetter", "sturm*", "extremwetter"]
+          fr: ["inondation*", "crue*", "tempête*", "intempéries", "événements météorologiques extrêmes"]
+          nl: ["overstroming*", "hoogwater", "storm*", "wateroverlast", "extreem weer"]
+          cs: ["povodn*", "záplav*", "přívalov* srážk*", "bouř*", "extrémní počasí"]
+          sk: ["povodn*", "záplav*", "búrk*"]
+          pl: ["powodzi*", "powódź", "podtopie*", "nawałnic*", "burz*"]
+          sv: ["översvämning*", "skyfall*", "storm*", "extremväder"]
+          da: ["oversvømmelse*", "skybrud*", "storm*", "stormflod"]
+          nb: ["flom*", "ekstremvær*", "storm*", "skred*"]
+          fi: ["tulv*", "myrsk*", "rankkasat*", "ääri-ilmiö*"]
+          et: ["üleujutus*", "torm", "tormi", "tormid", "äärmuslik* ilm*"]
+          lv: ["plūd*", "vētr*"]
+          lt: ["potvyn*", "audr*"]
+          es: ["inundaci*", "dana", "temporal*", "tormenta*"]
+          it: ["alluvion*", "inondazion*", "esondazion*", "frane", "dissesto idrogeologico"]
+          pt: ["inundaç*", "cheias", "tempestade*"]
+          ro: ["inundați*", "furtun*", "fenomene meteorologice extreme"]
+          bg: ["наводнени*", "бур*"]
+          hu: ["árvíz*", "vihar*"]
+          el: ["πλημμύρ*"]
+          ja: ["洪水", "豪雨", "台風", "土砂災害", "高潮"]
+
+      wildfires-heat-drought:
+        name: "Wildfires, heat & drought"
+        terms:
+          en: ["wildfire*", "forest fire*", "bushfire*", "heatwave*", "heat wave*", "extreme heat", "drought*", "water scarcity"]
+          de: ["waldbrand*", "vegetationsbrand*", "hitzewelle*", "hitze", "dürre*", "trockenheit"]
+          fr: ["feu* de forêt", "incendie* de forêt", "canicule*", "vague* de chaleur", "sécheresse*"]
+          nl: ["natuurbrand*", "bosbrand*", "hittegolf*", "droogte*"]
+          cs: ["lesní požár*", "požár* v přírodě", "vln* vedr*", "horko", "sucho", "sucha", "suchem"]
+          sk: ["lesn* požiar*", "vln* horúčav*", "sucho"]
+          pl: ["pożar* lasów", "pożar* lasu", "upał*", "susz*"]
+          sv: ["skogsbrand*", "värmebölj*", "torka"]
+          da: ["naturbrand*", "hedebølge*", "tørke"]
+          nb: ["skogbrann*", "hetebølge*", "tørke"]
+          fi: ["metsäpalo*", "maastopalo*", "helle", "helleaal*", "hellejakso*", "kuivuu*"]
+          et: ["metsatulekah*", "kuumalain*", "põud*"]
+          es: ["incendio* forestal*", "ola* de calor", "sequía*"]
+          it: ["incendi boschivi", "ondat* di calore", "siccità"]
+          pt: ["incêndios rurais", "incêndios florestais", "onda* de calor", "seca"]
+          ro: ["incendii de vegetație", "incendii forestiere", "caniculă", "val* de căldură", "secet*"]
+          bg: ["горски пожар*", "горещ* вълн*", "суша"]
+          hu: ["erdőtűz*", "hőhullám*", "aszály*"]
+          el: ["δασικ* πυρκαγι*", "καύσωνα*", "λειψυδρ*"]
+          ja: ["林野火災", "熱中症", "猛暑", "干ばつ"]
+
+      earthquakes-volcanoes:
+        name: "Earthquakes, tsunamis & volcanoes"
+        terms:
+          en: ["earthquake*", "seismic", "tsunami*", "volcan*", "eruption*", "nankai trough"]
+          de: ["erdbeben", "seismisch*", "vulkan*", "tsunami*"]
+          fr: ["séisme*", "tremblement* de terre", "sismique*", "volcan*", "tsunami*"]
+          nl: ["aardbeving*", "vulkan*"]
+          cs: ["zemětřesení", "seismick*", "sopk*", "vulkán*"]
+          pl: ["trzęsieni* ziemi", "sejsmiczn*", "wulkan*"]
+          sv: ["jordbävning*", "vulkan*"]
+          nb: ["jordskjelv*", "vulkan*"]
+          fi: ["maanjäristy*", "tulivuor*"]
+          es: ["terremoto*", "sismo*", "sísmic*", "volcán*", "erupción*"]
+          it: ["terremot*", "sismic*", "vulcan*", "eruzion*", "campi flegrei"]
+          pt: ["sismo*", "terramoto*", "vulcân*"]
+          ro: ["cutremur*", "seismic*"]
+          bg: ["земетресени*", "сеизмичн*"]
+          el: ["σεισμ*", "ηφαιστ*"]
+          hr: ["potres*"]
+          sl: ["potres*"]
+          ja: ["地震", "津波", "火山", "噴火", "南海トラフ", "首都直下"]
+
+      pandemics-health:
+        name: "Pandemics & health threats"
+        terms:
+          en: ["pandemic*", "epidemic*", "outbreak*", "covid", "sars-cov-2", "coronavirus", "influenza", "avian influenza", "h5n1", "mpox", "measles", "antimicrobial resistance", "amr", "vaccination", "infectious disease*", "public health emergenc*"]
+          de: ["pandemie*", "epidemie*", "ausbruch*", "infektionskrankheit*", "vogelgrippe", "antibiotikaresistenz*"]
+          fr: ["pandémie*", "épidémie*", "maladie* infectieuse*", "grippe aviaire", "antibiorésistance"]
+          nl: ["pandemie*", "uitbraak*", "infectieziekte*"]
+          cs: ["pandemi*", "epidemi*", "covid*", "infekční* nemoc*", "ptačí chřipk*"]
+          sk: ["pandémi*", "epidémi*"]
+          pl: ["pandemi*", "epidemi*", "chorob* zakaźn*"]
+          sv: ["pandemi*", "epidemi*", "smittsamma sjukdomar", "fågelinfluensa"]
+          da: ["pandemi*", "epidemi*"]
+          nb: ["pandemi*", "epidemi*", "smittsomme sykdommer"]
+          fi: ["pandemi*", "epidemi*", "tartuntatau*"]
+          et: ["pandeemi*", "epideemi*", "nakkushaigus*"]
+          lv: ["pandēmij*"]
+          lt: ["pandemij*"]
+          es: ["pandemia*", "epidemia*", "brote*"]
+          it: ["pandemi*", "epidemi*", "focolai*"]
+          pt: ["pandemia*", "epidemia*"]
+          ro: ["pandemi*", "epidemi*", "boli infecțioase"]
+          bg: ["пандеми*", "епидеми*"]
+          hu: ["járvány*", "pandémi*"]
+          el: ["πανδημ*", "επιδημ*"]
+          ja: ["感染症", "パンデミック", "新型コロナ", "新型インフルエンザ"]
+
+      cbrn-nuclear-accident:
+        name: "CBRN, nuclear & industrial accidents"
+        terms:
+          en: ["cbrn", "cbrne", "chemical incident*", "radiological", "nuclear accident*", "nuclear power plant*", "nuclear safety", "radiation", "hazardous substance*", "industrial accident*", "seveso", "dirty bomb"]
+          de: ["cbrn", "chemieunfall*", "radiologisch*", "kerntechnisch* unfall", "kernkraftwerk*", "strahlenschutz", "störfall*", "gefahrstoff*"]
+          fr: ["nrbc", "accident nucléaire", "centrale* nucléaire*", "radiologique*", "accident* industriel*", "seveso", "sûreté nucléaire"]
+          nl: ["cbrn", "kernongeval*", "kerncentrale*", "stralingsongeval*"]
+          cs: ["cbrn", "radiační* havári*", "jadern* elektrárn*", "průmyslov* havári*", "nebezpečn* látk*"]
+          pl: ["cbrn", "awari* jądrow*", "elektrowni* jądrow*", "awari* przemysłow*"]
+          sv: ["cbrn", "kärnkraftsolycka*", "kärnkraftverk*", "strålning*", "kemikalieolycka*"]
+          nb: ["cbrn", "atomulykke*", "atomberedskap", "strålevern*", "kjemikalieulykke*"]
+          fi: ["cbrn", "ydinvoimala*", "säteily*", "kemikaalionnettomuu*"]
+          et: ["kkbt", "tuumaõnnetus*", "kiirgus*", "tööstusõnnetus*"]
+          es: ["nrbq", "accidente nuclear", "central* nuclear*", "radiológic*"]
+          it: ["nbcr", "incidente nucleare", "centrale nucleare", "rischio industriale"]
+          ro: ["kbrn", "cbrn", "accident nuclear", "radiologic*", "accident* industrial*"]
+          bg: ["хбря", "ядрен* авари*", "аец"]
+          ja: ["原子力災害", "原子力発電所", "放射線", "化学災害"]
+
+      space-weather:
+        name: "Space weather"
+        terms:
+          en: ["space weather", "solar storm*", "geomagnetic storm*", "solar flare*", "coronal mass ejection*"]
+          de: ["weltraumwetter", "sonnensturm*", "geomagnetisch* sturm"]
+          fr: ["météo spatiale", "tempête* solaire*"]
+          sv: ["rymdväder"]
+          nb: ["romvær", "solstorm*"]
+          fi: ["avaruussää*"]
+          es: ["meteorología espacial", "tormenta* solar*"]
+
+  # ─────────────────────────────── RESILIENCE & PREPAREDNESS ───────────────────────────────
+  resilience:
+    name: "Resilience & preparedness"
+    topics:
+      civil-defence:
+        name: "Civil defence & total defence"
+        terms:
+          en: ["civil defence", "civil defense", "total defence", "total defense", "comprehensive security", "whole-of-society", "whole of society", "shelter*", "bomb shelter*", "civil protection", "home guard", "wartime"]
+          de: ["zivilschutz", "zivile verteidigung", "gesamtverteidigung", "schutzräume", "schutzraum", "bevölkerungsschutz"]
+          fr: ["défense civile", "protection civile", "abris", "résilience nationale", "défense globale"]
+          nl: ["civiele verdediging", "bescherming bevolking", "schuilkelder*"]
+          cs: ["civilní ochran*", "ochrana obyvatelstva", "ochrany obyvatelstva", "úkryt*", "branná"]
+          sk: ["civiln* ochran*", "úkryt*"]
+          pl: ["obron* cywiln*", "ochron* ludnoś*", "schron*"]
+          sv: ["civilt försvar", "totalförsvar*", "skyddsrum*", "beredskap*", "höjd beredskap"]
+          da: ["totalforsvar*", "civilt beredskab", "beskyttelsesrum"]
+          nb: ["totalforsvar*", "sivilforsvar*", "tilfluktsrom*", "samfunnssikkerhet"]
+          fi: ["kokonaisturvallisuu*", "väestönsuoje*", "maanpuolustu*", "huoltovarmuu*"]
+          et: ["elanikkonnakaits*", "tsiviilkaits*", "varjend*", "laiapindne riigikaitse"]
+          lv: ["civilā aizsardzīb*", "visaptveroš* aizsardzīb*", "patvertn*"]
+          lt: ["civilin* sauga", "civilinės saugos", "visuotin* gynyb*", "slėptuv*"]
+          es: ["protección civil", "defensa civil"]
+          it: ["protezione civile", "difesa civile"]
+          pt: ["proteção civil"]
+          ro: ["protecți* civil*", "adăposturi"]
+          bg: ["гражданска защита", "гражданската защита", "убежищ*"]
+          hu: ["polgári védelem*", "katasztrófavédelem*"]
+          ja: ["国民保護", "避難施設", "防災"]
+
+      public-preparedness:
+        name: "Public & household preparedness"
+        terms:
+          en: ["preparedness", "household preparedness", "emergency kit*", "72 hours", "self-sufficiency", "be prepared", "emergency supplies", "public warning*", "alert system*", "evacuation"]
+          de: ["notvorrat", "vorsorge", "selbsthilfe", "warnung der bevölkerung", "sirenen", "katastrophenvorsorge", "evakuierung"]
+          fr: ["préparation", "kit d'urgence", "alerte à la population", "évacuation"]
+          nl: ["noodpakket*", "zelfredzaamheid", "noodvoorraad", "evacuatie"]
+          cs: ["připravenost*", "evakuačn* zavazadl*", "varování obyvatelstva", "evakuac*", "72 hodin"]
+          sk: ["pripravenos*", "evakuáci*"]
+          pl: ["przygotowani* na sytuacj* kryzysow*", "gotowoś*", "ewakuac*", "zestaw* ratunkow*"]
+          sv: ["om krisen eller kriget kommer", "hemberedskap", "krisberedskap", "72 timmar", "evakuering"]
+          da: ["beredskab", "72 timer", "evakuering"]
+          nb: ["egenberedskap", "beredskap", "72 timer", "evakuering"]
+          fi: ["kotivara*", "varautumi*", "72 tuntia", "evakuoin*"]
+          et: ["valmisolek*", "hädaolukorraks valmis", "72 tundi", "evakuatsioon*"]
+          lv: ["gatavīb*", "72 stund*"]
+          lt: ["pasirengim*", "evakuacij*"]
+          es: ["preparación", "autoprotección", "evacuación"]
+          it: ["preparazione", "autoprotezione", "evacuazione"]
+          ro: ["pregătir* populației", "evacuar*", "ro-alert"]
+          bg: ["готовност*", "евакуац*"]
+          hu: ["felkészül*", "kitelepít*"]
+          ja: ["備蓄", "避難", "防災訓練"]
+
+      critical-infrastructure:
+        name: "Critical infrastructure protection & resilience"
+        terms:
+          en: ["critical infrastructure protection", "resilience of critical entities", "cer directive", "critical entit*", "infrastructure resilience", "vital infrastructure", "lifeline*"]
+          de: ["schutz kritischer infrastruktur*", "kritis-dachgesetz", "resilienz kritischer"]
+          fr: ["protection des infrastructures critiques", "résilience des entités critiques", "secteurs d'activité d'importance vitale"]
+          nl: ["weerbaarheid vitale", "vitale processen"]
+          cs: ["ochran* kritick* infrastruktur*", "odolnost* kritick*"]
+          pl: ["ochron* infrastruktur* krytyczn*", "podmiot* krytyczn*"]
+          sv: ["skydd av samhällsviktig", "motståndskraft hos kritiska"]
+          nb: ["skjermingsverdige objekter", "kritiske samfunnsfunksjoner"]
+          fi: ["kriittis* infrastruktuur* suojaami*", "elintärke* toimin*"]
+          et: ["elutähtsa teenuse", "elutähtsad teenused"]
+          ro: ["protecți* infrastructurilor critice", "entități critice"]
+          ja: ["重要インフラ防護", "ライフライン"]
+
+      energy-security:
+        name: "Energy security & blackouts"
+        terms:
+          en: ["energy security", "security of supply", "blackout*", "power outage*", "power cut*", "electricity grid", "gas supply", "energy supply", "lng", "energy crisis", "grid failure"]
+          de: ["energieversorgung", "versorgungssicherheit", "stromausfall", "blackout", "gasmangellage", "energiekrise", "stromnetz"]
+          fr: ["sécurité énergétique", "sécurité d'approvisionnement", "coupure* d'électricité", "black-out", "délestage*", "réseau électrique"]
+          nl: ["energiezekerheid", "leveringszekerheid", "stroomstoring*", "black-out"]
+          cs: ["energetick* bezpečnost*", "výpadek elektřiny", "výpadk* proudu", "blackout", "dodávk* plynu"]
+          sk: ["energetick* bezpečnos*", "výpadok elektriny", "blackout"]
+          pl: ["bezpieczeństw* energetyczn*", "blackout", "przerw* w dostawach", "dostaw* gazu"]
+          sv: ["energiförsörjning", "elförsörjning", "strömavbrott", "elbrist", "effektbrist"]
+          da: ["energiforsyning", "strømafbrydelse*", "forsyningssikkerhed"]
+          nb: ["energiforsyning", "strømbrudd", "kraftforsyning", "forsyningssikkerhet"]
+          fi: ["energiaturvallisuu*", "sähkökatko*", "energiahuolto*", "sähköpula*"]
+          et: ["energiajulgeolek*", "elektrikatkest*", "varustuskindlus*", "desünkroniseeri*", "sünkroniseeri*"]
+          lv: ["energoapgād*", "energodrošīb*", "sinhronizācij*"]
+          lt: ["energetin* saugum*", "sinchronizacij*"]
+          es: ["seguridad energética", "apagón", "suministro eléctrico"]
+          it: ["sicurezza energetica", "blackout", "approvvigionamento energetico"]
+          pt: ["segurança energética", "apagão"]
+          ro: ["securitat* energetic*", "pan* de curent", "blackout"]
+          bg: ["енергийна сигурност", "енергийната сигурност"]
+          hu: ["energiabiztonság*", "áramszünet*"]
+          ja: ["エネルギー安全保障", "停電", "電力供給"]
+
+      supply-security:
+        name: "Food, water & supply security"
+        terms:
+          en: ["food security", "water security", "drinking water", "supply chain disruption*", "supply security", "stockpil*", "strategic reserves", "shortage*", "critical raw material*", "semiconductor*"]
+          de: ["ernährungssicherheit", "trinkwasser*", "lieferengp*", "bevorratung", "rohstoff*", "halbleiter*"]
+          fr: ["sécurité alimentaire", "eau potable", "pénurie*", "stocks stratégiques", "matières premières critiques", "semi-conducteur*"]
+          nl: ["voedselzekerheid", "drinkwater*", "tekorten", "kritieke grondstoffen"]
+          cs: ["potravinov* bezpečnost*", "pitn* vod*", "státní hmotné rezerv*", "kritick* surovin*", "polovodič*"]
+          pl: ["bezpieczeństw* żywnościow*", "wod* pitn*", "rezerw* strategiczn*", "surowc* krytyczn*"]
+          sv: ["livsmedelsberedskap", "livsmedelsförsörjning", "dricksvatten*", "försörjningsberedskap", "beredskapslager"]
+          da: ["fødevaresikkerhed", "drikkevand*", "forsyningssikkerhed"]
+          nb: ["matsikkerhet", "drikkevann*", "forsyningsberedskap", "beredskapslager*"]
+          fi: ["ruokaturva*", "juomave*", "huoltovarmuusvaras*", "kriittis* raaka-ain*"]
+          et: ["toiduga kindlusta*", "joogivee*", "varustuskindlus*", "riigi varud"]
+          es: ["seguridad alimentaria", "agua potable", "materias primas críticas"]
+          it: ["sicurezza alimentare", "materie prime critiche"]
+          ro: ["securitat* alimentar*", "apă potabilă", "rezerve de stat"]
+          ja: ["食料安全保障", "サプライチェーン", "重要鉱物", "半導体"]
+
+      crisis-management:
+        name: "Crisis management & emergency response"
+        terms:
+          en: ["crisis management", "emergency management", "emergency response", "civil contingenc*", "incident command", "crisis centre", "crisis center", "business continuity", "exercise*", "lessons learned", "after-action"]
+          de: ["krisenmanagement", "katastrophenschutz", "krisenstab*", "gefahrenabwehr", "übung*"]
+          fr: ["gestion de crise*", "cellule de crise", "sécurité civile", "retour d'expérience", "exercice*"]
+          nl: ["crisisbeheersing", "crisismanagement", "rampenbestrijding", "veiligheidsregio*"]
+          cs: ["krizov* řízení", "krizov* štáb*", "integrovan* záchrann* systém*", "mimořádn* událost*", "cvičení"]
+          sk: ["krízov* riadeni*", "mimoriadn* udalos*"]
+          pl: ["zarządzani* kryzysow*", "sytuacj* kryzysow*", "ćwiczeni*"]
+          sv: ["krishantering", "krisledning", "övning*", "lärdomar"]
+          da: ["krisestyring", "beredskabsplanlægning", "øvelse*"]
+          nb: ["krisehåndtering", "beredskapsplan*", "øvelse*", "læringspunkter"]
+          fi: ["kriisinhallin*", "valmiussuunnit*", "harjoitu*"]
+          et: ["kriisireguleeri*", "hädaolukor*", "õppus*"]
+          lv: ["krīzes vadīb*", "ārkārtas situācij*"]
+          lt: ["krizių valdym*", "ekstremal* situacij*"]
+          es: ["gestión de crisis", "gestión de emergencias", "ejercicio*"]
+          it: ["gestione delle emergenze", "gestione delle crisi", "esercitazion*"]
+          ro: ["managementul situațiilor de urgență", "situații de urgență", "gestionar* crizelor", "exerciți*"]
+          bg: ["управление при кризи", "бедствени ситуации", "учени*"]
+          hu: ["válságkezelés*", "katasztrófavédelm*"]
+          ja: ["危機管理", "災害対応", "訓練"]
+
+      societal-resilience:
+        name: "Societal resilience, cohesion & polarisation"
+        terms:
+          en: ["societal resilience", "social cohesion", "polarisation", "polarization", "trust in institutions", "public trust", "democratic resilience", "media literacy", "civic education", "will to defend"]
+          de: ["gesellschaftliche resilienz", "gesellschaftlicher zusammenhalt", "polarisierung", "vertrauen in institutionen", "medienkompetenz"]
+          fr: ["résilience de la société", "cohésion sociale", "polarisation", "confiance dans les institutions", "éducation aux médias"]
+          nl: ["maatschappelijke weerbaarheid", "polarisatie", "sociale cohesie"]
+          cs: ["odolnost* společnosti", "odolnosti společnosti", "polarizac*", "důvěr* v instituc*", "mediální gramotnost*"]
+          sk: ["odolnos* spoločnosti", "polarizáci*"]
+          pl: ["odpornoś* społeczn*", "polaryzac*", "spójnoś* społeczn*"]
+          sv: ["motståndskraft", "polarisering", "försvarsvilja", "tillit"]
+          da: ["modstandskraft", "polarisering", "sammenhængskraft"]
+          nb: ["motstandsdyktighet", "polarisering", "tillit", "forsvarsvilje"]
+          fi: ["resilienssi*", "polarisaatio*", "luottamus*", "maanpuolustustahto"]
+          et: ["vastupanuvõime*", "sidusus*", "polariseeru*", "kaitsetahe"]
+          lv: ["noturīb*", "sabiedrības saliedētīb*", "polarizācij*"]
+          lt: ["atsparum*", "poliarizacij*", "pilietin* atsparum*"]
+          es: ["resiliencia social", "cohesión social", "polarización"]
+          it: ["resilienza", "coesione sociale", "polarizzazione"]
+          ro: ["reziliență* societ*", "coeziun* social*", "polarizar*"]
+          bg: ["устойчивост на обществото", "поляризация"]
+          hu: ["társadalmi ellenálló*", "polarizáció*"]
+
+  # ─────────────────────────────── GOVERNANCE ───────────────────────────────
+  governance:
+    name: "Governance & oversight"
+    topics:
+      intelligence-oversight:
+        name: "Intelligence oversight, law & accountability"
+        meta: true
+        terms:
+          en: ["oversight committee", "parliamentary oversight", "judicial authorisation", "legal basis", "bulk interception", "surveillance powers", "data retention", "investigatory powers", "accountability", "complaints", "privacy"]
+          de: ["parlamentarisches kontrollgremium", "g 10", "kontrolle der nachrichtendienste", "datenschutz", "rechtsgrundlage"]
+          fr: ["contrôle parlementaire", "cnctr", "techniques de renseignement", "délégation parlementaire au renseignement"]
+          nl: ["ctivd", "wiv", "toezicht", "toetsingscommissie"]
+          cs: ["kontrol* zpravodajsk*", "parlamentní kontrol*", "stálá komise"]
+          pl: ["kontrol* parlamentarn*", "komisj* do spraw służb specjalnych"]
+          sv: ["siun", "säkerhets- och integritetsskyddsnämnden", "tillsyn"]
+          nb: ["eos-utvalget", "kontroll med etterretning"]
+          fi: ["tiedusteluvalvon*", "tiedusteluvaltuutet*"]
+          ro: ["control parlamentar", "comisia comună permanentă"]
+          ja: ["監視", "情報公開"]
+
+      annual-activity:
+        name: "Agency activity, organisation & resources"
+        meta: true      # describes the kind of report, not its subject: listed last, still filterable
+        terms:
+          en: ["annual report", "activity report", "year in review", "our organisation", "staff", "budget", "recruitment", "workforce", "strategic plan"]
+          de: ["jahresbericht", "tätigkeitsbericht", "personal", "haushalt"]
+          fr: ["rapport annuel", "rapport d'activité", "effectifs", "budget"]
+          nl: ["jaarverslag", "jaarrapport"]
+          cs: ["výroční zpráv*", "zpráv* o činnosti", "rozpočet", "personální"]
+          sk: ["výročn* správ*", "správ* o činnosti"]
+          pl: ["sprawozdani*", "raport z działalności"]
+          sv: ["årsredovisning", "verksamhetsberättelse", "årsöversikt"]
+          nb: ["årsrapport", "årsmelding"]
+          fi: ["vuosikertomu*", "toimintakertomu*"]
+          et: ["aastaraamat*", "aastaaruanne", "tegevusaruanne"]
+          lv: ["gada pārskat*"]
+          lt: ["veiklos ataskait*"]
+          es: ["informe anual", "memoria anual"]
+          it: ["relazione annuale"]
+          ro: ["raport* de activitate", "raport anual"]
+          bg: ["годишен доклад", "доклад за дейността"]
+          hu: ["éves jelentés*", "beszámoló*"]
+          ja: ["年次報告", "白書"]

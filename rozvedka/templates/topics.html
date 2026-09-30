@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Topics · Rozvedka{% endblock %}
+{% block main %}
+<div class="summary">
+  <span><b>{{ tax.topics|length }}</b> topics in <b>{{ tax.categories|length }}</b> categories</span>
+  <span class="muted small">{{ indexed[1] or 0 }} of {{ indexed[0] or 0 }} extracted documents classified ·
+    keyword lists in <code>sources/topics.yaml</code></span>
+</div>
+{% set maxdocs = (stats.values()|map(attribute='docs')|max) if stats else 1 %}
+<div class="topic-grid">
+{% for ckey, cat in tax.categories.items() %}
+  <section class="topic-cat">
+    <h2>{{ cat.name }}</h2>
+    <ul>
+    {% for tkey in cat.topics %}{% set st = stats.get(tkey) %}
+      <li>
+        <a class="tname" href="/?topic={{ tkey }}">{{ tax.topics[tkey].name }}</a>
+        <span class="bar" aria-hidden="true"><i style="width: {{ ((st.docs if st else 0) / maxdocs * 100)|round(1) }}%"></i></span>
+        <span class="tnum"><b>{{ st.docs if st else 0 }}</b> docs</span>
+        <span class="muted small tmeta">{% if st %}{{ st.sources }} agencies · {{ st.countries }} countries{% if st.y0 %} · {{ st.y0 }}–{{ st.y1 }}{% endif %}{% endif %}</span>
+      </li>
+    {% endfor %}
+    </ul>
+  </section>
+{% endfor %}
+</div>
+{% endblock %}

@@ -22,6 +22,10 @@ def main():
     s.add_argument("--host", default="0.0.0.0"); s.add_argument("--port", type=int, default=8080)
     sub.add_parser("stats", help="print document counts")
     sub.add_parser("improve-titles", help="replace poor document titles with the title stored in the PDF")
+    ix = sub.add_parser("index-topics", help="extract report text (full-text search) and tag documents with topics")
+    ix.add_argument("--reextract", action="store_true", help="extract text again for all documents")
+    ix.add_argument("--limit", type=int, help="only extract this many new documents (for trying it out)")
+    ix.add_argument("--workers", type=int, default=4)
     lg = sub.add_parser("fetch-logos", help="download agency logos from their home pages")
     lg.add_argument("--refresh", action="store_true", help="re-fetch logos that already exist")
     a = ap.parse_args()
@@ -41,6 +45,11 @@ def main():
         print(crawler.crawl(a.country))
         print(downloader.download(a.country))
         print({"titles_improved": downloader.improve_titles()})
+        from . import topics
+        print(topics.index())
+    elif a.cmd == "index-topics":
+        from . import topics
+        print(topics.index(a.reextract, a.limit, a.workers))
     elif a.cmd == "improve-titles":
         print({"titles_improved": downloader.improve_titles()})
     elif a.cmd == "serve":

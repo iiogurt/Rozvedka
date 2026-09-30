@@ -1,0 +1,295 @@
+"""Topic indexing: extract report text, store it for full-text search, and tag documents with topics.
+
+Taxonomy: sources/topics.yaml (categories → topics → multilingual terms). Text is extracted once per document
+(pdftotext, first MAX_PAGES pages, capped at MAX_CHARS) into an SQLite FTS5 table. Classification runs on the
+stored text, so editing the taxonomy only needs `index-topics` again – no re-download, no re-extraction.
+"""
+import concurrent.futures as cf
+import hashlib
+import json
+import logging
+import math
+import re
+import shutil
+import subprocess
+import unicodedata
+from datetime import datetime
+from functools import lru_cache
+from pathlib import Path
+
+import yaml
+
+from . import db
+from .config import FILES, ROOT
+
+log = logging.getLogger("rozvedka.topics")
+TAXONOMY = ROOT / "sources" / "topics.yaml"
+MAX_PAGES = 150          # enough to characterise a report; IPCC volumes have 2,000+ pages
+MAX_CHARS = 400_000      # stored text per document (full-text search + classification)
+PDFTOTEXT = shutil.which("pdftotext")
+
+# ── normalisation: case- and accent-insensitive, same for text and terms ──
+_FOLD = str.maketrans({"ß": "ss", "ø": "o", "æ": "ae", "œ": "oe", "ł": "l", "đ": "d", "ð": "d", "þ": "th",
+                       "ı": "i", "’": "'", "‘": "'", "–": "-", "—": "-", "­": ""})
+_CJK = re.compile(r"[぀-ヿ㐀-鿿가-힯＀-￯]")
+
+
+def normalize(text: str) -> str:
+    text = text.lower().translate(_FOLD)
+    text = unicodedata.normalize("NFKD", text)
+    return "".join(ch for ch in text if not unicodedata.combining(ch))
+
+
+def term_regex(term: str) -> str:
+    """'pravicov* extremis*' → regex for the phrase; CJK terms match as plain substrings."""
+    t = normalize(term.strip())
+    if _CJK.search(t):
+        return re.escape(t)
+    parts = []
+    for tok in t.split():
+        stem = tok.endswith("*")
+        body = re.escape(tok.rstrip("*"))
+        parts.append(body + (r"\w*" if stem else ""))
+    rx = r"[\s\-/]+".join(parts)
+    last_is_stem = t.split()[-1].endswith("*")
+    return r"(?<!\w)" + rx + ("" if last_is_stem else r"(?!\w)")
+
+
+# ── taxonomy ──
+_WORD = re.compile(r"\w+")
+
+
+def term_tokens(term: str) -> list[tuple[str, bool]]:
+    """'right-wing extrem*' → [('right', False), ('wing', False), ('extrem', True)] (normalised, stem flag)."""
+    return [(tok.rstrip("*"), tok.endswith("*")) for tok in re.findall(r"\w+\*?", normalize(term))]
+
+
+@lru_cache(maxsize=1)
+def taxonomy() -> dict:
+    """Topics with their terms compiled for fast word-based matching.
+
+    Per topic: exact (word → term), stems (prefix → term), phrases (token tuples), cjk (substrings);
+    'regex' is kept for short strings such as titles.
+    """
+    raw = TAXONOMY.read_bytes()
+    data = yaml.safe_load(raw)
+    topics = {}
+    for ckey, cat in data["categories"].items():
+        for tkey, tp in cat["topics"].items():
+            terms = [t for lang_terms in tp["terms"].values() for t in lang_terms]
+            exact, stems, phrases, cjk = {}, {}, [], []
+            for t in terms:
+                if _CJK.search(normalize(t)):
+                    cjk.append(normalize(t))
+                    continue
+                toks = term_tokens(t)
+                if len(toks) == 1:
+                    word, stem = toks[0]
+                    (stems if stem else exact)[word] = t
+                elif toks:
+                    phrases.append((tuple(toks), t))
+            alternatives = sorted({term_regex(t) for t in terms}, key=len, reverse=True)
+            topics[tkey] = {"key": tkey, "name": tp["name"], "category": ckey, "category_name": cat["name"],
+                            "terms": terms, "exact": exact, "stems": stems, "phrases": phrases, "cjk": cjk,
+                            "stem_lens": sorted({len(k) for k in stems}), "meta": bool(tp.get("meta")),
+                            "regex": re.compile("|".join(alternatives))}
+    return {"categories": {k: {"name": c["name"], "topics": list(c["topics"])} for k, c in data["categories"].items()},
+            "topics": topics, "hash": hashlib.sha256(raw).hexdigest()[:16]}
+
+
+def reload() -> None:
+    taxonomy.cache_clear()
+
+
+def _token_matches(word: str, tok: tuple[str, bool]) -> bool:
+    base, stem = tok
+    return word.startswith(base) if stem else word == base
+
+
+# ── classification ──
+def count_terms(body: str, tp: dict, tokens: list[str], vocab: dict[str, int],
+                positions: dict[str, list[int]]) -> dict[str, int]:
+    """How often each term of one topic occurs in an already tokenised text."""
+    counts: dict[str, int] = {}
+    exact, stems, lens = tp["exact"], tp["stems"], tp["stem_lens"]
+    for word, n in vocab.items():                   # single-word terms: dictionary lookups per distinct word
+        term = exact.get(word)
+        if term is None:
+            for L in lens:
+                if L > len(word):
+                    break
+                term = stems.get(word[:L])
+                if term is not None:
+                    break
+        if term is not None:
+            counts[term] = counts.get(term, 0) + n
+    for toks, term in tp["phrases"]:                # phrases: checked only where the first word occurs
+        base, stem = toks[0]
+        starts = [w for w in positions if w.startswith(base)] if stem else ([base] if base in positions else [])
+        n = 0
+        for w in starts:
+            for i in positions[w]:
+                if i + len(toks) <= len(tokens) and all(_token_matches(tokens[i + k], toks[k]) for k in range(1, len(toks))):
+                    n += 1
+        if n:
+            counts[term] = counts.get(term, 0) + n
+    for sub in tp["cjk"]:
+        n = body.count(sub)
+        if n:
+            counts[sub] = counts.get(sub, 0) + n
+    return counts
+
+
+def classify(text: str, title: str = "") -> list[dict]:
+    """Topics found in a text, best first. Each: key, score, hits, distinct, title_hit, terms (most frequent)."""
+    body = normalize(text)
+    head = normalize(title or "")
+    tokens = _WORD.findall(body)
+    words = max(len(tokens), 1)
+    vocab: dict[str, int] = {}
+    positions: dict[str, list[int]] = {}
+    for i, w in enumerate(tokens):
+        vocab[w] = vocab.get(w, 0) + 1
+        positions.setdefault(w, []).append(i)
+    needed = max(3, math.ceil(words / 15_000))
+    found = []
+    for key, tp in taxonomy()["topics"].items():
+        counts = count_terms(body, tp, tokens, vocab, positions)
+        title_hit = bool(head and tp["regex"].search(head))
+        hits, distinct = sum(counts.values()), len(counts)
+        # enough evidence: the title says so, or several different terms appear often enough for the length
+        if not (title_hit or (distinct >= 2 and hits >= needed)):
+            continue
+        density = hits / words * 10_000                  # hits per 10,000 words
+        score = round(math.log1p(density) * 10 + min(distinct, 12) * 1.5 + (25 if title_hit else 0), 2)
+        top = sorted(counts.items(), key=lambda kv: -kv[1])[:6]
+        found.append({"key": key, "score": score, "hits": hits, "distinct": distinct, "title_hit": int(title_hit),
+                      "terms": [t for t, _ in top]})
+    return sorted(found, key=lambda f: -f["score"])
+
+
+# ── text extraction ──
+def extract_text(path: Path) -> str:
+    if PDFTOTEXT:
+        out = subprocess.run([PDFTOTEXT, "-q", "-enc", "UTF-8", "-l", str(MAX_PAGES), str(path), "-"],
+                             capture_output=True, timeout=300)
+        text = out.stdout.decode("utf-8", "replace")
+    else:   # slower pure-Python fallback
+        from pypdf import PdfReader
+        reader = PdfReader(str(path))
+        text = "\n".join((p.extract_text() or "") for p in reader.pages[:MAX_PAGES])
+    text = re.sub(r"[ \t\f\r]+", " ", text)
+    return re.sub(r"\n\s*\n+", "\n", text)[:MAX_CHARS]
+
+
+# ── database ──
+SCHEMA = """
+CREATE VIRTUAL TABLE IF NOT EXISTS doc_text USING fts5(
+    title, body, tokenize = "unicode61 remove_diacritics 2");        -- rowid = documents.id
+CREATE TABLE IF NOT EXISTS doc_index (
+    doc_id INTEGER PRIMARY KEY REFERENCES documents(id) ON DELETE CASCADE,
+    chars INTEGER, words INTEGER, extracted_at TEXT, error TEXT,
+    taxonomy_hash TEXT, classified_at TEXT);
+CREATE TABLE IF NOT EXISTS doc_topics (
+    doc_id INTEGER NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    topic TEXT NOT NULL, score REAL, hits INTEGER, distinct_terms INTEGER, title_hit INTEGER, terms TEXT,
+    PRIMARY KEY (doc_id, topic));
+CREATE INDEX IF NOT EXISTS ix_doc_topics_topic ON doc_topics(topic, score DESC);
+"""
+
+
+def init() -> None:
+    with db.session() as con:
+        con.executescript(SCHEMA)
+
+
+def _process(doc: dict) -> dict:
+    """Worker (separate process): extract a PDF's text and classify it."""
+    try:
+        text = extract_text(FILES / doc["local_path"])
+    except Exception as e:  # noqa: BLE001 - one broken PDF must not stop the run
+        return {"id": doc["id"], "text": None, "error": f"{type(e).__name__}: {e}"[:300], "found": []}
+    return {"id": doc["id"], "text": text, "error": None, "found": classify(text, doc["title"] or "")}
+
+
+def _classify_only(item: tuple[int, str, str]) -> dict:
+    """Worker: re-classify stored text (after the taxonomy changed)."""
+    doc_id, body, title = item
+    return {"id": doc_id, "found": classify(body or "", title or "")}
+
+
+def _write_topics(con, doc_id: int, found: list[dict], tax_hash: str, now: str) -> None:
+    con.execute("DELETE FROM doc_topics WHERE doc_id=?", (doc_id,))
+    con.executemany(
+        "INSERT INTO doc_topics(doc_id, topic, score, hits, distinct_terms, title_hit, terms) VALUES(?,?,?,?,?,?,?)",
+        [(doc_id, f["key"], f["score"], f["hits"], f["distinct"], f["title_hit"],
+          json.dumps(f["terms"], ensure_ascii=False)) for f in found])
+    con.execute("UPDATE doc_index SET taxonomy_hash=?, classified_at=? WHERE doc_id=?", (tax_hash, now, doc_id))
+
+
+def index(reextract: bool = False, limit: int | None = None, workers: int = 4, batch: int = 25) -> dict:
+    """Extract + classify new downloads, then re-classify documents classified with an older taxonomy.
+
+    Work runs in separate processes (all CPU cores); results are written in batches and appear in the portal
+    while the run continues.
+    """
+    init()
+    tax_hash = taxonomy()["hash"]
+    stats = {"extracted": 0, "extract_errors": 0, "classified": 0}
+    now = lambda: datetime.now().isoformat(timespec="seconds")  # noqa: E731
+    with db.session() as con:
+        q = """SELECT d.id, d.local_path, d.title FROM documents d LEFT JOIN doc_index i ON i.doc_id = d.id
+               WHERE d.status = 'downloaded' AND d.local_path IS NOT NULL"""
+        if not reextract:
+            q += " AND i.extracted_at IS NULL"
+        todo = [dict(r) for r in con.execute(q + (f" LIMIT {int(limit)}" if limit else ""))]
+
+    con = db.connect()
+    con.execute("PRAGMA synchronous=NORMAL")     # WAL + NORMAL: safe on crash, far fewer SD-card flushes
+    try:
+        with cf.ProcessPoolExecutor(workers) as ex:
+            futures = [ex.submit(_process, d) for d in todo]
+            for n, fut in enumerate(cf.as_completed(futures), 1):
+                r = fut.result()
+                con.execute("DELETE FROM doc_text WHERE rowid=?", (r["id"],))
+                title = next(d["title"] for d in todo if d["id"] == r["id"])
+                if r["text"] is not None:
+                    con.execute("INSERT INTO doc_text(rowid, title, body) VALUES(?,?,?)", (r["id"], title, r["text"]))
+                con.execute("""INSERT INTO doc_index(doc_id, chars, words, extracted_at, error) VALUES(?,?,?,?,?)
+                               ON CONFLICT(doc_id) DO UPDATE SET chars=excluded.chars, words=excluded.words,
+                                 extracted_at=excluded.extracted_at, error=excluded.error, taxonomy_hash=NULL""",
+                            (r["id"], len(r["text"] or ""), len((r["text"] or "").split()), now(), r["error"]))
+                if r["error"]:
+                    stats["extract_errors"] += 1
+                else:
+                    _write_topics(con, r["id"], r["found"], tax_hash, now())
+                    stats["extracted"] += 1
+                    stats["classified"] += 1
+                if n % batch == 0:
+                    con.commit()
+                    log.info("indexed %d/%d", n, len(todo))
+            con.commit()
+
+            # documents extracted earlier but classified with an older taxonomy version
+            stale = con.execute("""SELECT i.doc_id, t.body, d.title FROM doc_index i JOIN doc_text t ON t.rowid=i.doc_id
+                                   JOIN documents d ON d.id=i.doc_id
+                                   WHERE i.taxonomy_hash IS NULL OR i.taxonomy_hash != ?""", (tax_hash,)).fetchall()
+            for n, r in enumerate(ex.map(_classify_only, [tuple(x) for x in stale], chunksize=8), 1):
+                _write_topics(con, r["id"], r["found"], tax_hash, now())
+                stats["classified"] += 1
+                if n % batch == 0:
+                    con.commit()
+                    log.info("re-classified %d/%d", n, len(stale))
+            con.commit()
+    finally:
+        con.close()
+    return stats
+
+
+def fts_query(q: str) -> str:
+    """User search text → safe FTS5 query: every word must occur (prefix match); quoted phrases kept."""
+    phrases = re.findall(r'"([^"]+)"', q)
+    rest = re.sub(r'"[^"]+"', " ", q)
+    parts = [f'"{p.replace(chr(34), "")}"' for p in phrases]
+    parts += [f'"{w}"*' for w in re.findall(r"\w+", rest)]
+    return " AND ".join(parts)

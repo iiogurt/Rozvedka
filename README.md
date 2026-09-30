@@ -112,3 +112,20 @@ well-known facts (Five Eyes members, Finland and Sweden in NATO, …).
      git switch main && git pull
      git tag -a v0.6.0 -m "Rozvedka 0.6.0" && git push origin v0.6.0
      ```
+
+## Topics and full-text search
+
+- `sources/topics.yaml` holds the topic taxonomy: categories → topics → keywords per language. Keyword syntax:
+  `word` (whole word), `stem*` (words starting with the stem), `two words` (a phrase; each token may end in `*`),
+  and Japanese, Chinese and Korean terms as plain substrings. Matching ignores case and accents. Every language's
+  terms apply to every document.
+- `python -m rozvedka index-topics` extracts the text of new downloads into an SQLite FTS5 index (first 150 pages,
+  up to 400,000 characters) and tags the documents with topics. It uses every CPU core and writes results as it
+  goes. After editing `topics.yaml`, run it again: documents are re-classified from the stored text only.
+- A topic is assigned when the title matches, or when at least 2 different keywords appear and the hits keep up
+  with the length (≥ 3, and at least one per 15,000 words). A single passing mention is not enough.
+- In the portal: pick topics on the documents list (several must all match), search inside the reports (use
+  `"quotes"` for phrases), see all topics at `/topics`, and filter the map by topic.
+- Limits: keyword matching finds what a report *talks about*, not what it concludes. Scanned PDFs without a text
+  layer have no text to index. Coverage is strongest in English, German, French and the Central European and
+  Nordic languages.
