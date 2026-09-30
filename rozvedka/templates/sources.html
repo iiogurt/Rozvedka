@@ -2,45 +2,73 @@
 {% block title %}Sources · Rozvedka{% endblock %}
 {% block main %}
 <div class="summary">
-  <span><b>{{ sources|length }}</b> sources</span>
+  <span><b>{{ sources|length }}</b> agencies and institutions in <b>{{ groups|length }}</b> groups</span>
   <form method="post" action="/jobs/sync" class="inline"><button title="Reload sources/registry.yaml">Reload registry</button></form>
   <form method="post" action="/jobs/crawl" class="inline"><button title="Crawl every source (slow)">Crawl all</button></form>
 </div>
 
-{% set ns = namespace(cur='') %}
-{% for s in sources %}
-  {% if s.country != ns.cur %}{% set ns.cur = s.country %}<h2>{{ COUNTRY_NAMES.get(s.country, s.country) }}</h2>{% endif %}
-  <section class="source">
-    <div class="shead">
-      <div>
-        <b>{{ s.agency }}</b> <span class="muted">{{ s.full_name }}</span><br>
-        <span class="tag">{{ TYPE_NAMES.get(s.type, s.type) }}</span>
-        <span class="tag">{{ s.frequency }}</span>
-        <span class="tag acc-{{ s.access }}">{{ s.access }}</span>
-        <a href="/?source={{ s.id }}">{{ s.n_docs }} documents</a> · {{ s.n_ok or 0 }} downloaded
-        {% if s.notes %}<div class="note">{{ s.notes }}</div>{% endif %}
+<nav class="flagbar" aria-label="Jump to country">
+  {% for country, items in groups %}
+  <a href="#c-{{ country }}" title="{{ COUNTRY_NAMES.get(country, country) }} ({{ items|length }})">
+    <img src="{{ flag_url(country) }}" alt="" width="28" height="21"><span>{{ country }}</span></a>
+  {% endfor %}
+</nav>
+
+{% for country, items in groups %}
+<section class="country" id="c-{{ country }}">
+  <h2><img class="flag" src="{{ flag_url(country) }}" alt="" width="32" height="24">
+    {{ COUNTRY_NAMES.get(country, country) }} <span class="muted">· {{ items|length }}</span></h2>
+  <div class="cards">
+  {% for s in items %}
+  <article class="card" id="s-{{ s.id }}">
+    <div class="card-head">
+      <div class="logo">
+        {% if s.logo_path %}<img src="/logo/{{ s.id }}" alt="{{ s.agency }} logo" loading="lazy">
+        {% else %}<span class="initials">{{ initials(s.agency) }}</span>{% endif %}
       </div>
-      <form method="post" action="/jobs/crawl" class="inline">
-        <input type="hidden" name="country" value="{{ s.country }}"><input type="hidden" name="agency" value="{{ s.agency }}">
-        <button>Crawl</button></form>
+      <div class="names">
+        <div class="acr">{{ s.agency }}</div>
+        <div class="name-en">{{ s.name_en or '' }}</div>
+        {% if s.name_local and s.name_local != s.name_en %}<div class="name-local">{{ s.name_local }}</div>{% endif %}
+      </div>
     </div>
-    <ul class="pages">
-      {% for p in pages.get(s.id, []) %}
-      <li><span class="lang">{{ p.lang }}</span> <span class="kind">{{ p.kind }}</span>
-        <a href="{{ p.url }}" target="_blank" rel="noopener">{{ p.url }}</a>
-        {% if not p.verified %}<span class="warn" title="bot-protected – open in a browser">⚠</span>{% endif %}
-        {% if p.last_status %}<span class="muted"> — {{ p.last_status }} ({{ p.last_crawled }})</span>{% endif %}</li>
-      {% endfor %}
-    </ul>
-    <details class="add"><summary>Add a document by URL</summary>
-      <form method="post" action="/add">
+    {% if s.description %}<p class="desc">{{ s.description }}</p>{% endif %}
+    <div class="chips">
+      <span class="tag type-{{ s.type }}">{{ TYPE_NAMES.get(s.type, s.type) }}</span>
+      <span class="tag">{{ s.frequency }}</span>
+      {% if s.access != 'auto' %}<span class="tag acc-{{ s.access }}" title="how the crawler fetches this site">{{ s.access }}</span>{% endif %}
+    </div>
+    {% if s.notes %}<div class="note">{{ s.notes }}</div>{% endif %}
+    <div class="card-links">
+      {% if s.homepage %}<a href="{{ s.homepage }}" target="_blank" rel="noopener">⌂ {{ s.homepage.split('//')[1].rstrip('/') }}</a>{% endif %}
+      <a href="/?source={{ s.id }}"><b>{{ s.n_docs }}</b> documents · {{ s.n_ok or 0 }} downloaded</a>
+    </div>
+    <details class="more"><summary>Report pages ({{ pages.get(s.id, [])|length }}) · crawl · add document</summary>
+      <ul class="pages">
+        {% for p in pages.get(s.id, []) %}
+        <li><span class="lang">{{ p.lang }}</span> <span class="kind">{{ p.kind }}</span>
+          <a href="{{ p.url }}" target="_blank" rel="noopener">{{ p.note or p.url }}</a>
+          {% if not p.verified %}<span class="warn" title="bot-protected – open in a browser">⚠</span>{% endif %}
+          {% if p.last_status %}<div class="muted small">{{ p.last_status }} · {{ p.last_crawled }}</div>{% endif %}</li>
+        {% endfor %}
+      </ul>
+      <div class="actions-row">
+        <form method="post" action="/jobs/crawl" class="inline">
+          <input type="hidden" name="country" value="{{ s.country }}"><input type="hidden" name="agency" value="{{ s.agency }}">
+          <button>Crawl now</button></form>
+      </div>
+      <form method="post" action="/add" class="addform">
         <input type="hidden" name="source_id" value="{{ s.id }}">
-        <input name="url" placeholder="https://… .pdf" required size="50">
+        <input name="url" placeholder="https://… .pdf" required>
         <input name="title" placeholder="Title">
         <input name="lang" placeholder="lang" size="3"><input name="year" placeholder="year" size="5">
         <label class="chk"><input type="checkbox" name="fetch_now" value="1" checked> download now</label>
-        <button>Add</button>
-      </form></details>
-  </section>
+        <button>Add document</button>
+      </form>
+    </details>
+  </article>
+  {% endfor %}
+  </div>
+</section>
 {% endfor %}
 {% endblock %}

@@ -10,6 +10,7 @@ from urllib.parse import unquote, urlsplit
 
 from . import db, fetch
 from .config import FILES, MAX_FILE_MB
+from .crawler import is_poor_title
 
 log = logging.getLogger("rozvedka.download")
 
@@ -33,6 +34,29 @@ def pdf_info(path: Path) -> tuple[int | None, str | None]:
         return len(r.pages), title
     except Exception:  # noqa: BLE001 - metadata is best effort
         return None, None
+
+
+def good_pdf_title(t: str | None) -> bool:
+    """PDF metadata titles are often junk ('Microsoft Word - x.docx', 'untitled', 'PowerPoint Presentation')."""
+    if not t or len(t.strip()) < 8:
+        return False
+    return not re.search(r"microsoft|\.docx?\b|\.indd\b|\.pptx?\b|untitled|unbenannt|bez názvu|presentation|"
+                         r"^\s*(title|titel|document|dokument)\s*\d*\s*$", t, re.I)
+
+
+def improve_titles() -> int:
+    """Replace poor titles of already-downloaded documents with the title stored inside the PDF."""
+    changed = 0
+    with db.session() as con:
+        rows = con.execute("SELECT id, title, url, local_path FROM documents WHERE local_path IS NOT NULL").fetchall()
+        for r in rows:
+            if not is_poor_title(r["title"], r["url"]):
+                continue
+            _, pdf_title = pdf_info(FILES / r["local_path"])
+            if good_pdf_title(pdf_title):
+                con.execute("UPDATE documents SET title=? WHERE id=?", (pdf_title.strip()[:300], r["id"]))
+                changed += 1
+    return changed
 
 
 def download_one(doc_id: int) -> str:
@@ -71,8 +95,8 @@ def download_one(doc_id: int) -> str:
                 fields = {"sha256": sha, "size": len(data), "local_path": str(dest.relative_to(FILES)),
                           "pages_count": pages, "mime": "application/pdf",
                           "downloaded_at": datetime.now().isoformat(timespec="seconds")}
-                if pdf_title and len(pdf_title) > 8 and re.fullmatch(r"[\w .%-]+\.pdf", doc["title"] or "", re.I):
-                    fields["title"] = pdf_title[:300]
+                if good_pdf_title(pdf_title) and is_poor_title(doc["title"], doc["url"]):
+                    fields["title"] = pdf_title.strip()[:300]
     except fetch.Blocked:
         error = "blocked by robots.txt"
     except Exception as e:  # noqa: BLE001

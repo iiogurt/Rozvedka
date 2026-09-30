@@ -20,6 +20,9 @@ def main():
     s = sub.add_parser("serve", help="run the web portal")
     s.add_argument("--host", default="0.0.0.0"); s.add_argument("--port", type=int, default=8080)
     sub.add_parser("stats", help="print document counts")
+    sub.add_parser("improve-titles", help="replace poor document titles with the title stored in the PDF")
+    lg = sub.add_parser("fetch-logos", help="download agency logos from their home pages")
+    lg.add_argument("--refresh", action="store_true", help="re-fetch logos that already exist")
     a = ap.parse_args()
 
     logging.basicConfig(level=logging.DEBUG if a.verbose else logging.INFO, format="%(asctime)s %(name)s %(message)s")
@@ -31,12 +34,19 @@ def main():
         print(crawler.crawl(a.country, a.agency))
     elif a.cmd == "download":
         print(downloader.download(a.country, a.retry_failed, a.limit, a.workers))
+        print({"titles_improved": downloader.improve_titles()})
     elif a.cmd == "update":
         print(crawler.crawl(a.country))
         print(downloader.download(a.country))
+        print({"titles_improved": downloader.improve_titles()})
+    elif a.cmd == "improve-titles":
+        print({"titles_improved": downloader.improve_titles()})
     elif a.cmd == "serve":
         import uvicorn
         uvicorn.run("rozvedka.app:app", host=a.host, port=a.port)
+    elif a.cmd == "fetch-logos":
+        from . import logos
+        print(logos.fetch_logos(a.refresh))
     elif a.cmd == "stats":
         with db.session() as con:
             for r in con.execute("""SELECT s.country, COUNT(*) n, SUM(d.status='downloaded') ok

@@ -45,6 +45,21 @@ GENERIC_TITLES = re.compile(
     r"^\s*((download|stáhnout|stiahnuť|stiahnut|pobierz|herunterladen|télécharger|downloaden|ladda ner|lataa|"
     r"descargar|scarica|descarcă|изтегли|preuzmi|prenesi|letöltés|here|zde|tu|více|more|read more|open|otevřít|"
     r"view|zobrazit)\s*)?(pdf|file|soubor|dokument|document)?\s*(\(?[\d.,]+\s*[mk]i?b\)?|\(pdf[^)]*\))?\s*$", re.I)
+# link texts that are calls to action, not titles ("Click here to access our report")
+_CTA_WORDS = re.compile(
+    r"(?<!\w)(click|klikn\w*|cliquez|download\w*|télécharg\w*|herunterladen|stáhn\w*|stiahn\w*|pobierz|scarica|"
+    r"descarg\w*|consultez|here|hier|ici|zde|tady)(?!\w)", re.I)
+
+
+class _CallToAction:
+    """Short link text built around 'click/download/here' with no year in it – not a real title."""
+    @staticmethod
+    def match(text: str) -> bool:
+        t = (text or "").strip()
+        return len(t) <= 80 and bool(_CTA_WORDS.search(t)) and not YEAR_RE.search(t)
+
+
+CALL_TO_ACTION = _CallToAction()
 # kept but hidden by default: administrative documents that are not security reports
 LOW_RELEVANCE_RE = re.compile((
     r"contract|procurement|corrigendum|zakázk|veřejn[aá] zak|кандидат|конкурс|класиране|"
@@ -89,12 +104,14 @@ def guess_year(title: str, url: str) -> int | None:
 
 def _title_for(a) -> str:
     t = " ".join(a.get_text(" ", strip=True).split())
-    if GENERIC_TITLES.match(t) or len(t) < 4:
+    if GENERIC_TITLES.match(t) or CALL_TO_ACTION.match(t) or len(t) < 4:
         t = a.get("title") or a.get("aria-label") or ""
-    if GENERIC_TITLES.match(t) or len(t) < 4:
+    if GENERIC_TITLES.match(t) or CALL_TO_ACTION.match(t) or len(t) < 4:
         parent = a.find_parent(["li", "tr", "article", "div", "p"])
         if parent:
             t = " ".join(parent.get_text(" ", strip=True).split())[:200]
+        if CALL_TO_ACTION.match(t):
+            t = ""   # the surrounding text is the same call to action – use the filename instead
     if GENERIC_TITLES.match(t) or len(t) < 4 or t.startswith(("/", "http")):
         t = humanize_filename(a["href"])
     return t[:300]
@@ -134,7 +151,8 @@ def extract(html: str, base: str) -> tuple[list[dict], list[tuple[str, str]]]:
 
 
 def is_poor_title(title: str | None, url: str) -> bool:
-    return not title or bool(GENERIC_TITLES.match(title)) or title == humanize_filename(url)
+    return (not title or bool(GENERIC_TITLES.match(title)) or bool(CALL_TO_ACTION.match(title))
+            or title == humanize_filename(url) or bool(re.fullmatch(r"[\w .%()-]+\.pdf", title, re.I)))
 
 
 def _store(con, source_id, page_id, docs, page_lang, allowed) -> int:

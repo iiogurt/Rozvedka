@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import crawler, db, downloader, registry
+from . import crawler, db, downloader, logos, registry
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -28,7 +28,23 @@ TYPE_NAMES = {
     "cyber": "Cyber security", "civil-protection": "Civil protection & crisis", "police-ct": "Police / counter-terrorism",
     "eu-body": "EU body", "nato": "NATO", "other": "Other",
 }
-tpl.env.globals.update(COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=TYPE_NAMES)
+FLAGS = {p.stem for p in (HERE / "static" / "flags").glob("*.svg")}
+
+
+def flag_url(country: str) -> str:
+    code = (country or "").lower()
+    return f"/static/flags/{code if code in FLAGS else 'other'}.svg"
+
+
+def initials(agency: str) -> str:
+    """Badge text for agencies without a logo: 'NBÚ' -> 'NBÚ', 'Dept. of the Taoiseach' -> 'DT'."""
+    words = [w for w in agency.replace("/", " ").split() if w[:1].isalpha()]
+    if len(words) == 1:
+        return words[0][:4]
+    return "".join(w[0] for w in words if w[0].isupper())[:4] or agency[:3]
+
+
+tpl.env.globals.update(COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=TYPE_NAMES, flag_url=flag_url, initials=initials)
 
 _jobs: dict[str, str] = {}      # background job name -> status text
 _jobs_lock = threading.Lock()
@@ -71,15 +87,16 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
     if source:
         where.append("s.id=?"); args.append(source)
     if q:
-        where.append("(d.title LIKE ? OR d.url LIKE ? OR s.agency LIKE ? OR s.full_name LIKE ?)")
-        args += [f"%{q}%"] * 4
+        where.append("(d.title LIKE ? OR d.url LIKE ? OR s.agency LIKE ? OR s.name_local LIKE ? OR s.name_en LIKE ?)")
+        args += [f"%{q}%"] * 5
     sql_where = " AND ".join(where)
     per_page = 100
     with db.session() as con:
         total = con.execute(f"SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id WHERE {sql_where}",
                             args).fetchone()[0]
         docs = con.execute(
-            f"""SELECT d.*, s.country, s.agency, s.type FROM documents d JOIN sources s ON s.id=d.source_id
+            f"""SELECT d.*, s.country, s.agency, s.type, s.name_en, s.logo_path
+                FROM documents d JOIN sources s ON s.id=d.source_id
                 WHERE {sql_where} ORDER BY d.year DESC NULLS LAST, s.country, s.agency, d.lang
                 LIMIT ? OFFSET ?""", (*args, per_page, (page - 1) * per_page)).fetchall()
         facets = {
@@ -108,7 +125,33 @@ def sources(request: Request):
         pages = {}
         for p in con.execute("SELECT * FROM pages WHERE active=1 ORDER BY lang, kind"):
             pages.setdefault(p["source_id"], []).append(p)
-    return tpl.TemplateResponse(request, "sources.html", {"sources": rows, "pages": pages, "jobs": dict(_jobs)})
+    # member states alphabetically by name, then EU bodies, NATO, other
+    tail = {"EU": 1, "NATO": 2, "OTHER": 3}
+    groups: dict[str, list] = {}
+    for r in rows:
+        groups.setdefault(r["country"], []).append(r)
+    ordered = sorted(groups.items(), key=lambda kv: (tail.get(kv[0], 0), COUNTRY_NAMES.get(kv[0], kv[0])))
+    return tpl.TemplateResponse(request, "sources.html", {"sources": rows, "groups": ordered, "pages": pages,
+                                                         "jobs": dict(_jobs)})
+
+
+LOGO_TYPES = {"svg": "image/svg+xml", "png": "image/png", "jpg": "image/jpeg", "webp": "image/webp",
+              "gif": "image/gif", "ico": "image/x-icon"}
+
+
+@app.get("/logo/{source_id}")
+def logo(source_id: int):
+    with db.session() as con:
+        s = con.execute("SELECT logo_path FROM sources WHERE id=?", (source_id,)).fetchone()
+    if not s or not s["logo_path"]:
+        raise HTTPException(404, "no logo")
+    path = (logos.LOGOS / s["logo_path"]).resolve()
+    if not path.is_relative_to(logos.LOGOS.resolve()) or not path.exists():
+        raise HTTPException(404, "logo missing")
+    # logos come from third-party sites: an SVG could carry script, so forbid active content outright
+    return FileResponse(path, media_type=LOGO_TYPES.get(path.suffix.lstrip("."), "application/octet-stream"),
+                        headers={"Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; img-src data:",
+                                 "X-Content-Type-Options": "nosniff", "Cache-Control": "max-age=86400"})
 
 
 @app.get("/doc/{doc_id}")

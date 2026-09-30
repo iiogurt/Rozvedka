@@ -16,6 +16,8 @@ A local library of the public reports that European intelligence, cyber-security
 .venv/bin/python -m rozvedka update                   # crawl + download (what the weekly timer runs)
 .venv/bin/python -m rozvedka serve                    # portal on http://<pi>:8080
 .venv/bin/python -m rozvedka stats
+.venv/bin/python -m rozvedka fetch-logos [--refresh]  # agency logos from home pages -> data/logos/
+.venv/bin/python -m rozvedka improve-titles           # poor titles -> title stored in the PDF
 python3 tools/check_registry.py                       # check that every registry URL still loads
 ```
 
@@ -58,3 +60,13 @@ The portal has no login. It listens on your LAN (port 8080), so don't expose it 
 - `main` always holds working code. Make changes on a branch (`feat/…`, `fix/…`, `sources/…`) and merge through a pull request.
 - Never commit `data/`, `.env` or credentials. `.gitignore` covers these.
 - Edits to the registry go in their own commits (e.g. `sources: add Latvian SAB reports page`), so the list of sources has a clear history.
+
+## Agency profiles, flags and logos
+
+- Every registry entry has `name_local` (official name in the original language), `name_en` (official English name),
+  `homepage` and a short `description` of what its reports cover.
+- Flags in `rozvedka/static/flags/` come from [flag-icons](https://github.com/lipis/flag-icons) (MIT, see
+  `LICENSE.flag-icons`). `nato.svg` and `other.svg` were drawn for this project.
+- Logos are the agencies' own marks. `fetch-logos` downloads them into `data/logos/`, which is not committed. When the
+  automatic pick is wrong, set `logo: "https://…"` on the registry entry and run `fetch-logos --refresh`.
+  Agencies without a logo show an initials badge.

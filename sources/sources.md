@@ -1,235 +1,234 @@
 # Rozvedka – official security report sources
 
-Generated from `sources/registry.yaml` — 84 sources, 149 pages.
+Generated from `sources/registry.yaml` — 83 sources, 148 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
 
 ## Czechia
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **BIS**<br>Bezpečnostní informační služba | intelligence-civil | annual report | [cs archive](https://www.bis.cz/vyrocni-zpravy/) · [en archive](https://www.bis.cz/annual-reports/) · [cs series](https://www.bis.cz/vyrocni-zpravy-archivu/) |
-| **VZ**<br>Vojenské zpravodajství | intelligence-military | annual report<br>_Public annual reports 2004–2023 only; from 2024 VZ submits classified reports only._ | [cs archive](https://vzcr.gov.cz/vyrocni-zpravy-o-cinnosti-vojenskeho-zpravodajstvi-41) · [cs series](https://www.vzcr.cz/vyrocni-zpravy-bezpecnostniho-archivu-vojenske-zpravodajstvi-42) |
-| **NÚKIB**<br>Národní úřad pro kybernetickou a informační bezpečnost | cyber | annual report, report on the state of cyber security | [cs archive](https://nukib.gov.cz/cs/infoservis/dokumenty-a-publikace/) · [en archive](https://nukib.gov.cz/en/infoservis-en/publications-reports/) |
-| **HZS ČR**<br>Hasičský záchranný sbor ČR | civil-protection | statistical yearbook<br>_Moved to archiv.hzscr.gov.cz (robots.txt disallows crawling) – add yearbooks manually._ | [cs archive](https://archiv.hzscr.gov.cz/clanek/statisticke-rocenky-hasicskeho-zachranneho-sboru-cr.aspx) |
-| **MV ČR**<br>Ministerstvo vnitra – zprávy o extremismu | police-ct | report on extremism<br>_Moved to archiv.mv.gov.cz (robots.txt disallows crawling) – add reports manually._ | [cs archive](https://archiv.mv.gov.cz/clanek/extremismus-vyrocni-zpravy-o-extremismu-a-strategie-boje-proti-extremismu.aspx) |
+| **BIS** – Security Information Service<br>_Bezpečnostní informační služba_<br>[www.bis.cz](https://www.bis.cz/) | Czech civil counter-intelligence and security service. Annual reports cover Russian and Chinese espionage and influence operations, extremism, terrorism, proliferation and threats to the economy and critical infrastructure. | annual report | [cs archive](https://www.bis.cz/vyrocni-zpravy/) · [en archive](https://www.bis.cz/annual-reports/) · [cs series](https://www.bis.cz/vyrocni-zpravy-archivu/) |
+| **VZ** – Military Intelligence<br>_Vojenské zpravodajství_<br>[vzcr.gov.cz](https://vzcr.gov.cz/) | Czech military intelligence (foreign and military counter-intelligence). Public reports (2004–2023) describe the military-political situation abroad, threats to the armed forces and defence cyber security. | annual report<br>_Public annual reports 2004–2023 only; from 2024 VZ submits classified reports only._ | [cs archive](https://vzcr.gov.cz/vyrocni-zpravy-o-cinnosti-vojenskeho-zpravodajstvi-41) · [cs series](https://www.vzcr.cz/vyrocni-zpravy-bezpecnostniho-archivu-vojenske-zpravodajstvi-42) |
+| **NÚKIB** – National Cyber and Information Security Agency<br>_Národní úřad pro kybernetickou a informační bezpečnost_<br>[nukib.gov.cz](https://nukib.gov.cz/) | Czech national cyber-security authority and government CERT. Annual reports on the state of cyber security, threat assessments, warnings and guidance for critical infrastructure. | annual report, report on the state of cyber security | [cs archive](https://nukib.gov.cz/cs/infoservis/dokumenty-a-publikace/) · [en archive](https://nukib.gov.cz/en/infoservis-en/publications-reports/) |
+| **HZS ČR** – Fire Rescue Service of the Czech Republic<br>_Hasičský záchranný sbor České republiky_<br>[hzscr.gov.cz](https://hzscr.gov.cz/) | National fire and rescue service, core of the Integrated Rescue System and civil protection. Statistical yearbooks on fires, floods, accidents, disasters and emergency response. | statistical yearbook<br>_Moved to archiv.hzscr.gov.cz (robots.txt disallows crawling) – add yearbooks manually._ | [cs archive](https://archiv.hzscr.gov.cz/clanek/statisticke-rocenky-hasicskeho-zachranneho-sboru-cr.aspx) |
+| **MV ČR** – Ministry of the Interior of the Czech Republic<br>_Ministerstvo vnitra České republiky_<br>[mv.gov.cz](https://mv.gov.cz/) | Czech interior ministry. Annual reports on extremism and prejudicial hatred, plus internal-security strategy documents. | report on extremism<br>_Moved to archiv.mv.gov.cz (robots.txt disallows crawling) – add reports manually._ | [cs archive](https://archiv.mv.gov.cz/clanek/extremismus-vyrocni-zpravy-o-extremismu-a-strategie-boje-proti-extremismu.aspx) |
 
 ## Slovakia
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **SIS**<br>Slovenská informačná služba | intelligence-civil | activity report | [sk archive](https://www.sis.gov.sk/pre-vas/sprava-o-cinnosti.html) |
-| **NBÚ**<br>Národný bezpečnostný úrad (SK-CERT) | cyber | annual report<br>_Page content hidden behind a loading screen, also in a headless browser – add reports manually._ | [sk archive](https://www.nbu.gov.sk/urad/o-nas/vyrocne-spravy/) |
+| **SIS** – Slovak Information Service<br>_Slovenská informačná služba_<br>[www.sis.gov.sk](https://www.sis.gov.sk/) | Slovak civil intelligence service (domestic and foreign). Activity reports summarise foreign intelligence activity, extremism, terrorism, economic security and cyber threats. | activity report | [sk archive](https://www.sis.gov.sk/pre-vas/sprava-o-cinnosti.html) |
+| **NBÚ** – National Security Authority<br>_Národný bezpečnostný úrad_<br>[www.nbu.gov.sk](https://www.nbu.gov.sk/) | Protects classified information and runs national cyber security (SK-CERT). Annual reports on cyber incidents and the state of cyber security in Slovakia. | annual report<br>_Page content hidden behind a loading screen, also in a headless browser – add reports manually._ | [sk archive](https://www.nbu.gov.sk/urad/o-nas/vyrocne-spravy/) |
 
 ## Poland
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **ABW**<br>Agencja Bezpieczeństwa Wewnętrznego | intelligence-civil | activity report | [pl current](https://www.abw.gov.pl/pl/raport-2024-2025) |
-| **RCB**<br>Rządowe Centrum Bezpieczeństwa | civil-protection | report on threats to national security | [pl current](https://www.gov.pl/web/rcb/raport-o-zagrozeniach-bezpieczenstwa-narodowego) |
-| **CERT Polska**<br>CERT Polska (NASK) | cyber | annual report | [pl archive](https://cert.pl/publikacje/) · [en archive](https://cert.pl/en/publications/) |
+| **ABW** – Internal Security Agency<br>_Agencja Bezpieczeństwa Wewnętrznego_<br>[www.abw.gov.pl](https://www.abw.gov.pl/) | Polish counter-intelligence and internal security service. Reports cover espionage, sabotage, terrorism, hybrid threats and government cyber security (CSIRT GOV). | activity report | [pl current](https://www.abw.gov.pl/pl/raport-2024-2025) |
+| **RCB** – Government Centre for Security<br>_Rządowe Centrum Bezpieczeństwa_<br>[www.gov.pl/web/rcb](https://www.gov.pl/web/rcb) | Crisis-management centre of the Polish government. Publishes the report on threats to national security and preparedness guidance for citizens. | report on threats to national security | [pl current](https://www.gov.pl/web/rcb/raport-o-zagrozeniach-bezpieczenstwa-narodowego) |
+| **CERT Polska** – CERT Polska<br>_CERT Polska (NASK)_<br>[cert.pl](https://cert.pl/) | Polish national CSIRT run by the NASK research institute. Annual reports on cyber incidents, phishing, malware and attacks on Polish internet users. | annual report | [pl archive](https://cert.pl/publikacje/) · [en archive](https://cert.pl/en/publications/) |
 
 ## Germany
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **BfV**<br>Bundesamt für Verfassungsschutz | intelligence-civil | Verfassungsschutzbericht<br>_English summary of the report exists; English publication page times out from here._ | [de archive](https://www.verfassungsschutz.de/DE/service/publikationen/publikationen_node.html) · [de current](https://www.verfassungsschutz.de/SharedDocs/publikationen/DE/verfassungsschutzberichte/2026-06-30-verfassungsschutzbericht-2025.html) · [de archive](https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht) · [de archive](https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht&gtp=714296_list%253D2) · [de archive](https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht&gtp=714296_list%253D3) |
-| **BMI**<br>Bundesministerium des Innern – Verfassungsschutzbericht | intelligence-civil | Verfassungsschutzbericht | [de current](https://www.bmi.bund.de/SharedDocs/downloads/DE/publikationen/themen/sicherheit/BMI26012-vsb2025.html) |
-| **BSI**<br>Bundesamt für Sicherheit in der Informationstechnik | cyber | Die Lage der IT-Sicherheit in Deutschland | [de archive](https://www.bsi.bund.de/DE/Service-Navi/Publikationen/Lagebericht/lagebericht_node.html) · [en archive](https://www.bsi.bund.de/EN/Service-Navi/Publikationen/Lagebericht/lagebericht_node.html) |
-| **BBK**<br>Bundesamt für Bevölkerungsschutz und Katastrophenhilfe | civil-protection | Risikoanalyse Bevölkerungsschutz Bund | [de archive](https://www.bbk.bund.de/DE/Themen/Risikomanagement/Risikoanalysen-Bund-Laender/risikoanalysen-bund-laender_node.html) |
-| **BKA**<br>Bundeskriminalamt – Lagebilder | police-ct | Bundeslagebild OK, Korruption, Cybercrime, PKS | [de archive](https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/statistikenlagebilder_node.html) |
+| **BfV** – Federal Office for the Protection of the Constitution<br>_Bundesamt für Verfassungsschutz_<br>[www.verfassungsschutz.de](https://www.verfassungsschutz.de/) | German domestic intelligence service. The annual Verfassungsschutzbericht covers right- and left-wing extremism, Islamism, espionage, sabotage, cyber attacks and proliferation. | Verfassungsschutzbericht<br>_English summary of the report exists; English publication page times out from here._ | [de archive](https://www.verfassungsschutz.de/DE/service/publikationen/publikationen_node.html) · [de current](https://www.verfassungsschutz.de/SharedDocs/publikationen/DE/verfassungsschutzberichte/2026-06-30-verfassungsschutzbericht-2025.html) · [de archive](https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht) · [de archive](https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht&gtp=714296_list%253D2) · [de archive](https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht&gtp=714296_list%253D3) |
+| **BMI** – Federal Ministry of the Interior<br>_Bundesministerium des Innern_<br>[www.bmi.bund.de](https://www.bmi.bund.de/) | German federal interior ministry, responsible for internal security and civil protection. Publishes the Verfassungsschutzbericht with BfV and national security-policy documents. | Verfassungsschutzbericht | [de current](https://www.bmi.bund.de/SharedDocs/downloads/DE/publikationen/themen/sicherheit/BMI26012-vsb2025.html) |
+| **BSI** – Federal Office for Information Security<br>_Bundesamt für Sicherheit in der Informationstechnik_<br>[www.bsi.bund.de](https://www.bsi.bund.de/) | Germany's national cyber-security authority. The annual report 'The State of IT Security in Germany' covers threat actors, ransomware, vulnerabilities and critical infrastructure. | Die Lage der IT-Sicherheit in Deutschland | [de archive](https://www.bsi.bund.de/DE/Service-Navi/Publikationen/Lagebericht/lagebericht_node.html) · [en archive](https://www.bsi.bund.de/EN/Service-Navi/Publikationen/Lagebericht/lagebericht_node.html) |
+| **BBK** – Federal Office of Civil Protection and Disaster Assistance<br>_Bundesamt für Bevölkerungsschutz und Katastrophenhilfe_<br>[www.bbk.bund.de](https://www.bbk.bund.de/) | German federal civil-protection agency. Risk analyses (floods, pandemics, power blackouts, heat), critical-infrastructure protection and citizen preparedness advice. | Risikoanalyse Bevölkerungsschutz Bund | [de archive](https://www.bbk.bund.de/DE/Themen/Risikomanagement/Risikoanalysen-Bund-Laender/risikoanalysen-bund-laender_node.html) |
+| **BKA** – Federal Criminal Police Office<br>_Bundeskriminalamt_<br>[www.bka.de](https://www.bka.de/) | German federal criminal police. National situation reports (Bundeslagebilder) on organised crime, cybercrime, corruption, human trafficking and politically motivated crime. | Bundeslagebild OK, Korruption, Cybercrime, PKS | [de archive](https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/statistikenlagebilder_node.html) |
 
 ## Austria
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **DSN**<br>Direktion Staatsschutz und Nachrichtendienst | intelligence-civil | Verfassungsschutzbericht | [de archive](https://www.dsn.gv.at/501/) |
-| **BMLV**<br>Bundesministerium für Landesverteidigung – Sicherheitspolitik (Risikobild) | intelligence-military | Risikobild | [de+en current](https://verteidigungspolitik.at/risikobild) · [de archive](https://www.bmlv.gv.at/wissen-forschung/publikationen/index.shtml) |
+| **DSN** – Directorate State Protection and Intelligence Service<br>_Direktion Staatsschutz und Nachrichtendienst_<br>[www.dsn.gv.at](https://www.dsn.gv.at/) | Austrian domestic intelligence and state-protection service. The annual Verfassungsschutzbericht covers extremism, terrorism, espionage and cyber threats. | Verfassungsschutzbericht | [de archive](https://www.dsn.gv.at/501/) |
+| **BMLV** – Federal Ministry of Defence<br>_Bundesministerium für Landesverteidigung_<br>[www.bundesheer.at](https://www.bundesheer.at/) | Austrian defence ministry. The annual Risikobild (Risk Monitor) assesses the international security environment and the risks it poses to Austria and Europe. | Risikobild | [de+en current](https://verteidigungspolitik.at/risikobild) · [de archive](https://www.bmlv.gv.at/wissen-forschung/publikationen/index.shtml) |
 
 ## Estonia
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **KAPO**<br>Kaitsepolitseiamet (Internal Security Service) | intelligence-civil | annual review<br>_Russian edition also published; no separate Russian page found._ | [en archive](https://kapo.ee/en/content/annual-reviews/) · [et archive](https://kapo.ee/et/aastaraamatud/) |
-| **VLA**<br>Välisluureamet (Foreign Intelligence Service) | intelligence-military | International Security and Estonia | [et current](https://raport.valisluureamet.ee/2026/) · [en current](https://raport.valisluureamet.ee/2026/en/) · [en archive](https://raport.valisluureamet.ee/2025/en/)<br>pattern: `https://www.valisluureamet.ee/doc/raport/{year}-{lang}.pdf` 2016–2026 |
-| **RIA**<br>Riigi Infosüsteemi Amet (Information System Authority, CERT-EE) | cyber | cyber security in Estonia yearbook, threat assessments | [et archive](https://www.ria.ee/amet-uudised-ja-kontakt/uudised-pressikontakt/uuringud-ja-analuusid) · [en archive](https://www.ria.ee/en/authority-news-and-contact/news-media-contact/studies-analyses-overviews) |
+| **KAPO** – Estonian Internal Security Service<br>_Kaitsepolitseiamet_<br>[kapo.ee](https://kapo.ee/) | Estonian counter-intelligence and security police. Annual reviews describe Russian intelligence and influence activities, extremism, terrorism and economic security, with concrete case examples. | annual review<br>_Russian edition also published; no separate Russian page found._ | [en archive](https://kapo.ee/en/content/annual-reviews/) · [et archive](https://kapo.ee/et/aastaraamatud/) |
+| **VLA** – Estonian Foreign Intelligence Service<br>_Välisluureamet_<br>[www.valisluureamet.ee](https://www.valisluureamet.ee/) | Estonia's foreign intelligence service. The annual 'International Security and Estonia' report analyses Russia's military, politics, economy and influence operations, and China. | International Security and Estonia | [et current](https://raport.valisluureamet.ee/2026/) · [en current](https://raport.valisluureamet.ee/2026/en/) · [en archive](https://raport.valisluureamet.ee/2025/en/)<br>pattern: `https://www.valisluureamet.ee/doc/raport/{year}-{lang}.pdf` 2016–2026 |
+| **RIA** – Estonian Information System Authority<br>_Riigi Infosüsteemi Amet_<br>[www.ria.ee](https://www.ria.ee/) | Estonian cyber-security authority and home of CERT-EE. Cyber security yearbooks, threat assessments and studies on the security of the digital state. | cyber security in Estonia yearbook, threat assessments | [et archive](https://www.ria.ee/amet-uudised-ja-kontakt/uudised-pressikontakt/uuringud-ja-analuusid) · [en archive](https://www.ria.ee/en/authority-news-and-contact/news-media-contact/studies-analyses-overviews) |
 
 ## Latvia
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **VDD**<br>Valsts drošības dienests (State Security Service) | intelligence-civil | annual report | [lv archive](https://vdd.gov.lv/noderigi/gada-parskati) · [en archive](https://vdd.gov.lv/en/useful/annual-reports) |
-| **SAB**<br>Satversmes aizsardzības birojs (Constitution Protection Bureau) | intelligence-civil | annual report | [lv archive](https://www.sab.gov.lv/gada-parskati/) · [en archive](https://www.sab.gov.lv/en/annual-reports/) |
-| **MIDD**<br>Militārās izlūkošanas un drošības dienests | intelligence-military | threat assessment and activity report | [lv archive](https://www.midd.gov.lv/lv/parskati) · [en archive](https://www.midd.gov.lv/en/node/29) |
+| **VDD** – State Security Service<br>_Valsts drošības dienests_<br>[vdd.gov.lv](https://vdd.gov.lv/) | Latvian counter-intelligence and internal security service. Annual reports on Russian intelligence and influence, extremism, terrorism and protection of the constitutional order. | annual report | [lv archive](https://vdd.gov.lv/noderigi/gada-parskati) · [en archive](https://vdd.gov.lv/en/useful/annual-reports) |
+| **SAB** – Constitution Protection Bureau<br>_Satversmes aizsardzības birojs_<br>[www.sab.gov.lv](https://www.sab.gov.lv/) | Latvian foreign intelligence service and national cyber-security coordinator. Annual reports and analytical reports on Russia and threats to Western countries. | annual report | [lv archive](https://www.sab.gov.lv/gada-parskati/) · [en archive](https://www.sab.gov.lv/en/annual-reports/) |
+| **MIDD** – Defence Intelligence and Security Service<br>_Militārās izlūkošanas un drošības dienests_<br>[www.midd.gov.lv](https://www.midd.gov.lv/) | Latvian military intelligence. Annual threat assessments on Russia's armed forces, hybrid activity, sabotage and information operations against Latvia. | threat assessment and activity report | [lv archive](https://www.midd.gov.lv/lv/parskati) · [en archive](https://www.midd.gov.lv/en/node/29) |
 
 ## Lithuania
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **VSD + AOTD**<br>Valstybės saugumo departamentas & Antrasis operatyvinių tarnybų departamentas – National Threat Assessment | intelligence-civil | National Threat Assessment | [en current ⚠](https://www.vsd.lt/en/reports/national-threat-assessment-2026/) · [en archive ⚠](https://www.vsd.lt/en/threats/threats-national-security-lithuania/) · [lt archive ⚠](https://www.vsd.lt/gresmes/gresmes-nacionaliniam-saugumui/) |
-| **NKSC**<br>Nacionalinis kibernetinio saugumo centras | cyber | national cyber security status report | [lt archive ⚠](https://www.nksc.lt/aktualu.html) |
+| **VSD + AOTD** – State Security Department; Defence Intelligence and Security Service<br>_Valstybės saugumo departamentas; Antrasis operatyvinių tarnybų departamentas_<br>[www.vsd.lt](https://www.vsd.lt/) | Lithuania's civil and military intelligence services. Their joint annual National Threat Assessment covers Russia, Belarus, China, military threats, cyber and influence operations. | National Threat Assessment | [en current ⚠](https://www.vsd.lt/en/reports/national-threat-assessment-2026/) · [en archive ⚠](https://www.vsd.lt/en/threats/threats-national-security-lithuania/) · [lt archive ⚠](https://www.vsd.lt/gresmes/gresmes-nacionaliniam-saugumui/) |
+| **NKSC** – National Cyber Security Centre<br>_Nacionalinis kibernetinio saugumo centras_<br>[www.nksc.lt](https://www.nksc.lt/) | Lithuanian national cyber-security authority under the Ministry of National Defence. Annual national cyber-security status reports. | national cyber security status report | [lt archive ⚠](https://www.nksc.lt/aktualu.html) |
 
 ## Finland
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **Supo**<br>Suojelupoliisi (Finnish Security and Intelligence Service) | intelligence-civil | National Security Overview | [fi current](https://supo.fi/katsaus) · [sv current](https://supo.fi/sv/oversikt) · [en current](https://supo.fi/en/overview) |
-| **Traficom NCSC-FI**<br>Kyberturvallisuuskeskus (National Cyber Security Centre Finland) | cyber | cyber security year review | [fi current](https://vuosiraportit.traficom.fi/fi/kyberturvallisuuden-vuosi-2025) |
-| **Turvallisuuskomitea**<br>The Security Committee | civil-protection | Security Strategy for Society | [fi current](https://turvallisuuskomitea.fi/yhteiskunnan-turvallisuusstrategia/) · [sv current](https://turvallisuuskomitea.fi/sv/sakerhetsstrategi-for-samhallet/) · [en current](https://turvallisuuskomitea.fi/en/security-strategy-for-society/) |
+| **Supo** – Finnish Security and Intelligence Service<br>_Suojelupoliisi_<br>[supo.fi](https://supo.fi/) | Finnish security and intelligence service. The annual National Security Overview covers state espionage and influence, terrorism and threats to critical infrastructure. | National Security Overview | [fi current](https://supo.fi/katsaus) · [sv current](https://supo.fi/sv/oversikt) · [en current](https://supo.fi/en/overview) |
+| **Traficom NCSC-FI** – National Cyber Security Centre Finland<br>_Kyberturvallisuuskeskus (Liikenne- ja viestintävirasto Traficom)_<br>[www.kyberturvallisuuskeskus.fi](https://www.kyberturvallisuuskeskus.fi/) | Finland's national cyber-security centre within Traficom. Annual cyber-security reviews, weekly reviews and 'cyber weather' situation reports. | cyber security year review | [fi current](https://vuosiraportit.traficom.fi/fi/kyberturvallisuuden-vuosi-2025) |
+| **Turvallisuuskomitea** – The Security Committee<br>_Turvallisuuskomitea_<br>[turvallisuuskomitea.fi](https://turvallisuuskomitea.fi/) | Finnish government body for comprehensive security. Publishes the Security Strategy for Society and preparedness guidance based on the Finnish comprehensive-security model. | Security Strategy for Society | [fi current](https://turvallisuuskomitea.fi/yhteiskunnan-turvallisuusstrategia/) · [sv current](https://turvallisuuskomitea.fi/sv/sakerhetsstrategi-for-samhallet/) · [en current](https://turvallisuuskomitea.fi/en/security-strategy-for-society/) |
 
 ## Sweden
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **Säpo**<br>Säkerhetspolisen (Swedish Security Service) | intelligence-civil | Säkerhetspolisens lägesbild / annual assessment | [sv archive ⚠](https://www.sakerhetspolisen.se/om-sakerhetspolisen/publikationer/sakerhetspolisens-lagesbilder.html) · [en archive ⚠](https://sakerhetspolisen.se/ovriga-sidor/other-languages/english-engelska/press-room/the-swedish-security-services-annual-assesments.html) |
-| **MUST**<br>Militära underrättelse- och säkerhetstjänsten | intelligence-military | Must årsöversikt | [sv current](https://www.forsvarsmakten.se/aktuellt/nyheter/must-arsoversikt-2025/) |
-| **MCF (ex-MSB)**<br>Myndigheten för civilt försvar (formerly MSB) | civil-protection | national risk and capability assessment, preparedness guidance | [sv archive](https://www.mcf.se/sv/publikationer/) · [en archive](https://www.mcf.se/en/publications/) |
+| **Säpo** – Swedish Security Service<br>_Säkerhetspolisen_<br>[www.sakerhetspolisen.se](https://www.sakerhetspolisen.se/) | Swedish security and counter-intelligence service. The annual assessment covers foreign powers' espionage and influence, violent extremism, terrorism and protective security. | Säkerhetspolisens lägesbild / annual assessment | [sv archive ⚠](https://www.sakerhetspolisen.se/om-sakerhetspolisen/publikationer/sakerhetspolisens-lagesbilder.html) · [en archive ⚠](https://sakerhetspolisen.se/ovriga-sidor/other-languages/english-engelska/press-room/the-swedish-security-services-annual-assesments.html) |
+| **MUST** – Military Intelligence and Security Service<br>_Militära underrättelse- och säkerhetstjänsten_<br>[www.forsvarsmakten.se](https://www.forsvarsmakten.se/) | Swedish military intelligence within the Armed Forces. Annual overviews of the military threat, Russia, hybrid activity and security threats to Swedish defence. | Must årsöversikt | [sv current](https://www.forsvarsmakten.se/aktuellt/nyheter/must-arsoversikt-2025/) |
+| **MCF (ex-MSB)** – Swedish Civil Defence and Resilience Agency<br>_Myndigheten för civilt försvar_<br>[www.mcf.se](https://www.mcf.se/) | Swedish civil-defence and emergency-preparedness agency (formerly MSB). National risk and capability assessments and crisis-preparedness guidance such as 'In case of crisis or war'. | national risk and capability assessment, preparedness guidance | [sv archive](https://www.mcf.se/sv/publikationer/) · [en archive](https://www.mcf.se/en/publications/) |
 
 ## Denmark
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **PET**<br>Politiets Efterretningstjeneste (incl. Center for Terroranalyse) | intelligence-civil | Vurdering af terrortruslen mod Danmark, espionage threat assessment | [da archive ⚠](https://pet.dk/pets-opgaver/trusselsvurderinger-og-analyser) |
-| **FE**<br>Forsvarets Efterretningstjeneste | intelligence-military | Efterretningsmæssig Risikovurdering / Intelligence Risk Assessment<br>_English Intelligence Outlook is published as web pages; PDFs mainly in Danish._ | [da archive](https://www.fe-ddis.dk/da/produkter/Risikovurdering/) · [en archive](https://www.fe-ddis.dk/en/produkter/Risk_assessment/) |
-| **SAMSIK (ex-CFCS)**<br>Styrelsen for Samfundssikkerhed (cyber threat assessments, national risk picture) | cyber | cyber threat assessment, Nationalt Risikobillede | [da archive](https://samsik.dk/publikations-kategori/da/trusselsvurderinger/) · [da series](https://samsik.dk/nationalt-risikobillede/) · [en current](https://samsik.dk/en/) |
-| **BRS**<br>Beredskabsstyrelsen (Danish Emergency Management Agency) | civil-protection | Nationalt Risikobillede, publications | [da series](https://www.brs.dk/da/redningsberedskab-myndighed/krisestyring2-og-beredskabsplanlagning/nationalt-risikobillede/) · [da archive](https://www.brs.dk/da/nyheder-og-publikationer/publikationer2/) · [en current](https://www.brs.dk/en/nyheder-og-publikationer/publikationer2/alle-publikationer/2022/national-risk-profile/) |
+| **PET** – Danish Security and Intelligence Service<br>_Politiets Efterretningstjeneste_<br>[pet.dk](https://pet.dk/) | Danish domestic security and intelligence service. Its Centre for Terror Analysis issues the annual terror threat assessment; PET also publishes espionage threat assessments. | Vurdering af terrortruslen mod Danmark, espionage threat assessment | [da archive ⚠](https://pet.dk/pets-opgaver/trusselsvurderinger-og-analyser) |
+| **FE** – Danish Defence Intelligence Service<br>_Forsvarets Efterretningstjeneste_<br>[www.fe-ddis.dk](https://www.fe-ddis.dk/) | Danish foreign and military intelligence. The annual Intelligence Outlook covers Russia, China, the Arctic, terrorism and cyber threats against Denmark. | Efterretningsmæssig Risikovurdering / Intelligence Risk Assessment<br>_English Intelligence Outlook is published as web pages; PDFs mainly in Danish._ | [da archive](https://www.fe-ddis.dk/da/produkter/Risikovurdering/) · [en archive](https://www.fe-ddis.dk/en/produkter/Risk_assessment/) |
+| **SAMSIK (ex-CFCS)** – Danish Resilience Agency<br>_Styrelsen for Samfundssikkerhed_<br>[samsik.dk](https://samsik.dk/) | Danish resilience agency (incl. the former Centre for Cyber Security). Cyber threat assessments, the National Risk Picture and total-defence preparedness material. | cyber threat assessment, Nationalt Risikobillede | [da archive](https://samsik.dk/publikations-kategori/da/trusselsvurderinger/) · [da series](https://samsik.dk/nationalt-risikobillede/) · [en current](https://samsik.dk/en/) |
+| **BRS** – Danish Emergency Management Agency<br>_Beredskabsstyrelsen_<br>[www.brs.dk](https://www.brs.dk/) | Danish emergency-management agency. National risk profile, rescue-service statistics, research and preparedness publications. | Nationalt Risikobillede, publications | [da series](https://www.brs.dk/da/redningsberedskab-myndighed/krisestyring2-og-beredskabsplanlagning/nationalt-risikobillede/) · [da archive](https://www.brs.dk/da/nyheder-og-publikationer/publikationer2/) · [en current](https://www.brs.dk/en/nyheder-og-publikationer/publikationer2/alle-publikationer/2022/national-risk-profile/) |
 
 ## Netherlands
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **AIVD**<br>Algemene Inlichtingen- en Veiligheidsdienst | intelligence-civil | jaarverslag / annual report | [nl archive](https://www.aivd.nl/onderwerpen/jaarverslagen) · [nl archive](https://www.aivd.nl/documenten) · [en archive](https://english.aivd.nl/documents) |
-| **MIVD**<br>Militaire Inlichtingen- en Veiligheidsdienst | intelligence-military | openbaar jaarverslag | [nl current](https://www.defensie.nl/documenten/2026/04/21/openbaar-jaarverslag-2025-militaire-inlichtingen--en-veiligheidsdienst) · [nl archive](https://www.eerstekamer.nl/kamerstukdossier/verslagen_aivd_en_mivd) |
-| **NCTV**<br>Nationaal Coördinator Terrorismebestrijding en Veiligheid | police-ct | Dreigingsbeeld Terrorisme Nederland, Cybersecuritybeeld Nederland | [nl archive](https://www.nctv.nl/documenten) · [en archive](https://english.nctv.nl/documents) |
-| **NCSC-NL**<br>Nationaal Cyber Security Centrum | cyber | publications | [nl current](https://www.ncsc.nl/cybersecurity-themas) |
+| **AIVD** – General Intelligence and Security Service<br>_Algemene Inlichtingen- en Veiligheidsdienst_<br>[www.aivd.nl](https://www.aivd.nl/) | Dutch civil intelligence and security service. Annual reports cover state actors (Russia, China, Iran), terrorism, extremism and cyber espionage. | jaarverslag / annual report | [nl archive](https://www.aivd.nl/onderwerpen/jaarverslagen) · [nl archive](https://www.aivd.nl/documenten) · [en archive](https://english.aivd.nl/documents) |
+| **MIVD** – Defence Intelligence and Security Service<br>_Militaire Inlichtingen- en Veiligheidsdienst_<br>[www.defensie.nl/onderwerpen/militaire-inlichtingen-en-veiligheid](https://www.defensie.nl/onderwerpen/militaire-inlichtingen-en-veiligheid) | Dutch military intelligence. Annual reports on military threats, Russia and the war in Ukraine, China and threats against the defence sector. | openbaar jaarverslag | [nl current](https://www.defensie.nl/documenten/2026/04/21/openbaar-jaarverslag-2025-militaire-inlichtingen--en-veiligheidsdienst) · [nl archive](https://www.eerstekamer.nl/kamerstukdossier/verslagen_aivd_en_mivd) |
+| **NCTV** – National Coordinator for Security and Counterterrorism<br>_Nationaal Coördinator Terrorismebestrijding en Veiligheid_<br>[www.nctv.nl](https://www.nctv.nl/) | Coordinates Dutch counter-terrorism, cyber security and crisis management. Publishes the Terrorist Threat Assessment Netherlands (DTN) and the Cyber Security Assessment Netherlands (CSBN). | Dreigingsbeeld Terrorisme Nederland, Cybersecuritybeeld Nederland | [nl archive](https://www.nctv.nl/documenten) · [en archive](https://english.nctv.nl/documents) |
+| **NCSC-NL** – National Cyber Security Centre<br>_Nationaal Cyber Security Centrum_<br>[www.ncsc.nl](https://www.ncsc.nl/) | Dutch national cyber-security centre for government and vital sectors. Security advisories, threat information and guidance. | publications | [nl current](https://www.ncsc.nl/cybersecurity-themas) |
 
 ## Belgium
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **VSSE**<br>Veiligheid van de Staat / Sûreté de l'État | intelligence-civil | intelligence report | [nl archive](https://vsse.be/nl/publicaties) · [fr archive](https://vsse.be/fr/publications) · [en current](https://www.vsse.be/nl/nieuws/intelligence-report-2025-english) |
-| **OCAD/OCAM/CUTA**<br>Coördinatieorgaan voor de dreigingsanalyse | police-ct | annual report, threat analysis | [nl archive](https://ocad.belgium.be/publicaties/) · [fr archive](https://ocam.belgium.be/publications/) · [de archive](https://koba.belgium.be/veroeffentlichungen/) · [en archive](https://cuta.belgium.be/publications/) |
-| **CCB**<br>Centre for Cybersecurity Belgium | cyber | annual report, key figures | [en current ⚠](https://ccb.belgium.be/news/key-figures-2025) · [nl current ⚠](https://ccb.belgium.be/nl/news/kerncijfers-2025) · [fr current ⚠](https://ccb.belgium.be/fr/news/chiffres-cles-2025) · [de current ⚠](https://ccb.belgium.be/de/news/kennzahlen-2025) |
+| **VSSE** – State Security Service<br>_Veiligheid van de Staat / Sûreté de l'État_<br>[www.vsse.be](https://www.vsse.be/) | Belgian civil intelligence service. Its public intelligence report covers espionage, foreign interference, extremism, terrorism and proliferation. | intelligence report | [nl archive](https://vsse.be/nl/publicaties) · [fr archive](https://vsse.be/fr/publications) · [en current](https://www.vsse.be/nl/nieuws/intelligence-report-2025-english) |
+| **OCAD/OCAM/CUTA** – Coordination Unit for Threat Analysis<br>_Coördinatieorgaan voor de dreigingsanalyse / Organe de coordination pour l'analyse de la menace_<br>[cuta.belgium.be](https://cuta.belgium.be/) | Belgian threat-assessment body that sets the national terror threat level. Annual reports and analyses of terrorism and violent extremism. | annual report, threat analysis | [nl archive](https://ocad.belgium.be/publicaties/) · [fr archive](https://ocam.belgium.be/publications/) · [de archive](https://koba.belgium.be/veroeffentlichungen/) · [en archive](https://cuta.belgium.be/publications/) |
+| **CCB** – Centre for Cybersecurity Belgium<br>_Centrum voor Cybersecurity België / Centre pour la Cybersécurité Belgique_<br>[ccb.belgium.be](https://ccb.belgium.be/) | Belgian national cyber-security authority (CERT.be). Annual reports and key figures on cyber threats, phishing and incidents in Belgium. | annual report, key figures | [en current ⚠](https://ccb.belgium.be/news/key-figures-2025) · [nl current ⚠](https://ccb.belgium.be/nl/news/kerncijfers-2025) · [fr current ⚠](https://ccb.belgium.be/fr/news/chiffres-cles-2025) · [de current ⚠](https://ccb.belgium.be/de/news/kennzahlen-2025) |
 
 ## France
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **SGDSN**<br>Secrétariat général de la défense et de la sécurité nationale | civil-protection | Revue nationale stratégique, activity report | [fr archive](https://www.sgdsn.gouv.fr/publications) |
-| **ANSSI**<br>Agence nationale de la sécurité des systèmes d'information | cyber | Panorama de la cybermenace, activity report | [fr series](https://cyber.gouv.fr/nous-connaitre/publications/panoramas-de-la-cybermenace/) · [fr series](https://www.cert.ssi.gouv.fr/cti/) · [fr archive](https://cyber.gouv.fr/nous-connaitre/publications/) · [en archive](https://cyber.gouv.fr/en/publications/) |
-| **VIGINUM**<br>VIGINUM (SGDSN – foreign digital interference) | intelligence-civil | FIMI threat reports | [fr current](https://www.sgdsn.gouv.fr/nos-missions/proteger/proteger-le-debat-public-contre-les-ingerences-numeriques-etrangeres) |
+| **SGDSN** – General Secretariat for National Defence and Security<br>_Secrétariat général de la défense et de la sécurité nationale_<br>[www.sgdsn.gouv.fr](https://www.sgdsn.gouv.fr/) | Supports the French Prime Minister on defence and national security. National Strategic Review, national resilience and crisis-management documents. | Revue nationale stratégique, activity report | [fr archive](https://www.sgdsn.gouv.fr/publications) |
+| **ANSSI** – National Cybersecurity Agency of France<br>_Agence nationale de la sécurité des systèmes d'information_<br>[cyber.gouv.fr](https://cyber.gouv.fr/) | French national cyber-security authority. The annual 'Panorama de la cybermenace' and CERT-FR threat reports cover state-sponsored attacks, ransomware and threats by sector. | Panorama de la cybermenace, activity report | [fr series](https://cyber.gouv.fr/nous-connaitre/publications/panoramas-de-la-cybermenace/) · [fr series](https://www.cert.ssi.gouv.fr/cti/) · [fr archive](https://cyber.gouv.fr/nous-connaitre/publications/) · [en archive](https://cyber.gouv.fr/en/publications/) |
+| **VIGINUM** – Service for Vigilance and Protection against Foreign Digital Interference<br>_Service de vigilance et de protection contre les ingérences numériques étrangères_<br>[www.sgdsn.gouv.fr](https://www.sgdsn.gouv.fr/) | French agency detecting foreign information-manipulation campaigns. Technical reports on specific disinformation operations targeting France and Europe. | FIMI threat reports | [fr current](https://www.sgdsn.gouv.fr/nos-missions/proteger/proteger-le-debat-public-contre-les-ingerences-numeriques-etrangeres) |
 
 ## Italy
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **DIS / Sistema di informazione**<br>Sistema di informazione per la sicurezza della Repubblica (DIS, AISE, AISI) | intelligence-civil | Relazione sulla politica dell'informazione per la sicurezza<br>_Reports since 2007. JavaScript site – each year at relazione-al-parlamento-{year}._ | [it current](https://www.sicurezzanazionale.gov.it/contenuti/relazione-al-parlamento-2025)<br>pattern: `https://www.sicurezzanazionale.gov.it/contenuti/relazione-al-parlamento-{year}` 2007–2025 |
-| **ACN**<br>Agenzia per la Cybersicurezza Nazionale | cyber | Relazione annuale al Parlamento | [it archive](https://www.acn.gov.it/portale/relazione-annuale) · [it current](https://www.acn.gov.it/portale/relazione-annuale/2025) · [en current](https://www.acn.gov.it/portale/en/2024-year-in-review) |
-| **Protezione Civile**<br>Dipartimento della Protezione Civile | civil-protection | publications, risk reports | [it archive](https://www.protezionecivile.gov.it/it/pubblicazioni/) |
+| **DIS / Sistema di informazione** – Intelligence System for the Security of the Republic<br>_Sistema di informazione per la sicurezza della Repubblica_<br>[www.sicurezzanazionale.gov.it](https://www.sicurezzanazionale.gov.it/) | Italy's intelligence community (DIS, AISE, AISI). The annual report to Parliament covers geopolitics, terrorism, cyber threats, economic security and hybrid threats. | Relazione sulla politica dell'informazione per la sicurezza<br>_Reports since 2007. JavaScript site – each year at relazione-al-parlamento-{year}._ | [it current](https://www.sicurezzanazionale.gov.it/contenuti/relazione-al-parlamento-2025)<br>pattern: `https://www.sicurezzanazionale.gov.it/contenuti/relazione-al-parlamento-{year}` 2007–2025 |
+| **ACN** – National Cybersecurity Agency<br>_Agenzia per la Cybersicurezza Nazionale_<br>[www.acn.gov.it](https://www.acn.gov.it/) | Italian national cyber-security authority (home of CSIRT Italia). Annual report to Parliament and operational summaries of the cyber threat. | Relazione annuale al Parlamento | [it archive](https://www.acn.gov.it/portale/relazione-annuale) · [it current](https://www.acn.gov.it/portale/relazione-annuale/2025) · [en current](https://www.acn.gov.it/portale/en/2024-year-in-review) |
+| **Protezione Civile** – Civil Protection Department<br>_Dipartimento della Protezione Civile_<br>[www.protezionecivile.gov.it](https://www.protezionecivile.gov.it/) | Italian national civil-protection department. Publications on seismic, volcanic, hydro-geological and other risks, emergency planning and citizen preparedness. | publications, risk reports | [it archive](https://www.protezionecivile.gov.it/it/pubblicazioni/) |
 
 ## Spain
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **DSN**<br>Departamento de Seguridad Nacional | civil-protection | Informe Anual de Seguridad Nacional<br>_Reports in Spanish; some editions also in Galician, Catalan, Basque. English section of site, no English reports found._ | [es archive](https://www.dsn.gob.es/es/publicaciones/informes-anuales) · [en archive](https://www.dsn.gob.es/en/publicaciones/informes-anuales) · [es archive](https://www.dsn.gob.es/es/publicaciones?tags=All) |
-| **CCN-CERT**<br>Centro Criptológico Nacional (CNI) | cyber | Ciberamenazas y Tendencias | [es archive ⚠](https://www.ccn-cert.cni.es/es/informes/informes-ccn-cert-publicos.html) |
-| **Ministerio del Interior**<br>Ministerio del Interior – Anuarios estadísticos | police-ct | statistical yearbook | [es archive ⚠](https://www.interior.gob.es/opencms/es/archivos-y-documentacion/documentacion-y-publicaciones/anuarios-y-estadisticas/) |
+| **DSN** – Department of National Security<br>_Departamento de Seguridad Nacional_<br>[www.dsn.gob.es](https://www.dsn.gob.es/) | Supports the Spanish Prime Minister on national security. The Annual National Security Report reviews all national-security areas, from terrorism and cyber to pandemics and climate. | Informe Anual de Seguridad Nacional<br>_Reports in Spanish; some editions also in Galician, Catalan, Basque. English section of site, no English reports found._ | [es archive](https://www.dsn.gob.es/es/publicaciones/informes-anuales) · [en archive](https://www.dsn.gob.es/en/publicaciones/informes-anuales) · [es archive](https://www.dsn.gob.es/es/publicaciones?tags=All) |
+| **CCN-CERT** – National Cryptologic Centre – CERT<br>_Centro Criptológico Nacional – CERT_<br>[www.ccn-cert.cni.es](https://www.ccn-cert.cni.es/) | Spanish governmental CERT attached to the intelligence service CNI. Annual 'Cyber Threats and Trends' report and security guides. | Ciberamenazas y Tendencias | [es archive ⚠](https://www.ccn-cert.cni.es/es/informes/informes-ccn-cert-publicos.html) |
+| **Ministerio del Interior** – Ministry of the Interior<br>_Ministerio del Interior_<br>[www.interior.gob.es](https://www.interior.gob.es/) | Spanish interior ministry. Statistical yearbooks and crime reports, including hate crime and cybercrime. | statistical yearbook | [es archive ⚠](https://www.interior.gob.es/opencms/es/archivos-y-documentacion/documentacion-y-publicaciones/anuarios-y-estadisticas/) |
 
 ## Portugal
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **SSI**<br>Sistema de Segurança Interna – Relatório Anual de Segurança Interna (RASI) | police-ct | RASI | [pt archive ⚠](https://ssi.gov.pt/publicacoes/relatorio-anual-de-seguranca-interna/) · [pt current](https://www.portugal.gov.pt/pt/gc25/comunicacao/documentos/rasi-2025-relatorio-anual-de-seguranca-interna) |
-| **CNCS**<br>Centro Nacional de Cibersegurança – Observatório | cyber | Riscos & Conflitos | [pt archive ⚠](https://www.cncs.gov.pt/pt/observatorio/) |
+| **SSI** – Internal Security System<br>_Sistema de Segurança Interna_<br>[www.ssi.gov.pt](https://www.ssi.gov.pt/) | Coordinates Portugal's internal-security forces. The Annual Internal Security Report (RASI) covers crime, terrorism, extremism, cybercrime and civil protection. | RASI | [pt archive ⚠](https://ssi.gov.pt/publicacoes/relatorio-anual-de-seguranca-interna/) · [pt current](https://www.portugal.gov.pt/pt/gc25/comunicacao/documentos/rasi-2025-relatorio-anual-de-seguranca-interna) |
+| **CNCS** – National Cybersecurity Centre<br>_Centro Nacional de Cibersegurança_<br>[www.cncs.gov.pt](https://www.cncs.gov.pt/) | Portuguese national cyber-security authority. Its observatory publishes the annual 'Risks & Conflicts' report on cyber threats to Portugal. | Riscos & Conflitos | [pt archive ⚠](https://www.cncs.gov.pt/pt/observatorio/) |
 
 ## Hungary
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **NBSZ NKI**<br>Nemzetbiztonsági Szakszolgálat – Nemzeti Kibervédelmi Intézet | cyber | cyber threat analyses<br>_Hungarian civil intelligence (AH, IH) publish no regular public reports._ | [hu archive](https://nki.gov.hu/it-biztonsag/elemzesek/) |
+| **NBSZ NKI** – Special Service for National Security – National Cyber Security Center<br>_Nemzetbiztonsági Szakszolgálat – Nemzeti Kibervédelmi Intézet_<br>[nki.gov.hu](https://nki.gov.hu/) | Hungarian national cyber-security centre (NCSC-HU). Analyses and threat assessments of cyber incidents affecting Hungary. | cyber threat analyses<br>_Hungarian civil intelligence (AH, IH) publish no regular public reports._ | [hu archive](https://nki.gov.hu/it-biztonsag/elemzesek/) |
 
 ## Romania
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **SRI**<br>Serviciul Român de Informații | intelligence-civil | raport de activitate<br>_Reports 2021+ remain classified until approved by full Parliament; last public one covers 2020._ | [ro archive](https://www.sri.ro/rapoarte-de-activitate) |
-| **SRR**<br>Serviciul de Informații Externe | intelligence-military | activity report | [ro+en archive](https://www.srr.ro/informatii-publice/rapoarte/) |
-| **DNSC**<br>Directoratul Național de Securitate Cibernetică | cyber | annual activity report, cyber risk assessment | [ro archive ⚠](https://www.dnsc.ro/doc/raport) |
+| **SRI** – Romanian Intelligence Service<br>_Serviciul Român de Informații_<br>[www.sri.ro](https://www.sri.ro/) | Romanian domestic intelligence service. Activity reports (last public edition covers 2020) on espionage, terrorism, cyber threats and economic security. | raport de activitate<br>_Reports 2021+ remain classified until approved by full Parliament; last public one covers 2020._ | [ro archive](https://www.sri.ro/rapoarte-de-activitate) |
+| **DNSC** – National Cyber Security Directorate<br>_Directoratul Național de Securitate Cibernetică_<br>[www.dnsc.ro](https://www.dnsc.ro/) | Romanian national cyber-security authority and CERT. Annual activity reports and cyber risk assessments. | annual activity report, cyber risk assessment | [ro archive ⚠](https://www.dnsc.ro/doc/raport) |
 
 ## Bulgaria
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **ДАНС / DANS**<br>Държавна агенция „Национална сигурност“ | intelligence-civil | годишен доклад, radicalisation reports | [bg archive](https://www.dans.bg/bg/activityreport) · [bg archive](https://www.dans.bg/bg/activities/reports) · [bg series](https://www.dans.bg/bg/activities/radicalisation-reports) |
+| **ДАНС / DANS** – State Agency for National Security<br>_Държавна агенция „Национална сигурност“_<br>[www.dans.bg](https://www.dans.bg/) | Bulgarian counter-intelligence and national-security agency. Annual activity reports cover foreign intelligence activity, hybrid threats, terrorism, radicalisation and economic security. | годишен доклад, radicalisation reports | [bg archive](https://www.dans.bg/bg/activityreport) · [bg archive](https://www.dans.bg/bg/activities/reports) · [bg series](https://www.dans.bg/bg/activities/radicalisation-reports) |
 
 ## Croatia
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **SOA**<br>Sigurnosno-obavještajna agencija | intelligence-civil | javno izvješće / public report<br>_Public reports 2014–2022 and 2025; none found for 2023–2024._ | [hr archive](https://soa.hr/hr/javni-dokumenti-soa-e/194) · [en archive](https://soa.hr/en/public-documents-soa/194) |
+| **SOA** – Security and Intelligence Agency<br>_Sigurnosno-obavještajna agencija_<br>[www.soa.hr](https://www.soa.hr/) | Croatian security and intelligence service. Public reports describe the security environment, foreign intelligence activity, terrorism, extremism and cyber threats. | javno izvješće / public report<br>_Public reports 2014–2022 and 2025; none found for 2023–2024._ | [hr archive](https://soa.hr/hr/javni-dokumenti-soa-e/194) · [en archive](https://soa.hr/en/public-documents-soa/194) |
 
 ## Slovenia
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **SOVA**<br>Slovenska obveščevalno-varnostna agencija | intelligence-civil | Aktivnosti SOVE | [sl archive](https://www.gov.si/drzavni-organi/vladne-sluzbe/slovenska-obvescevalno-varnostna-agencija/) |
-| **SI-CERT**<br>Slovenian national CERT | cyber | letno poročilo | [sl archive](https://www.cert.si/letna_porocila/) |
+| **SOVA** – Slovenian Intelligence and Security Agency<br>_Slovenska obveščevalno-varnostna agencija_<br>[www.gov.si/drzavni-organi/vladne-sluzbe/slovenska-obvescevalno-varnostna-agencija](https://www.gov.si/drzavni-organi/vladne-sluzbe/slovenska-obvescevalno-varnostna-agencija/) | Slovenian civil intelligence and security agency. Annual activity summaries on the security situation, terrorism, extremism, cyber and hybrid threats. | Aktivnosti SOVE | [sl archive](https://www.gov.si/drzavni-organi/vladne-sluzbe/slovenska-obvescevalno-varnostna-agencija/) |
+| **SI-CERT** – Slovenian Computer Emergency Response Team<br>_SI-CERT (Nacionalni odzivni center za kibernetsko varnost)_<br>[www.cert.si](https://www.cert.si/) | Slovenian national CERT. Annual reports on cyber incidents, fraud and threats handled in Slovenia. | letno poročilo | [sl archive](https://www.cert.si/letna_porocila/) |
 
 ## Greece
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **NCSA**<br>National Cybersecurity Authority | cyber | strategy, handbooks<br>_Greek intelligence (EYP) and civil protection publish no regular public threat reports._ | [en current](https://cyber.gov.gr/en/) |
+| **NCSA** – National Cybersecurity Authority<br>_Εθνική Αρχή Κυβερνοασφάλειας_<br>[cyber.gov.gr](https://cyber.gov.gr/) | Greek national cyber-security authority. National cyber-security strategy, handbooks and guidance. | strategy, handbooks<br>_Greek intelligence (EYP) and civil protection publish no regular public threat reports._ | [en current](https://cyber.gov.gr/en/) |
 
 ## Cyprus
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **DSA**<br>Digital Security Authority | cyber | annual report | [el archive](https://dsa.cy/the-dsa/annual-reports) |
+| **DSA** – Digital Security Authority<br>_Αρχή Ψηφιακής Ασφάλειας_<br>[dsa.cy](https://dsa.cy/) | Cypriot national cyber-security authority (CSIRT-CY). Annual reports on cyber incidents and national cyber security. | annual report | [el archive](https://dsa.cy/the-dsa/annual-reports) |
 
 ## Luxembourg
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **SRE**<br>Service de renseignement de l'État – parliamentary oversight | intelligence-civil | oversight commission report | [fr current](https://sre.gouvernement.lu/fr/supervision.html) |
-| **HCPN**<br>Haut-Commissariat à la Protection nationale | civil-protection | publications | [fr archive](https://hcpn.gouvernement.lu/fr/actualites/publications.html) |
+| **SRE** – State Intelligence Service<br>_Service de renseignement de l'État_<br>[sre.gouvernement.lu](https://sre.gouvernement.lu/) | Luxembourg's intelligence service. Public information is mainly the annual report of the parliamentary oversight commission. | oversight commission report | [fr current](https://sre.gouvernement.lu/fr/supervision.html) |
+| **HCPN** – High Commission for National Protection<br>_Haut-Commissariat à la Protection nationale_<br>[hcpn.gouvernement.lu](https://hcpn.gouvernement.lu/) | Luxembourg's crisis-management and national-protection body. Publications on crisis preparedness, critical infrastructure and national risk. | publications | [fr archive](https://hcpn.gouvernement.lu/fr/actualites/publications.html) |
 
 ## Ireland
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **Dept. of the Taoiseach**<br>National (Strategic) Risk Assessment | civil-protection | National Risk Assessment<br>_Published 2014–2024; none in 2025; 2026 edition in consultation._ | [en current](https://www.gov.ie/en/department-of-the-taoiseach/policy-information/national-risk-assessment-2023-overview-of-strategic-risks/) |
-| **NCSC-IE**<br>National Cyber Security Centre Ireland | cyber | National Cyber Risk Assessment | [en current](https://www.ncsc.gov.ie/ncra/) |
-| **OEP**<br>Office of Emergency Planning | civil-protection | emergency planning publications | [en current](https://www.gov.ie/en/office-of-emergency-planning/) |
+| **Dept. of the Taoiseach** – Department of the Taoiseach<br>_Roinn an Taoisigh_<br>[www.gov.ie/en/department-of-the-taoiseach](https://www.gov.ie/en/department-of-the-taoiseach/) | Irish Prime Minister's department. The National Risk Assessment identifies strategic geopolitical, economic, social, environmental and technological risks for Ireland. | National Risk Assessment<br>_Published 2014–2024; none in 2025; 2026 edition in consultation._ | [en current](https://www.gov.ie/en/department-of-the-taoiseach/policy-information/national-risk-assessment-2023-overview-of-strategic-risks/) |
+| **NCSC-IE** – National Cyber Security Centre<br>_An tIonad Náisiúnta Cibearshlándála_<br>[www.ncsc.gov.ie](https://www.ncsc.gov.ie/) | Irish national cyber-security centre. National Cyber Risk Assessment, advisories and guidance. | National Cyber Risk Assessment | [en current](https://www.ncsc.gov.ie/ncra/) |
+| **OEP** – Office of Emergency Planning<br>_An Oifig um Pleanáil Éigeandála_<br>[www.gov.ie/en/office-of-emergency-planning](https://www.gov.ie/en/office-of-emergency-planning/) | Irish government office coordinating national emergency planning. Emergency-planning frameworks and public preparedness material. | emergency planning publications | [en current](https://www.gov.ie/en/office-of-emergency-planning/) |
 
 ## European Union bodies
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **Europol**<br>European Union Agency for Law Enforcement Cooperation | eu-body | TE-SAT, IOCTA, EU SOCTA | [en archive](https://www.europol.europa.eu/publications-events/main-reports) · [en series](https://www.europol.europa.eu/publications-events/main-reports/tesat-report) · [en series](https://www.europol.europa.eu/publications-events/main-reports/iocta-report) · [en series](https://www.europol.europa.eu/publications-events/main-reports/socta-report) |
-| **ENISA**<br>EU Agency for Cybersecurity | eu-body | ENISA Threat Landscape | [en archive](https://www.enisa.europa.eu/publications) · [en series](https://www.enisa.europa.eu/topics/cyber-threats/threat-landscape) |
-| **EEAS**<br>European External Action Service | eu-body | FIMI threat report, annual report | [en series](https://www.eeas.europa.eu/eeas/information-integrity-and-countering-foreign-information-manipulation-interference-fimi_en) · [en archive](https://www.eeas.europa.eu/eeas/annual-reports_en) |
-| **Frontex**<br>European Border and Coast Guard Agency | eu-body | risk analysis | [en archive](https://www.frontex.europa.eu/publications/) · [en series](https://www.frontex.europa.eu/publications/?category=riskanalysis) |
-| **ECDC**<br>European Centre for Disease Prevention and Control | eu-body | annual epidemiological reports, threat reports | [en archive](https://www.ecdc.europa.eu/en/publications-data) · [en archive](https://www.ecdc.europa.eu/en/publications-data/monitoring/all-annual-epidemiological-reports) |
-| **DG ECHO**<br>EU Civil Protection – disaster risk overviews | eu-body | Overview of natural and man-made disaster risks | [en current](https://civil-protection-knowledge-network.europa.eu/disaster-prevention-and-risk-management) |
-| **JRC DRMKC**<br>Joint Research Centre – Disaster Risk Management Knowledge Centre | eu-body | Science for Disaster Risk Management<br>_Site answers with a bot-challenge page – add reports manually._ | [en archive](https://drmkc.jrc.ec.europa.eu/science-for-drm/scientific-output) |
-| **EUISS**<br>EU Institute for Security Studies | eu-body | Chaillot papers, briefs | [en archive](https://www.iss.europa.eu/publications) |
-| **Hybrid CoE**<br>European Centre of Excellence for Countering Hybrid Threats | eu-body | research reports, papers | [en archive](https://www.hybridcoe.fi/all-content/?_type=hcoe20_publications) |
-| **EU Preparedness**<br>European Commission – Preparedness Union Strategy / Niinistö report | eu-body | preparedness report | [en current](https://commission.europa.eu/topics/defence/safer-together-path-towards-fully-prepared-union_en) |
+| **Europol** – Europol<br>_European Union Agency for Law Enforcement Cooperation_<br>[www.europol.europa.eu](https://www.europol.europa.eu/) | EU law-enforcement agency. Flagship reports: TE-SAT (terrorism situation and trends), IOCTA (internet-organised crime) and EU SOCTA (serious and organised crime threat assessment). | TE-SAT, IOCTA, EU SOCTA | [en archive](https://www.europol.europa.eu/publications-events/main-reports) · [en series](https://www.europol.europa.eu/publications-events/main-reports/tesat-report) · [en series](https://www.europol.europa.eu/publications-events/main-reports/iocta-report) · [en series](https://www.europol.europa.eu/publications-events/main-reports/socta-report) |
+| **ENISA** – ENISA<br>_European Union Agency for Cybersecurity_<br>[www.enisa.europa.eu](https://www.enisa.europa.eu/) | EU cyber-security agency. The annual ENISA Threat Landscape and sector threat reports describe prime cyber threats, actors and trends in Europe. | ENISA Threat Landscape | [en archive](https://www.enisa.europa.eu/publications) · [en series](https://www.enisa.europa.eu/topics/cyber-threats/threat-landscape) |
+| **EEAS** – European External Action Service<br>[www.eeas.europa.eu](https://www.eeas.europa.eu/) | EU diplomatic service. Annual reports on Foreign Information Manipulation and Interference (FIMI), the EU's strategic outlook and activity reports. | FIMI threat report, annual report | [en series](https://www.eeas.europa.eu/eeas/information-integrity-and-countering-foreign-information-manipulation-interference-fimi_en) · [en archive](https://www.eeas.europa.eu/eeas/annual-reports_en) |
+| **Frontex** – Frontex<br>_European Border and Coast Guard Agency_<br>[www.frontex.europa.eu](https://www.frontex.europa.eu/) | EU border agency. Annual risk analyses on irregular migration, cross-border crime and security at the EU's external borders. | risk analysis | [en archive](https://www.frontex.europa.eu/publications/) · [en series](https://www.frontex.europa.eu/publications/?category=riskanalysis) |
+| **ECDC** – ECDC<br>_European Centre for Disease Prevention and Control_<br>[www.ecdc.europa.eu](https://www.ecdc.europa.eu/) | EU public-health agency. Epidemiological reports, rapid risk assessments and preparedness guidance on infectious-disease threats. | annual epidemiological reports, threat reports | [en archive](https://www.ecdc.europa.eu/en/publications-data) · [en archive](https://www.ecdc.europa.eu/en/publications-data/monitoring/all-annual-epidemiological-reports) |
+| **DG ECHO** – DG ECHO – EU Civil Protection<br>_Directorate-General for European Civil Protection and Humanitarian Aid Operations_<br>[civil-protection-humanitarian-aid.ec.europa.eu](https://civil-protection-humanitarian-aid.ec.europa.eu/) | European Commission service for civil protection. Overviews of natural and man-made disaster risks in the EU and the Union Civil Protection Mechanism. | Overview of natural and man-made disaster risks | [en current](https://civil-protection-knowledge-network.europa.eu/disaster-prevention-and-risk-management) |
+| **JRC DRMKC** – JRC Disaster Risk Management Knowledge Centre<br>_Joint Research Centre – Disaster Risk Management Knowledge Centre_<br>[drmkc.jrc.ec.europa.eu](https://drmkc.jrc.ec.europa.eu/) | European Commission science service for disaster risk. 'Science for Disaster Risk Management' flagship reports and risk-data resources. | Science for Disaster Risk Management<br>_Site answers with a bot-challenge page – add reports manually._ | [en archive](https://drmkc.jrc.ec.europa.eu/science-for-drm/scientific-output) |
+| **EUISS** – EUISS<br>_European Union Institute for Security Studies_<br>[www.iss.europa.eu](https://www.iss.europa.eu/) | EU agency for foreign, security and defence policy analysis. Chaillot Papers, briefs and foresight reports on geopolitics and security. | Chaillot papers, briefs | [en archive](https://www.iss.europa.eu/publications) |
+| **Hybrid CoE** – Hybrid CoE<br>_European Centre of Excellence for Countering Hybrid Threats_<br>[www.hybridcoe.fi](https://www.hybridcoe.fi/) | EU–NATO centre of excellence in Helsinki. Research reports and working papers on hybrid threats, information influence and resilience. | research reports, papers | [en archive](https://www.hybridcoe.fi/all-content/?_type=hcoe20_publications) |
+| **EU Preparedness** – European Commission – Preparedness Union<br>_European Commission – Preparedness Union Strategy_<br>[commission.europa.eu](https://commission.europa.eu/) | European Commission documents on civil and military preparedness, incl. the Niinistö report 'Safer Together' and the Preparedness Union Strategy. | preparedness report | [en current](https://commission.europa.eu/topics/defence/safer-together-path-towards-fully-prepared-union_en) |
 
 ## NATO
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **NATO**<br>NATO – Secretary General's Annual Report | nato | annual report | [en archive](https://www.nato.int/en/about-us/official-texts-and-resources/secretary-generals-annual-report) · [fr archive](https://www.nato.int/fr/about-us/official-texts-and-resources/secretary-generals-annual-report) |
-| **StratCom CoE**<br>NATO Strategic Communications Centre of Excellence (Riga) | nato | research reports, annual report | [en archive](https://stratcomcoe.org/publications) · [en archive](https://stratcomcoe.org/about_us/annual-reports/11) |
-| **CCDCOE**<br>NATO Cooperative Cyber Defence Centre of Excellence (Tallinn) | nato | research | [en archive](https://ccdcoe.org/library/publications/) |
+| **NATO** – NATO<br>_North Atlantic Treaty Organization / Organisation du Traité de l'Atlantique Nord_<br>[www.nato.int](https://www.nato.int/) | The North Atlantic Alliance. The Secretary General's Annual Report reviews Allied defence spending, deterrence, operations and the security environment. | annual report | [en archive](https://www.nato.int/en/about-us/official-texts-and-resources/secretary-generals-annual-report) · [fr archive](https://www.nato.int/fr/about-us/official-texts-and-resources/secretary-generals-annual-report) |
+| **StratCom CoE** – NATO StratCom CoE<br>_NATO Strategic Communications Centre of Excellence_<br>[stratcomcoe.org](https://stratcomcoe.org/) | NATO-accredited centre of excellence in Riga. Research on disinformation, information influence, social-media manipulation and strategic communications. | research reports, annual report | [en archive](https://stratcomcoe.org/publications) · [en archive](https://stratcomcoe.org/about_us/annual-reports/11) |
+| **CCDCOE** – NATO CCDCOE<br>_NATO Cooperative Cyber Defence Centre of Excellence_<br>[ccdcoe.org](https://ccdcoe.org/) | NATO-accredited cyber-defence centre in Tallinn. Research on cyber law (Tallinn Manual), national cyber-security organisation, cyber conflict and exercises. | research | [en archive](https://ccdcoe.org/library/publications/) |
 
 ## Other (outside EU/NATO)
 
-| Agency | Type | Reports | Links |
+| Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **IPCC**<br>Intergovernmental Panel on Climate Change | other | assessment reports, special reports | [en archive](https://www.ipcc.ch/reports/) · [fr archive](https://www.ipcc.ch/languages-2/francais/) · [ru archive](https://www.ipcc.ch/languages-2/russian/) |
-| **DIA**<br>US Defense Intelligence Agency | other | military power reports, worldwide threat assessment | [en archive ⚠](https://www.dia.mil/Military-Power-Publications/) |
-| **ODNI**<br>US Office of the Director of National Intelligence | other | Annual Threat Assessment, Global Trends | [en archive](https://www.dni.gov/index.php/newsroom/reports-publications) |
+| **IPCC** – IPCC<br>_Intergovernmental Panel on Climate Change_<br>[www.ipcc.ch](https://www.ipcc.ch/) | UN body assessing climate-change science. Assessment and special reports on climate impacts, adaptation and risks – a key basis for disaster preparedness. | assessment reports, special reports | [en archive](https://www.ipcc.ch/reports/) · [fr archive](https://www.ipcc.ch/languages-2/francais/) · [ru archive](https://www.ipcc.ch/languages-2/russian/) |
+| **DIA** – US Defense Intelligence Agency<br>_Defense Intelligence Agency_<br>[www.dia.mil](https://www.dia.mil/) | US military intelligence agency. Military-power reports on China, Russia, Iran and North Korea, and worldwide threat assessments. | military power reports, worldwide threat assessment | [en archive ⚠](https://www.dia.mil/Military-Power-Publications/) |
+| **ODNI** – US Office of the Director of National Intelligence<br>_Office of the Director of National Intelligence_<br>[www.dni.gov](https://www.dni.gov/) | Head of the US intelligence community. The Annual Threat Assessment and the Global Trends foresight reports. | Annual Threat Assessment, Global Trends | [en archive](https://www.dni.gov/index.php/newsroom/reports-publications) |
