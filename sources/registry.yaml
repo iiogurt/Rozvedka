@@ -52,10 +52,10 @@
   agency: HZS ČR
   full_name: Hasičský záchranný sbor ČR
   type: civil-protection
-  access: auto
+  access: manual
   frequency: yearly
   report_types: [statistical yearbook]
-  notes: "Moved to archiv.hzscr.gov.cz – may no longer be updated."
+  notes: "Moved to archiv.hzscr.gov.cz (robots.txt disallows crawling) – add yearbooks manually."
   pages:
     - {lang: cs, kind: archive, url: "https://archiv.hzscr.gov.cz/clanek/statisticke-rocenky-hasicskeho-zachranneho-sboru-cr.aspx"}
 
@@ -63,10 +63,10 @@
   agency: MV ČR
   full_name: Ministerstvo vnitra – zprávy o extremismu
   type: police-ct
-  access: auto
+  access: manual
   frequency: yearly
   report_types: [report on extremism]
-  notes: "Moved to archiv.mv.gov.cz – may no longer be updated."
+  notes: "Moved to archiv.mv.gov.cz (robots.txt disallows crawling) – add reports manually."
   pages:
     - {lang: cs, kind: archive, url: "https://archiv.mv.gov.cz/clanek/extremismus-vyrocni-zpravy-o-extremismu-a-strategie-boje-proti-extremismu.aspx"}
 
@@ -196,7 +196,7 @@
   frequency: yearly
   report_types: [Risikobild]
   pages:
-    - {lang: de, kind: archive, url: "https://www.bmlv.gv.at/menu/vpol.shtml"}
+    - {lang: de, kind: archive, url: "https://www.bmlv.gv.at/wissen-forschung/publikationen/index.shtml"}
 
 # ════════════════════════ ESTONIA ════════════════════════
 - country: EE
@@ -257,10 +257,9 @@
   access: auto
   frequency: yearly
   report_types: [annual report]
-  notes: "Homepage only – exact reports page to be pinned during crawling."
   pages:
-    - {lang: lv, kind: current, url: "https://www.sab.gov.lv/"}
-    - {lang: en, kind: current, url: "https://www.sab.gov.lv/en/"}
+    - {lang: lv, kind: archive, url: "https://www.sab.gov.lv/gada-parskati/"}
+    - {lang: en, kind: archive, url: "https://www.sab.gov.lv/en/annual-reports/"}
 
 - country: LV
   agency: MIDD
@@ -408,7 +407,7 @@
   pages:
     - {lang: da, kind: series, url: "https://www.brs.dk/da/redningsberedskab-myndighed/krisestyring2-og-beredskabsplanlagning/nationalt-risikobillede/"}
     - {lang: da, kind: archive, url: "https://www.brs.dk/da/nyheder-og-publikationer/publikationer2/"}
-    - {lang: en, kind: current, url: "https://www.brs.dk/en/"}
+    - {lang: en, kind: current, url: "https://www.brs.dk/en/nyheder-og-publikationer/publikationer2/alle-publikationer/2022/national-risk-profile/"}
 
 # ════════════════════════ NETHERLANDS ════════════════════════
 - country: NL
@@ -685,10 +684,10 @@
   access: auto
   frequency: yearly
   report_types: [javno izvješće / public report]
-  notes: "Public reports 2014–2022; none published for 2023."
+  notes: "Public reports 2014–2022 and 2025; none found for 2023–2024."
   pages:
-    - {lang: hr, kind: archive, url: "https://www.soa.hr/hr/dokumenti/javna-izvjesca/"}
-    - {lang: en, kind: archive, url: "https://www.soa.hr/en/documents/public-reports/"}
+    - {lang: hr, kind: archive, url: "https://soa.hr/hr/javni-dokumenti-soa-e/194"}
+    - {lang: en, kind: archive, url: "https://soa.hr/en/public-documents-soa/194"}
 
 # ════════════════════════ SLOVENIA ════════════════════════
 - country: SI
