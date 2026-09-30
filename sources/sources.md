@@ -1,11 +1,13 @@
 # Rozvedka – official security report sources
 
-Generated from `sources/registry.yaml` — 109 sources, 186 pages.
+Generated from `sources/registry.yaml` — 109 sources, 187 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
 
 ## Czechia
+
+_EU (2004) · NATO (1999) · Schengen (2007)_
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -17,12 +19,16 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Slovakia
 
+_EU (2004) · NATO (2004) · Schengen (2007)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **SIS** – Slovak Information Service<br>_Slovenská informačná služba_<br>[www.sis.gov.sk](https://www.sis.gov.sk/) | Slovak civil intelligence service (domestic and foreign). Activity reports summarise foreign intelligence activity, extremism, terrorism, economic security and cyber threats. | activity report | [sk archive](https://www.sis.gov.sk/pre-vas/sprava-o-cinnosti.html) |
 | **NBÚ** – National Security Authority<br>_Národný bezpečnostný úrad_<br>[www.nbu.gov.sk](https://www.nbu.gov.sk/) | Protects classified information and runs national cyber security (SK-CERT). Annual reports on cyber incidents and the state of cyber security in Slovakia. | annual report<br>_Page content hidden behind a loading screen, also in a headless browser – add reports manually._ | [sk archive](https://www.nbu.gov.sk/urad/o-nas/vyrocne-spravy/) |
 
 ## Poland
+
+_EU (2004) · NATO (1999) · Schengen (2007)_
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -31,6 +37,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 | **CERT Polska** – CERT Polska<br>_CERT Polska (NASK)_<br>[cert.pl](https://cert.pl/) | Polish national CSIRT run by the NASK research institute. Annual reports on cyber incidents, phishing, malware and attacks on Polish internet users. | annual report | [pl archive](https://cert.pl/publikacje/) · [en archive](https://cert.pl/en/publications/) |
 
 ## Germany
+
+_EU (1958) · NATO (1955) · Schengen (1995) · G7 (1975)_
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -42,12 +50,16 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Austria
 
+_EU (1995) · Schengen (1997)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **DSN** – Directorate State Protection and Intelligence Service<br>_Direktion Staatsschutz und Nachrichtendienst_<br>[www.dsn.gv.at](https://www.dsn.gv.at/) | Austrian domestic intelligence and state-protection service. The annual Verfassungsschutzbericht covers extremism, terrorism, espionage and cyber threats. | Verfassungsschutzbericht | [de archive](https://www.dsn.gv.at/501/) |
 | **BMLV** – Federal Ministry of Defence<br>_Bundesministerium für Landesverteidigung_<br>[www.bundesheer.at](https://www.bundesheer.at/) | Austrian defence ministry. The annual Risikobild (Risk Monitor) assesses the international security environment and the risks it poses to Austria and Europe. | Risikobild | [de+en current](https://verteidigungspolitik.at/risikobild) · [de archive](https://www.bmlv.gv.at/wissen-forschung/publikationen/index.shtml) |
 
 ## Estonia
+
+_EU (2004) · NATO (2004) · Schengen (2007) · JEF (2014)_
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -57,6 +69,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Latvia
 
+_EU (2004) · NATO (2004) · Schengen (2007) · JEF (2014)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **VDD** – State Security Service<br>_Valsts drošības dienests_<br>[vdd.gov.lv](https://vdd.gov.lv/) | Latvian counter-intelligence and internal security service. Annual reports on Russian intelligence and influence, extremism, terrorism and protection of the constitutional order. | annual report | [lv archive](https://vdd.gov.lv/noderigi/gada-parskati) · [en archive](https://vdd.gov.lv/en/useful/annual-reports) |
@@ -65,12 +79,16 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Lithuania
 
+_EU (2004) · NATO (2004) · Schengen (2007) · JEF (2014)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **VSD + AOTD** – State Security Department; Defence Intelligence and Security Service<br>_Valstybės saugumo departamentas; Antrasis operatyvinių tarnybų departamentas_<br>[www.vsd.lt](https://www.vsd.lt/) | Lithuania's civil and military intelligence services. Their joint annual National Threat Assessment covers Russia, Belarus, China, military threats, cyber and influence operations. | National Threat Assessment | [en current ⚠](https://www.vsd.lt/en/reports/national-threat-assessment-2026/) · [en archive ⚠](https://www.vsd.lt/en/threats/threats-national-security-lithuania/) · [lt archive ⚠](https://www.vsd.lt/gresmes/gresmes-nacionaliniam-saugumui/) |
 | **NKSC** – National Cyber Security Centre<br>_Nacionalinis kibernetinio saugumo centras_<br>[www.nksc.lt](https://www.nksc.lt/) | Lithuanian national cyber-security authority under the Ministry of National Defence. Annual national cyber-security status reports. | national cyber security status report | [lt archive ⚠](https://www.nksc.lt/aktualu.html) |
 
 ## Finland
+
+_EU (1995) · NATO (2023) · Schengen (2001) · JEF (2017)_
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -80,6 +98,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Sweden
 
+_EU (1995) · NATO (2024) · Schengen (2001) · JEF (2017)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **Säpo** – Swedish Security Service<br>_Säkerhetspolisen_<br>[www.sakerhetspolisen.se](https://www.sakerhetspolisen.se/) | Swedish security and counter-intelligence service. The annual assessment covers foreign powers' espionage and influence, violent extremism, terrorism and protective security. | Säkerhetspolisens lägesbild / annual assessment | [sv archive ⚠](https://www.sakerhetspolisen.se/om-sakerhetspolisen/publikationer/sakerhetspolisens-lagesbilder.html) · [en archive ⚠](https://sakerhetspolisen.se/ovriga-sidor/other-languages/english-engelska/press-room/the-swedish-security-services-annual-assesments.html) |
@@ -87,6 +107,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 | **MCF (ex-MSB)** – Swedish Civil Defence and Resilience Agency<br>_Myndigheten för civilt försvar_<br>[www.mcf.se](https://www.mcf.se/) | Swedish civil-defence and emergency-preparedness agency (formerly MSB). National risk and capability assessments and crisis-preparedness guidance such as 'In case of crisis or war'. | national risk and capability assessment, preparedness guidance | [sv archive](https://www.mcf.se/sv/publikationer/) · [en archive](https://www.mcf.se/en/publications/) |
 
 ## Denmark
+
+_EU (1973) · NATO (1949) · Schengen (2001) · JEF (2014)_
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -97,6 +119,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Netherlands
 
+_EU (1958) · NATO (1949) · Schengen (1995) · JEF (2014)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **AIVD** – General Intelligence and Security Service<br>_Algemene Inlichtingen- en Veiligheidsdienst_<br>[www.aivd.nl](https://www.aivd.nl/) | Dutch civil intelligence and security service. Annual reports cover state actors (Russia, China, Iran), terrorism, extremism and cyber espionage. | jaarverslag / annual report | [nl archive](https://www.aivd.nl/onderwerpen/jaarverslagen) · [nl archive](https://www.aivd.nl/documenten) · [en archive](https://english.aivd.nl/documents) |
@@ -106,6 +130,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Belgium
 
+_EU (1958) · NATO (1949) · Schengen (1995)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **VSSE** – State Security Service<br>_Veiligheid van de Staat / Sûreté de l'État_<br>[www.vsse.be](https://www.vsse.be/) | Belgian civil intelligence service. Its public intelligence report covers espionage, foreign interference, extremism, terrorism and proliferation. | intelligence report | [nl archive](https://vsse.be/nl/publicaties) · [fr archive](https://vsse.be/fr/publications) · [en current](https://www.vsse.be/nl/nieuws/intelligence-report-2025-english) |
@@ -113,6 +139,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 | **CCB** – Centre for Cybersecurity Belgium<br>_Centrum voor Cybersecurity België / Centre pour la Cybersécurité Belgique_<br>[ccb.belgium.be](https://ccb.belgium.be/) | Belgian national cyber-security authority (CERT.be). Annual reports and key figures on cyber threats, phishing and incidents in Belgium. | annual report, key figures | [en current ⚠](https://ccb.belgium.be/news/key-figures-2025) · [nl current ⚠](https://ccb.belgium.be/nl/news/kerncijfers-2025) · [fr current ⚠](https://ccb.belgium.be/fr/news/chiffres-cles-2025) · [de current ⚠](https://ccb.belgium.be/de/news/kennzahlen-2025) |
 
 ## France
+
+_EU (1958) · NATO (1949) · Schengen (1995) · G7 (1975)_
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -122,6 +150,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Italy
 
+_EU (1958) · NATO (1949) · Schengen (1997) · G7 (1975)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **DIS / Sistema di informazione** – Intelligence System for the Security of the Republic<br>_Sistema di informazione per la sicurezza della Repubblica_<br>[www.sicurezzanazionale.gov.it](https://www.sicurezzanazionale.gov.it/) | Italy's intelligence community (DIS, AISE, AISI). The annual report to Parliament covers geopolitics, terrorism, cyber threats, economic security and hybrid threats. | Relazione sulla politica dell'informazione per la sicurezza<br>_Reports since 2007. JavaScript site – each year at relazione-al-parlamento-{year}._ | [it current](https://www.sicurezzanazionale.gov.it/contenuti/relazione-al-parlamento-2025)<br>pattern: `https://www.sicurezzanazionale.gov.it/contenuti/relazione-al-parlamento-{year}` 2007–2025 |
@@ -129,6 +159,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 | **Protezione Civile** – Civil Protection Department<br>_Dipartimento della Protezione Civile_<br>[www.protezionecivile.gov.it](https://www.protezionecivile.gov.it/) | Italian national civil-protection department. Publications on seismic, volcanic, hydro-geological and other risks, emergency planning and citizen preparedness. | publications, risk reports | [it archive](https://www.protezionecivile.gov.it/it/pubblicazioni/) |
 
 ## Spain
+
+_EU (1986) · NATO (1982) · Schengen (1995)_
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -138,6 +170,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Portugal
 
+_EU (1986) · NATO (1949) · Schengen (1995)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **SSI** – Internal Security System<br>_Sistema de Segurança Interna_<br>[www.ssi.gov.pt](https://www.ssi.gov.pt/) | Coordinates Portugal's internal-security forces. The Annual Internal Security Report (RASI) covers crime, terrorism, extremism, cybercrime and civil protection. | RASI | [pt archive ⚠](https://ssi.gov.pt/publicacoes/relatorio-anual-de-seguranca-interna/) · [pt current](https://www.portugal.gov.pt/pt/gc25/comunicacao/documentos/rasi-2025-relatorio-anual-de-seguranca-interna) |
@@ -145,11 +179,15 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Hungary
 
+_EU (2004) · NATO (1999) · Schengen (2007)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **NBSZ NKI** – Special Service for National Security – National Cyber Security Center<br>_Nemzetbiztonsági Szakszolgálat – Nemzeti Kibervédelmi Intézet_<br>[nki.gov.hu](https://nki.gov.hu/) | Hungarian national cyber-security centre (NCSC-HU). Analyses and threat assessments of cyber incidents affecting Hungary. | cyber threat analyses<br>_Hungarian civil intelligence (AH, IH) publish no regular public reports._ | [hu archive](https://nki.gov.hu/it-biztonsag/elemzesek/) |
 
 ## Romania
+
+_EU (2007) · NATO (2004) · Schengen (2025)_
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -158,17 +196,23 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Bulgaria
 
+_EU (2007) · NATO (2004) · Schengen (2025)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **ДАНС / DANS** – State Agency for National Security<br>_Държавна агенция „Национална сигурност“_<br>[www.dans.bg](https://www.dans.bg/) | Bulgarian counter-intelligence and national-security agency. Annual activity reports cover foreign intelligence activity, hybrid threats, terrorism, radicalisation and economic security. | годишен доклад, radicalisation reports | [bg archive](https://www.dans.bg/bg/activityreport) · [bg archive](https://www.dans.bg/bg/activities/reports) · [bg series](https://www.dans.bg/bg/activities/radicalisation-reports) |
 
 ## Croatia
 
+_EU (2013) · NATO (2009) · Schengen (2023)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **SOA** – Security and Intelligence Agency<br>_Sigurnosno-obavještajna agencija_<br>[www.soa.hr](https://www.soa.hr/) | Croatian security and intelligence service. Public reports describe the security environment, foreign intelligence activity, terrorism, extremism and cyber threats. | javno izvješće / public report<br>_Public reports 2014–2022 and 2025; none found for 2023–2024._ | [hr archive](https://soa.hr/hr/javni-dokumenti-soa-e/194) · [en archive](https://soa.hr/en/public-documents-soa/194) |
 
 ## Slovenia
+
+_EU (2004) · NATO (2004) · Schengen (2007)_
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -177,17 +221,23 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Greece
 
+_EU (1981) · NATO (1952) · Schengen (2000)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **NCSA** – National Cybersecurity Authority<br>_Εθνική Αρχή Κυβερνοασφάλειας_<br>[cyber.gov.gr](https://cyber.gov.gr/) | Greek national cyber-security authority. National cyber-security strategy, handbooks and guidance. | strategy, handbooks<br>_Greek intelligence (EYP) and civil protection publish no regular public threat reports._ | [en current](https://cyber.gov.gr/en/) |
 
 ## Cyprus
 
+_EU (2004)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **DSA** – Digital Security Authority<br>_Αρχή Ψηφιακής Ασφάλειας_<br>[dsa.cy](https://dsa.cy/) | Cypriot national cyber-security authority (CSIRT-CY). Annual reports on cyber incidents and national cyber security. | annual report | [el archive](https://dsa.cy/the-dsa/annual-reports) |
 
 ## Luxembourg
+
+_EU (1958) · NATO (1949) · Schengen (1995)_
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -196,13 +246,15 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Ireland
 
+_EU (1973)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **Dept. of the Taoiseach** – Department of the Taoiseach<br>_Roinn an Taoisigh_<br>[www.gov.ie/en/department-of-the-taoiseach](https://www.gov.ie/en/department-of-the-taoiseach/) | Irish Prime Minister's department. The National Risk Assessment identifies strategic geopolitical, economic, social, environmental and technological risks for Ireland. | National Risk Assessment<br>_Published 2014–2024; none in 2025; 2026 edition in consultation._ | [en current](https://www.gov.ie/en/department-of-the-taoiseach/policy-information/national-risk-assessment-2023-overview-of-strategic-risks/) |
 | **NCSC-IE** – National Cyber Security Centre<br>_An tIonad Náisiúnta Cibearshlándála_<br>[www.ncsc.gov.ie](https://www.ncsc.gov.ie/) | Irish national cyber-security centre. National Cyber Risk Assessment, advisories and guidance. | National Cyber Risk Assessment | [en current](https://www.ncsc.gov.ie/ncra/) |
 | **OEP** – Office of Emergency Planning<br>_An Oifig um Pleanáil Éigeandála_<br>[www.gov.ie/en/office-of-emergency-planning](https://www.gov.ie/en/office-of-emergency-planning/) | Irish government office coordinating national emergency planning. Emergency-planning frameworks and public preparedness material. | emergency planning publications | [en current](https://www.gov.ie/en/office-of-emergency-planning/) |
 
-## European Union bodies
+## EU bodies
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -233,6 +285,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## United Kingdom
 
+_NATO (1949) · Five Eyes (1946) · G7 (1975) · AUKUS (2021) · JEF (2014)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **NCSC-UK** – National Cyber Security Centre<br>[www.ncsc.gov.uk](https://www.ncsc.gov.uk/) | UK national cyber-security authority, part of GCHQ. The NCSC Annual Review covers nationally significant incidents, state threat actors, ransomware and resilience of critical national infrastructure. | NCSC Annual Review | [en current](https://www.ncsc.gov.uk/collection/ncsc-annual-review-2025) |
@@ -240,6 +294,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 | **ISC** – Intelligence and Security Committee of Parliament<br>[isc.independent.gov.uk](https://isc.independent.gov.uk/) | Parliamentary oversight of MI5, MI6, GCHQ and Defence Intelligence. Annual reports and inquiry reports (e.g. on Russia, China, Iran) – the most detailed public window on UK intelligence. | annual report, inquiry reports | [en archive](https://isc.independent.gov.uk/) · [en archive](https://isc.independent.gov.uk/news/) |
 
 ## United States
+
+_NATO (1949) · Five Eyes (1946) · G7 (1975) · AUKUS (2021)_
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -251,6 +307,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Canada
 
+_NATO (1949) · Five Eyes (1948) · G7 (1976)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **CSIS** – Canadian Security Intelligence Service<br>_Canadian Security Intelligence Service / Service canadien du renseignement de sécurité_<br>[www.canada.ca/en/security-intelligence-service.html](https://www.canada.ca/en/security-intelligence-service.html) | Canada's security intelligence service. The CSIS Public Report covers espionage, foreign interference, transnational repression, violent extremism and threats to the economy. | CSIS Public Report | [en archive ⚠](https://www.canada.ca/en/security-intelligence-service/corporate/publications.html) · [fr archive ⚠](https://www.canada.ca/fr/service-renseignement-securite/organisation/publications.html) |
@@ -259,6 +317,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Australia
 
+_Five Eyes (1956) · AUKUS (2021) · NATO IP4 (2022)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **ASIO** – Australian Security Intelligence Organisation<br>[www.asio.gov.au](https://www.asio.gov.au/) | Australia's security intelligence service. The Director-General's Annual Threat Assessment covers espionage, foreign interference, sabotage, terrorism and politically motivated violence. | Annual Threat Assessment, annual report | [en archive ⚠](https://www.asio.gov.au/resources/speeches-and-statements) |
@@ -266,22 +326,28 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## New Zealand
 
+_Five Eyes (1956) · NATO IP4 (2022)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **NZSIS** – New Zealand Security Intelligence Service<br>_New Zealand Security Intelligence Service / Te Pā Whakamarumaru_<br>[www.nzsis.govt.nz](https://www.nzsis.govt.nz/) | New Zealand's security intelligence service. The annual 'New Zealand's Security Threat Environment' covers foreign interference, espionage, violent extremism and insider threats, with case studies. | New Zealand's Security Threat Environment | [en archive](https://www.nzsis.govt.nz/our-work/new-zealands-security-threat-environment) |
+| **NZSIS** – New Zealand Security Intelligence Service<br>_New Zealand Security Intelligence Service / Te Pā Whakamarumaru_<br>[www.nzsis.govt.nz](https://www.nzsis.govt.nz/) | New Zealand's security intelligence service. The annual 'New Zealand's Security Threat Environment' covers foreign interference, espionage, violent extremism and insider threats, with case studies. | New Zealand's Security Threat Environment | [en archive](https://www.nzsis.govt.nz/our-work/new-zealands-security-threat-environment)<br>pattern: `https://www.nzsis.govt.nz/assets/NZSIS-Documents/New-Zealands-Security-Threat-Environment-{year}.pdf` 2023–2026 |
 | **GCSB / NCSC-NZ** – Government Communications Security Bureau – National Cyber Security Centre<br>_Government Communications Security Bureau / Te Tira Tiaki – National Cyber Security Centre_<br>[www.ncsc.govt.nz](https://www.ncsc.govt.nz/) | New Zealand's signals intelligence and cyber-security agency. Cyber threat reports on state-sponsored and criminal activity, and GCSB annual reports. | Cyber Threat Report, annual report | [en archive](https://www.ncsc.govt.nz/news/) · [en archive](https://www.gcsb.govt.nz/publications/annual-reports) |
 | **NEMA** – National Emergency Management Agency<br>_National Emergency Management Agency / Te Rākau Whakamarumaru_<br>[www.civildefence.govt.nz](https://www.civildefence.govt.nz/) | New Zealand's emergency-management agency. National hazard and preparedness resources, emergency-management plans and public guidance. | preparedness resources | [en archive](https://www.civildefence.govt.nz/resources/) |
 
 ## Norway
 
+_NATO (1949) · Schengen (2001) · JEF (2014)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **PST** – Norwegian Police Security Service<br>_Politiets sikkerhetstjeneste_<br>[www.pst.no](https://www.pst.no/) | Norway's security and counter-intelligence service. The annual National Threat Assessment (NTV) covers state intelligence activity, extremism, terrorism and threats to government officials. | Nasjonal trusselvurdering / National Threat Assessment | [nb+en archive](https://www.pst.no/trusselbilde/norsk-trusselvurdering/) |
-| **E-tjenesten** – Norwegian Intelligence Service<br>_Etterretningstjenesten_<br>[www.forsvaret.no](https://www.forsvaret.no/) | Norway's foreign and military intelligence service. The annual FOKUS assessment covers Russia, the High North, China, terrorism and cyber threats. | FOKUS | [nb+en archive](https://www.forsvaret.no/aktuelt-og-presse/publikasjoner/fokus) |
+| **E-tjenesten** – Norwegian Intelligence Service<br>_Etterretningstjenesten_<br>[www.etterretningstjenesten.no](https://www.etterretningstjenesten.no/) | Norway's foreign and military intelligence service. The annual FOKUS assessment covers Russia, the High North, China, terrorism and cyber threats. | FOKUS | [nb archive](https://www.etterretningstjenesten.no/publikasjoner/fokus) · [en archive](https://www.etterretningstjenesten.no/en/publications/focus) |
 | **NSM** – Norwegian National Security Authority<br>_Nasjonal sikkerhetsmyndighet_<br>[nsm.no](https://nsm.no/) | Norway's preventive-security and cyber authority. The annual 'Risiko' report describes vulnerabilities threat actors exploit and recommended protective measures. | Risiko | [nb archive](https://nsm.no/regelverk-og-hjelp/rapporter/) |
 | **DSB** – Norwegian Directorate for Civil Protection<br>_Direktoratet for samfunnssikkerhet og beredskap_<br>[www.dsb.no](https://www.dsb.no/) | Norway's civil-protection directorate. 'Analyses of crisis scenarios' (national risk analysis), evaluations of major events and preparedness guidance. | Analyser av krisescenarioer, evaluations | [nb series](https://www.dsb.no/ros-og-beredskap/samfunnssikkerhet-og-samordning/analyser-av-krisescenarioer/) · [nb archive](https://www.dsb.no/rapporter-og-publikasjoner/) |
 
 ## Switzerland
+
+_Schengen (2008)_
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
@@ -291,6 +357,8 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## Japan
 
+_G7 (1975) · NATO IP4 (2022)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **PSIA** – Public Security Intelligence Agency<br>_公安調査庁_<br>[www.moj.go.jp/psia](https://www.moj.go.jp/psia/) | Japanese intelligence agency under the Ministry of Justice. The annual 'Review and Prospects of Internal and External Situations' covers China, North Korea, Russia, terrorism and economic security. | Review and Prospects of Internal and External Situations | [en archive](https://www.moj.go.jp/psia/English_Publications.html) |
@@ -299,9 +367,11 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 ## South Korea
 
+_NATO IP4 (2022)_
+
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
-| **NIS** – National Intelligence Service<br>_국가정보원_<br>[eng.nis.go.kr](https://eng.nis.go.kr/) | South Korea's intelligence service and national cyber-security coordinator (NCSC). Cyber-security reports and white papers on North Korean and other state cyber threats. | National Information Security White Paper, cyber reports | [en current](https://eng.nis.go.kr/EAF/1_7.do) · [ko current](https://www.nis.go.kr/) |
+| **NIS** – National Intelligence Service<br>_국가정보원_<br>[eng.nis.go.kr](https://eng.nis.go.kr/) | South Korea's intelligence service and national cyber-security coordinator (NCSC). Cyber-security reports and white papers on North Korean and other state cyber threats. | National Information Security White Paper, cyber reports<br>_robots.txt disallows crawling – open in a browser and add reports manually._ | [en current](https://eng.nis.go.kr/EAF/1_7.do) · [ko current](https://www.nis.go.kr/) |
 
 ## Taiwan
 

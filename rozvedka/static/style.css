@@ -1,3 +1,4 @@
+[hidden] { display: none !important; }   /* the hidden attribute must win over display rules */
 :root {
   --bg: #f6f5f1; --panel: #fff; --ink: #1d2126; --muted: #6b7280; --line: #e3e1da;
   --accent: #1f4e79; --ok: #2f7d4f; --warn: #b7791f; --err: #b3261e; --chip: #eef1f5;
@@ -161,3 +162,27 @@ h2.region { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; c
 .flagsep { width: 1px; align-self: stretch; background: var(--line); margin: 0 4px; }
 .views { display: flex; flex-wrap: wrap; gap: 4px; }
 .views button { font-size: 12px; padding: 3px 8px; }
+
+/* ── Coalition tags ── */
+.coalition-filter { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 0 0 6px; }
+.cf { font-size: 12px; padding: 3px 9px; border-radius: 999px; }
+.cf.on { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+.coalitions { display: inline-flex; flex-wrap: wrap; gap: 4px; margin-left: 6px; }
+.ctag { font-size: 11px; font-weight: 700; letter-spacing: .02em; padding: 1px 7px; border-radius: 999px;
+        border: 1px solid currentColor; line-height: 1.6; white-space: nowrap; }
+.ctag:hover { text-decoration: none; filter: brightness(.9); }
+.ctag .since { font-weight: 400; opacity: .75; }
+.ctag-EU { color: #1b3f8f; background: #e3eafb; } .ctag-NATO { color: #004990; background: #dfe8f1; }
+.ctag-FVEY { color: #6b2c91; background: #efe4f6; } .ctag-G7 { color: #8a5a00; background: #fbefd9; }
+.ctag-SCHENGEN { color: #1f6b52; background: #def1e9; } .ctag-AUKUS { color: #8c1d1d; background: #f6e1e1; }
+.ctag-JEF { color: #3e5a1e; background: #e6eadf; } .ctag-NATO_IP4 { color: #1f5f79; background: #dcecf2; }
+@media (prefers-color-scheme: dark) { .ctag { filter: brightness(1.35) saturate(.8); background: transparent; } }
+.foot { text-align: center; color: var(--muted); font-size: 12px; padding: 18px 0 28px; }
+.coal-select { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted); }
+.pop-coal { margin: 3px 0 0; display: flex; flex-wrap: wrap; gap: 3px; }
+.pop-coal .ctag { font-size: 10px; }
+.changelog { max-width: 860px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+             padding: 8px 28px 24px; line-height: 1.55; }
+.changelog h2 { font-size: 18px; margin-top: 28px; }
+.changelog h3 { font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 16px 0 4px; }
+.changelog code { background: var(--chip); padding: 0 4px; border-radius: 4px; font-size: 12.5px; }

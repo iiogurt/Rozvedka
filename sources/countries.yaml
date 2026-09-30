@@ -1,0 +1,72 @@
+# Countries and groups used by the registry: display name, region and coalition memberships.
+#
+# coalitions: year the country joined (for Schengen: year of full implementation).
+# Status as of 2026-09-30. Sources: official member lists of NATO, the EU, the Schengen area, G7,
+# AUKUS and the Joint Expeditionary Force; Five Eyes = UKUSA signals-intelligence partners.
+#
+# Quote "NO": a bare NO is read as boolean false by YAML.
+
+coalitions:
+  EU:        {name: "European Union", short: "EU", description: "27 member states; common foreign & security policy, mutual assistance clause (Art. 42.7 TEU)."}
+  NATO:      {name: "NATO", short: "NATO", description: "North Atlantic Treaty Organization – collective defence (Article 5), 32 Allies."}
+  FVEY:      {name: "Five Eyes", short: "Five Eyes", description: "Signals-intelligence alliance (UKUSA): Australia, Canada, New Zealand, United Kingdom, United States."}
+  G7:        {name: "Group of Seven", short: "G7", description: "Forum of seven major advanced economies (the EU also takes part)."}
+  SCHENGEN:  {name: "Schengen Area", short: "Schengen", description: "Area without internal border controls; shared Schengen Information System."}
+  AUKUS:     {name: "AUKUS", short: "AUKUS", description: "Trilateral security partnership of Australia, the United Kingdom and the United States (2021)."}
+  JEF:       {name: "Joint Expeditionary Force", short: "JEF", description: "UK-led defence coalition of ten Northern European nations."}
+  NATO_IP4:  {name: "NATO Indo-Pacific partners", short: "NATO IP4", description: "Australia, Japan, New Zealand and South Korea – NATO's partners in the Indo-Pacific."}
+
+regions:
+  - "EU member states"
+  - "EU and NATO"
+  - "Other European democracies"
+  - "Americas"
+  - "Asia-Pacific"
+  - "International"
+
+countries:
+  AT: {name: "Austria", region: "EU member states", coalitions: {EU: 1995, SCHENGEN: 1997}}
+  BE: {name: "Belgium", region: "EU member states", coalitions: {EU: 1958, NATO: 1949, SCHENGEN: 1995}}
+  BG: {name: "Bulgaria", region: "EU member states", coalitions: {EU: 2007, NATO: 2004, SCHENGEN: 2025}}
+  HR: {name: "Croatia", region: "EU member states", coalitions: {EU: 2013, NATO: 2009, SCHENGEN: 2023}}
+  CY: {name: "Cyprus", region: "EU member states", coalitions: {EU: 2004}}
+  CZ: {name: "Czechia", region: "EU member states", coalitions: {EU: 2004, NATO: 1999, SCHENGEN: 2007}}
+  DK: {name: "Denmark", region: "EU member states", coalitions: {EU: 1973, NATO: 1949, SCHENGEN: 2001, JEF: 2014}}
+  EE: {name: "Estonia", region: "EU member states", coalitions: {EU: 2004, NATO: 2004, SCHENGEN: 2007, JEF: 2014}}
+  FI: {name: "Finland", region: "EU member states", coalitions: {EU: 1995, NATO: 2023, SCHENGEN: 2001, JEF: 2017}}
+  FR: {name: "France", region: "EU member states", coalitions: {EU: 1958, NATO: 1949, SCHENGEN: 1995, G7: 1975}}
+  DE: {name: "Germany", region: "EU member states", coalitions: {EU: 1958, NATO: 1955, SCHENGEN: 1995, G7: 1975}}
+  GR: {name: "Greece", region: "EU member states", coalitions: {EU: 1981, NATO: 1952, SCHENGEN: 2000}}
+  HU: {name: "Hungary", region: "EU member states", coalitions: {EU: 2004, NATO: 1999, SCHENGEN: 2007}}
+  IE: {name: "Ireland", region: "EU member states", coalitions: {EU: 1973}}
+  IT: {name: "Italy", region: "EU member states", coalitions: {EU: 1958, NATO: 1949, SCHENGEN: 1997, G7: 1975}}
+  LV: {name: "Latvia", region: "EU member states", coalitions: {EU: 2004, NATO: 2004, SCHENGEN: 2007, JEF: 2014}}
+  LT: {name: "Lithuania", region: "EU member states", coalitions: {EU: 2004, NATO: 2004, SCHENGEN: 2007, JEF: 2014}}
+  LU: {name: "Luxembourg", region: "EU member states", coalitions: {EU: 1958, NATO: 1949, SCHENGEN: 1995}}
+  MT: {name: "Malta", region: "EU member states", coalitions: {EU: 2004, SCHENGEN: 2007}}
+  NL: {name: "Netherlands", region: "EU member states", coalitions: {EU: 1958, NATO: 1949, SCHENGEN: 1995, JEF: 2014}}
+  PL: {name: "Poland", region: "EU member states", coalitions: {EU: 2004, NATO: 1999, SCHENGEN: 2007}}
+  PT: {name: "Portugal", region: "EU member states", coalitions: {EU: 1986, NATO: 1949, SCHENGEN: 1995}}
+  RO: {name: "Romania", region: "EU member states", coalitions: {EU: 2007, NATO: 2004, SCHENGEN: 2025}}
+  SK: {name: "Slovakia", region: "EU member states", coalitions: {EU: 2004, NATO: 2004, SCHENGEN: 2007}}
+  SI: {name: "Slovenia", region: "EU member states", coalitions: {EU: 2004, NATO: 2004, SCHENGEN: 2007}}
+  ES: {name: "Spain", region: "EU member states", coalitions: {EU: 1986, NATO: 1982, SCHENGEN: 1995}}
+  SE: {name: "Sweden", region: "EU member states", coalitions: {EU: 1995, NATO: 2024, SCHENGEN: 2001, JEF: 2017}}
+
+  EU: {name: "EU bodies", region: "EU and NATO", coalitions: {}}
+  NATO: {name: "NATO", region: "EU and NATO", coalitions: {}}
+
+  GB: {name: "United Kingdom", region: "Other European democracies", coalitions: {NATO: 1949, FVEY: 1946, G7: 1975, AUKUS: 2021, JEF: 2014}}
+  "NO": {name: "Norway", region: "Other European democracies", coalitions: {NATO: 1949, SCHENGEN: 2001, JEF: 2014}}
+  CH: {name: "Switzerland", region: "Other European democracies", coalitions: {SCHENGEN: 2008}}
+
+  US: {name: "United States", region: "Americas", coalitions: {NATO: 1949, FVEY: 1946, G7: 1975, AUKUS: 2021}}
+  CA: {name: "Canada", region: "Americas", coalitions: {NATO: 1949, FVEY: 1948, G7: 1976}}
+
+  AU: {name: "Australia", region: "Asia-Pacific", coalitions: {FVEY: 1956, AUKUS: 2021, NATO_IP4: 2022}}
+  NZ: {name: "New Zealand", region: "Asia-Pacific", coalitions: {FVEY: 1956, NATO_IP4: 2022}}
+  JP: {name: "Japan", region: "Asia-Pacific", coalitions: {G7: 1975, NATO_IP4: 2022}}
+  KR: {name: "South Korea", region: "Asia-Pacific", coalitions: {NATO_IP4: 2022}}
+  TW: {name: "Taiwan", region: "Asia-Pacific", coalitions: {}}
+
+  OTHER: {name: "International", region: "International", coalitions: {}}

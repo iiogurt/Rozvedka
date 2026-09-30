@@ -5,6 +5,9 @@
   <select name="country"><option value="">All countries</option>
     {% for r in facets.country %}<option value="{{ r[0] }}" {{ 'selected' if f.country == r[0] }}>{{ COUNTRY_NAMES.get(r[0], r[0]) }}</option>{% endfor %}
   </select>
+  <select name="coalition" aria-label="Coalition"><option value="">All coalitions</option>
+    {% for key, c in COALITIONS.items() %}<option value="{{ key }}" {{ 'selected' if f.coalition == key }}>{{ c.short }}</option>{% endfor %}
+  </select>
   <select name="type"><option value="">All agency types</option>
     {% for r in facets.type %}<option value="{{ r[0] }}" {{ 'selected' if f.type == r[0] }}>{{ TYPE_NAMES.get(r[0], r[0]) }}</option>{% endfor %}
   </select>
