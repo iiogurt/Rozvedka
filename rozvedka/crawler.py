@@ -4,12 +4,15 @@ import re
 from datetime import datetime
 from urllib.parse import unquote, urldefrag, urljoin, urlsplit
 
-from bs4 import BeautifulSoup
+import warnings
+
+from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 
 from . import db, fetch, registry
 from .config import FOLLOW_LIMIT
 
 log = logging.getLogger("rozvedka.crawl")
+warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)   # some sites serve XHTML as XML
 
 DOC_RE = re.compile(
     r"(\.pdf($|[?#]))|__blob=publicationFile|/document/download/|/attachments/[^/]+/download|/file\.html$|/doc/[^/]+\.pdf",
@@ -24,7 +27,8 @@ REPORT_WORDS = re.compile(
     r"report|annual|review|overview|assessment|threat|landscape|yearbook|situation|"
     r"zpr[aá]v|spr[aá]v|raport|bericht|lagebild|risikobild|verslag|jaarverslag|dreigingsbeeld|rapport|relazion|informe|"
     r"relat[oó]rio|ataskait|gr[eė]sm|p[aā]rskat|aastaraamat|katsaus|[oö]versikt|l[aä]gesbild|vurdering|risikovurdering|"
-    r"izvje|poro[cč]il|доклад|evkonyv|évkönyv|jelent|tesat|iocta|socta|fimi|(19[89]\d|20[0-4]\d)",
+    r"izvje|poro[cč]il|доклад|evkonyv|évkönyv|jelent|tesat|iocta|socta|fimi|(19[89]\d|20[0-4]\d)|"
+    r"publikation|publication|publicaties|risk|risiko|dokumenti|lagebericht",
     re.I)
 YEAR_RE = re.compile(r"(?<!\d)(19[89]\d|20[0-4]\d)(?!\d)")
 
@@ -36,8 +40,17 @@ LANG_TOKENS = {
     "es": r"es|esp|español", "pt": r"pt|por", "hu": r"hu|hun", "ro": r"ro|rou", "bg": r"bg|bul", "hr": r"hr|hrv",
     "sl": r"sl|slo|slv", "el": r"el|gr|gre", "ru": r"ru|rus|русский|russian",
 }
-GENERIC_TITLES = re.compile(r"^(pdf|download|stáhnout|stiahnuť|herunterladen|télécharger|downloaden|ladda ner|lataa|"
-                            r"here|zde|tu|více|more|read more|open|\s*|\(pdf.*\)|\d+(\.\d+)? ?[mk]b)$", re.I)
+GENERIC_TITLES = re.compile(
+    r"^\s*((download|stáhnout|stiahnuť|stiahnut|pobierz|herunterladen|télécharger|downloaden|ladda ner|lataa|"
+    r"descargar|scarica|descarcă|изтегли|preuzmi|prenesi|letöltés|here|zde|tu|více|more|read more|open|otevřít|"
+    r"view|zobrazit)\s*)?(pdf|file|soubor|dokument|document)?\s*(\(?[\d.,]+\s*[mk]i?b\)?|\(pdf[^)]*\))?\s*$", re.I)
+# kept but hidden by default: administrative documents that are not security reports
+LOW_RELEVANCE_RE = re.compile((
+    r"contract|procurement|corrigendum|zakázk|veřejn[aá] zak|кандидат|конкурс|класиране|"
+    r"interes public|acces la informa|poskytov[aá]n[ií] informac|106/1999|access to information|freedom of information|"
+    r"human resources|recruit|n[aá]bor|vacanc|stellenausschreibung|budget|rozpo[cč]et|bilan[tț] contabil|"
+    r"sluzebni|služební|výběrov[eé] řízen|ausschreibung|relationarea .* cu publicul"
+).replace(" ", r"[\s_-]+"), re.I)   # filenames use _ or - where titles use spaces
 
 
 LANG_NAMES = {
@@ -97,6 +110,9 @@ def extract(html: str, base: str) -> tuple[list[dict], list[tuple[str, str]]]:
     soup = BeautifulSoup(html, "html.parser")
     for tag in soup(["script", "style", "noscript"]):
         tag.decompose()
+    base_tag = soup.find("base", href=True)
+    if base_tag:   # e.g. bund.de sites resolve every relative link against <base href>
+        base = urljoin(base, base_tag["href"])
     docs, subs, seen = [], [], set()
     for a in soup.find_all("a", href=True):
         href = a["href"].strip()
@@ -116,15 +132,25 @@ def extract(html: str, base: str) -> tuple[list[dict], list[tuple[str, str]]]:
     return docs, subs
 
 
+def is_poor_title(title: str | None, url: str) -> bool:
+    return not title or bool(GENERIC_TITLES.match(title)) or title == humanize_filename(url)
+
+
 def _store(con, source_id, page_id, docs, page_lang, allowed) -> int:
     new = 0
     for d in docs:
         lang = guess_lang(d["url"], d["title"], page_lang, allowed)
         year = guess_year(d["title"], d["url"])
-        cur = con.execute(
-            "INSERT OR IGNORE INTO documents(source_id,page_id,url,title,lang,year,origin) VALUES(?,?,?,?,?,?,?)",
-            (source_id, page_id, d["url"], d["title"], lang, year, d.get("origin", "crawl")))
-        new += cur.rowcount
+        hidden = 1 if LOW_RELEVANCE_RE.search(d["title"] + " " + unquote(d["url"])) else 0
+        old = con.execute("SELECT id, title FROM documents WHERE url=?", (d["url"],)).fetchone()
+        if old is None:
+            con.execute(
+                "INSERT INTO documents(source_id,page_id,url,title,lang,year,origin,hidden) VALUES(?,?,?,?,?,?,?,?)",
+                (source_id, page_id, d["url"], d["title"], lang, year, d.get("origin", "crawl"), hidden))
+            new += 1
+        elif is_poor_title(old["title"], d["url"]) and not is_poor_title(d["title"], d["url"]):
+            # a later crawl found a better title (e.g. from the linking sub-page) – keep that one
+            con.execute("UPDATE documents SET title=?, year=COALESCE(year, ?) WHERE id=?", (d["title"], year, old["id"]))
     return new
 
 
@@ -146,6 +172,15 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
         return "ok", _store(con, src["id"], page["id"], [{"url": page["url"], "title": page["note"] or src["agency"]}],
                             page["lang"], allowed_langs)
     docs, subs = extract(resp.text, resp.url)
+    if not docs and fetch.CHROMIUM and src["access"] != "browser-js":
+        # nothing found in the raw HTML – the list may be built by JavaScript; try once in a browser
+        try:
+            rendered = fetch.render(page["url"])
+            r_docs, r_subs = extract(rendered.text, page["url"])
+            if len(r_docs) + len(r_subs) > len(docs) + len(subs):
+                docs, subs = r_docs, r_subs
+        except Exception as e:  # noqa: BLE001
+            log.debug("render fallback failed for %s: %s", page["url"], e)
     followed = 0
     if len(docs) < 3:
         # archive pages often link to one sub-page per report; follow those one level deep

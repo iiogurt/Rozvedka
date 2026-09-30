@@ -101,7 +101,7 @@ def get(url: str, lenient: bool = False, check_robots: bool = True) -> Response:
         with _client(lenient) as c:
             r = c.get(url)
         return Response(str(r.url), r.status_code, r.headers.get("content-type", ""), r.content)
-    except (httpx.ConnectError, httpx.ReadError, httpx.RemoteProtocolError, httpx.ReadTimeout) as e:
+    except (httpx.TransportError, httpx.TimeoutException) as e:
         if shutil.which("curl"):
             return _curl(url, None, lenient)
         raise e
@@ -154,7 +154,7 @@ def download(url: str, dest: Path, lenient: bool = False, max_bytes: int = 200 *
                         raise RuntimeError("file too large")
                     f.write(chunk)
             return Response(str(r.url), r.status_code, r.headers.get("content-type", ""))
-    except (httpx.ConnectError, httpx.ReadError, httpx.RemoteProtocolError, httpx.ReadTimeout):
+    except (httpx.TransportError, httpx.TimeoutException):
         if shutil.which("curl"):
             return _curl(url, dest, lenient)
         raise
