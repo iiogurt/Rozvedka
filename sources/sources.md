@@ -1,6 +1,6 @@
 # Rozvedka – official security report sources
 
-Generated from `sources/registry.yaml` — 109 sources, 187 pages.
+Generated from `sources/registry.yaml` — 120 sources, 202 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
@@ -378,3 +378,49 @@ _NATO IP4 (2022)_
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **NSB** – National Security Bureau<br>_國家安全局_<br>[www.nsb.gov.tw](https://www.nsb.gov.tw/) | Taiwan's intelligence agency. Reports on China's cognitive warfare, disinformation and cyber attacks against Taiwan. | Analysis of China's cognitive warfare | [en current](https://www.nsb.gov.tw/en/) · [zh current](https://www.nsb.gov.tw/) |
+
+## Ukraine
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **SSSCIP / CERT-UA** – State Service of Special Communications and Information Protection of Ukraine<br>_Державна служба спеціального зв'язку та захисту інформації України_<br>[cip.gov.ua](https://cip.gov.ua/) | Ukraine's cyber-security agency and home of CERT-UA. Half-yearly analytical reports 'Russian Cyber Operations' / 'Russia's Cyber Tactics' on attacks against Ukraine, hacker groups and their techniques. | Russian Cyber Operations, Russia's Cyber Tactics<br>_cip.gov.ua denies automated access (CDN) – add the half-yearly reports manually._ | [en archive ⚠](https://cip.gov.ua/en/) · [uk archive ⚠](https://cip.gov.ua/ua/) |
+| **CPD** – Center for Countering Disinformation at the National Security and Defense Council of Ukraine<br>_Центр протидії дезінформації при РНБО України_<br>[cpd.gov.ua](https://cpd.gov.ua/) | Ukrainian government body countering Russian disinformation. Analytical reports on propaganda networks, influence campaigns, AI-generated fakes and narratives targeting Ukraine and its partners. | analytical reports<br>_robots.txt forbids crawling of /wp-* (where the report files are) – add reports manually._ | [en archive](https://cpd.gov.ua/en/category/report/) · [uk archive](https://cpd.gov.ua/category/report/) |
+| **NISS** – National Institute for Strategic Studies<br>_Національний інститут стратегічних досліджень_<br>[niss.gov.ua](https://niss.gov.ua/) | Analytical institute of the President of Ukraine. Analytical reports on national security, economic security, the war, energy and European integration. | analytical reports | [en archive ⚠](https://niss.gov.ua/en/publikacii/analitichni-dopovidi) · [uk archive ⚠](https://niss.gov.ua/publikacii/analitichni-dopovidi) |
+
+## Mexico
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **CENAPRED** – National Center for Disaster Prevention<br>_Centro Nacional de Prevención de Desastres_<br>[www.gob.mx/cenapred](https://www.gob.mx/cenapred) | Mexico's disaster-prevention centre. The annual series 'Impacto socioeconómico de los principales desastres' (since 1999) quantifies damage from earthquakes, hurricanes, floods and other disasters. | Impacto socioeconómico de los desastres<br>_Publications site returns 403 to automated requests – add reports manually._ | [es archive ⚠](https://www.cenapred.unam.mx/es/Publicaciones/) |
+
+## Brazil
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **ABIN** – Brazilian Intelligence Agency<br>_Agência Brasileira de Inteligência_<br>[www.gov.br/abin/pt-br](https://www.gov.br/abin/pt-br) | Brazil's intelligence agency. The annual public report 'Desafios de Inteligência' covers election security, cyber and AI threats, organised crime, espionage, foreign interference, climate and South American security. | Desafios de Inteligência | [pt+es+en current](https://repositorio.enap.gov.br/handle/1/9285) · [pt+es+en archive](https://repositorio.enap.gov.br/handle/1/8216) |
+
+## Chile
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **CSIRT Chile** – Chilean Government CSIRT<br>_CSIRT de Gobierno / Agencia Nacional de Ciberseguridad_<br>[www.csirt.gob.cl](https://www.csirt.gob.cl/) | Chile's government computer-security incident response team. Annual and monthly management reports on incidents, phishing, malware and vulnerabilities. | Informe anual de gestión<br>_Reports page returns 403 to automated requests – add reports manually._ | [es archive ⚠](https://www.csirt.gob.cl/reportes/) |
+| **SENAPRED** – National Service for Disaster Prevention and Response<br>_Servicio Nacional de Prevención y Respuesta ante Desastres_<br>[senapred.cl](https://senapred.cl/) | Chile's disaster-management service. Disaster-risk programmes, plans and studies on earthquakes, tsunamis, wildfires and floods in its BiblioGRD library. | disaster risk management programme, plans<br>_The BiblioGRD library forbids crawling in robots.txt – add documents manually._ | [es archive](https://bibliogrd.senapred.gob.cl/) |
+
+## Colombia
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **UNGRD** – National Unit for Disaster Risk Management<br>_Unidad Nacional para la Gestión del Riesgo de Desastres_<br>[portal.gestiondelriesgo.gov.co](https://portal.gestiondelriesgo.gov.co/) | Colombia's disaster-risk management agency. Annual management reports (since 2011) and emergency reports on floods, landslides, droughts and the La Niña / El Niño seasons. | Informe de gestión | [es archive](https://portal.gestiondelriesgo.gov.co/paginas/informe-de-gestion.aspx) |
+| **colCERT** – Colombian Cyber Emergency Response Team<br>_Grupo de Respuesta a Emergencias Cibernéticas de Colombia_<br>[www.colcert.gov.co](https://www.colcert.gov.co/) | Colombia's national CERT under MinTIC. Annual 'Informe de Tendencias de Amenazas Cibernéticas' on phishing, ransomware and attacks on critical infrastructure. | Informe de Tendencias de Amenazas Cibernéticas | [es current](https://www.colcert.gov.co/800/w3-article-433510.html) |
+
+## Peru
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **INDECI** – National Institute of Civil Defence<br>_Instituto Nacional de Defensa Civil_<br>[portal.indeci.gob.pe](https://portal.indeci.gob.pe/) | Peru's civil-defence institute. The annual statistical compendium of emergencies and damage (earthquakes, El Niño floods, landslides, cold waves) by region, since 2003. | Compendio estadístico<br>_Older compendia (1995–2012) are split into chapter tables; recent ones are single PDFs._ | [es archive](https://portal.indeci.gob.pe/direccion-politicas-y-planes/compendios-estadisticos/compendios/2018-2/)<br>pattern: `https://portal.indeci.gob.pe/direccion-politicas-y-planes/compendios-estadisticos/compendios/{year}-2/` 1995–2021 |
+
+## Argentina
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **Ministerio de Seguridad** – Ministry of National Security – National Criminal Information System<br>_Ministerio de Seguridad Nacional – Sistema Nacional de Información Criminal_<br>[www.argentina.gob.ar/seguridad](https://www.argentina.gob.ar/seguridad) | Argentina's security ministry. Annual national and provincial crime reports (SNIC, since 2000): homicides, robbery, drug offences and violence against women. | Informe SNIC / criminal statistics | [es archive](https://www.argentina.gob.ar/seguridad/estadisticascriminales/informes) |

@@ -10,6 +10,25 @@ Each release is tagged `v<version>` on `main` (e.g. `v0.6.0`). The version shown
 
 ## [Unreleased]
 
+## [0.9.0] – 2026-09-30
+
+### Added
+- Ukraine: SSSCIP / CERT-UA (half-yearly "Russian Cyber Operations" reports), Center for Countering
+  Disinformation, and the National Institute for Strategic Studies. All three are manual: the sites deny
+  automated access, or forbid crawling of their files in robots.txt.
+- Latin America (new region):
+  - **Brazil:** ABIN "Desafios de Inteligência" in Portuguese, Spanish and English.
+  - **Colombia:** UNGRD annual management reports 2004–2025; colCERT's cyber-threat trends report.
+  - **Peru:** INDECI statistical compendia 1995–2021.
+  - **Argentina:** national crime statistics.
+  - **Mexico:** CENAPRED socio-economic disaster impact series (manual).
+  - **Chile:** CSIRT and SENAPRED (manual).
+- The crawler recognises DSpace repository download links (`/bitstreams/<id>/download`).
+
+### Fixed
+- Link titles with a file size, such as "report.pdf (77.28 MB)", are cleaned before being judged.
+- Citizen-service policies and daily operational bulletins are hidden by default.
+
 ## [0.8.0] – 2026-09-30
 
 ### Added
@@ -115,7 +134,8 @@ Each release is tagged `v<version>` on `main` (e.g. `v0.6.0`). The version shown
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/iiogurt/Rozvedka/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/iiogurt/Rozvedka/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/iiogurt/Rozvedka/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/iiogurt/Rozvedka/compare/v0.5.0...v0.6.0

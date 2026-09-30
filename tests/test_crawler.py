@@ -128,3 +128,22 @@ def test_domain_family_and_official_filter():
     assert domain_family("https://www.justice.gov/d9/complaint.pdf") not in fams      # cited in a footnote
     odni = {"homepage": "https://www.dni.gov/", "domains": "odni.gov"}
     assert domain_family("https://www.odni.gov/files/ATA-2026.pdf") in official_families(odni, None)
+
+
+def test_extract_dspace_download_links():
+    html = '<a href="/bitstreams/5b9dc559-233f-4be4-ae16-e5fd767707de/download">ABIN_Desafios_2026.pdf (77.28 MB)</a>'
+    docs, _ = extract(html, "https://repositorio.enap.gov.br/handle/1/9285")
+    assert len(docs) == 1 and docs[0]["url"].endswith("/download")
+
+
+def test_title_size_suffix_removed_and_filename_title_is_poor():
+    html = '<a href="/bitstreams/abc/download">ABIN_Desafios_2026.pdf (77.28 MB)</a>'
+    docs, _ = extract(html, "https://repositorio.enap.gov.br/handle/1/9285")
+    assert docs[0]["title"] == "ABIN_Desafios_2026.pdf"
+    assert is_poor_title(docs[0]["title"], docs[0]["url"])
+
+
+@pytest.mark.parametrize("text", ["Protocolo de Servicio al Ciudadano", "REPORTE COMPLEMENTARIO N.° 13180",
+                                  "Política de tratamiento de datos personales"])
+def test_low_relevance_latam_admin(text):
+    assert LOW_RELEVANCE_RE.search(text)
