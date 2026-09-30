@@ -52,10 +52,10 @@
   agency: HZS ČR
   full_name: Hasičský záchranný sbor ČR
   type: civil-protection
-  access: auto
+  access: manual
   frequency: yearly
   report_types: [statistical yearbook]
-  notes: "Moved to archiv.hzscr.gov.cz – may no longer be updated."
+  notes: "Moved to archiv.hzscr.gov.cz (robots.txt disallows crawling) – add yearbooks manually."
   pages:
     - {lang: cs, kind: archive, url: "https://archiv.hzscr.gov.cz/clanek/statisticke-rocenky-hasicskeho-zachranneho-sboru-cr.aspx"}
 
@@ -63,10 +63,10 @@
   agency: MV ČR
   full_name: Ministerstvo vnitra – zprávy o extremismu
   type: police-ct
-  access: auto
+  access: manual
   frequency: yearly
   report_types: [report on extremism]
-  notes: "Moved to archiv.mv.gov.cz – may no longer be updated."
+  notes: "Moved to archiv.mv.gov.cz (robots.txt disallows crawling) – add reports manually."
   pages:
     - {lang: cs, kind: archive, url: "https://archiv.mv.gov.cz/clanek/extremismus-vyrocni-zpravy-o-extremismu-a-strategie-boje-proti-extremismu.aspx"}
 
@@ -85,7 +85,8 @@
   agency: NBÚ
   full_name: Národný bezpečnostný úrad (SK-CERT)
   type: cyber
-  access: auto
+  access: manual
+  notes: "Page content hidden behind a loading screen, also in a headless browser – add reports manually."
   frequency: yearly
   report_types: [annual report]
   pages:
@@ -135,6 +136,9 @@
   pages:
     - {lang: de, kind: archive, url: "https://www.verfassungsschutz.de/DE/service/publikationen/publikationen_node.html"}
     - {lang: de, kind: current, url: "https://www.verfassungsschutz.de/SharedDocs/publikationen/DE/verfassungsschutzberichte/2026-06-30-verfassungsschutzbericht-2025.html"}
+    - {lang: de, kind: archive, url: "https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht", note: "publication search – annual reports and summaries"}
+    - {lang: de, kind: archive, url: "https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht&gtp=714296_list%253D2", note: "search results page 2"}
+    - {lang: de, kind: archive, url: "https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht&gtp=714296_list%253D3", note: "search results page 3"}
 
 - country: DE
   agency: BMI
@@ -196,7 +200,8 @@
   frequency: yearly
   report_types: [Risikobild]
   pages:
-    - {lang: de, kind: archive, url: "https://www.bmlv.gv.at/menu/vpol.shtml"}
+    - {lang: de+en, kind: current, url: "https://verteidigungspolitik.at/risikobild", note: "Risikobild / Risk Monitor (German + English)"}
+    - {lang: de, kind: archive, url: "https://www.bmlv.gv.at/wissen-forschung/publikationen/index.shtml"}
 
 # ════════════════════════ ESTONIA ════════════════════════
 - country: EE
@@ -257,10 +262,9 @@
   access: auto
   frequency: yearly
   report_types: [annual report]
-  notes: "Homepage only – exact reports page to be pinned during crawling."
   pages:
-    - {lang: lv, kind: current, url: "https://www.sab.gov.lv/"}
-    - {lang: en, kind: current, url: "https://www.sab.gov.lv/en/"}
+    - {lang: lv, kind: archive, url: "https://www.sab.gov.lv/gada-parskati/"}
+    - {lang: en, kind: archive, url: "https://www.sab.gov.lv/en/annual-reports/"}
 
 - country: LV
   agency: MIDD
@@ -382,6 +386,7 @@
   access: auto
   frequency: yearly
   report_types: [Efterretningsmæssig Risikovurdering / Intelligence Risk Assessment]
+  notes: "English Intelligence Outlook is published as web pages; PDFs mainly in Danish."
   pages:
     - {lang: da, kind: archive, url: "https://www.fe-ddis.dk/da/produkter/Risikovurdering/"}
     - {lang: en, kind: archive, url: "https://www.fe-ddis.dk/en/produkter/Risk_assessment/"}
@@ -408,7 +413,7 @@
   pages:
     - {lang: da, kind: series, url: "https://www.brs.dk/da/redningsberedskab-myndighed/krisestyring2-og-beredskabsplanlagning/nationalt-risikobillede/"}
     - {lang: da, kind: archive, url: "https://www.brs.dk/da/nyheder-og-publikationer/publikationer2/"}
-    - {lang: en, kind: current, url: "https://www.brs.dk/en/"}
+    - {lang: en, kind: current, url: "https://www.brs.dk/en/nyheder-og-publikationer/publikationer2/alle-publikationer/2022/national-risk-profile/"}
 
 # ════════════════════════ NETHERLANDS ════════════════════════
 - country: NL
@@ -513,6 +518,8 @@
   frequency: yearly
   report_types: [Panorama de la cybermenace, activity report]
   pages:
+    - {lang: fr, kind: series, url: "https://cyber.gouv.fr/nous-connaitre/publications/panoramas-de-la-cybermenace/", note: "Panorama de la cybermenace 2021–"}
+    - {lang: fr, kind: series, url: "https://www.cert.ssi.gouv.fr/cti/", note: "CERT-FR threat reports (CTI)"}
     - {lang: fr, kind: archive, url: "https://cyber.gouv.fr/nous-connaitre/publications/"}
     - {lang: en, kind: archive, url: "https://cyber.gouv.fr/en/publications/"}
 
@@ -607,7 +614,7 @@
   frequency: yearly
   report_types: [RASI]
   pages:
-    - {lang: pt, kind: archive, url: "https://ssi.gov.pt/publicacoes/relatorio-anual-de-seguranca-interna/"}
+    - {lang: pt, kind: archive, url: "https://ssi.gov.pt/publicacoes/relatorio-anual-de-seguranca-interna/", verified: false, note: "web firewall rejects automated requests – open in browser"}
     - {lang: pt, kind: current, url: "https://www.portugal.gov.pt/pt/gc25/comunicacao/documentos/rasi-2025-relatorio-anual-de-seguranca-interna"}
 
 - country: PT
@@ -685,10 +692,10 @@
   access: auto
   frequency: yearly
   report_types: [javno izvješće / public report]
-  notes: "Public reports 2014–2022; none published for 2023."
+  notes: "Public reports 2014–2022 and 2025; none found for 2023–2024."
   pages:
-    - {lang: hr, kind: archive, url: "https://www.soa.hr/hr/dokumenti/javna-izvjesca/"}
-    - {lang: en, kind: archive, url: "https://www.soa.hr/en/documents/public-reports/"}
+    - {lang: hr, kind: archive, url: "https://soa.hr/hr/javni-dokumenti-soa-e/194"}
+    - {lang: en, kind: archive, url: "https://soa.hr/en/public-documents-soa/194"}
 
 # ════════════════════════ SLOVENIA ════════════════════════
 - country: SI
@@ -861,7 +868,8 @@
   agency: JRC DRMKC
   full_name: Joint Research Centre – Disaster Risk Management Knowledge Centre
   type: eu-body
-  access: auto
+  access: manual
+  notes: "Site answers with a bot-challenge page – add reports manually."
   frequency: periodic
   report_types: [Science for Disaster Risk Management]
   pages:

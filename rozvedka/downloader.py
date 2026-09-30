@@ -50,7 +50,11 @@ def download_one(doc_id: int) -> str:
         elif resp.status != 200:
             error = f"http {resp.status}"
         elif b"%PDF" not in head:
-            status, error = "skipped", f"not a PDF ({resp.content_type or 'unknown type'})"
+            if "html" in (resp.content_type or "") or head.lstrip()[:15].lower().startswith((b"<!doctype", b"<html")):
+                # still a report worth listing – the site only hands the file to a real browser
+                status, error = "browser-only", "site returned a web page, not the file – open the original link in a browser"
+            else:
+                status, error = "skipped", f"not a PDF ({resp.content_type or 'unknown type'})"
         else:
             data = tmp.read_bytes()
             sha = hashlib.sha256(data).hexdigest()

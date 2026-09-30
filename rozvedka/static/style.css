@@ -45,6 +45,7 @@ table.docs { width: 100%; border-collapse: collapse; }
 .st-downloaded { color: var(--ok); border-color: var(--ok); }
 .st-failed { color: var(--err); border-color: var(--err); }
 .st-new { color: var(--warn); border-color: var(--warn); }
+.st-browser-only { color: var(--accent); border-color: var(--accent); }
 .actions { white-space: nowrap; }
 .actions form, .actions details { display: inline-block; }
 .actions button, .actions summary { padding: 1px 7px; font-size: 13px; }

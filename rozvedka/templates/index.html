@@ -15,7 +15,7 @@
     {% for r in facets.year %}<option value="{{ r[0] }}" {{ 'selected' if f.year|string == r[0]|string }}>{{ r[0] }}</option>{% endfor %}
   </select>
   <select name="status"><option value="">Any status</option>
-    {% for s in ['downloaded','new','failed'] %}<option value="{{ s }}" {{ 'selected' if f.status == s }}>{{ s }}</option>{% endfor %}
+    {% for s in ['downloaded','new','browser-only','failed'] %}<option value="{{ s }}" {{ 'selected' if f.status == s }}>{{ s }}</option>{% endfor %}
   </select>
   <label class="chk"><input type="checkbox" name="show_hidden" value="1" {{ 'checked' if f.show_hidden }}> hidden too</label>
   <button>Filter</button>
