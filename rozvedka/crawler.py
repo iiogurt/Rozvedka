@@ -16,7 +16,8 @@ warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)   # some site
 
 DOC_RE = re.compile(
     r"(\.pdf($|[?#]))|__blob=publicationFile|/document/download/|/attachments/[^/]+/download|/file\.html$|/doc/[^/]+\.pdf|"
-    r"/documents/[^?#]*\.pdf/",   # Liferay document library: /documents/<ids>/<name>.pdf/<uuid>?download=true
+    r"/documents/[^?#]*\.pdf/|"   # Liferay document library: /documents/<ids>/<name>.pdf/<uuid>?download=true
+    r"/bitstreams?/[^?#]+/download",  # DSpace repositories: /bitstreams/<uuid>/download
     re.I)
 JUNK_RE = re.compile(
     r"cookie|privacy|gdpr|ochrana-osobnich|osobnych-udajov|datenschutz|impressum|"
@@ -65,7 +66,10 @@ LOW_RELEVANCE_RE = re.compile((
     r"contract|procurement|corrigendum|zakázk|veřejn[aá] zak|кандидат|конкурс|класиране|"
     r"interes public|acces la informa|poskytov[aá]n[ií] informac|106/1999|access to information|freedom of information|"
     r"human resources|recruit|n[aá]bor|vacanc|stellenausschreibung|budget|rozpo[cč]et|bilan[tț] contabil|"
-    r"sluzebni|služební|výběrov[eé] řízen|ausschreibung|relationarea .* cu publicul"
+    r"sluzebni|služební|výběrov[eé] řízen|ausschreibung|relationarea .* cu publicul|"
+    r"protocolo de servicio|política de tratamiento de datos|politica de relacionamiento|política de relacionamiento|"
+    r"carta de trato digno|lenguaje claro|participación ciudadana|manuales de comunicación|"
+    r"reporte complementario|informe de emergencia n|boletín informativo sísmico|boletin informativo sismico"
 ).replace(" ", r"[\s_-]+"), re.I)   # filenames use _ or - where titles use spaces
 
 
@@ -102,8 +106,11 @@ def guess_year(title: str, url: str) -> int | None:
     return None
 
 
+_SIZE_SUFFIX = re.compile(r"\s*[\(\[]\s*(?:pdf[,\s]*)?[\d.,]+\s*[kmg]i?b\s*[\)\]]\s*$", re.I)
+
+
 def _title_for(a) -> str:
-    t = " ".join(a.get_text(" ", strip=True).split())
+    t = _SIZE_SUFFIX.sub("", " ".join(a.get_text(" ", strip=True).split()))
     if GENERIC_TITLES.match(t) or CALL_TO_ACTION.match(t) or len(t) < 4:
         t = a.get("title") or a.get("aria-label") or ""
     if GENERIC_TITLES.match(t) or CALL_TO_ACTION.match(t) or len(t) < 4:
