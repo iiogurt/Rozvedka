@@ -1,8 +1,30 @@
 """Unit tests for the crawler's pure heuristics (no network)."""
 import pytest
 
-from rozvedka.crawler import (GENERIC_TITLES, LOW_RELEVANCE_RE, extract, guess_lang, guess_year,
-                              humanize_filename)
+from rozvedka.crawler import (CALL_TO_ACTION, GENERIC_TITLES, LOW_RELEVANCE_RE, extract, guess_lang, guess_year,
+                              humanize_filename, is_poor_title)
+from rozvedka.downloader import good_pdf_title
+from rozvedka.logos import candidates
+
+
+@pytest.mark.parametrize("title,good", [
+    ("Rapport annuel de la Sûreté de l'État 2025", True),
+    ("Microsoft Word - VZ_2023_final.docx", False),
+    ("untitled", False),
+    ("", False),
+])
+def test_good_pdf_title(title, good):
+    assert good_pdf_title(title) is good
+
+
+def test_logo_candidates_prefer_own_logo_over_portal_mark():
+    html = """<header><img src="/themes/ccbe/fonts/iconfont/svg/be.svg" class="logo">
+              <a class="site-logo"><img src="/files/2025-02/vsse-logo.png" alt="VSSE"></a></header>
+              <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png">"""
+    urls = candidates(html, "https://vsse.be/", "VSSE")
+    assert urls[0] == "https://vsse.be/files/2025-02/vsse-logo.png"
+    assert urls.index("https://vsse.be/themes/ccbe/fonts/iconfont/svg/be.svg") > urls.index(
+        "https://vsse.be/favicon/apple-touch-icon.png")
 
 
 @pytest.mark.parametrize("url,text,page_lang,allowed,expected", [
@@ -50,6 +72,25 @@ def test_real_titles_not_generic(title):
 ])
 def test_low_relevance(text, low):
     assert bool(LOW_RELEVANCE_RE.search(text)) is low
+
+
+@pytest.mark.parametrize("text,cta", [
+    ("Click here to access our report", True),
+    ("Télécharger ici le rapport complet.", True),
+    ("Download hier het volledige verslag.", True),
+    ("Consultez les photos", True),
+    ("Download the TE-SAT 2024 report", False),        # has a year -> a real title
+    ("Open Source Intelligence and hybrid threats", False),
+    ("Annual Report 2023", False),
+])
+def test_call_to_action(text, cta):
+    assert CALL_TO_ACTION.match(text) is cta
+
+
+def test_poor_titles():
+    assert is_poor_title("web2-espionnage_et_ingerence-v3-uk-simple.pdf", "https://x/web2.pdf")
+    assert is_poor_title("Click here to access our report", "https://x/r.pdf")
+    assert not is_poor_title("Verfassungsschutzbericht 2025", "https://x/vsb.pdf")
 
 
 def test_humanize_filename():
