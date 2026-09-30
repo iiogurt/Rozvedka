@@ -1,6 +1,6 @@
 # Rozvedka
 
-A local library of the public reports that intelligence, cyber-security, civil-protection and police agencies publish: the EU member states, EU bodies and NATO, plus other democracies (UK, Norway, Switzerland, USA, Canada, Australia, New Zealand, Japan, South Korea, Taiwan). It runs on this Raspberry Pi.
+A local library of the public reports that intelligence, cyber-security, civil-protection and police agencies publish: the EU member states, EU bodies and NATO, plus other democracies (UK, Norway, Switzerland, Ukraine, USA, Canada, Mexico, Brazil, Argentina, Chile, Colombia, Peru, Australia, New Zealand, Japan, South Korea, Taiwan). It runs on this Raspberry Pi.
 
 - `sources/registry.yaml` lists the agencies and their report pages (language + current/archive). Edit it by hand.
 - `sources/sources.md` is the readable version of the registry. Rebuild it with `python3 tools/build_sources_md.py`.

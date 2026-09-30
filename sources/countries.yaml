@@ -21,6 +21,7 @@ regions:
   - "EU and NATO"
   - "Other European democracies"
   - "Americas"
+  - "Latin America"
   - "Asia-Pacific"
   - "International"
 
@@ -59,9 +60,17 @@ countries:
   GB: {name: "United Kingdom", region: "Other European democracies", coalitions: {NATO: 1949, FVEY: 1946, G7: 1975, AUKUS: 2021, JEF: 2014}}
   "NO": {name: "Norway", region: "Other European democracies", coalitions: {NATO: 1949, SCHENGEN: 2001, JEF: 2014}}
   CH: {name: "Switzerland", region: "Other European democracies", coalitions: {SCHENGEN: 2008}}
+  UA: {name: "Ukraine", region: "Other European democracies", coalitions: {}}
 
   US: {name: "United States", region: "Americas", coalitions: {NATO: 1949, FVEY: 1946, G7: 1975, AUKUS: 2021}}
   CA: {name: "Canada", region: "Americas", coalitions: {NATO: 1949, FVEY: 1948, G7: 1976}}
+
+  MX: {name: "Mexico", region: "Latin America", coalitions: {}}
+  BR: {name: "Brazil", region: "Latin America", coalitions: {}}
+  AR: {name: "Argentina", region: "Latin America", coalitions: {}}
+  CL: {name: "Chile", region: "Latin America", coalitions: {}}
+  CO: {name: "Colombia", region: "Latin America", coalitions: {}}
+  PE: {name: "Peru", region: "Latin America", coalitions: {}}
 
   AU: {name: "Australia", region: "Asia-Pacific", coalitions: {FVEY: 1956, AUKUS: 2021, NATO_IP4: 2022}}
   NZ: {name: "New Zealand", region: "Asia-Pacific", coalitions: {FVEY: 1956, NATO_IP4: 2022}}

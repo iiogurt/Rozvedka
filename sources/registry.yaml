@@ -1694,3 +1694,181 @@
   pages:
     - {lang: en, kind: current, url: "https://www.nsb.gov.tw/en/"}
     - {lang: zh, kind: current, url: "https://www.nsb.gov.tw/"}
+
+# ════════════════════════ UKRAINE ════════════════════════
+# Ukrainian government sites answer automated requests with "Access Denied" (CDN bot/geo protection) or forbid
+# crawling of their file uploads in robots.txt – add reports by hand from a browser.
+- country: UA
+  agency: SSSCIP / CERT-UA
+  name_local: "Державна служба спеціального зв'язку та захисту інформації України"
+  name_en: "State Service of Special Communications and Information Protection of Ukraine"
+  homepage: "https://cip.gov.ua/"
+  description: "Ukraine's cyber-security agency and home of CERT-UA. Half-yearly analytical reports 'Russian Cyber Operations' / 'Russia's Cyber Tactics' on attacks against Ukraine, hacker groups and their techniques."
+  hq: {address: "Solomianska Street 13, Kyiv, Ukraine", lat: 50.42552, lon: 30.47775, precision: address}
+  type: cyber
+  access: manual
+  frequency: half-yearly
+  report_types: [Russian Cyber Operations, Russia's Cyber Tactics]
+  notes: "cip.gov.ua denies automated access (CDN) – add the half-yearly reports manually."
+  pages:
+    - {lang: en, kind: archive, url: "https://cip.gov.ua/en/", verified: false}
+    - {lang: uk, kind: archive, url: "https://cip.gov.ua/ua/", verified: false}
+
+- country: UA
+  agency: CPD
+  name_local: "Центр протидії дезінформації при РНБО України"
+  name_en: "Center for Countering Disinformation at the National Security and Defense Council of Ukraine"
+  homepage: "https://cpd.gov.ua/"
+  description: "Ukrainian government body countering Russian disinformation. Analytical reports on propaganda networks, influence campaigns, AI-generated fakes and narratives targeting Ukraine and its partners."
+  hq: {address: "Kyiv, Ukraine", lat: 50.45003, lon: 30.52414, precision: city}
+  type: intelligence-civil
+  access: manual
+  frequency: periodic
+  report_types: [analytical reports]
+  notes: "robots.txt forbids crawling of /wp-* (where the report files are) – add reports manually."
+  pages:
+    - {lang: en, kind: archive, url: "https://cpd.gov.ua/en/category/report/"}
+    - {lang: uk, kind: archive, url: "https://cpd.gov.ua/category/report/"}
+
+- country: UA
+  agency: NISS
+  name_local: "Національний інститут стратегічних досліджень"
+  name_en: "National Institute for Strategic Studies"
+  homepage: "https://niss.gov.ua/"
+  description: "Analytical institute of the President of Ukraine. Analytical reports on national security, economic security, the war, energy and European integration."
+  hq: {address: "Pyrohova Street 7a, Kyiv, Ukraine", lat: 50.44547, lon: 30.50674, precision: address}
+  type: intelligence-civil
+  access: manual
+  frequency: periodic
+  report_types: [analytical reports]
+  pages:
+    - {lang: en, kind: archive, url: "https://niss.gov.ua/en/publikacii/analitichni-dopovidi", verified: false}
+    - {lang: uk, kind: archive, url: "https://niss.gov.ua/publikacii/analitichni-dopovidi", verified: false}
+
+# ════════════════════════ MEXICO ════════════════════════
+- country: MX
+  agency: CENAPRED
+  name_local: "Centro Nacional de Prevención de Desastres"
+  name_en: "National Center for Disaster Prevention"
+  homepage: "https://www.gob.mx/cenapred"
+  description: "Mexico's disaster-prevention centre. The annual series 'Impacto socioeconómico de los principales desastres' (since 1999) quantifies damage from earthquakes, hurricanes, floods and other disasters."
+  hq: {address: "Avenida Delfín Madrigal 665, Coyoacán, Ciudad de México, Mexico", lat: 19.31487, lon: -99.17473, precision: address}
+  type: civil-protection
+  access: manual
+  frequency: yearly
+  report_types: [Impacto socioeconómico de los desastres]
+  notes: "Publications site returns 403 to automated requests – add reports manually."
+  pages:
+    - {lang: es, kind: archive, url: "https://www.cenapred.unam.mx/es/Publicaciones/", verified: false}
+
+# ════════════════════════ BRAZIL ════════════════════════
+- country: BR
+  agency: ABIN
+  name_local: "Agência Brasileira de Inteligência"
+  name_en: "Brazilian Intelligence Agency"
+  homepage: "https://www.gov.br/abin/pt-br"
+  description: "Brazil's intelligence agency. The annual public report 'Desafios de Inteligência' covers election security, cyber and AI threats, organised crime, espionage, foreign interference, climate and South American security."
+  hq: {address: "SPO Área 5, Quadra 1, Brasília, Brazil", lat: -15.79399, lon: -47.8828, precision: city}
+  type: intelligence-civil
+  access: auto
+  frequency: yearly
+  report_types: [Desafios de Inteligência]
+  domains: ["enap.gov.br"]   # published in the repository of the National School of Public Administration
+  pages:
+    - {lang: pt+es+en, kind: current, url: "https://repositorio.enap.gov.br/handle/1/9285", note: "Desafios de Inteligência 2026"}
+    - {lang: pt+es+en, kind: archive, url: "https://repositorio.enap.gov.br/handle/1/8216", note: "Desafios de Inteligência 2025"}
+
+# ════════════════════════ CHILE ════════════════════════
+- country: CL
+  agency: CSIRT Chile
+  name_local: "CSIRT de Gobierno / Agencia Nacional de Ciberseguridad"
+  name_en: "Chilean Government CSIRT"
+  homepage: "https://www.csirt.gob.cl/"
+  description: "Chile's government computer-security incident response team. Annual and monthly management reports on incidents, phishing, malware and vulnerabilities."
+  hq: {address: "Santiago, Chile", lat: -33.4377, lon: -70.65107, precision: city}
+  type: cyber
+  access: manual
+  frequency: yearly
+  report_types: [Informe anual de gestión]
+  notes: "Reports page returns 403 to automated requests – add reports manually."
+  pages:
+    - {lang: es, kind: archive, url: "https://www.csirt.gob.cl/reportes/", verified: false}
+
+- country: CL
+  agency: SENAPRED
+  name_local: "Servicio Nacional de Prevención y Respuesta ante Desastres"
+  name_en: "National Service for Disaster Prevention and Response"
+  homepage: "https://senapred.cl/"
+  description: "Chile's disaster-management service. Disaster-risk programmes, plans and studies on earthquakes, tsunamis, wildfires and floods in its BiblioGRD library."
+  hq: {address: "Avenida Beauchef 1671, Santiago, Chile", lat: -33.4377, lon: -70.65107, precision: city}
+  type: civil-protection
+  access: manual
+  frequency: periodic
+  report_types: [disaster risk management programme, plans]
+  notes: "The BiblioGRD library forbids crawling in robots.txt – add documents manually."
+  pages:
+    - {lang: es, kind: archive, url: "https://bibliogrd.senapred.gob.cl/"}
+
+# ════════════════════════ COLOMBIA ════════════════════════
+- country: CO
+  agency: UNGRD
+  name_local: "Unidad Nacional para la Gestión del Riesgo de Desastres"
+  name_en: "National Unit for Disaster Risk Management"
+  homepage: "https://portal.gestiondelriesgo.gov.co/"
+  description: "Colombia's disaster-risk management agency. Annual management reports (since 2011) and emergency reports on floods, landslides, droughts and the La Niña / El Niño seasons."
+  hq: {address: "Avenida Calle 26 No. 92-32, Bogotá, Colombia", lat: 4.65338, lon: -74.08363, precision: city}
+  type: civil-protection
+  access: auto
+  frequency: yearly
+  report_types: [Informe de gestión]
+  pages:
+    - {lang: es, kind: archive, url: "https://portal.gestiondelriesgo.gov.co/paginas/informe-de-gestion.aspx"}
+
+- country: CO
+  agency: colCERT
+  name_local: "Grupo de Respuesta a Emergencias Cibernéticas de Colombia"
+  name_en: "Colombian Cyber Emergency Response Team"
+  homepage: "https://www.colcert.gov.co/"
+  description: "Colombia's national CERT under MinTIC. Annual 'Informe de Tendencias de Amenazas Cibernéticas' on phishing, ransomware and attacks on critical infrastructure."
+  hq: {address: "Edificio Murillo Toro, Carrera 8, Bogotá, Colombia", lat: 4.65338, lon: -74.08363, precision: city}
+  type: cyber
+  access: auto
+  frequency: yearly
+  report_types: [Informe de Tendencias de Amenazas Cibernéticas]
+  pages:
+    - {lang: es, kind: current, url: "https://www.colcert.gov.co/800/w3-article-433510.html", note: "Tendencias de amenazas cibernéticas 2025"}
+
+# ════════════════════════ PERU ════════════════════════
+- country: PE
+  agency: INDECI
+  name_local: "Instituto Nacional de Defensa Civil"
+  name_en: "National Institute of Civil Defence"
+  homepage: "https://portal.indeci.gob.pe/"
+  description: "Peru's civil-defence institute. The annual statistical compendium of emergencies and damage (earthquakes, El Niño floods, landslides, cold waves) by region, since 2003."
+  hq: {address: "Calle Dr. Ricardo Angulo Ramírez 694, San Isidro, Lima, Peru", lat: -12.04598, lon: -77.03059, precision: city}
+  type: civil-protection
+  access: auto
+  frequency: yearly
+  report_types: [Compendio estadístico]
+  notes: "Older compendia (1995–2012) are split into chapter tables; recent ones are single PDFs."
+  pages:
+    - {lang: es, kind: archive, url: "https://portal.indeci.gob.pe/direccion-politicas-y-planes/compendios-estadisticos/compendios/2018-2/"}
+  url_pattern:
+    template: "https://portal.indeci.gob.pe/direccion-politicas-y-planes/compendios-estadisticos/compendios/{year}-2/"
+    years: [1995, 2021]
+    langs: [es]
+
+# ════════════════════════ ARGENTINA ════════════════════════
+- country: AR
+  agency: Ministerio de Seguridad
+  name_local: "Ministerio de Seguridad Nacional – Sistema Nacional de Información Criminal"
+  name_en: "Ministry of National Security – National Criminal Information System"
+  homepage: "https://www.argentina.gob.ar/seguridad"
+  description: "Argentina's security ministry. Annual national and provincial crime reports (SNIC, since 2000): homicides, robbery, drug offences and violence against women."
+  hq: {address: "Gelly y Obes 2289, Buenos Aires, Argentina", lat: -34.58568, lon: -58.39636, precision: address}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Informe SNIC / criminal statistics]
+  pages:
+    - {lang: es, kind: archive, url: "https://www.argentina.gob.ar/seguridad/estadisticascriminales/informes"}
