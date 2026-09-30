@@ -295,6 +295,7 @@
   homepage: "https://www.valisluureamet.ee/"
   hq: {address: "Rahumäe tee 4b, 11316 Tallinn, Estonia", lat: 59.39772, lon: 24.71016, precision: address}
   description: "Estonia's foreign intelligence service. The annual 'International Security and Estonia' report analyses Russia's military, politics, economy and influence operations, and China."
+  domains: ["xn--vlisluureamet-bfb.ee"]   # extra official domains for its documents
   type: intelligence-military
   access: auto
   frequency: yearly
@@ -484,6 +485,7 @@
   homepage: "https://www.mcf.se/"
   hq: {address: "Packhusallén 2, Karlstad, Sweden", lat: 59.37202, lon: 13.50676, precision: address}
   description: "Swedish civil-defence and emergency-preparedness agency (formerly MSB). National risk and capability assessments and crisis-preparedness guidance such as 'In case of crisis or war'."
+  domains: ["msb.se"]   # extra official domains for its documents
   type: civil-protection
   access: auto
   frequency: yearly
@@ -1323,6 +1325,7 @@
   homepage: "https://www.dni.gov/"
   description: "Head of the US intelligence community. The Annual Threat Assessment covers China, Russia, Iran, North Korea, terrorism, cyber and emerging technologies; Global Trends reports look 20 years ahead."
   hq: {address: "Liberty Crossing, McLean, Virginia, USA", lat: 38.93221, lon: -77.20519, precision: address}
+  domains: ["odni.gov"]   # extra official domains for its documents
   type: intelligence-civil
   access: auto
   frequency: yearly
@@ -1424,6 +1427,7 @@
   homepage: "https://www.publicsafety.gc.ca/"
   description: "Canadian public-safety department. The National Risk Profile assesses disaster risk from earthquakes, wildfires and floods (later rounds: heat, hurricanes, space weather) and gaps in emergency management."
   hq: {address: "269 Laurier Avenue West, Ottawa, Ontario, Canada", lat: 45.41912, lon: -75.69851, precision: address}
+  domains: ["canada.ca"]   # extra official domains for its documents
   type: civil-protection
   access: auto
   frequency: periodic
