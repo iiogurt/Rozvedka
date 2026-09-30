@@ -23,6 +23,7 @@
 </section>
 {% endif %}
 <main>{% block main %}{% endblock %}</main>
-<footer class="foot">Rozvedka <a href="/changelog" title="What's new">v{{ VERSION }}</a></footer>
+<footer class="foot">Rozvedka <a href="/changelog" title="What's new">v{{ VERSION }}</a>{% if BUILD != VERSION %}
+  <span class="muted" title="Build: commits after the release (git)">· build {{ BUILD.split('+', 1)[1] }}</span>{% endif %}</footer>
 </body>
 </html>

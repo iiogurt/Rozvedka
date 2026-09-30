@@ -2,13 +2,13 @@
 import argparse
 import logging
 
-from . import __version__, crawler, db, downloader, registry
+from . import __version__, build_version, crawler, db, downloader, registry
 
 
 def main():
     ap = argparse.ArgumentParser(prog="rozvedka")
     ap.add_argument("-v", "--verbose", action="store_true")
-    ap.add_argument("--version", action="version", version=f"rozvedka {__version__}")
+    ap.add_argument("--version", action="version", version=f"rozvedka {build_version()}")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("sync-registry", help="load sources/registry.yaml into the database")
     c = sub.add_parser("crawl", help="discover documents on source pages")

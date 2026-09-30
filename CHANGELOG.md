@@ -8,7 +8,30 @@ registry format.
 Each release is tagged `v<version>` on `main` (e.g. `v0.6.0`). The version shown in the portal footer comes from
 `rozvedka/__init__.py`.
 
+## Versioning
+
+From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.PATCH` goes up:
+
+| Level | When | Examples |
+|---|---|---|
+| **patch** – 0.9.0 → 0.9.**1** | nothing new to learn: fixes, content and small visual changes | bug fix; new or corrected sources in the registry; topic keyword changes; logo/flag updates; styling; docs |
+| **minor** – 0.9.1 → 0.**10**.0 | a new capability | new page or view; new filter or search; new command; new field in the registry or database (migrated automatically) |
+| **major** – 0.10.0 → **1**.0.0 | an incompatible change | registry or database format that needs manual migration; removed or renamed command; changed URL structure |
+
+- Several changes in one release: the most significant one decides.
+- Between releases the portal footer and `python -m rozvedka --version` show the build, e.g. `0.9.1+3.g1a2b3c4`
+  (3 commits after v0.9.1, commit `1a2b3c4`; `.dirty` = uncommitted local changes).
+- Releases 0.2.0–0.9.0 were numbered before this rule and each raised the minor version.
+- To release: `python3 tools/bump_version.py patch|minor|major` moves the notes below into a new version section and
+  sets the version; merge, then tag the merge commit `v<version>`.
+
 ## [Unreleased]
+
+## [0.9.1] – 2026-09-30
+
+### Added
+- Significance-based versioning (patch / minor / major, table above) and `tools/bump_version.py` to apply it.
+- Build identifier from git between releases, shown in the portal footer, at `/api/version` and by `--version`.
 
 ## [0.9.0] – 2026-09-30
 
@@ -134,7 +157,8 @@ Each release is tagged `v<version>` on `main` (e.g. `v0.6.0`). The version shown
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.9.1...HEAD
+[0.9.1]: https://github.com/iiogurt/Rozvedka/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/iiogurt/Rozvedka/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/iiogurt/Rozvedka/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/iiogurt/Rozvedka/compare/v0.6.0...v0.7.0
