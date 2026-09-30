@@ -10,6 +10,21 @@ Each release is tagged `v<version>` on `main` (e.g. `v0.6.0`). The version shown
 
 ## [Unreleased]
 
+## [0.7.0] – 2026-09-30
+
+### Added
+- Hover card on every HQ pin: logo, flag, names in both languages, agency type, coalitions, the first sentence of
+  the description, document count and years, and whether the HQ location is exact. Clicking still opens the full
+  card with links.
+- Hovering a cluster lists the agencies inside it. Hovering the agency list highlights the pin on the map.
+
+### Changed
+- The map page uses a dark theme: dark panel, controls, popups and clusters, pin colours tuned for dark
+  backgrounds, and country shading that gets brighter with more reports (with a legend).
+- The street map is standard OpenStreetMap, darkened in the browser with a CSS filter. It needs no API key and
+  no third-party tile service.
+- Coalition tags follow the same order everywhere (EU, NATO, Five Eyes, …).
+
 ## [0.6.0] – 2026-09-30
 
 ### Added
@@ -84,7 +99,8 @@ Each release is tagged `v<version>` on `main` (e.g. `v0.6.0`). The version shown
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/iiogurt/Rozvedka/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/iiogurt/Rozvedka/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/iiogurt/Rozvedka/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/iiogurt/Rozvedka/compare/v0.3.0...v0.4.0

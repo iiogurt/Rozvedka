@@ -73,6 +73,8 @@ The portal has no login. It listens on your LAN (port 8080), so don't expose it 
 
 ## World map (`/map`)
 
+- The map page has a dark theme. Hovering a pin shows the agency card, hovering a cluster lists the agencies
+  inside it, and clicking opens the full card with links.
 - A pin marks each agency's headquarters, coloured by agency type. Solid pins are an exact building address. Hollow
   pins are street or city level, used where the house number didn't match or the service doesn't publish its address.
 - Countries are shaded by number of reports. Clicking a country opens its documents, and clicking a pin shows the
@@ -84,7 +86,8 @@ The portal has no login. It listens on your LAN (port 8080), so don't expose it 
   makes no geocoding calls at runtime.
 - Third-party code and data in `rozvedka/static/`: Leaflet 1.9.4 (BSD-2), Leaflet.markercluster 1.5.3 (MIT) and Natural
   Earth country outlines (public domain). Street tiles load from the OpenStreetMap tile servers in the viewer's browser,
-  under the OSM tile usage policy (© OpenStreetMap contributors).
+  under the OSM tile usage policy (© OpenStreetMap contributors). They are darkened with a CSS filter, so no
+  dark-tile provider or API key is needed.
 
 ## Countries and coalitions
 
