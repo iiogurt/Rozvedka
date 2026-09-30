@@ -57,6 +57,12 @@ def test_humanize_filename():
         "vyrocni zprava archivu bis 2024 web"
 
 
+def test_extract_liferay_document_links():
+    html = '<a href="/documents/475963/0/Risikobild+2026+Teil+1.pdf/cfb12d11?t=1&amp;download=true">Risikobild 2026 Teil 1</a>'
+    docs, _ = extract(html, "https://verteidigungspolitik.at/risikobild")
+    assert len(docs) == 1 and docs[0]["title"] == "Risikobild 2026 Teil 1"
+
+
 def test_extract_respects_base_href_and_skips_junk():
     html = """<html><head><base href="https://www.bsi.bund.de/"></head><body>
       <a href="SharedDocs/Downloads/DE/Lagebericht2025.pdf?__blob=publicationFile">Die Lage 2025 (PDF, barrierefrei)</a>

@@ -15,7 +15,8 @@ log = logging.getLogger("rozvedka.crawl")
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)   # some sites serve XHTML as XML
 
 DOC_RE = re.compile(
-    r"(\.pdf($|[?#]))|__blob=publicationFile|/document/download/|/attachments/[^/]+/download|/file\.html$|/doc/[^/]+\.pdf",
+    r"(\.pdf($|[?#]))|__blob=publicationFile|/document/download/|/attachments/[^/]+/download|/file\.html$|/doc/[^/]+\.pdf|"
+    r"/documents/[^?#]*\.pdf/",   # Liferay document library: /documents/<ids>/<name>.pdf/<uuid>?download=true
     re.I)
 JUNK_RE = re.compile(
     r"cookie|privacy|gdpr|ochrana-osobnich|osobnych-udajov|datenschutz|impressum|"
@@ -160,7 +161,10 @@ def get_page(url: str, src) -> fetch.Response:
     resp = fetch.get(url, lenient=src["access"] == "tls-lenient")
     if resp.status == 200 and fetch.CHROMIUM and fetch.looks_like_js_shell(resp):
         log.debug("rendering JS page %s", url)
-        return fetch.render(url)
+        try:
+            return fetch.render(url)
+        except Exception as e:  # noqa: BLE001 - a failed render must not lose the page we already have
+            log.debug("render failed for %s: %s", url, e)
     return resp
 
 
@@ -244,6 +248,9 @@ def crawl(country: str | None = None, agency: str | None = None) -> dict:
                 stats["pages"] += 1
                 if src["access"] == "manual" or (src["access"] == "browser-js" and not fetch.CHROMIUM):
                     status, new = f"skipped ({src['access']})", 0
+                    stats["skipped"] += 1
+                elif not page["verified"]:
+                    status, new = "skipped (blocked page – open in browser)", 0
                     stats["skipped"] += 1
                 else:
                     try:
