@@ -99,19 +99,21 @@ well-known facts (Five Eyes members, Finland and Sweden in NATO, …).
 
 ## Versions and releases
 
-- Version numbers follow [Semantic Versioning](https://semver.org). The version is set once, in
-  `rozvedka/__init__.py`, and shows in the portal footer, at `/api/version` and via `python -m rozvedka --version`.
-- `CHANGELOG.md` ([Keep a Changelog](https://keepachangelog.com) format) lists every release. It can also be read in
-  the portal at `/changelog`. Note changes under **Unreleased** while working.
+- Version numbers follow [Semantic Versioning](https://semver.org), raised by significance: **patch** for fixes,
+  new or corrected sources, keyword changes and visual tweaks; **minor** for new capabilities; **major** for
+  incompatible changes. The full table is in `CHANGELOG.md` under "Versioning".
+- The release version lives in `rozvedka/__init__.py`. Between releases, the footer, `/api/version` and
+  `python -m rozvedka --version` also show the git build (e.g. `0.9.1+3.g1a2b3c4`).
+- `CHANGELOG.md` ([Keep a Changelog](https://keepachangelog.com)) lists every release, and the portal shows it at
+  `/changelog`. Note changes under **Unreleased** while working.
 - Releasing:
-  1. Move the Unreleased notes into a new version section, and set the same version in `rozvedka/__init__.py`
-     (a test checks the two match).
-  2. Merge the pull request into `main`.
-  3. Tag the merge commit and push the tag:
-     ```bash
-     git switch main && git pull
-     git tag -a v0.6.0 -m "Rozvedka 0.6.0" && git push origin v0.6.0
-     ```
+  ```bash
+  python3 tools/bump_version.py patch        # or minor / major; --dry-run to preview
+  git commit -am "release: <version>" && git push      # open and merge the pull request
+  git switch main && git pull
+  git tag -a v<version> -m "Rozvedka <version>" && git push origin v<version>
+  ```
+  GitHub releases carry the changelog section as release notes.
 
 ## Topics and full-text search
 

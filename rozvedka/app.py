@@ -10,7 +10,7 @@ from fastapi.templating import Jinja2Templates
 
 from markupsafe import escape
 
-from . import __version__, countries, crawler, db, downloader, logos, registry, topics
+from . import __version__, build_version, countries, crawler, db, downloader, logos, registry, topics
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -65,7 +65,8 @@ def coalition_tags(country: str) -> list[dict]:
 
 
 tpl.env.globals.update(COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=TYPE_NAMES, flag_url=flag_url, initials=initials,
-                       coalition_tags=coalition_tags, COALITIONS=countries.coalitions(), VERSION=__version__)
+                       coalition_tags=coalition_tags, COALITIONS=countries.coalitions(), VERSION=__version__,
+                       BUILD=build_version())
 
 _jobs: dict[str, str] = {}      # background job name -> status text
 _jobs_lock = threading.Lock()
@@ -237,7 +238,7 @@ def changelog(request: Request):
 
 @app.get("/api/version")
 def version():
-    return {"version": __version__}
+    return {"version": __version__, "build": build_version()}
 
 
 @app.get("/map")
