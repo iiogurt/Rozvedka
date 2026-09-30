@@ -15,6 +15,10 @@ CREATE TABLE IF NOT EXISTS sources (
     description TEXT,
     logo_url    TEXT,                          -- optional override from the registry
     logo_path   TEXT,                          -- fetched logo, relative to data/logos
+    hq_address  TEXT,                          -- publicly listed headquarters / contact address
+    lat         REAL,
+    lon         REAL,
+    hq_precision TEXT,                         -- address | street | city
     type        TEXT,
     access      TEXT,
     frequency   TEXT,
@@ -87,7 +91,8 @@ def session():
 # columns added after the first release; ALTER TABLE brings older databases up to date
 MIGRATIONS = {
     "sources": {"name_local": "TEXT", "name_en": "TEXT", "homepage": "TEXT", "description": "TEXT",
-                "logo_url": "TEXT", "logo_path": "TEXT"},
+                "logo_url": "TEXT", "logo_path": "TEXT", "hq_address": "TEXT", "lat": "REAL", "lon": "REAL",
+                "hq_precision": "TEXT"},
 }
 
 

@@ -135,6 +135,36 @@ def sources(request: Request):
                                                          "jobs": dict(_jobs)})
 
 
+@app.get("/map")
+def world_map(request: Request):
+    return tpl.TemplateResponse(request, "map.html", {"jobs": dict(_jobs), "TYPE_NAMES": TYPE_NAMES})
+
+
+@app.get("/api/map")
+def map_data():
+    """Agencies with HQ coordinates and document counts, plus per-country totals for shading."""
+    with db.session() as con:
+        rows = con.execute(
+            """SELECT s.id, s.country, s.agency, s.name_en, s.name_local, s.type, s.description, s.homepage,
+                      s.hq_address, s.lat, s.lon, s.hq_precision, s.logo_path,
+                      COUNT(d.id) AS n_docs, COALESCE(SUM(d.status='downloaded'), 0) AS n_ok,
+                      MIN(d.year) AS y0, MAX(d.year) AS y1
+               FROM sources s LEFT JOIN documents d ON d.source_id=s.id AND d.hidden=0
+               WHERE s.active=1 GROUP BY s.id""").fetchall()
+    agencies = [{**dict(r), "flag": flag_url(r["country"]), "logo": f"/logo/{r['id']}" if r["logo_path"] else None,
+                 "type_name": TYPE_NAMES.get(r["type"], r["type"]),
+                 "country_name": COUNTRY_NAMES.get(r["country"], r["country"])} for r in rows if r["lat"] is not None]
+    countries: dict[str, dict] = {}
+    for r in rows:
+        if r["country"] in ("EU", "NATO", "OTHER"):
+            continue   # organisations, not territories
+        c = countries.setdefault(r["country"], {"name": COUNTRY_NAMES.get(r["country"], r["country"]),
+                                                "agencies": 0, "docs": 0})
+        c["agencies"] += 1
+        c["docs"] += r["n_docs"]
+    return {"agencies": agencies, "countries": countries}
+
+
 LOGO_TYPES = {"svg": "image/svg+xml", "png": "image/png", "jpg": "image/jpeg", "webp": "image/webp",
               "gif": "image/gif", "ico": "image/x-icon"}
 

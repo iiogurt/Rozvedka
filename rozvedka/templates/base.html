@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Rozvedka{% endblock %}</title>
   <link rel="stylesheet" href="/static/style.css">
+  {% block head %}{% endblock %}
 </head>
 <body>
 <header class="top">
@@ -12,6 +13,7 @@
   <nav>
     <a href="/" class="{{ 'on' if request.url.path == '/' }}">Documents</a>
     <a href="/sources" class="{{ 'on' if request.url.path == '/sources' }}">Sources</a>
+    <a href="/map" class="{{ 'on' if request.url.path == '/map' }}">Map</a>
   </nav>
 </header>
 {% if jobs %}

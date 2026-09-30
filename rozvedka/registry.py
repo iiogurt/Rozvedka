@@ -20,16 +20,21 @@ def sync(path=REGISTRY) -> dict:
     with db.session() as con:
         for s in srcs:
             key = source_key(s)
+            hq = s.get("hq") or {}
             con.execute(
                 """INSERT INTO sources(key,country,agency,name_local,name_en,homepage,description,logo_url,
+                                      hq_address,lat,lon,hq_precision,
                                       type,access,frequency,report_types,notes,active)
-                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,1)
+                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)
                    ON CONFLICT(key) DO UPDATE SET name_local=excluded.name_local, name_en=excluded.name_en,
                      homepage=excluded.homepage, description=excluded.description, logo_url=excluded.logo_url,
+                     hq_address=excluded.hq_address, lat=excluded.lat, lon=excluded.lon,
+                     hq_precision=excluded.hq_precision,
                      type=excluded.type, access=excluded.access, frequency=excluded.frequency,
                      report_types=excluded.report_types, notes=excluded.notes, active=1""",
                 (key, s["country"], s["agency"], s.get("name_local"), s.get("name_en"), s.get("homepage"),
-                 s.get("description"), s.get("logo"), s.get("type"), s.get("access", "auto"),
+                 s.get("description"), s.get("logo"), hq.get("address"), hq.get("lat"), hq.get("lon"),
+                 hq.get("precision"), s.get("type"), s.get("access", "auto"),
                  s.get("frequency"), ", ".join(s.get("report_types", [])), s.get("notes")))
             sid = con.execute("SELECT id FROM sources WHERE key=?", (key,)).fetchone()["id"]
             seen_sources.add(sid)

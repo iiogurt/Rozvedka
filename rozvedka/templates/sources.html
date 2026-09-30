@@ -42,6 +42,7 @@
     <div class="card-links">
       {% if s.homepage %}<a href="{{ s.homepage }}" target="_blank" rel="noopener">⌂ {{ s.homepage.split('//')[1].rstrip('/') }}</a>{% endif %}
       <a href="/?source={{ s.id }}"><b>{{ s.n_docs }}</b> documents · {{ s.n_ok or 0 }} downloaded</a>
+      {% if s.lat is not none %}<a href="/map#s-{{ s.id }}" title="{{ s.hq_address }}">📍 map</a>{% endif %}
     </div>
     <details class="more"><summary>Report pages ({{ pages.get(s.id, [])|length }}) · crawl · add document</summary>
       <ul class="pages">
