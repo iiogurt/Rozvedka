@@ -9,7 +9,12 @@ CREATE TABLE IF NOT EXISTS sources (
     key         TEXT UNIQUE NOT NULL,          -- country/agency
     country     TEXT NOT NULL,
     agency      TEXT NOT NULL,
-    full_name   TEXT,
+    name_local  TEXT,                          -- official name in the original language
+    name_en     TEXT,                          -- official English name
+    homepage    TEXT,
+    description TEXT,
+    logo_url    TEXT,                          -- optional override from the registry
+    logo_path   TEXT,                          -- fetched logo, relative to data/logos
     type        TEXT,
     access      TEXT,
     frequency   TEXT,
@@ -79,6 +84,18 @@ def session():
         con.close()
 
 
+# columns added after the first release; ALTER TABLE brings older databases up to date
+MIGRATIONS = {
+    "sources": {"name_local": "TEXT", "name_en": "TEXT", "homepage": "TEXT", "description": "TEXT",
+                "logo_url": "TEXT", "logo_path": "TEXT"},
+}
+
+
 def init():
     with session() as con:
         con.executescript(SCHEMA)
+        for table, cols in MIGRATIONS.items():
+            have = {r["name"] for r in con.execute(f"PRAGMA table_info({table})")}
+            for col, typ in cols.items():
+                if col not in have:
+                    con.execute(f"ALTER TABLE {table} ADD COLUMN {col} {typ}")

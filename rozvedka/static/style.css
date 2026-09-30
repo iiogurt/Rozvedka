@@ -64,3 +64,49 @@ h2 { margin: 28px 0 8px; font-size: 16px; border-bottom: 1px solid var(--line); 
 .acc-browser-js { color: var(--warn); }
 .add { margin-top: 6px; font-size: 13px; }
 .add form { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+
+/* ── Sources: flag bar, country sections, agency cards ── */
+.flagbar { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; position: sticky; top: 49px; z-index: 4;
+           background: var(--bg); padding: 8px 0; border-bottom: 1px solid var(--line); }
+.flagbar a { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10px;
+             font-weight: 700; color: var(--muted); padding: 2px 3px; border-radius: 4px; }
+.flagbar a:hover { background: var(--chip); text-decoration: none; color: var(--ink); }
+.flagbar img, img.flag, img.flag-sm { border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.12); object-fit: cover; }
+.country { scroll-margin-top: 130px; }
+.country h2 { display: flex; align-items: center; gap: 10px; font-size: 18px; margin-top: 30px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+        display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.card-head { display: flex; gap: 12px; align-items: center; }
+.logo { flex: 0 0 64px; width: 64px; height: 64px; border-radius: 8px; background: #fff; border: 1px solid var(--line);
+        display: grid; place-items: center; overflow: hidden; }
+.logo img { max-width: 56px; max-height: 56px; object-fit: contain; }
+.initials { font-weight: 800; font-size: 16px; color: #1f4e79; letter-spacing: .02em; }
+.names { min-width: 0; }
+.acr { font-weight: 800; font-size: 16px; }
+.name-en { font-weight: 600; }
+.name-local { color: var(--muted); font-size: 13px; font-style: italic; }
+.desc { margin: 0; font-size: 13.5px; line-height: 1.5; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.card-links { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; overflow-wrap: anywhere; }
+.more summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+.more .pages { margin-top: 6px; }
+.small { font-size: 12px; }
+.actions-row { margin: 6px 0; }
+.addform { display: flex; flex-wrap: wrap; gap: 6px; font-size: 13px; }
+.addform input[name=url] { flex: 1 1 220px; }
+.type-intelligence-civil { background: #e3ecf7; color: #1f4e79; }
+.type-intelligence-military { background: #e6eadf; color: #3e5a1e; }
+.type-cyber { background: #ece4f5; color: #5a2d82; }
+.type-civil-protection { background: #fbe9dc; color: #8a4410; }
+.type-police-ct { background: #f6e1e1; color: #8c1d1d; }
+.type-eu-body { background: #e0e9fa; color: #1b3f8f; }
+.type-nato { background: #dfe8f1; color: #004990; }
+@media (prefers-color-scheme: dark) {
+  .logo { background: #f4f4f2; }
+  [class*="type-"] { filter: brightness(.85) saturate(.9); }
+}
+/* documents table: flag + small logo next to the agency */
+td.src a { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.logo-sm { width: 18px; height: 18px; object-fit: contain; background: #fff; border-radius: 3px; }
+@media (max-width: 700px) { .flagbar { position: static; } .country { scroll-margin-top: 60px; } }
