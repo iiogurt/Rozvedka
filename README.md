@@ -85,3 +85,27 @@ The portal has no login. It listens on your LAN (port 8080), so don't expose it 
 - Third-party code and data in `rozvedka/static/`: Leaflet 1.9.4 (BSD-2), Leaflet.markercluster 1.5.3 (MIT) and Natural
   Earth country outlines (public domain). Street tiles load from the OpenStreetMap tile servers in the viewer's browser,
   under the OSM tile usage policy (© OpenStreetMap contributors).
+
+## Countries and coalitions
+
+`sources/countries.yaml` holds each country's display name, region and coalition memberships, with the year it
+joined: EU, NATO, Five Eyes, G7, Schengen, AUKUS, the Joint Expeditionary Force and NATO's Indo-Pacific partners.
+The portal shows them as tags and uses them as filters, e.g. `/?coalition=FVEY`, `/sources?coalition=JEF` or
+`/map?coalition=NATO`. When a country joins or leaves a coalition, edit this file. The tests check a few
+well-known facts (Five Eyes members, Finland and Sweden in NATO, …).
+
+## Versions and releases
+
+- Version numbers follow [Semantic Versioning](https://semver.org). The version is set once, in
+  `rozvedka/__init__.py`, and shows in the portal footer, at `/api/version` and via `python -m rozvedka --version`.
+- `CHANGELOG.md` ([Keep a Changelog](https://keepachangelog.com) format) lists every release. It can also be read in
+  the portal at `/changelog`. Note changes under **Unreleased** while working.
+- Releasing:
+  1. Move the Unreleased notes into a new version section, and set the same version in `rozvedka/__init__.py`
+     (a test checks the two match).
+  2. Merge the pull request into `main`.
+  3. Tag the merge commit and push the tag:
+     ```bash
+     git switch main && git pull
+     git tag -a v0.6.0 -m "Rozvedka 0.6.0" && git push origin v0.6.0
+     ```
