@@ -28,7 +28,7 @@
   });
   map.addLayer(cluster);
 
-  let agencies = [], markers = [], shading = null;
+  let agencies = [], markers = [], shading = null, coalitionNames = {}, countryStats = {};
 
   function pinIcon(a) {
     const color = TYPE_COLORS[a.type] || TYPE_COLORS.other;
@@ -49,6 +49,7 @@
       <div class="pop-head">${logo}<div><img class="pop-flag" src="${esc(a.flag)}" alt=""> <b>${esc(a.agency)}</b>
         <div class="pop-en">${esc(a.name_en)}</div>${local}</div></div>
       <div class="pop-type" style="--c:${TYPE_COLORS[a.type] || "#555"}">${esc(a.type_name)} · ${esc(a.country_name)}</div>
+      <div class="pop-coal">${a.coalitions.map((k) => `<span class="ctag ctag-${esc(k)}">${esc((coalitionNames[k] || {}).short || k)}</span>`).join(" ")}</div>
       <p class="pop-desc">${esc(a.description)}</p>
       <div class="pop-addr"><b>HQ:</b> ${esc(a.hq_address)}<br><span class="muted">${esc(PRECISION[a.hq_precision] || "")}</span></div>
       <div class="pop-links"><a href="/?source=${a.id}"><b>${a.n_docs}</b> documents${years}</a>
@@ -65,7 +66,8 @@
     cluster.clearLayers();
     const list = document.getElementById("list");
     list.innerHTML = "";
-    const visible = markers.filter(({ a }) => types.has(a.type) &&
+    const coal = document.getElementById("coalition").value;
+    const visible = markers.filter(({ a }) => types.has(a.type) && (!coal || a.coalitions.includes(coal)) &&
       (!q || [a.agency, a.name_en, a.name_local, a.country_name].join(" ").toLowerCase().includes(q)));
     cluster.addLayers(visible.map((v) => v.m));
     visible.sort((x, y) => (x.a.country_name + x.a.agency).localeCompare(y.a.country_name + y.a.agency));
@@ -91,14 +93,18 @@
     shading = L.geoJSON(geo, {
       pane: "countries",
       style: (f) => {
-        const c = stats[f.properties.iso];
+        const coal = document.getElementById("coalition").value;
+        const c = stats[f.properties.iso] && (!coal || stats[f.properties.iso].coalitions.includes(coal))
+          ? stats[f.properties.iso] : null;
         return c ? { fillColor: shadeColor(c.docs, max), fillOpacity: 0.55, color: "#6b7f95", weight: 1 }
                  : { fillOpacity: 0, color: "#b9b7ae", weight: 0.4 };   // no sources: outline only
       },
       onEachFeature: (f, layer) => {
         const c = stats[f.properties.iso];
         if (!c) return;
-        layer.bindTooltip(`<b>${esc(c.name)}</b><br>${c.agencies} agencies · ${c.docs} documents`, { sticky: true });
+        const tags = c.coalitions.map((k) => esc((coalitionNames[k] || {}).short || k)).join(" · ");
+        layer.bindTooltip(`<b>${esc(c.name)}</b><br>${c.agencies} agencies · ${c.docs} documents` +
+                          (tags ? `<br><span class="muted">${tags}</span>` : ""), { sticky: true });
         layer.on("click", () => { window.location.href = `/?country=${encodeURIComponent(f.properties.iso)}`; });
         layer.on("mouseover", () => layer.setStyle({ weight: 2.5, color: "#1f4e79" }));
         layer.on("mouseout", () => { shading.resetStyle(layer); fadeShading(); });
@@ -115,6 +121,11 @@
   }
   map.on("zoomend", fadeShading);
 
+  const initialCoalition = new URLSearchParams(window.location.search).get("coalition");
+  if (initialCoalition && document.querySelector(`#coalition option[value="${CSS.escape(initialCoalition)}"]`)) {
+    document.getElementById("coalition").value = initialCoalition;
+  }
+
   if (new URLSearchParams(window.location.search).get("tiles") === "0") {   // e.g. offline use
     map.removeLayer(tiles);
     document.getElementById("tiles").checked = false;
@@ -122,6 +133,8 @@
 
   fetch("/api/map").then((r) => r.json()).then(async (data) => {
     agencies = data.agencies;
+    coalitionNames = data.coalitions;
+    countryStats = data.countries;
     markers = agencies.map((a) => {
       const m = L.marker([a.lat, a.lon], { icon: pinIcon(a), title: `${a.agency} – ${a.name_en}`, keyboard: true });
       m.bindPopup(popupHtml(a), { maxWidth: 340, minWidth: 260 });
@@ -152,6 +165,10 @@
 
   document.querySelectorAll("input[name=type]").forEach((i) => i.addEventListener("change", render));
   document.getElementById("find").addEventListener("input", render);
+  document.getElementById("coalition").addEventListener("change", () => {
+    render();
+    if (shading) { shading.setStyle(shading.options.style); fadeShading(); }
+  });
   document.getElementById("shade").addEventListener("change", (e) => {
     if (!shading) return;
     e.target.checked ? shading.addTo(map) : map.removeLayer(shading);

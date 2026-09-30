@@ -7,10 +7,17 @@
   <form method="post" action="/jobs/crawl" class="inline"><button title="Crawl every source (slow)">Crawl all</button></form>
 </div>
 
+<div class="coalition-filter" role="group" aria-label="Show countries in coalition">
+  <span class="muted small">Coalition:</span>
+  <button type="button" class="cf on" data-coalition="">All</button>
+  {% for key, c in COALITIONS.items() %}<button type="button" class="cf" data-coalition="{{ key }}" title="{{ c.name }} – {{ c.description }}">{{ c.short }}</button>{% endfor %}
+</div>
+
 <nav class="flagbar" aria-label="Jump to country">
   {% for region, countries in regions %}{% if not loop.first %}<span class="flagsep" aria-hidden="true"></span>{% endif %}
   {% for country, items in countries %}
-  <a href="#c-{{ country }}" title="{{ COUNTRY_NAMES.get(country, country) }} ({{ items|length }})">
+  <a href="#c-{{ country }}" title="{{ COUNTRY_NAMES.get(country, country) }} ({{ items|length }})"
+     data-coalitions="{{ coalition_tags(country)|map(attribute='key')|join(' ') }}{{ ' ' ~ country if country in ('EU', 'NATO') }}">
     <img src="{{ flag_url(country) }}" alt="" width="28" height="21"><span>{{ country }}</span></a>
   {% endfor %}{% endfor %}
 </nav>
@@ -18,9 +25,12 @@
 {% for region, countries in regions %}
 <h2 class="region">{{ region }}</h2>
 {% for country, items in countries %}
-<section class="country" id="c-{{ country }}">
+<section class="country" id="c-{{ country }}"
+         data-coalitions="{{ coalition_tags(country)|map(attribute='key')|join(' ') }}{{ ' ' ~ country if country in ('EU', 'NATO') }}">
   <h2><img class="flag" src="{{ flag_url(country) }}" alt="" width="32" height="24">
-    {{ COUNTRY_NAMES.get(country, country) }} <span class="muted">· {{ items|length }}</span></h2>
+    {{ COUNTRY_NAMES.get(country, country) }} <span class="muted">· {{ items|length }}</span>
+    <span class="coalitions">{% for t in coalition_tags(country) %}<a class="ctag ctag-{{ t.key }}" href="/?coalition={{ t.key }}"
+      title="{{ t.name }} since {{ t.since }}">{{ t.short }}<span class="since"> {{ t.since }}</span></a>{% endfor %}</span></h2>
   <div class="cards">
   {% for s in items %}
   <article class="card" id="s-{{ s.id }}">
@@ -76,4 +86,5 @@
 </section>
 {% endfor %}
 {% endfor %}
+<script src="/static/sources.js"></script>
 {% endblock %}

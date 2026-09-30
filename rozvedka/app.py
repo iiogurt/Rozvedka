@@ -8,40 +8,16 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import crawler, db, downloader, logos, registry
+from . import __version__, countries, crawler, db, downloader, logos, registry
 from .config import FILES
 
 HERE = Path(__file__).parent
-app = FastAPI(title="Rozvedka")
+app = FastAPI(title="Rozvedka", version=__version__)
 app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
 tpl = Jinja2Templates(directory=HERE / "templates")
 
-COUNTRY_NAMES = {
-    "AT": "Austria", "BE": "Belgium", "BG": "Bulgaria", "HR": "Croatia", "CY": "Cyprus", "CZ": "Czechia",
-    "DK": "Denmark", "EE": "Estonia", "FI": "Finland", "FR": "France", "DE": "Germany", "GR": "Greece",
-    "HU": "Hungary", "IE": "Ireland", "IT": "Italy", "LV": "Latvia", "LT": "Lithuania", "LU": "Luxembourg",
-    "MT": "Malta", "NL": "Netherlands", "PL": "Poland", "PT": "Portugal", "RO": "Romania", "SK": "Slovakia",
-    "SI": "Slovenia", "ES": "Spain", "SE": "Sweden", "EU": "EU bodies", "NATO": "NATO", "OTHER": "International",
-    "GB": "United Kingdom", "NO": "Norway", "CH": "Switzerland", "US": "United States", "CA": "Canada",
-    "AU": "Australia", "NZ": "New Zealand", "JP": "Japan", "KR": "South Korea", "TW": "Taiwan",
-}
-# regions for grouping on the Sources page, in display order
-REGIONS = [
-    ("EU member states", {"AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT",
-                          "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"}),
-    ("EU and NATO", {"EU", "NATO"}),
-    ("Other European democracies", {"GB", "NO", "CH"}),
-    ("Americas", {"US", "CA"}),
-    ("Asia-Pacific", {"AU", "NZ", "JP", "KR", "TW"}),
-    ("International", {"OTHER"}),
-]
-
-
-def region_of(country: str) -> tuple[int, str]:
-    for i, (name, members) in enumerate(REGIONS):
-        if country in members:
-            return i, name
-    return len(REGIONS), "Other"
+COUNTRY_NAMES = countries.names()
+region_of = countries.region_of
 TYPE_NAMES = {
     "intelligence-civil": "Civil intelligence", "intelligence-military": "Military / foreign intelligence",
     "cyber": "Cyber security", "civil-protection": "Civil protection & crisis", "police-ct": "Police / counter-terrorism",
@@ -63,7 +39,25 @@ def initials(agency: str) -> str:
     return "".join(w[0] for w in words if w[0].isupper())[:4] or agency[:3]
 
 
-tpl.env.globals.update(COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=TYPE_NAMES, flag_url=flag_url, initials=initials)
+def coalition_scope(coalition: str) -> set[str]:
+    """Registry country codes in a coalition; the EU and NATO filters also include their own institutions."""
+    return countries.members(coalition) | ({coalition} if coalition in ("EU", "NATO") else set())
+
+
+def coalition_members_of(country: str) -> set[str]:
+    """Coalitions a registry entry belongs to (EU bodies count as EU, NATO bodies as NATO)."""
+    return set(countries.memberships(country)) | ({country} if country in ("EU", "NATO") else set())
+
+
+def coalition_tags(country: str) -> list[dict]:
+    """Coalition chips for a country, in the order of countries.yaml."""
+    mine = countries.memberships(country)
+    return [{"key": k, "short": c["short"], "name": c["name"], "since": mine[k]}
+            for k, c in countries.coalitions().items() if k in mine]
+
+
+tpl.env.globals.update(COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=TYPE_NAMES, flag_url=flag_url, initials=initials,
+                       coalition_tags=coalition_tags, COALITIONS=countries.coalitions(), VERSION=__version__)
 
 _jobs: dict[str, str] = {}      # background job name -> status text
 _jobs_lock = threading.Lock()
@@ -94,8 +88,12 @@ def startup():
 
 @app.get("/")
 def index(request: Request, country: str = "", type: str = "", lang: str = "", year: str = "",
-          status: str = "", q: str = "", source: int = 0, page: int = 1, show_hidden: int = 0):
+          status: str = "", q: str = "", source: int = 0, page: int = 1, show_hidden: int = 0,
+          coalition: str = ""):
     where, args = ["s.active=1"], []
+    if coalition in countries.coalitions():
+        codes = sorted(coalition_scope(coalition))
+        where.append(f"s.country IN ({','.join('?' * len(codes))})"); args += codes
     if not show_hidden:
         where.append("d.hidden=0 AND d.status NOT IN ('missing','duplicate','skipped')")
     for col, val in (("s.country", country), ("s.type", type), ("d.lang", lang), ("d.status", status)):
@@ -126,6 +124,7 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
         }
         counts = dict(con.execute("SELECT status, COUNT(*) FROM documents GROUP BY status").fetchall())
     params = dict(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source or "",
+                  coalition=coalition,
                   show_hidden=show_hidden or "")
     return tpl.TemplateResponse(request, "index.html", {
         "docs": docs, "total": total, "page": page, "pages": (total + per_page - 1) // per_page,
@@ -159,6 +158,19 @@ def sources(request: Request):
                                                          "pages": pages, "jobs": dict(_jobs)})
 
 
+@app.get("/changelog")
+def changelog(request: Request):
+    import markdown   # our own CHANGELOG.md – trusted content
+    text = (HERE.parent / "CHANGELOG.md").read_text(encoding="utf-8")
+    html = markdown.markdown(text, extensions=["extra"], output_format="html")
+    return tpl.TemplateResponse(request, "changelog.html", {"body": html, "jobs": dict(_jobs)})
+
+
+@app.get("/api/version")
+def version():
+    return {"version": __version__}
+
+
 @app.get("/map")
 def world_map(request: Request):
     return tpl.TemplateResponse(request, "map.html", {"jobs": dict(_jobs), "TYPE_NAMES": TYPE_NAMES})
@@ -177,16 +189,19 @@ def map_data():
                WHERE s.active=1 GROUP BY s.id""").fetchall()
     agencies = [{**dict(r), "flag": flag_url(r["country"]), "logo": f"/logo/{r['id']}" if r["logo_path"] else None,
                  "type_name": TYPE_NAMES.get(r["type"], r["type"]),
-                 "country_name": COUNTRY_NAMES.get(r["country"], r["country"])} for r in rows if r["lat"] is not None]
-    countries: dict[str, dict] = {}
+                 "country_name": COUNTRY_NAMES.get(r["country"], r["country"]),
+                 "coalitions": sorted(coalition_members_of(r["country"]))} for r in rows if r["lat"] is not None]
+    per_country: dict[str, dict] = {}
     for r in rows:
         if r["country"] in ("EU", "NATO", "OTHER"):
             continue   # organisations, not territories
-        c = countries.setdefault(r["country"], {"name": COUNTRY_NAMES.get(r["country"], r["country"]),
-                                                "agencies": 0, "docs": 0})
+        c = per_country.setdefault(r["country"], {"name": COUNTRY_NAMES.get(r["country"], r["country"]),
+                                                  "agencies": 0, "docs": 0,
+                                                  "coalitions": sorted(countries.memberships(r["country"]))})
         c["agencies"] += 1
         c["docs"] += r["n_docs"]
-    return {"agencies": agencies, "countries": countries}
+    return {"agencies": agencies, "countries": per_country,
+            "coalitions": {k: {"short": v["short"], "name": v["name"]} for k, v in countries.coalitions().items()}}
 
 
 LOGO_TYPES = {"svg": "image/svg+xml", "png": "image/png", "jpg": "image/jpeg", "webp": "image/webp",
