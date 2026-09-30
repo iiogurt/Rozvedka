@@ -70,3 +70,18 @@ The portal has no login. It listens on your LAN (port 8080), so don't expose it 
 - Logos are the agencies' own marks. `fetch-logos` downloads them into `data/logos/`, which is not committed. When the
   automatic pick is wrong, set `logo: "https://…"` on the registry entry and run `fetch-logos --refresh`.
   Agencies without a logo show an initials badge.
+
+## World map (`/map`)
+
+- A pin marks each agency's headquarters, coloured by agency type. Solid pins are an exact building address. Hollow
+  pins are street or city level, used where the house number didn't match or the service doesn't publish its address.
+- Countries are shaded by number of reports. Clicking a country opens its documents, and clicking a pin shows the
+  agency's profile. Agencies in the same city are grouped into clusters.
+- `/map#s-<id>` zooms to one agency (linked from each card on the Sources page). `/map?tiles=0` hides the street map,
+  and the country outlines still work offline.
+- Addresses are the publicly listed headquarters or contact addresses, stored in the registry as
+  `hq: {address, lat, lon, precision}`. Coordinates were geocoded once with OpenStreetMap Nominatim, and the portal
+  makes no geocoding calls at runtime.
+- Third-party code and data in `rozvedka/static/`: Leaflet 1.9.4 (BSD-2), Leaflet.markercluster 1.5.3 (MIT) and Natural
+  Earth country outlines (public domain). Street tiles load from the OpenStreetMap tile servers in the viewer's browser,
+  under the OSM tile usage policy (© OpenStreetMap contributors).

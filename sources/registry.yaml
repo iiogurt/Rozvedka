@@ -18,6 +18,7 @@
   name_local: "Bezpečnostní informační služba"
   name_en: "Security Information Service"
   homepage: "https://www.bis.cz/"
+  hq: {address: "Nárožní 1111/2, 158 00 Praha 5, Czech Republic", lat: 50.05442, lon: 14.33697, precision: address}
   description: "Czech civil counter-intelligence and security service. Annual reports cover Russian and Chinese espionage and influence operations, extremism, terrorism, proliferation and threats to the economy and critical infrastructure."
   type: intelligence-civil
   access: auto
@@ -33,6 +34,7 @@
   name_local: "Vojenské zpravodajství"
   name_en: "Military Intelligence"
   homepage: "https://vzcr.gov.cz/"
+  hq: {address: "Tychonova 221/1, 160 00 Praha 6, Czech Republic", lat: 50.09472, lon: 14.40056, precision: address}
   description: "Czech military intelligence (foreign and military counter-intelligence). Public reports (2004–2023) describe the military-political situation abroad, threats to the armed forces and defence cyber security."
   type: intelligence-military
   access: auto
@@ -48,6 +50,7 @@
   name_local: "Národní úřad pro kybernetickou a informační bezpečnost"
   name_en: "National Cyber and Information Security Agency"
   homepage: "https://nukib.gov.cz/"
+  hq: {address: "Mučednická 1125/31, 616 00 Brno, Czech Republic", lat: 49.20795, lon: 16.58416, precision: address}
   description: "Czech national cyber-security authority and government CERT. Annual reports on the state of cyber security, threat assessments, warnings and guidance for critical infrastructure."
   type: cyber
   access: auto
@@ -62,6 +65,7 @@
   name_local: "Hasičský záchranný sbor České republiky"
   name_en: "Fire Rescue Service of the Czech Republic"
   homepage: "https://hzscr.gov.cz/"
+  hq: {address: "Kloknerova 2295/26, 148 00 Praha 4, Czech Republic", lat: 50.03653, lon: 14.48843, precision: address}
   description: "National fire and rescue service, core of the Integrated Rescue System and civil protection. Statistical yearbooks on fires, floods, accidents, disasters and emergency response."
   type: civil-protection
   access: manual
@@ -76,6 +80,7 @@
   name_local: "Ministerstvo vnitra České republiky"
   name_en: "Ministry of the Interior of the Czech Republic"
   homepage: "https://mv.gov.cz/"
+  hq: {address: "Nad Štolou 936/3, 170 00 Praha 7, Czech Republic", lat: 50.09851, lon: 14.42191, precision: address}
   description: "Czech interior ministry. Annual reports on extremism and prejudicial hatred, plus internal-security strategy documents."
   type: police-ct
   access: manual
@@ -91,6 +96,7 @@
   name_local: "Slovenská informačná služba"
   name_en: "Slovak Information Service"
   homepage: "https://www.sis.gov.sk/"
+  hq: {address: "Vajnorská 39, 831 04 Bratislava, Slovakia", lat: 48.1645, lon: 17.13366, precision: address}
   description: "Slovak civil intelligence service (domestic and foreign). Activity reports summarise foreign intelligence activity, extremism, terrorism, economic security and cyber threats."
   type: intelligence-civil
   access: tls-lenient
@@ -104,6 +110,7 @@
   name_local: "Národný bezpečnostný úrad"
   name_en: "National Security Authority"
   homepage: "https://www.nbu.gov.sk/"
+  hq: {address: "Budatínska 30, 851 06 Bratislava, Slovakia", lat: 48.10097, lon: 17.10036, precision: address}
   description: "Protects classified information and runs national cyber security (SK-CERT). Annual reports on cyber incidents and the state of cyber security in Slovakia."
   type: cyber
   access: manual
@@ -119,6 +126,7 @@
   name_local: "Agencja Bezpieczeństwa Wewnętrznego"
   name_en: "Internal Security Agency"
   homepage: "https://www.abw.gov.pl/"
+  hq: {address: "Rakowiecka 2A, 00-993 Warszawa, Poland", lat: 52.21032, lon: 21.0168, precision: address}
   description: "Polish counter-intelligence and internal security service. Reports cover espionage, sabotage, terrorism, hybrid threats and government cyber security (CSIRT GOV)."
   type: intelligence-civil
   access: auto
@@ -132,6 +140,7 @@
   name_local: "Rządowe Centrum Bezpieczeństwa"
   name_en: "Government Centre for Security"
   homepage: "https://www.gov.pl/web/rcb"
+  hq: {address: "Rakowiecka 2A, 00-993 Warszawa, Poland", lat: 52.21032, lon: 21.0168, precision: address}
   description: "Crisis-management centre of the Polish government. Publishes the report on threats to national security and preparedness guidance for citizens."
   type: civil-protection
   access: auto
@@ -145,6 +154,7 @@
   name_local: "CERT Polska (NASK)"
   name_en: "CERT Polska"
   homepage: "https://cert.pl/"
+  hq: {address: "Kolska 12, 01-045 Warszawa, Poland", lat: 52.25121, lon: 20.97582, precision: address}
   description: "Polish national CSIRT run by the NASK research institute. Annual reports on cyber incidents, phishing, malware and attacks on Polish internet users."
   type: cyber
   access: auto
@@ -160,6 +170,7 @@
   name_local: "Bundesamt für Verfassungsschutz"
   name_en: "Federal Office for the Protection of the Constitution"
   homepage: "https://www.verfassungsschutz.de/"
+  hq: {address: "Merianstraße 100, 50765 Köln, Germany", lat: 51.02044, lon: 6.88882, precision: address}
   description: "German domestic intelligence service. The annual Verfassungsschutzbericht covers right- and left-wing extremism, Islamism, espionage, sabotage, cyber attacks and proliferation."
   type: intelligence-civil
   access: browser-ua
@@ -178,6 +189,7 @@
   name_local: "Bundesministerium des Innern"
   name_en: "Federal Ministry of the Interior"
   homepage: "https://www.bmi.bund.de/"
+  hq: {address: "Alt-Moabit 140, 10557 Berlin, Germany", lat: 52.52184, lon: 13.36315, precision: address}
   description: "German federal interior ministry, responsible for internal security and civil protection. Publishes the Verfassungsschutzbericht with BfV and national security-policy documents."
   type: intelligence-civil
   access: manual
@@ -191,6 +203,7 @@
   name_local: "Bundesamt für Sicherheit in der Informationstechnik"
   name_en: "Federal Office for Information Security"
   homepage: "https://www.bsi.bund.de/"
+  hq: {address: "Godesberger Allee 185, 53175 Bonn, Germany", lat: 50.70453, lon: 7.13296, precision: address}
   description: "Germany's national cyber-security authority. The annual report 'The State of IT Security in Germany' covers threat actors, ransomware, vulnerabilities and critical infrastructure."
   type: cyber
   access: auto
@@ -205,6 +218,7 @@
   name_local: "Bundesamt für Bevölkerungsschutz und Katastrophenhilfe"
   name_en: "Federal Office of Civil Protection and Disaster Assistance"
   homepage: "https://www.bbk.bund.de/"
+  hq: {address: "Provinzialstraße 93, 53127 Bonn, Germany", lat: 50.71497, lon: 7.06835, precision: address}
   description: "German federal civil-protection agency. Risk analyses (floods, pandemics, power blackouts, heat), critical-infrastructure protection and citizen preparedness advice."
   type: civil-protection
   access: auto
@@ -218,6 +232,7 @@
   name_local: "Bundeskriminalamt"
   name_en: "Federal Criminal Police Office"
   homepage: "https://www.bka.de/"
+  hq: {address: "Thaerstraße 11, 65193 Wiesbaden, Germany", lat: 50.09711, lon: 8.24509, precision: address}
   description: "German federal criminal police. National situation reports (Bundeslagebilder) on organised crime, cybercrime, corruption, human trafficking and politically motivated crime."
   type: police-ct
   access: browser-ua
@@ -232,6 +247,7 @@
   name_local: "Direktion Staatsschutz und Nachrichtendienst"
   name_en: "Directorate State Protection and Intelligence Service"
   homepage: "https://www.dsn.gv.at/"
+  hq: {address: "Herrengasse 7, 1010 Wien, Austria", lat: 48.20895, lon: 16.36569, precision: address}
   description: "Austrian domestic intelligence and state-protection service. The annual Verfassungsschutzbericht covers extremism, terrorism, espionage and cyber threats."
   type: intelligence-civil
   access: auto
@@ -245,6 +261,7 @@
   name_local: "Bundesministerium für Landesverteidigung"
   name_en: "Federal Ministry of Defence"
   homepage: "https://www.bundesheer.at/"
+  hq: {address: "Roßauer Lände 1, 1090 Wien, Austria", lat: 48.21862, lon: 16.36862, precision: address}
   description: "Austrian defence ministry. The annual Risikobild (Risk Monitor) assesses the international security environment and the risks it poses to Austria and Europe."
   type: intelligence-military
   access: auto
@@ -260,6 +277,7 @@
   name_local: "Kaitsepolitseiamet"
   name_en: "Estonian Internal Security Service"
   homepage: "https://kapo.ee/"
+  hq: {address: "Toompuiestee 3, 10142 Tallinn, Estonia", lat: 59.43117, lon: 24.73724, precision: address}
   description: "Estonian counter-intelligence and security police. Annual reviews describe Russian intelligence and influence activities, extremism, terrorism and economic security, with concrete case examples."
   type: intelligence-civil
   access: auto
@@ -275,6 +293,7 @@
   name_local: "Välisluureamet"
   name_en: "Estonian Foreign Intelligence Service"
   homepage: "https://www.valisluureamet.ee/"
+  hq: {address: "Rahumäe tee 4b, 11316 Tallinn, Estonia", lat: 59.39772, lon: 24.71016, precision: address}
   description: "Estonia's foreign intelligence service. The annual 'International Security and Estonia' report analyses Russia's military, politics, economy and influence operations, and China."
   type: intelligence-military
   access: auto
@@ -294,6 +313,7 @@
   name_local: "Riigi Infosüsteemi Amet"
   name_en: "Estonian Information System Authority"
   homepage: "https://www.ria.ee/"
+  hq: {address: "Pärnu maantee 139a, 15169 Tallinn, Estonia", lat: 59.41931, lon: 24.74452, precision: street}
   description: "Estonian cyber-security authority and home of CERT-EE. Cyber security yearbooks, threat assessments and studies on the security of the digital state."
   type: cyber
   access: auto
@@ -309,6 +329,7 @@
   name_local: "Valsts drošības dienests"
   name_en: "State Security Service"
   homepage: "https://vdd.gov.lv/"
+  hq: {address: "Brīvības gatve 207, Rīga, LV-1039, Latvia", lat: 56.97473, lon: 24.16889, precision: address}
   description: "Latvian counter-intelligence and internal security service. Annual reports on Russian intelligence and influence, extremism, terrorism and protection of the constitutional order."
   type: intelligence-civil
   access: auto
@@ -323,6 +344,7 @@
   name_local: "Satversmes aizsardzības birojs"
   name_en: "Constitution Protection Bureau"
   homepage: "https://www.sab.gov.lv/"
+  hq: {address: "Miera iela 85A, Rīga, Latvia", lat: 56.97277, lon: 24.139, precision: address}
   description: "Latvian foreign intelligence service and national cyber-security coordinator. Annual reports and analytical reports on Russia and threats to Western countries."
   type: intelligence-civil
   access: auto
@@ -337,6 +359,7 @@
   name_local: "Militārās izlūkošanas un drošības dienests"
   name_en: "Defence Intelligence and Security Service"
   homepage: "https://www.midd.gov.lv/"
+  hq: {address: "Grostonas iela 2, Rīga, LV-1013, Latvia", lat: 56.96338, lon: 24.11981, precision: address}
   description: "Latvian military intelligence. Annual threat assessments on Russia's armed forces, hybrid activity, sabotage and information operations against Latvia."
   type: intelligence-military
   access: auto
@@ -352,6 +375,7 @@
   name_local: "Valstybės saugumo departamentas; Antrasis operatyvinių tarnybų departamentas"
   name_en: "State Security Department; Defence Intelligence and Security Service"
   homepage: "https://www.vsd.lt/"
+  hq: {address: "Vytenio g. 1, Vilnius, Lithuania", lat: 54.68023, lon: 25.2628, precision: address}
   description: "Lithuania's civil and military intelligence services. Their joint annual National Threat Assessment covers Russia, Belarus, China, military threats, cyber and influence operations."
   type: intelligence-civil
   access: manual
@@ -367,6 +391,7 @@
   name_local: "Nacionalinis kibernetinio saugumo centras"
   name_en: "National Cyber Security Centre"
   homepage: "https://www.nksc.lt/"
+  hq: {address: "Totorių g. 25, Vilnius, Lithuania", lat: 54.68281, lon: 25.28281, precision: address}
   description: "Lithuanian national cyber-security authority under the Ministry of National Defence. Annual national cyber-security status reports."
   type: cyber
   access: manual
@@ -381,6 +406,7 @@
   name_local: "Suojelupoliisi"
   name_en: "Finnish Security and Intelligence Service"
   homepage: "https://supo.fi/"
+  hq: {address: "Ratamestarinkatu 11, 00520 Helsinki, Finland", lat: 60.20124, lon: 24.93938, precision: address}
   description: "Finnish security and intelligence service. The annual National Security Overview covers state espionage and influence, terrorism and threats to critical infrastructure."
   type: intelligence-civil
   access: auto
@@ -396,6 +422,7 @@
   name_local: "Kyberturvallisuuskeskus (Liikenne- ja viestintävirasto Traficom)"
   name_en: "National Cyber Security Centre Finland"
   homepage: "https://www.kyberturvallisuuskeskus.fi/"
+  hq: {address: "Kumpulantie 9, 00520 Helsinki, Finland", lat: 60.19676, lon: 24.945, precision: address}
   description: "Finland's national cyber-security centre within Traficom. Annual cyber-security reviews, weekly reviews and 'cyber weather' situation reports."
   type: cyber
   access: auto
@@ -409,6 +436,7 @@
   name_local: "Turvallisuuskomitea"
   name_en: "The Security Committee"
   homepage: "https://turvallisuuskomitea.fi/"
+  hq: {address: "Eteläinen Makasiinikatu 8, 00130 Helsinki, Finland", lat: 60.16462, lon: 24.94888, precision: address}
   description: "Finnish government body for comprehensive security. Publishes the Security Strategy for Society and preparedness guidance based on the Finnish comprehensive-security model."
   type: civil-protection
   access: auto
@@ -425,6 +453,7 @@
   name_local: "Säkerhetspolisen"
   name_en: "Swedish Security Service"
   homepage: "https://www.sakerhetspolisen.se/"
+  hq: {address: "Bolstomtavägen 2, Solna, Sweden", lat: 59.35228, lon: 18.01053, precision: address}
   description: "Swedish security and counter-intelligence service. The annual assessment covers foreign powers' espionage and influence, violent extremism, terrorism and protective security."
   type: intelligence-civil
   access: manual
@@ -439,6 +468,7 @@
   name_local: "Militära underrättelse- och säkerhetstjänsten"
   name_en: "Military Intelligence and Security Service"
   homepage: "https://www.forsvarsmakten.se/"
+  hq: {address: "Lidingövägen 24, 115 41 Stockholm, Sweden", lat: 59.35177, lon: 18.10654, precision: street}
   description: "Swedish military intelligence within the Armed Forces. Annual overviews of the military threat, Russia, hybrid activity and security threats to Swedish defence."
   type: intelligence-military
   access: auto
@@ -452,6 +482,7 @@
   name_local: "Myndigheten för civilt försvar"
   name_en: "Swedish Civil Defence and Resilience Agency"
   homepage: "https://www.mcf.se/"
+  hq: {address: "Packhusallén 2, Karlstad, Sweden", lat: 59.37202, lon: 13.50676, precision: address}
   description: "Swedish civil-defence and emergency-preparedness agency (formerly MSB). National risk and capability assessments and crisis-preparedness guidance such as 'In case of crisis or war'."
   type: civil-protection
   access: auto
@@ -467,6 +498,7 @@
   name_local: "Politiets Efterretningstjeneste"
   name_en: "Danish Security and Intelligence Service"
   homepage: "https://pet.dk/"
+  hq: {address: "Klausdalsbrovej 1, 2860 Søborg, Denmark", lat: 55.74606, lon: 12.49311, precision: address}
   description: "Danish domestic security and intelligence service. Its Centre for Terror Analysis issues the annual terror threat assessment; PET also publishes espionage threat assessments."
   type: intelligence-civil
   access: manual
@@ -480,6 +512,7 @@
   name_local: "Forsvarets Efterretningstjeneste"
   name_en: "Danish Defence Intelligence Service"
   homepage: "https://www.fe-ddis.dk/"
+  hq: {address: "Kastellet 30, 2100 København Ø, Denmark", lat: 55.69047, lon: 12.59407, precision: address}
   description: "Danish foreign and military intelligence. The annual Intelligence Outlook covers Russia, China, the Arctic, terrorism and cyber threats against Denmark."
   type: intelligence-military
   access: auto
@@ -495,6 +528,7 @@
   name_local: "Styrelsen for Samfundssikkerhed"
   name_en: "Danish Resilience Agency"
   homepage: "https://samsik.dk/"
+  hq: {address: "Datavej 20, 3460 Birkerød, Denmark", lat: 55.83582, lon: 12.41081, precision: address}
   description: "Danish resilience agency (incl. the former Centre for Cyber Security). Cyber threat assessments, the National Risk Picture and total-defence preparedness material."
   type: cyber
   access: auto
@@ -510,6 +544,7 @@
   name_local: "Beredskabsstyrelsen"
   name_en: "Danish Emergency Management Agency"
   homepage: "https://www.brs.dk/"
+  hq: {address: "Datavej 16, 3460 Birkerød, Denmark", lat: 55.83534, lon: 12.41132, precision: address}
   description: "Danish emergency-management agency. National risk profile, rescue-service statistics, research and preparedness publications."
   type: civil-protection
   access: auto
@@ -526,6 +561,7 @@
   name_local: "Algemene Inlichtingen- en Veiligheidsdienst"
   name_en: "General Intelligence and Security Service"
   homepage: "https://www.aivd.nl/"
+  hq: {address: "Europaweg 4, 2711 AH Zoetermeer, Netherlands", lat: 52.0632, lon: 4.48801, precision: address}
   description: "Dutch civil intelligence and security service. Annual reports cover state actors (Russia, China, Iran), terrorism, extremism and cyber espionage."
   type: intelligence-civil
   access: auto
@@ -541,6 +577,7 @@
   name_local: "Militaire Inlichtingen- en Veiligheidsdienst"
   name_en: "Defence Intelligence and Security Service"
   homepage: "https://www.defensie.nl/onderwerpen/militaire-inlichtingen-en-veiligheid"
+  hq: {address: "Frederikkazerne, Van Alkemadelaan 786, Den Haag, Netherlands", lat: 52.10322, lon: 4.31194, precision: address}
   description: "Dutch military intelligence. Annual reports on military threats, Russia and the war in Ukraine, China and threats against the defence sector."
   type: intelligence-military
   access: auto
@@ -555,6 +592,7 @@
   name_local: "Nationaal Coördinator Terrorismebestrijding en Veiligheid"
   name_en: "National Coordinator for Security and Counterterrorism"
   homepage: "https://www.nctv.nl/"
+  hq: {address: "Turfmarkt 147, 2511 DP Den Haag, Netherlands", lat: 52.07907, lon: 4.32185, precision: address}
   description: "Coordinates Dutch counter-terrorism, cyber security and crisis management. Publishes the Terrorist Threat Assessment Netherlands (DTN) and the Cyber Security Assessment Netherlands (CSBN)."
   type: police-ct
   access: auto
@@ -569,6 +607,7 @@
   name_local: "Nationaal Cyber Security Centrum"
   name_en: "National Cyber Security Centre"
   homepage: "https://www.ncsc.nl/"
+  hq: {address: "Turfmarkt 147, 2511 DP Den Haag, Netherlands", lat: 52.07907, lon: 4.32185, precision: address}
   description: "Dutch national cyber-security centre for government and vital sectors. Security advisories, threat information and guidance."
   type: cyber
   access: auto
@@ -583,6 +622,7 @@
   name_local: "Veiligheid van de Staat / Sûreté de l'État"
   name_en: "State Security Service"
   homepage: "https://www.vsse.be/"
+  hq: {address: "Koning Albert II-laan 6, 1000 Brussel, Belgium", lat: 50.85756, lon: 4.3555, precision: address}
   description: "Belgian civil intelligence service. Its public intelligence report covers espionage, foreign interference, extremism, terrorism and proliferation."
   type: intelligence-civil
   access: auto
@@ -598,6 +638,7 @@
   name_local: "Coördinatieorgaan voor de dreigingsanalyse / Organe de coordination pour l'analyse de la menace"
   name_en: "Coordination Unit for Threat Analysis"
   homepage: "https://cuta.belgium.be/"
+  hq: {address: "Brussel, Belgium", lat: 50.84674, lon: 4.35249, precision: city}
   description: "Belgian threat-assessment body that sets the national terror threat level. Annual reports and analyses of terrorism and violent extremism."
   type: police-ct
   access: tls-lenient
@@ -614,6 +655,7 @@
   name_local: "Centrum voor Cybersecurity België / Centre pour la Cybersécurité Belgique"
   name_en: "Centre for Cybersecurity Belgium"
   homepage: "https://ccb.belgium.be/"
+  hq: {address: "Wetstraat 18, 1000 Brussel, Belgium", lat: 50.84596, lon: 4.36717, precision: address}
   description: "Belgian national cyber-security authority (CERT.be). Annual reports and key figures on cyber threats, phishing and incidents in Belgium."
   type: cyber
   access: manual
@@ -631,6 +673,7 @@
   name_local: "Secrétariat général de la défense et de la sécurité nationale"
   name_en: "General Secretariat for National Defence and Security"
   homepage: "https://www.sgdsn.gouv.fr/"
+  hq: {address: "51 Boulevard de La Tour-Maubourg, 75007 Paris, France", lat: 48.85661, lon: 2.31004, precision: address}
   description: "Supports the French Prime Minister on defence and national security. National Strategic Review, national resilience and crisis-management documents."
   type: civil-protection
   access: auto
@@ -644,6 +687,7 @@
   name_local: "Agence nationale de la sécurité des systèmes d'information"
   name_en: "National Cybersecurity Agency of France"
   homepage: "https://cyber.gouv.fr/"
+  hq: {address: "51 Boulevard de La Tour-Maubourg, 75007 Paris, France", lat: 48.85661, lon: 2.31004, precision: address}
   description: "French national cyber-security authority. The annual 'Panorama de la cybermenace' and CERT-FR threat reports cover state-sponsored attacks, ransomware and threats by sector."
   type: cyber
   access: auto
@@ -660,6 +704,7 @@
   name_local: "Service de vigilance et de protection contre les ingérences numériques étrangères"
   name_en: "Service for Vigilance and Protection against Foreign Digital Interference"
   homepage: "https://www.sgdsn.gouv.fr/"
+  hq: {address: "51 Boulevard de La Tour-Maubourg, 75007 Paris, France", lat: 48.85661, lon: 2.31004, precision: address}
   description: "French agency detecting foreign information-manipulation campaigns. Technical reports on specific disinformation operations targeting France and Europe."
   type: intelligence-civil
   access: auto
@@ -674,6 +719,7 @@
   name_local: "Sistema di informazione per la sicurezza della Repubblica"
   name_en: "Intelligence System for the Security of the Republic"
   homepage: "https://www.sicurezzanazionale.gov.it/"
+  hq: {address: "Piazza Dante 25, 00185 Roma, Italy", lat: 41.8917, lon: 12.50418, precision: address}
   description: "Italy's intelligence community (DIS, AISE, AISI). The annual report to Parliament covers geopolitics, terrorism, cyber threats, economic security and hybrid threats."
   type: intelligence-civil
   access: browser-js
@@ -692,6 +738,7 @@
   name_local: "Agenzia per la Cybersicurezza Nazionale"
   name_en: "National Cybersecurity Agency"
   homepage: "https://www.acn.gov.it/"
+  hq: {address: "Via di Santa Susanna 15, 00187 Roma, Italy", lat: 41.90539, lon: 12.49321, precision: street}
   description: "Italian national cyber-security authority (home of CSIRT Italia). Annual report to Parliament and operational summaries of the cyber threat."
   type: cyber
   access: auto
@@ -707,6 +754,7 @@
   name_local: "Dipartimento della Protezione Civile"
   name_en: "Civil Protection Department"
   homepage: "https://www.protezionecivile.gov.it/"
+  hq: {address: "Via Ulpiano 11, 00193 Roma, Italy", lat: 41.90398, lon: 12.47192, precision: address}
   description: "Italian national civil-protection department. Publications on seismic, volcanic, hydro-geological and other risks, emergency planning and citizen preparedness."
   type: civil-protection
   access: auto
@@ -721,6 +769,7 @@
   name_local: "Departamento de Seguridad Nacional"
   name_en: "Department of National Security"
   homepage: "https://www.dsn.gob.es/"
+  hq: {address: "Complejo de la Moncloa, Madrid, Spain", lat: 40.44418, lon: -3.73552, precision: address}
   description: "Supports the Spanish Prime Minister on national security. The Annual National Security Report reviews all national-security areas, from terrorism and cyber to pandemics and climate."
   type: civil-protection
   access: auto
@@ -737,6 +786,7 @@
   name_local: "Centro Criptológico Nacional – CERT"
   name_en: "National Cryptologic Centre – CERT"
   homepage: "https://www.ccn-cert.cni.es/"
+  hq: {address: "Avenida del Padre Huidobro, Madrid, Spain", lat: 40.46134, lon: -3.75725, precision: street}
   description: "Spanish governmental CERT attached to the intelligence service CNI. Annual 'Cyber Threats and Trends' report and security guides."
   type: cyber
   access: manual
@@ -750,6 +800,7 @@
   name_local: "Ministerio del Interior"
   name_en: "Ministry of the Interior"
   homepage: "https://www.interior.gob.es/"
+  hq: {address: "Paseo de la Castellana 5, 28046 Madrid, Spain", lat: 40.4269, lon: -3.69074, precision: address}
   description: "Spanish interior ministry. Statistical yearbooks and crime reports, including hate crime and cybercrime."
   type: police-ct
   access: manual
@@ -764,6 +815,7 @@
   name_local: "Sistema de Segurança Interna"
   name_en: "Internal Security System"
   homepage: "https://www.ssi.gov.pt/"
+  hq: {address: "Avenida Defensores de Chaves 6, 1049-063 Lisboa, Portugal", lat: 38.733, lon: -9.14262, precision: address}
   description: "Coordinates Portugal's internal-security forces. The Annual Internal Security Report (RASI) covers crime, terrorism, extremism, cybercrime and civil protection."
   type: police-ct
   access: auto
@@ -778,6 +830,7 @@
   name_local: "Centro Nacional de Cibersegurança"
   name_en: "National Cybersecurity Centre"
   homepage: "https://www.cncs.gov.pt/"
+  hq: {address: "Rua da Junqueira 69, 1300-342 Lisboa, Portugal", lat: 38.70062, lon: -9.18234, precision: street}
   description: "Portuguese national cyber-security authority. Its observatory publishes the annual 'Risks & Conflicts' report on cyber threats to Portugal."
   type: cyber
   access: manual
@@ -792,6 +845,7 @@
   name_local: "Nemzetbiztonsági Szakszolgálat – Nemzeti Kibervédelmi Intézet"
   name_en: "Special Service for National Security – National Cyber Security Center"
   homepage: "https://nki.gov.hu/"
+  hq: {address: "Törökvész út 32, 1022 Budapest, Hungary", lat: 47.52029, lon: 19.02171, precision: street}
   description: "Hungarian national cyber-security centre (NCSC-HU). Analyses and threat assessments of cyber incidents affecting Hungary."
   type: cyber
   access: auto
@@ -808,6 +862,7 @@
   name_local: "Serviciul Român de Informații"
   name_en: "Romanian Intelligence Service"
   homepage: "https://www.sri.ro/"
+  hq: {address: "Bulevardul Libertății 14, București, Romania", lat: 44.42576, lon: 26.09133, precision: address}
   description: "Romanian domestic intelligence service. Activity reports (last public edition covers 2020) on espionage, terrorism, cyber threats and economic security."
   type: intelligence-civil
   access: auto
@@ -823,6 +878,7 @@
   name_local: "Directoratul Național de Securitate Cibernetică"
   name_en: "National Cyber Security Directorate"
   homepage: "https://www.dnsc.ro/"
+  hq: {address: "Strada Italiană 22, București, Romania", lat: 44.43841, lon: 26.10656, precision: address}
   description: "Romanian national cyber-security authority and CERT. Annual activity reports and cyber risk assessments."
   type: cyber
   access: manual
@@ -837,6 +893,7 @@
   name_local: "Държавна агенция „Национална сигурност“"
   name_en: "State Agency for National Security"
   homepage: "https://www.dans.bg/"
+  hq: {address: "бул. Черни връх 45, София, Bulgaria", lat: 42.68291, lon: 23.32054, precision: street}
   description: "Bulgarian counter-intelligence and national-security agency. Annual activity reports cover foreign intelligence activity, hybrid threats, terrorism, radicalisation and economic security."
   type: intelligence-civil
   access: auto
@@ -853,6 +910,7 @@
   name_local: "Sigurnosno-obavještajna agencija"
   name_en: "Security and Intelligence Agency"
   homepage: "https://www.soa.hr/"
+  hq: {address: "Savska cesta 39, 10000 Zagreb, Croatia", lat: 45.80032, lon: 15.9636, precision: address}
   description: "Croatian security and intelligence service. Public reports describe the security environment, foreign intelligence activity, terrorism, extremism and cyber threats."
   type: intelligence-civil
   access: auto
@@ -869,6 +927,7 @@
   name_local: "Slovenska obveščevalno-varnostna agencija"
   name_en: "Slovenian Intelligence and Security Agency"
   homepage: "https://www.gov.si/drzavni-organi/vladne-sluzbe/slovenska-obvescevalno-varnostna-agencija/"
+  hq: {address: "Stegne 23c, 1000 Ljubljana, Slovenia", lat: 46.0875, lon: 14.48295, precision: address}
   description: "Slovenian civil intelligence and security agency. Annual activity summaries on the security situation, terrorism, extremism, cyber and hybrid threats."
   type: intelligence-civil
   access: auto
@@ -882,6 +941,7 @@
   name_local: "SI-CERT (Nacionalni odzivni center za kibernetsko varnost)"
   name_en: "Slovenian Computer Emergency Response Team"
   homepage: "https://www.cert.si/"
+  hq: {address: "Tehnološki park 18, 1000 Ljubljana, Slovenia", lat: 46.05029, lon: 14.46029, precision: address}
   description: "Slovenian national CERT. Annual reports on cyber incidents, fraud and threats handled in Slovenia."
   type: cyber
   access: auto
@@ -896,6 +956,7 @@
   name_local: "Εθνική Αρχή Κυβερνοασφάλειας"
   name_en: "National Cybersecurity Authority"
   homepage: "https://cyber.gov.gr/"
+  hq: {address: "Αθήνα, Greece", lat: 37.97556, lon: 23.73483, precision: city}
   description: "Greek national cyber-security authority. National cyber-security strategy, handbooks and guidance."
   type: cyber
   access: auto
@@ -911,6 +972,7 @@
   name_local: "Αρχή Ψηφιακής Ασφάλειας"
   name_en: "Digital Security Authority"
   homepage: "https://dsa.cy/"
+  hq: {address: "Helioupoleos 12, 1101 Nicosia, Cyprus", lat: 35.16914, lon: 33.34666, precision: city}
   description: "Cypriot national cyber-security authority (CSIRT-CY). Annual reports on cyber incidents and national cyber security."
   type: cyber
   access: auto
@@ -925,6 +987,7 @@
   name_local: "Service de renseignement de l'État"
   name_en: "State Intelligence Service"
   homepage: "https://sre.gouvernement.lu/"
+  hq: {address: "Luxembourg, Luxembourg", lat: 49.61128, lon: 6.1298, precision: city}
   description: "Luxembourg's intelligence service. Public information is mainly the annual report of the parliamentary oversight commission."
   type: intelligence-civil
   access: auto
@@ -938,6 +1001,7 @@
   name_local: "Haut-Commissariat à la Protection nationale"
   name_en: "High Commission for National Protection"
   homepage: "https://hcpn.gouvernement.lu/"
+  hq: {address: "46 rue du Château, 6961 Senningen, Luxembourg", lat: 49.64529, lon: 6.23725, precision: address}
   description: "Luxembourg's crisis-management and national-protection body. Publications on crisis preparedness, critical infrastructure and national risk."
   type: civil-protection
   access: auto
@@ -952,6 +1016,7 @@
   name_local: "Roinn an Taoisigh"
   name_en: "Department of the Taoiseach"
   homepage: "https://www.gov.ie/en/department-of-the-taoiseach/"
+  hq: {address: "Government Buildings, Upper Merrion Street, Dublin 2, Ireland", lat: 53.3392, lon: -6.25296, precision: address}
   description: "Irish Prime Minister's department. The National Risk Assessment identifies strategic geopolitical, economic, social, environmental and technological risks for Ireland."
   type: civil-protection
   access: auto
@@ -966,6 +1031,7 @@
   name_local: "An tIonad Náisiúnta Cibearshlándála"
   name_en: "National Cyber Security Centre"
   homepage: "https://www.ncsc.gov.ie/"
+  hq: {address: "29-31 Adelaide Road, Dublin 2, Ireland", lat: 53.33189, lon: -6.25558, precision: address}
   description: "Irish national cyber-security centre. National Cyber Risk Assessment, advisories and guidance."
   type: cyber
   access: auto
@@ -979,6 +1045,7 @@
   name_local: "An Oifig um Pleanáil Éigeandála"
   name_en: "Office of Emergency Planning"
   homepage: "https://www.gov.ie/en/office-of-emergency-planning/"
+  hq: {address: "Dublin, Ireland", lat: 53.34938, lon: -6.26056, precision: city}
   description: "Irish government office coordinating national emergency planning. Emergency-planning frameworks and public preparedness material."
   type: civil-protection
   access: auto
@@ -995,6 +1062,7 @@
   name_local: "European Union Agency for Law Enforcement Cooperation"
   name_en: "Europol"
   homepage: "https://www.europol.europa.eu/"
+  hq: {address: "Eisenhowerlaan 73, 2517 KK Den Haag, Netherlands", lat: 52.09291, lon: 4.28126, precision: address}
   description: "EU law-enforcement agency. Flagship reports: TE-SAT (terrorism situation and trends), IOCTA (internet-organised crime) and EU SOCTA (serious and organised crime threat assessment)."
   type: eu-body
   access: browser-js
@@ -1011,6 +1079,7 @@
   name_local: "European Union Agency for Cybersecurity"
   name_en: "ENISA"
   homepage: "https://www.enisa.europa.eu/"
+  hq: {address: "Agamemnonos 14, 15231 Chalandri, Athens, Greece", lat: 38.01253, lon: 23.78444, precision: street}
   description: "EU cyber-security agency. The annual ENISA Threat Landscape and sector threat reports describe prime cyber threats, actors and trends in Europe."
   type: eu-body
   access: auto
@@ -1025,6 +1094,7 @@
   name_local: "European External Action Service"
   name_en: "European External Action Service"
   homepage: "https://www.eeas.europa.eu/"
+  hq: {address: "Rond-Point Robert Schuman 9A, 1046 Bruxelles, Belgium", lat: 50.84246, lon: 4.38464, precision: address}
   description: "EU diplomatic service. Annual reports on Foreign Information Manipulation and Interference (FIMI), the EU's strategic outlook and activity reports."
   type: eu-body
   access: auto
@@ -1039,6 +1109,7 @@
   name_local: "European Border and Coast Guard Agency"
   name_en: "Frontex"
   homepage: "https://www.frontex.europa.eu/"
+  hq: {address: "Plac Europejski 6, 00-844 Warszawa, Poland", lat: 52.23242, lon: 20.98489, precision: address}
   description: "EU border agency. Annual risk analyses on irregular migration, cross-border crime and security at the EU's external borders."
   type: eu-body
   access: auto
@@ -1053,6 +1124,7 @@
   name_local: "European Centre for Disease Prevention and Control"
   name_en: "ECDC"
   homepage: "https://www.ecdc.europa.eu/"
+  hq: {address: "Gustav III:s Boulevard 40, 169 73 Solna, Sweden", lat: 59.37267, lon: 18.01716, precision: address}
   description: "EU public-health agency. Epidemiological reports, rapid risk assessments and preparedness guidance on infectious-disease threats."
   type: eu-body
   access: auto
@@ -1067,6 +1139,7 @@
   name_local: "Directorate-General for European Civil Protection and Humanitarian Aid Operations"
   name_en: "DG ECHO – EU Civil Protection"
   homepage: "https://civil-protection-humanitarian-aid.ec.europa.eu/"
+  hq: {address: "Berlaymont, Bruxelles, Belgium", lat: 50.84362, lon: 4.38254, precision: address}
   description: "European Commission service for civil protection. Overviews of natural and man-made disaster risks in the EU and the Union Civil Protection Mechanism."
   type: eu-body
   access: auto
@@ -1080,6 +1153,7 @@
   name_local: "Joint Research Centre – Disaster Risk Management Knowledge Centre"
   name_en: "JRC Disaster Risk Management Knowledge Centre"
   homepage: "https://drmkc.jrc.ec.europa.eu/"
+  hq: {address: "Via Enrico Fermi 2749, 21027 Ispra, Italy", lat: 45.8038, lon: 8.62992, precision: address}
   description: "European Commission science service for disaster risk. 'Science for Disaster Risk Management' flagship reports and risk-data resources."
   type: eu-body
   access: manual
@@ -1094,6 +1168,7 @@
   name_local: "European Union Institute for Security Studies"
   name_en: "EUISS"
   homepage: "https://www.iss.europa.eu/"
+  hq: {address: "100 Avenue de Suffren, 75015 Paris, France", lat: 48.84991, lon: 2.30263, precision: address}
   description: "EU agency for foreign, security and defence policy analysis. Chaillot Papers, briefs and foresight reports on geopolitics and security."
   type: eu-body
   access: auto
@@ -1107,6 +1182,7 @@
   name_local: "European Centre of Excellence for Countering Hybrid Threats"
   name_en: "Hybrid CoE"
   homepage: "https://www.hybridcoe.fi/"
+  hq: {address: "Lintulahdenkatu 5a, 00530 Helsinki, Finland", lat: 60.18451, lon: 24.96027, precision: street}
   description: "EU–NATO centre of excellence in Helsinki. Research reports and working papers on hybrid threats, information influence and resilience."
   type: eu-body
   access: auto
@@ -1120,6 +1196,7 @@
   name_local: "European Commission – Preparedness Union Strategy"
   name_en: "European Commission – Preparedness Union"
   homepage: "https://commission.europa.eu/"
+  hq: {address: "Berlaymont, Bruxelles, Belgium", lat: 50.84362, lon: 4.38254, precision: address}
   description: "European Commission documents on civil and military preparedness, incl. the Niinistö report 'Safer Together' and the Preparedness Union Strategy."
   type: eu-body
   access: auto
@@ -1134,6 +1211,7 @@
   name_local: "North Atlantic Treaty Organization / Organisation du Traité de l'Atlantique Nord"
   name_en: "NATO"
   homepage: "https://www.nato.int/"
+  hq: {address: "Boulevard Léopold III, 1110 Bruxelles, Belgium", lat: 50.8673, lon: 4.40301, precision: street}
   description: "The North Atlantic Alliance. The Secretary General's Annual Report reviews Allied defence spending, deterrence, operations and the security environment."
   type: nato
   access: auto
@@ -1148,6 +1226,7 @@
   name_local: "NATO Strategic Communications Centre of Excellence"
   name_en: "NATO StratCom CoE"
   homepage: "https://stratcomcoe.org/"
+  hq: {address: "Kalnciema iela 11b, Rīga, Latvia", lat: 56.94598, lon: 24.07536, precision: address}
   description: "NATO-accredited centre of excellence in Riga. Research on disinformation, information influence, social-media manipulation and strategic communications."
   type: nato
   access: auto
@@ -1162,6 +1241,7 @@
   name_local: "NATO Cooperative Cyber Defence Centre of Excellence"
   name_en: "NATO CCDCOE"
   homepage: "https://ccdcoe.org/"
+  hq: {address: "Filtri tee 12, 10132 Tallinn, Estonia", lat: 59.42276, lon: 24.76645, precision: address}
   description: "NATO-accredited cyber-defence centre in Tallinn. Research on cyber law (Tallinn Manual), national cyber-security organisation, cyber conflict and exercises."
   type: nato
   access: auto
@@ -1176,6 +1256,7 @@
   name_local: "Intergovernmental Panel on Climate Change"
   name_en: "IPCC"
   homepage: "https://www.ipcc.ch/"
+  hq: {address: "7bis Avenue de la Paix, 1211 Genève, Switzerland", lat: 46.22325, lon: 6.14625, precision: address}
   description: "UN body assessing climate-change science. Assessment and special reports on climate impacts, adaptation and risks – a key basis for disaster preparedness."
   type: other
   access: auto
@@ -1191,6 +1272,7 @@
   name_local: "Defense Intelligence Agency"
   name_en: "US Defense Intelligence Agency"
   homepage: "https://www.dia.mil/"
+  hq: {address: "Joint Base Anacostia-Bolling, Washington, DC, USA", lat: 38.84268, lon: -77.01588, precision: address}
   description: "US military intelligence agency. Military-power reports on China, Russia, Iran and North Korea, and worldwide threat assessments."
   type: other
   access: manual
@@ -1204,6 +1286,7 @@
   name_local: "Office of the Director of National Intelligence"
   name_en: "US Office of the Director of National Intelligence"
   homepage: "https://www.dni.gov/"
+  hq: {address: "Liberty Crossing, McLean, Virginia, USA", lat: 38.93221, lon: -77.20519, precision: address}
   description: "Head of the US intelligence community. The Annual Threat Assessment and the Global Trends foresight reports."
   type: other
   access: auto
