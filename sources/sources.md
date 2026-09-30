@@ -1,6 +1,6 @@
 # Rozvedka – official security report sources
 
-Generated from `sources/registry.yaml` — 83 sources, 148 pages.
+Generated from `sources/registry.yaml` — 109 sources, 186 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
@@ -225,10 +225,86 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 | **StratCom CoE** – NATO StratCom CoE<br>_NATO Strategic Communications Centre of Excellence_<br>[stratcomcoe.org](https://stratcomcoe.org/) | NATO-accredited centre of excellence in Riga. Research on disinformation, information influence, social-media manipulation and strategic communications. | research reports, annual report | [en archive](https://stratcomcoe.org/publications) · [en archive](https://stratcomcoe.org/about_us/annual-reports/11) |
 | **CCDCOE** – NATO CCDCOE<br>_NATO Cooperative Cyber Defence Centre of Excellence_<br>[ccdcoe.org](https://ccdcoe.org/) | NATO-accredited cyber-defence centre in Tallinn. Research on cyber law (Tallinn Manual), national cyber-security organisation, cyber conflict and exercises. | research | [en archive](https://ccdcoe.org/library/publications/) |
 
-## Other (outside EU/NATO)
+## International
 
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **IPCC** – IPCC<br>_Intergovernmental Panel on Climate Change_<br>[www.ipcc.ch](https://www.ipcc.ch/) | UN body assessing climate-change science. Assessment and special reports on climate impacts, adaptation and risks – a key basis for disaster preparedness. | assessment reports, special reports | [en archive](https://www.ipcc.ch/reports/) · [fr archive](https://www.ipcc.ch/languages-2/francais/) · [ru archive](https://www.ipcc.ch/languages-2/russian/) |
-| **DIA** – US Defense Intelligence Agency<br>_Defense Intelligence Agency_<br>[www.dia.mil](https://www.dia.mil/) | US military intelligence agency. Military-power reports on China, Russia, Iran and North Korea, and worldwide threat assessments. | military power reports, worldwide threat assessment | [en archive ⚠](https://www.dia.mil/Military-Power-Publications/) |
-| **ODNI** – US Office of the Director of National Intelligence<br>_Office of the Director of National Intelligence_<br>[www.dni.gov](https://www.dni.gov/) | Head of the US intelligence community. The Annual Threat Assessment and the Global Trends foresight reports. | Annual Threat Assessment, Global Trends | [en archive](https://www.dni.gov/index.php/newsroom/reports-publications) |
+
+## United Kingdom
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **NCSC-UK** – National Cyber Security Centre<br>[www.ncsc.gov.uk](https://www.ncsc.gov.uk/) | UK national cyber-security authority, part of GCHQ. The NCSC Annual Review covers nationally significant incidents, state threat actors, ransomware and resilience of critical national infrastructure. | NCSC Annual Review | [en current](https://www.ncsc.gov.uk/collection/ncsc-annual-review-2025) |
+| **Cabinet Office** – Cabinet Office – National Risk Register<br>[www.gov.uk/government/organisations/cabinet-office](https://www.gov.uk/government/organisations/cabinet-office) | The National Risk Register is the public version of the UK's classified National Security Risk Assessment: 89 acute risks from terrorism and cyber attacks to pandemics, floods and grid failure, each with a reasonable worst-case scenario. | National Risk Register | [en current](https://www.gov.uk/government/publications/national-risk-register-2025) |
+| **ISC** – Intelligence and Security Committee of Parliament<br>[isc.independent.gov.uk](https://isc.independent.gov.uk/) | Parliamentary oversight of MI5, MI6, GCHQ and Defence Intelligence. Annual reports and inquiry reports (e.g. on Russia, China, Iran) – the most detailed public window on UK intelligence. | annual report, inquiry reports | [en archive](https://isc.independent.gov.uk/) · [en archive](https://isc.independent.gov.uk/news/) |
+
+## United States
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **ODNI** – Office of the Director of National Intelligence<br>[www.dni.gov](https://www.dni.gov/) | Head of the US intelligence community. The Annual Threat Assessment covers China, Russia, Iran, North Korea, terrorism, cyber and emerging technologies; Global Trends reports look 20 years ahead. | Annual Threat Assessment, Global Trends | [en archive](https://www.dni.gov/index.php/newsroom/reports-publications) |
+| **DIA** – Defense Intelligence Agency<br>[www.dia.mil](https://www.dia.mil/) | US military intelligence agency. Military-power reports on China, Russia, Iran and North Korea and the annual worldwide threat assessment to Congress. | military power reports, worldwide threat assessment | [en archive ⚠](https://www.dia.mil/Military-Power-Publications/) |
+| **DHS** – Department of Homeland Security<br>[www.dhs.gov](https://www.dhs.gov/) | US homeland-security department. The Homeland Threat Assessment covers terrorism, nation-state threats, cyber attacks on critical infrastructure, border security and illicit drugs. | Homeland Threat Assessment | [en archive](https://www.dhs.gov/publication/homeland-threat-assessment) |
+| **FEMA** – Federal Emergency Management Agency<br>[www.fema.gov](https://www.fema.gov/) | US emergency-management agency. The National Preparedness Report assesses national risks, capability gaps and preparedness for disasters. | National Preparedness Report | [en archive ⚠](https://www.fema.gov/emergency-managers/national-preparedness/goal/national-preparedness-report) |
+| **FBI IC3** – FBI Internet Crime Complaint Center<br>[www.ic3.gov](https://www.ic3.gov/) | FBI centre collecting reports of internet crime. The annual Internet Crime Report gives losses and trends for fraud, ransomware, business e-mail compromise and crypto scams. | Internet Crime Report | [en archive](https://www.ic3.gov/AnnualReport/Reports) |
+
+## Canada
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **CSIS** – Canadian Security Intelligence Service<br>_Canadian Security Intelligence Service / Service canadien du renseignement de sécurité_<br>[www.canada.ca/en/security-intelligence-service.html](https://www.canada.ca/en/security-intelligence-service.html) | Canada's security intelligence service. The CSIS Public Report covers espionage, foreign interference, transnational repression, violent extremism and threats to the economy. | CSIS Public Report | [en archive ⚠](https://www.canada.ca/en/security-intelligence-service/corporate/publications.html) · [fr archive ⚠](https://www.canada.ca/fr/service-renseignement-securite/organisation/publications.html) |
+| **CCCS** – Canadian Centre for Cyber Security<br>_Canadian Centre for Cyber Security / Centre canadien pour la cybersécurité_<br>[www.cyber.gc.ca](https://www.cyber.gc.ca/) | Canada's cyber-security authority, part of the Communications Security Establishment. The biennial National Cyber Threat Assessment covers state actors, ransomware and threats to critical infrastructure. | National Cyber Threat Assessment | [en current](https://www.cyber.gc.ca/en/guidance/national-cyber-threat-assessment-2025-2026) · [fr current](https://www.cyber.gc.ca/fr/orientation/evaluation-cybermenaces-nationales-2025-2026) |
+| **Public Safety Canada** – Public Safety Canada<br>_Public Safety Canada / Sécurité publique Canada_<br>[www.publicsafety.gc.ca](https://www.publicsafety.gc.ca/) | Canadian public-safety department. The National Risk Profile assesses disaster risk from earthquakes, wildfires and floods (later rounds: heat, hurricanes, space weather) and gaps in emergency management. | National Risk Profile | [en current](https://www.publicsafety.gc.ca/cnt/rsrcs/pblctns/2023-nrp-pnr/index-en.aspx) · [fr current](https://www.publicsafety.gc.ca/cnt/rsrcs/pblctns/2023-nrp-pnr/index-fr.aspx) |
+
+## Australia
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **ASIO** – Australian Security Intelligence Organisation<br>[www.asio.gov.au](https://www.asio.gov.au/) | Australia's security intelligence service. The Director-General's Annual Threat Assessment covers espionage, foreign interference, sabotage, terrorism and politically motivated violence. | Annual Threat Assessment, annual report | [en archive ⚠](https://www.asio.gov.au/resources/speeches-and-statements) |
+| **ASD ACSC** – Australian Signals Directorate – Australian Cyber Security Centre<br>[www.cyber.gov.au](https://www.cyber.gov.au/) | Australia's cyber-security authority within ASD. The Annual Cyber Threat Report covers state-sponsored activity, cybercrime costs, incidents and threats to critical infrastructure. | Annual Cyber Threat Report | [en archive ⚠](https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics) |
+
+## New Zealand
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **NZSIS** – New Zealand Security Intelligence Service<br>_New Zealand Security Intelligence Service / Te Pā Whakamarumaru_<br>[www.nzsis.govt.nz](https://www.nzsis.govt.nz/) | New Zealand's security intelligence service. The annual 'New Zealand's Security Threat Environment' covers foreign interference, espionage, violent extremism and insider threats, with case studies. | New Zealand's Security Threat Environment | [en archive](https://www.nzsis.govt.nz/our-work/new-zealands-security-threat-environment) |
+| **GCSB / NCSC-NZ** – Government Communications Security Bureau – National Cyber Security Centre<br>_Government Communications Security Bureau / Te Tira Tiaki – National Cyber Security Centre_<br>[www.ncsc.govt.nz](https://www.ncsc.govt.nz/) | New Zealand's signals intelligence and cyber-security agency. Cyber threat reports on state-sponsored and criminal activity, and GCSB annual reports. | Cyber Threat Report, annual report | [en archive](https://www.ncsc.govt.nz/news/) · [en archive](https://www.gcsb.govt.nz/publications/annual-reports) |
+| **NEMA** – National Emergency Management Agency<br>_National Emergency Management Agency / Te Rākau Whakamarumaru_<br>[www.civildefence.govt.nz](https://www.civildefence.govt.nz/) | New Zealand's emergency-management agency. National hazard and preparedness resources, emergency-management plans and public guidance. | preparedness resources | [en archive](https://www.civildefence.govt.nz/resources/) |
+
+## Norway
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **PST** – Norwegian Police Security Service<br>_Politiets sikkerhetstjeneste_<br>[www.pst.no](https://www.pst.no/) | Norway's security and counter-intelligence service. The annual National Threat Assessment (NTV) covers state intelligence activity, extremism, terrorism and threats to government officials. | Nasjonal trusselvurdering / National Threat Assessment | [nb+en archive](https://www.pst.no/trusselbilde/norsk-trusselvurdering/) |
+| **E-tjenesten** – Norwegian Intelligence Service<br>_Etterretningstjenesten_<br>[www.forsvaret.no](https://www.forsvaret.no/) | Norway's foreign and military intelligence service. The annual FOKUS assessment covers Russia, the High North, China, terrorism and cyber threats. | FOKUS | [nb+en archive](https://www.forsvaret.no/aktuelt-og-presse/publikasjoner/fokus) |
+| **NSM** – Norwegian National Security Authority<br>_Nasjonal sikkerhetsmyndighet_<br>[nsm.no](https://nsm.no/) | Norway's preventive-security and cyber authority. The annual 'Risiko' report describes vulnerabilities threat actors exploit and recommended protective measures. | Risiko | [nb archive](https://nsm.no/regelverk-og-hjelp/rapporter/) |
+| **DSB** – Norwegian Directorate for Civil Protection<br>_Direktoratet for samfunnssikkerhet og beredskap_<br>[www.dsb.no](https://www.dsb.no/) | Norway's civil-protection directorate. 'Analyses of crisis scenarios' (national risk analysis), evaluations of major events and preparedness guidance. | Analyser av krisescenarioer, evaluations | [nb series](https://www.dsb.no/ros-og-beredskap/samfunnssikkerhet-og-samordning/analyser-av-krisescenarioer/) · [nb archive](https://www.dsb.no/rapporter-og-publikasjoner/) |
+
+## Switzerland
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **NDB** – Federal Intelligence Service<br>_Nachrichtendienst des Bundes / Service de renseignement de la Confédération_<br>[www.vbs.admin.ch/de/nachrichtendienst](https://www.vbs.admin.ch/de/nachrichtendienst) | Swiss intelligence service. The annual situation report 'Sicherheit Schweiz' covers Russia, great-power rivalry, espionage, terrorism, proliferation and cyber threats. | Sicherheit Schweiz / Switzerland's Security | [de current](https://www.vbs.admin.ch/de/nachrichtendienst) · [en current](https://www.vbs.admin.ch/en/intelligence-service) |
+| **BACS** – Federal Office for Cyber Security<br>_Bundesamt für Cybersicherheit / Office fédéral de la cybersécurité_<br>[www.bacs.admin.ch](https://www.bacs.admin.ch/) | Swiss national cyber-security office (formerly NCSC). Half-yearly situation reports on reported incidents, fraud, ransomware and vulnerabilities in Switzerland. | Halbjahresbericht / semi-annual report | [de archive](https://www.bacs.admin.ch/de/lageberichte) · [en archive](https://www.bacs.admin.ch/en/situation-reports) |
+| **BABS** – Federal Office for Civil Protection<br>_Bundesamt für Bevölkerungsschutz / Office fédéral de la protection de la population_<br>[www.babs.admin.ch](https://www.babs.admin.ch/) | Swiss civil-protection office. The national risk analysis 'Katastrophen und Notlagen Schweiz' rates 44 hazards – pandemic and power shortage are the largest risks, armed conflict the largest damage. | Katastrophen und Notlagen Schweiz | [de archive](https://www.babs.admin.ch/de/unterlagen-gefahrdungen-und-risiken) |
+
+## Japan
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **PSIA** – Public Security Intelligence Agency<br>_公安調査庁_<br>[www.moj.go.jp/psia](https://www.moj.go.jp/psia/) | Japanese intelligence agency under the Ministry of Justice. The annual 'Review and Prospects of Internal and External Situations' covers China, North Korea, Russia, terrorism and economic security. | Review and Prospects of Internal and External Situations | [en archive](https://www.moj.go.jp/psia/English_Publications.html) |
+| **MOD Japan** – Ministry of Defense of Japan<br>_防衛省_<br>[www.mod.go.jp](https://www.mod.go.jp/) | Japanese defence ministry. The annual white paper 'Defense of Japan' analyses the security environment around Japan: China, North Korea, Russia and Taiwan contingencies. | Defense of Japan white paper | [en archive](https://www.mod.go.jp/en/publ/w_paper/index.html) · [ja archive](https://www.mod.go.jp/j/press/wp/index.html) |
+| **Cabinet Office Disaster Management** – Cabinet Office – Disaster Management<br>_内閣府 防災担当_<br>[www.bousai.go.jp](https://www.bousai.go.jp/) | Japanese government's disaster-management secretariat. The annual White Paper on Disaster Management covers earthquakes, tsunamis, floods and national resilience measures. | White Paper on Disaster Management | [en archive](https://www.bousai.go.jp/en/documentation/white_paper/index.html) · [ja archive](https://www.bousai.go.jp/kaigirep/hakusho/index.html) |
+
+## South Korea
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **NIS** – National Intelligence Service<br>_국가정보원_<br>[eng.nis.go.kr](https://eng.nis.go.kr/) | South Korea's intelligence service and national cyber-security coordinator (NCSC). Cyber-security reports and white papers on North Korean and other state cyber threats. | National Information Security White Paper, cyber reports | [en current](https://eng.nis.go.kr/EAF/1_7.do) · [ko current](https://www.nis.go.kr/) |
+
+## Taiwan
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **NSB** – National Security Bureau<br>_國家安全局_<br>[www.nsb.gov.tw](https://www.nsb.gov.tw/) | Taiwan's intelligence agency. Reports on China's cognitive warfare, disinformation and cyber attacks against Taiwan. | Analysis of China's cognitive warfare | [en current](https://www.nsb.gov.tw/en/) · [zh current](https://www.nsb.gov.tw/) |

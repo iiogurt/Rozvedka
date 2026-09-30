@@ -1267,30 +1267,426 @@
     - {lang: fr, kind: archive, url: "https://www.ipcc.ch/languages-2/francais/"}
     - {lang: ru, kind: archive, url: "https://www.ipcc.ch/languages-2/russian/"}
 
-- country: OTHER
+# ════════════════════════════════════════════════════════════════════════
+#  OTHER DEMOCRACIES (Five Eyes, non-EU Europe, Asia-Pacific)
+# ════════════════════════════════════════════════════════════════════════
+
+# ════════════════════════ UNITED KINGDOM ════════════════════════
+- country: GB
+  agency: NCSC-UK
+  name_local: "National Cyber Security Centre"
+  name_en: "National Cyber Security Centre"
+  homepage: "https://www.ncsc.gov.uk/"
+  description: "UK national cyber-security authority, part of GCHQ. The NCSC Annual Review covers nationally significant incidents, state threat actors, ransomware and resilience of critical national infrastructure."
+  hq: {address: "Nova South, 160 Victoria Street, London SW1E 5LB, United Kingdom", lat: 51.49671, lon: -0.14163, precision: address}
+  type: cyber
+  access: auto
+  frequency: yearly
+  report_types: [NCSC Annual Review]
+  pages:
+    - {lang: en, kind: current, url: "https://www.ncsc.gov.uk/collection/ncsc-annual-review-2025"}
+
+- country: GB
+  agency: Cabinet Office
+  name_local: "Cabinet Office – National Risk Register"
+  name_en: "Cabinet Office – National Risk Register"
+  homepage: "https://www.gov.uk/government/organisations/cabinet-office"
+  description: "The National Risk Register is the public version of the UK's classified National Security Risk Assessment: 89 acute risks from terrorism and cyber attacks to pandemics, floods and grid failure, each with a reasonable worst-case scenario."
+  hq: {address: "70 Whitehall, London SW1A 2AS, United Kingdom", lat: 51.50367, lon: -0.1272, precision: address}
+  type: civil-protection
+  access: auto
+  frequency: periodic
+  report_types: [National Risk Register]
+  pages:
+    - {lang: en, kind: current, url: "https://www.gov.uk/government/publications/national-risk-register-2025"}
+
+- country: GB
+  agency: ISC
+  name_local: "Intelligence and Security Committee of Parliament"
+  name_en: "Intelligence and Security Committee of Parliament"
+  homepage: "https://isc.independent.gov.uk/"
+  description: "Parliamentary oversight of MI5, MI6, GCHQ and Defence Intelligence. Annual reports and inquiry reports (e.g. on Russia, China, Iran) – the most detailed public window on UK intelligence."
+  hq: {address: "35 Great Smith Street, London SW1P 3BQ, United Kingdom", lat: 51.49717, lon: -0.1294, precision: street}
+  type: intelligence-civil
+  access: auto
+  frequency: yearly
+  report_types: [annual report, inquiry reports]
+  pages:
+    - {lang: en, kind: archive, url: "https://isc.independent.gov.uk/"}
+    - {lang: en, kind: archive, url: "https://isc.independent.gov.uk/news/"}
+
+# ════════════════════════ UNITED STATES ════════════════════════
+- country: US
+  agency: ODNI
+  name_local: "Office of the Director of National Intelligence"
+  name_en: "Office of the Director of National Intelligence"
+  homepage: "https://www.dni.gov/"
+  description: "Head of the US intelligence community. The Annual Threat Assessment covers China, Russia, Iran, North Korea, terrorism, cyber and emerging technologies; Global Trends reports look 20 years ahead."
+  hq: {address: "Liberty Crossing, McLean, Virginia, USA", lat: 38.93221, lon: -77.20519, precision: address}
+  type: intelligence-civil
+  access: auto
+  frequency: yearly
+  report_types: [Annual Threat Assessment, Global Trends]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.dni.gov/index.php/newsroom/reports-publications"}
+
+- country: US
   agency: DIA
   name_local: "Defense Intelligence Agency"
-  name_en: "US Defense Intelligence Agency"
+  name_en: "Defense Intelligence Agency"
   homepage: "https://www.dia.mil/"
+  description: "US military intelligence agency. Military-power reports on China, Russia, Iran and North Korea and the annual worldwide threat assessment to Congress."
   hq: {address: "Joint Base Anacostia-Bolling, Washington, DC, USA", lat: 38.84268, lon: -77.01588, precision: address}
-  description: "US military intelligence agency. Military-power reports on China, Russia, Iran and North Korea, and worldwide threat assessments."
-  type: other
+  type: intelligence-military
   access: manual
   frequency: periodic
   report_types: [military power reports, worldwide threat assessment]
   pages:
     - {lang: en, kind: archive, url: "https://www.dia.mil/Military-Power-Publications/", verified: false}
 
-- country: OTHER
-  agency: ODNI
-  name_local: "Office of the Director of National Intelligence"
-  name_en: "US Office of the Director of National Intelligence"
-  homepage: "https://www.dni.gov/"
-  hq: {address: "Liberty Crossing, McLean, Virginia, USA", lat: 38.93221, lon: -77.20519, precision: address}
-  description: "Head of the US intelligence community. The Annual Threat Assessment and the Global Trends foresight reports."
-  type: other
+- country: US
+  agency: DHS
+  name_local: "Department of Homeland Security"
+  name_en: "Department of Homeland Security"
+  homepage: "https://www.dhs.gov/"
+  description: "US homeland-security department. The Homeland Threat Assessment covers terrorism, nation-state threats, cyber attacks on critical infrastructure, border security and illicit drugs."
+  hq: {address: "2707 Martin Luther King Jr Avenue SE, Washington, DC 20528, USA", lat: 38.85488, lon: -76.99594, precision: address}
+  type: police-ct
   access: auto
   frequency: yearly
-  report_types: [Annual Threat Assessment, Global Trends]
+  report_types: [Homeland Threat Assessment]
   pages:
-    - {lang: en, kind: archive, url: "https://www.dni.gov/index.php/newsroom/reports-publications"}
+    - {lang: en, kind: archive, url: "https://www.dhs.gov/publication/homeland-threat-assessment"}
+
+- country: US
+  agency: FEMA
+  name_local: "Federal Emergency Management Agency"
+  name_en: "Federal Emergency Management Agency"
+  homepage: "https://www.fema.gov/"
+  description: "US emergency-management agency. The National Preparedness Report assesses national risks, capability gaps and preparedness for disasters."
+  hq: {address: "500 C Street SW, Washington, DC 20472, USA", lat: 38.88543, lon: -77.01871, precision: address}
+  type: civil-protection
+  access: manual
+  frequency: yearly
+  report_types: [National Preparedness Report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.fema.gov/emergency-managers/national-preparedness/goal/national-preparedness-report", verified: false}
+
+- country: US
+  agency: FBI IC3
+  name_local: "FBI Internet Crime Complaint Center"
+  name_en: "FBI Internet Crime Complaint Center"
+  homepage: "https://www.ic3.gov/"
+  description: "FBI centre collecting reports of internet crime. The annual Internet Crime Report gives losses and trends for fraud, ransomware, business e-mail compromise and crypto scams."
+  hq: {address: "935 Pennsylvania Avenue NW, Washington, DC 20535, USA", lat: 38.89514, lon: -77.02498, precision: address}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Internet Crime Report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.ic3.gov/AnnualReport/Reports"}
+
+# ════════════════════════ CANADA ════════════════════════
+- country: CA
+  agency: CSIS
+  name_local: "Canadian Security Intelligence Service / Service canadien du renseignement de sécurité"
+  name_en: "Canadian Security Intelligence Service"
+  homepage: "https://www.canada.ca/en/security-intelligence-service.html"
+  description: "Canada's security intelligence service. The CSIS Public Report covers espionage, foreign interference, transnational repression, violent extremism and threats to the economy."
+  hq: {address: "1941 Ogilvie Road, Ottawa, Ontario, Canada", lat: 45.43721, lon: -75.61409, precision: address}
+  type: intelligence-civil
+  access: manual
+  frequency: yearly
+  report_types: [CSIS Public Report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.canada.ca/en/security-intelligence-service/corporate/publications.html", verified: false}
+    - {lang: fr, kind: archive, url: "https://www.canada.ca/fr/service-renseignement-securite/organisation/publications.html", verified: false}
+
+- country: CA
+  agency: CCCS
+  name_local: "Canadian Centre for Cyber Security / Centre canadien pour la cybersécurité"
+  name_en: "Canadian Centre for Cyber Security"
+  homepage: "https://www.cyber.gc.ca/"
+  description: "Canada's cyber-security authority, part of the Communications Security Establishment. The biennial National Cyber Threat Assessment covers state actors, ransomware and threats to critical infrastructure."
+  hq: {address: "1929 Ogilvie Road, Ottawa, Ontario, Canada", lat: 45.43527, lon: -75.61579, precision: address}
+  type: cyber
+  access: auto
+  frequency: periodic
+  report_types: [National Cyber Threat Assessment]
+  pages:
+    - {lang: en, kind: current, url: "https://www.cyber.gc.ca/en/guidance/national-cyber-threat-assessment-2025-2026"}
+    - {lang: fr, kind: current, url: "https://www.cyber.gc.ca/fr/orientation/evaluation-cybermenaces-nationales-2025-2026"}
+
+- country: CA
+  agency: Public Safety Canada
+  name_local: "Public Safety Canada / Sécurité publique Canada"
+  name_en: "Public Safety Canada"
+  homepage: "https://www.publicsafety.gc.ca/"
+  description: "Canadian public-safety department. The National Risk Profile assesses disaster risk from earthquakes, wildfires and floods (later rounds: heat, hurricanes, space weather) and gaps in emergency management."
+  hq: {address: "269 Laurier Avenue West, Ottawa, Ontario, Canada", lat: 45.41912, lon: -75.69851, precision: address}
+  type: civil-protection
+  access: auto
+  frequency: periodic
+  report_types: [National Risk Profile]
+  pages:
+    - {lang: en, kind: current, url: "https://www.publicsafety.gc.ca/cnt/rsrcs/pblctns/2023-nrp-pnr/index-en.aspx"}
+    - {lang: fr, kind: current, url: "https://www.publicsafety.gc.ca/cnt/rsrcs/pblctns/2023-nrp-pnr/index-fr.aspx"}
+
+# ════════════════════════ AUSTRALIA ════════════════════════
+- country: AU
+  agency: ASIO
+  name_local: "Australian Security Intelligence Organisation"
+  name_en: "Australian Security Intelligence Organisation"
+  homepage: "https://www.asio.gov.au/"
+  description: "Australia's security intelligence service. The Director-General's Annual Threat Assessment covers espionage, foreign interference, sabotage, terrorism and politically motivated violence."
+  hq: {address: "70 Constitution Avenue, Campbell ACT 2612, Australia", lat: -35.29596, lon: 149.15199, precision: street}
+  type: intelligence-civil
+  access: manual
+  frequency: yearly
+  report_types: [Annual Threat Assessment, annual report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.asio.gov.au/resources/speeches-and-statements", verified: false}
+
+- country: AU
+  agency: ASD ACSC
+  name_local: "Australian Signals Directorate – Australian Cyber Security Centre"
+  name_en: "Australian Signals Directorate – Australian Cyber Security Centre"
+  homepage: "https://www.cyber.gov.au/"
+  description: "Australia's cyber-security authority within ASD. The Annual Cyber Threat Report covers state-sponsored activity, cybercrime costs, incidents and threats to critical infrastructure."
+  hq: {address: "Russell Offices, Canberra ACT 2600, Australia", lat: -35.29807, lon: 149.15097, precision: street}
+  type: cyber
+  access: manual
+  frequency: yearly
+  report_types: [Annual Cyber Threat Report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics", verified: false}
+
+# ════════════════════════ NEW ZEALAND ════════════════════════
+- country: NZ
+  agency: NZSIS
+  name_local: "New Zealand Security Intelligence Service / Te Pā Whakamarumaru"
+  name_en: "New Zealand Security Intelligence Service"
+  homepage: "https://www.nzsis.govt.nz/"
+  description: "New Zealand's security intelligence service. The annual 'New Zealand's Security Threat Environment' covers foreign interference, espionage, violent extremism and insider threats, with case studies."
+  hq: {address: "Pipitea House, 1 Pipitea Street, Wellington, New Zealand", lat: -41.2755, lon: 174.77882, precision: street}
+  type: intelligence-civil
+  access: auto
+  frequency: yearly
+  report_types: [New Zealand's Security Threat Environment]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.nzsis.govt.nz/our-work/new-zealands-security-threat-environment"}
+  url_pattern:
+    template: "https://www.nzsis.govt.nz/assets/NZSIS-Documents/New-Zealands-Security-Threat-Environment-{year}.pdf"
+    years: [2023, 2026]
+    langs: [en]
+
+- country: NZ
+  agency: GCSB / NCSC-NZ
+  name_local: "Government Communications Security Bureau / Te Tira Tiaki – National Cyber Security Centre"
+  name_en: "Government Communications Security Bureau – National Cyber Security Centre"
+  homepage: "https://www.ncsc.govt.nz/"
+  description: "New Zealand's signals intelligence and cyber-security agency. Cyber threat reports on state-sponsored and criminal activity, and GCSB annual reports."
+  hq: {address: "Pipitea House, 1 Pipitea Street, Wellington, New Zealand", lat: -41.2755, lon: 174.77882, precision: street}
+  type: cyber
+  access: auto
+  frequency: yearly
+  report_types: [Cyber Threat Report, annual report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.ncsc.govt.nz/news/"}
+    - {lang: en, kind: archive, url: "https://www.gcsb.govt.nz/publications/annual-reports"}
+
+- country: NZ
+  agency: NEMA
+  name_local: "National Emergency Management Agency / Te Rākau Whakamarumaru"
+  name_en: "National Emergency Management Agency"
+  homepage: "https://www.civildefence.govt.nz/"
+  description: "New Zealand's emergency-management agency. National hazard and preparedness resources, emergency-management plans and public guidance."
+  hq: {address: "Wellington, New Zealand", lat: -41.2888, lon: 174.77721, precision: city}
+  type: civil-protection
+  access: auto
+  frequency: periodic
+  report_types: [preparedness resources]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.civildefence.govt.nz/resources/"}
+
+# ════════════════════════ NORWAY ════════════════════════
+- country: "NO"
+  agency: PST
+  name_local: "Politiets sikkerhetstjeneste"
+  name_en: "Norwegian Police Security Service"
+  homepage: "https://www.pst.no/"
+  description: "Norway's security and counter-intelligence service. The annual National Threat Assessment (NTV) covers state intelligence activity, extremism, terrorism and threats to government officials."
+  hq: {address: "Nydalen allé 37A, 0484 Oslo, Norway", lat: 59.94724, lon: 10.76822, precision: address}
+  type: intelligence-civil
+  access: auto
+  frequency: yearly
+  report_types: [Nasjonal trusselvurdering / National Threat Assessment]
+  pages:
+    - {lang: nb+en, kind: archive, url: "https://www.pst.no/trusselbilde/norsk-trusselvurdering/"}
+
+- country: "NO"
+  agency: E-tjenesten
+  name_local: "Etterretningstjenesten"
+  name_en: "Norwegian Intelligence Service"
+  homepage: "https://www.etterretningstjenesten.no/"
+  description: "Norway's foreign and military intelligence service. The annual FOKUS assessment covers Russia, the High North, China, terrorism and cyber threats."
+  hq: {address: "Lutvann leir, Oslo, Norway", lat: 59.92313, lon: 10.87663, precision: address}
+  type: intelligence-military
+  access: auto
+  frequency: yearly
+  report_types: [FOKUS]
+  pages:
+    - {lang: nb, kind: archive, url: "https://www.etterretningstjenesten.no/publikasjoner/fokus"}
+    - {lang: en, kind: archive, url: "https://www.etterretningstjenesten.no/en/publications/focus"}
+
+- country: "NO"
+  agency: NSM
+  name_local: "Nasjonal sikkerhetsmyndighet"
+  name_en: "Norwegian National Security Authority"
+  homepage: "https://nsm.no/"
+  description: "Norway's preventive-security and cyber authority. The annual 'Risiko' report describes vulnerabilities threat actors exploit and recommended protective measures."
+  hq: {address: "Bærumsveien 208, 1357 Bekkestua, Norway", lat: 59.91572, lon: 10.58565, precision: street}
+  type: cyber
+  access: auto
+  frequency: yearly
+  report_types: [Risiko]
+  pages:
+    - {lang: nb, kind: archive, url: "https://nsm.no/regelverk-og-hjelp/rapporter/"}
+
+- country: "NO"
+  agency: DSB
+  name_local: "Direktoratet for samfunnssikkerhet og beredskap"
+  name_en: "Norwegian Directorate for Civil Protection"
+  homepage: "https://www.dsb.no/"
+  description: "Norway's civil-protection directorate. 'Analyses of crisis scenarios' (national risk analysis), evaluations of major events and preparedness guidance."
+  hq: {address: "Rambergveien 9, 3115 Tønsberg, Norway", lat: 59.26387, lon: 10.40449, precision: address}
+  type: civil-protection
+  access: auto
+  frequency: periodic
+  report_types: [Analyser av krisescenarioer, evaluations]
+  pages:
+    - {lang: nb, kind: series, url: "https://www.dsb.no/ros-og-beredskap/samfunnssikkerhet-og-samordning/analyser-av-krisescenarioer/"}
+    - {lang: nb, kind: archive, url: "https://www.dsb.no/rapporter-og-publikasjoner/"}
+
+# ════════════════════════ SWITZERLAND ════════════════════════
+- country: CH
+  agency: NDB
+  name_local: "Nachrichtendienst des Bundes / Service de renseignement de la Confédération"
+  name_en: "Federal Intelligence Service"
+  homepage: "https://www.vbs.admin.ch/de/nachrichtendienst"
+  description: "Swiss intelligence service. The annual situation report 'Sicherheit Schweiz' covers Russia, great-power rivalry, espionage, terrorism, proliferation and cyber threats."
+  hq: {address: "Papiermühlestrasse 20, 3014 Bern, Switzerland", lat: 46.9556, lon: 7.46143, precision: address}
+  type: intelligence-civil
+  access: auto
+  frequency: yearly
+  report_types: [Sicherheit Schweiz / Switzerland's Security]
+  pages:
+    - {lang: de, kind: current, url: "https://www.vbs.admin.ch/de/nachrichtendienst"}
+    - {lang: en, kind: current, url: "https://www.vbs.admin.ch/en/intelligence-service"}
+
+- country: CH
+  agency: BACS
+  name_local: "Bundesamt für Cybersicherheit / Office fédéral de la cybersécurité"
+  name_en: "Federal Office for Cyber Security"
+  homepage: "https://www.bacs.admin.ch/"
+  description: "Swiss national cyber-security office (formerly NCSC). Half-yearly situation reports on reported incidents, fraud, ransomware and vulnerabilities in Switzerland."
+  hq: {address: "Schwarztorstrasse 59, 3007 Bern, Switzerland", lat: 46.94445, lon: 7.43081, precision: address}
+  type: cyber
+  access: auto
+  frequency: half-yearly
+  report_types: [Halbjahresbericht / semi-annual report]
+  pages:
+    - {lang: de, kind: archive, url: "https://www.bacs.admin.ch/de/lageberichte"}
+    - {lang: en, kind: archive, url: "https://www.bacs.admin.ch/en/situation-reports"}
+
+- country: CH
+  agency: BABS
+  name_local: "Bundesamt für Bevölkerungsschutz / Office fédéral de la protection de la population"
+  name_en: "Federal Office for Civil Protection"
+  homepage: "https://www.babs.admin.ch/"
+  description: "Swiss civil-protection office. The national risk analysis 'Katastrophen und Notlagen Schweiz' rates 44 hazards – pandemic and power shortage are the largest risks, armed conflict the largest damage."
+  hq: {address: "Guisanplatz 1B, 3014 Bern, Switzerland", lat: 46.9603, lon: 7.46265, precision: address}
+  type: civil-protection
+  access: auto
+  frequency: periodic
+  report_types: [Katastrophen und Notlagen Schweiz]
+  pages:
+    - {lang: de, kind: archive, url: "https://www.babs.admin.ch/de/unterlagen-gefahrdungen-und-risiken"}
+
+# ════════════════════════ JAPAN ════════════════════════
+- country: JP
+  agency: PSIA
+  name_local: "公安調査庁"
+  name_en: "Public Security Intelligence Agency"
+  homepage: "https://www.moj.go.jp/psia/"
+  description: "Japanese intelligence agency under the Ministry of Justice. The annual 'Review and Prospects of Internal and External Situations' covers China, North Korea, Russia, terrorism and economic security."
+  hq: {address: "1-1-1 Kasumigaseki, Chiyoda-ku, Tokyo, Japan", lat: 35.67349, lon: 139.75018, precision: street}
+  type: intelligence-civil
+  access: auto
+  frequency: yearly
+  report_types: [Review and Prospects of Internal and External Situations]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.moj.go.jp/psia/English_Publications.html"}
+
+- country: JP
+  agency: MOD Japan
+  name_local: "防衛省"
+  name_en: "Ministry of Defense of Japan"
+  homepage: "https://www.mod.go.jp/"
+  description: "Japanese defence ministry. The annual white paper 'Defense of Japan' analyses the security environment around Japan: China, North Korea, Russia and Taiwan contingencies."
+  hq: {address: "5-1 Ichigayahonmuracho, Shinjuku-ku, Tokyo, Japan", lat: 35.69282, lon: 139.72876, precision: address}
+  type: intelligence-military
+  access: auto
+  frequency: yearly
+  report_types: [Defense of Japan white paper]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.mod.go.jp/en/publ/w_paper/index.html"}
+    - {lang: ja, kind: archive, url: "https://www.mod.go.jp/j/press/wp/index.html"}
+
+- country: JP
+  agency: Cabinet Office Disaster Management
+  name_local: "内閣府 防災担当"
+  name_en: "Cabinet Office – Disaster Management"
+  homepage: "https://www.bousai.go.jp/"
+  description: "Japanese government's disaster-management secretariat. The annual White Paper on Disaster Management covers earthquakes, tsunamis, floods and national resilience measures."
+  hq: {address: "1-6-1 Nagatacho, Chiyoda-ku, Tokyo, Japan", lat: 35.67687, lon: 139.74316, precision: street}
+  type: civil-protection
+  access: auto
+  frequency: yearly
+  report_types: [White Paper on Disaster Management]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.bousai.go.jp/en/documentation/white_paper/index.html"}
+    - {lang: ja, kind: archive, url: "https://www.bousai.go.jp/kaigirep/hakusho/index.html"}
+
+# ════════════════════════ SOUTH KOREA ════════════════════════
+- country: KR
+  agency: NIS
+  name_local: "국가정보원"
+  name_en: "National Intelligence Service"
+  homepage: "https://eng.nis.go.kr/"
+  description: "South Korea's intelligence service and national cyber-security coordinator (NCSC). Cyber-security reports and white papers on North Korean and other state cyber threats."
+  hq: {address: "Seocho-gu, Seoul, South Korea", lat: 37.4835, lon: 127.0322, precision: city}
+  type: intelligence-civil
+  access: manual
+  frequency: yearly
+  report_types: [National Information Security White Paper, cyber reports]
+  notes: "robots.txt disallows crawling – open in a browser and add reports manually."
+  pages:
+    - {lang: en, kind: current, url: "https://eng.nis.go.kr/EAF/1_7.do"}
+    - {lang: ko, kind: current, url: "https://www.nis.go.kr/"}
+
+# ════════════════════════ TAIWAN ════════════════════════
+- country: TW
+  agency: NSB
+  name_local: "國家安全局"
+  name_en: "National Security Bureau"
+  homepage: "https://www.nsb.gov.tw/"
+  description: "Taiwan's intelligence agency. Reports on China's cognitive warfare, disinformation and cyber attacks against Taiwan."
+  hq: {address: "Shilin District, Taipei, Taiwan", lat: 25.09184, lon: 121.52421, precision: city}
+  type: intelligence-civil
+  access: browser-js
+  frequency: yearly
+  report_types: [Analysis of China's cognitive warfare]
+  pages:
+    - {lang: en, kind: current, url: "https://www.nsb.gov.tw/en/"}
+    - {lang: zh, kind: current, url: "https://www.nsb.gov.tw/"}
