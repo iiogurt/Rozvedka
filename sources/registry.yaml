@@ -85,7 +85,8 @@
   agency: NBÚ
   full_name: Národný bezpečnostný úrad (SK-CERT)
   type: cyber
-  access: auto
+  access: manual
+  notes: "Page content hidden behind a loading screen, also in a headless browser – add reports manually."
   frequency: yearly
   report_types: [annual report]
   pages:
@@ -135,6 +136,9 @@
   pages:
     - {lang: de, kind: archive, url: "https://www.verfassungsschutz.de/DE/service/publikationen/publikationen_node.html"}
     - {lang: de, kind: current, url: "https://www.verfassungsschutz.de/SharedDocs/publikationen/DE/verfassungsschutzberichte/2026-06-30-verfassungsschutzbericht-2025.html"}
+    - {lang: de, kind: archive, url: "https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht", note: "publication search – annual reports and summaries"}
+    - {lang: de, kind: archive, url: "https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht&gtp=714296_list%253D2", note: "search results page 2"}
+    - {lang: de, kind: archive, url: "https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht&gtp=714296_list%253D3", note: "search results page 3"}
 
 - country: DE
   agency: BMI
@@ -196,6 +200,7 @@
   frequency: yearly
   report_types: [Risikobild]
   pages:
+    - {lang: de+en, kind: current, url: "https://verteidigungspolitik.at/risikobild", note: "Risikobild / Risk Monitor (German + English)"}
     - {lang: de, kind: archive, url: "https://www.bmlv.gv.at/wissen-forschung/publikationen/index.shtml"}
 
 # ════════════════════════ ESTONIA ════════════════════════
@@ -381,6 +386,7 @@
   access: auto
   frequency: yearly
   report_types: [Efterretningsmæssig Risikovurdering / Intelligence Risk Assessment]
+  notes: "English Intelligence Outlook is published as web pages; PDFs mainly in Danish."
   pages:
     - {lang: da, kind: archive, url: "https://www.fe-ddis.dk/da/produkter/Risikovurdering/"}
     - {lang: en, kind: archive, url: "https://www.fe-ddis.dk/en/produkter/Risk_assessment/"}
@@ -512,6 +518,8 @@
   frequency: yearly
   report_types: [Panorama de la cybermenace, activity report]
   pages:
+    - {lang: fr, kind: series, url: "https://cyber.gouv.fr/nous-connaitre/publications/panoramas-de-la-cybermenace/", note: "Panorama de la cybermenace 2021–"}
+    - {lang: fr, kind: series, url: "https://www.cert.ssi.gouv.fr/cti/", note: "CERT-FR threat reports (CTI)"}
     - {lang: fr, kind: archive, url: "https://cyber.gouv.fr/nous-connaitre/publications/"}
     - {lang: en, kind: archive, url: "https://cyber.gouv.fr/en/publications/"}
 
@@ -606,7 +614,7 @@
   frequency: yearly
   report_types: [RASI]
   pages:
-    - {lang: pt, kind: archive, url: "https://ssi.gov.pt/publicacoes/relatorio-anual-de-seguranca-interna/"}
+    - {lang: pt, kind: archive, url: "https://ssi.gov.pt/publicacoes/relatorio-anual-de-seguranca-interna/", verified: false, note: "web firewall rejects automated requests – open in browser"}
     - {lang: pt, kind: current, url: "https://www.portugal.gov.pt/pt/gc25/comunicacao/documentos/rasi-2025-relatorio-anual-de-seguranca-interna"}
 
 - country: PT
@@ -860,7 +868,8 @@
   agency: JRC DRMKC
   full_name: Joint Research Centre – Disaster Risk Management Knowledge Centre
   type: eu-body
-  access: auto
+  access: manual
+  notes: "Site answers with a bot-challenge page – add reports manually."
   frequency: periodic
   report_types: [Science for Disaster Risk Management]
   pages:

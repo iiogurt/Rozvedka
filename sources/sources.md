@@ -1,6 +1,6 @@
 # Rozvedka – official security report sources
 
-Generated from `sources/registry.yaml` — 84 sources, 143 pages.
+Generated from `sources/registry.yaml` — 84 sources, 149 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
@@ -12,15 +12,15 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 | **BIS**<br>Bezpečnostní informační služba | intelligence-civil | annual report | [cs archive](https://www.bis.cz/vyrocni-zpravy/) · [en archive](https://www.bis.cz/annual-reports/) · [cs series](https://www.bis.cz/vyrocni-zpravy-archivu/) |
 | **VZ**<br>Vojenské zpravodajství | intelligence-military | annual report<br>_Public annual reports 2004–2023 only; from 2024 VZ submits classified reports only._ | [cs archive](https://vzcr.gov.cz/vyrocni-zpravy-o-cinnosti-vojenskeho-zpravodajstvi-41) · [cs series](https://www.vzcr.cz/vyrocni-zpravy-bezpecnostniho-archivu-vojenske-zpravodajstvi-42) |
 | **NÚKIB**<br>Národní úřad pro kybernetickou a informační bezpečnost | cyber | annual report, report on the state of cyber security | [cs archive](https://nukib.gov.cz/cs/infoservis/dokumenty-a-publikace/) · [en archive](https://nukib.gov.cz/en/infoservis-en/publications-reports/) |
-| **HZS ČR**<br>Hasičský záchranný sbor ČR | civil-protection | statistical yearbook<br>_Moved to archiv.hzscr.gov.cz – may no longer be updated._ | [cs archive](https://archiv.hzscr.gov.cz/clanek/statisticke-rocenky-hasicskeho-zachranneho-sboru-cr.aspx) |
-| **MV ČR**<br>Ministerstvo vnitra – zprávy o extremismu | police-ct | report on extremism<br>_Moved to archiv.mv.gov.cz – may no longer be updated._ | [cs archive](https://archiv.mv.gov.cz/clanek/extremismus-vyrocni-zpravy-o-extremismu-a-strategie-boje-proti-extremismu.aspx) |
+| **HZS ČR**<br>Hasičský záchranný sbor ČR | civil-protection | statistical yearbook<br>_Moved to archiv.hzscr.gov.cz (robots.txt disallows crawling) – add yearbooks manually._ | [cs archive](https://archiv.hzscr.gov.cz/clanek/statisticke-rocenky-hasicskeho-zachranneho-sboru-cr.aspx) |
+| **MV ČR**<br>Ministerstvo vnitra – zprávy o extremismu | police-ct | report on extremism<br>_Moved to archiv.mv.gov.cz (robots.txt disallows crawling) – add reports manually._ | [cs archive](https://archiv.mv.gov.cz/clanek/extremismus-vyrocni-zpravy-o-extremismu-a-strategie-boje-proti-extremismu.aspx) |
 
 ## Slovakia
 
 | Agency | Type | Reports | Links |
 |---|---|---|---|
 | **SIS**<br>Slovenská informačná služba | intelligence-civil | activity report | [sk archive](https://www.sis.gov.sk/pre-vas/sprava-o-cinnosti.html) |
-| **NBÚ**<br>Národný bezpečnostný úrad (SK-CERT) | cyber | annual report | [sk archive](https://www.nbu.gov.sk/urad/o-nas/vyrocne-spravy/) |
+| **NBÚ**<br>Národný bezpečnostný úrad (SK-CERT) | cyber | annual report<br>_Page content hidden behind a loading screen, also in a headless browser – add reports manually._ | [sk archive](https://www.nbu.gov.sk/urad/o-nas/vyrocne-spravy/) |
 
 ## Poland
 
@@ -34,7 +34,7 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 | Agency | Type | Reports | Links |
 |---|---|---|---|
-| **BfV**<br>Bundesamt für Verfassungsschutz | intelligence-civil | Verfassungsschutzbericht<br>_English summary of the report exists; English publication page times out from here._ | [de archive](https://www.verfassungsschutz.de/DE/service/publikationen/publikationen_node.html) · [de current](https://www.verfassungsschutz.de/SharedDocs/publikationen/DE/verfassungsschutzberichte/2026-06-30-verfassungsschutzbericht-2025.html) |
+| **BfV**<br>Bundesamt für Verfassungsschutz | intelligence-civil | Verfassungsschutzbericht<br>_English summary of the report exists; English publication page times out from here._ | [de archive](https://www.verfassungsschutz.de/DE/service/publikationen/publikationen_node.html) · [de current](https://www.verfassungsschutz.de/SharedDocs/publikationen/DE/verfassungsschutzberichte/2026-06-30-verfassungsschutzbericht-2025.html) · [de archive](https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht) · [de archive](https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht&gtp=714296_list%253D2) · [de archive](https://www.verfassungsschutz.de/SiteGlobals/Forms/Suche/Publikationensuche_Formular.html?templateQueryString=Verfassungsschutzbericht&gtp=714296_list%253D3) |
 | **BMI**<br>Bundesministerium des Innern – Verfassungsschutzbericht | intelligence-civil | Verfassungsschutzbericht | [de current](https://www.bmi.bund.de/SharedDocs/downloads/DE/publikationen/themen/sicherheit/BMI26012-vsb2025.html) |
 | **BSI**<br>Bundesamt für Sicherheit in der Informationstechnik | cyber | Die Lage der IT-Sicherheit in Deutschland | [de archive](https://www.bsi.bund.de/DE/Service-Navi/Publikationen/Lagebericht/lagebericht_node.html) · [en archive](https://www.bsi.bund.de/EN/Service-Navi/Publikationen/Lagebericht/lagebericht_node.html) |
 | **BBK**<br>Bundesamt für Bevölkerungsschutz und Katastrophenhilfe | civil-protection | Risikoanalyse Bevölkerungsschutz Bund | [de archive](https://www.bbk.bund.de/DE/Themen/Risikomanagement/Risikoanalysen-Bund-Laender/risikoanalysen-bund-laender_node.html) |
@@ -45,7 +45,7 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 | Agency | Type | Reports | Links |
 |---|---|---|---|
 | **DSN**<br>Direktion Staatsschutz und Nachrichtendienst | intelligence-civil | Verfassungsschutzbericht | [de archive](https://www.dsn.gv.at/501/) |
-| **BMLV**<br>Bundesministerium für Landesverteidigung – Sicherheitspolitik (Risikobild) | intelligence-military | Risikobild | [de archive](https://www.bmlv.gv.at/menu/vpol.shtml) |
+| **BMLV**<br>Bundesministerium für Landesverteidigung – Sicherheitspolitik (Risikobild) | intelligence-military | Risikobild | [de+en current](https://verteidigungspolitik.at/risikobild) · [de archive](https://www.bmlv.gv.at/wissen-forschung/publikationen/index.shtml) |
 
 ## Estonia
 
@@ -60,7 +60,7 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 | Agency | Type | Reports | Links |
 |---|---|---|---|
 | **VDD**<br>Valsts drošības dienests (State Security Service) | intelligence-civil | annual report | [lv archive](https://vdd.gov.lv/noderigi/gada-parskati) · [en archive](https://vdd.gov.lv/en/useful/annual-reports) |
-| **SAB**<br>Satversmes aizsardzības birojs (Constitution Protection Bureau) | intelligence-civil | annual report<br>_Homepage only – exact reports page to be pinned during crawling._ | [lv current](https://www.sab.gov.lv/) · [en current](https://www.sab.gov.lv/en/) |
+| **SAB**<br>Satversmes aizsardzības birojs (Constitution Protection Bureau) | intelligence-civil | annual report | [lv archive](https://www.sab.gov.lv/gada-parskati/) · [en archive](https://www.sab.gov.lv/en/annual-reports/) |
 | **MIDD**<br>Militārās izlūkošanas un drošības dienests | intelligence-military | threat assessment and activity report | [lv archive](https://www.midd.gov.lv/lv/parskati) · [en archive](https://www.midd.gov.lv/en/node/29) |
 
 ## Lithuania
@@ -91,9 +91,9 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 | Agency | Type | Reports | Links |
 |---|---|---|---|
 | **PET**<br>Politiets Efterretningstjeneste (incl. Center for Terroranalyse) | intelligence-civil | Vurdering af terrortruslen mod Danmark, espionage threat assessment | [da archive ⚠](https://pet.dk/pets-opgaver/trusselsvurderinger-og-analyser) |
-| **FE**<br>Forsvarets Efterretningstjeneste | intelligence-military | Efterretningsmæssig Risikovurdering / Intelligence Risk Assessment | [da archive](https://www.fe-ddis.dk/da/produkter/Risikovurdering/) · [en archive](https://www.fe-ddis.dk/en/produkter/Risk_assessment/) |
+| **FE**<br>Forsvarets Efterretningstjeneste | intelligence-military | Efterretningsmæssig Risikovurdering / Intelligence Risk Assessment<br>_English Intelligence Outlook is published as web pages; PDFs mainly in Danish._ | [da archive](https://www.fe-ddis.dk/da/produkter/Risikovurdering/) · [en archive](https://www.fe-ddis.dk/en/produkter/Risk_assessment/) |
 | **SAMSIK (ex-CFCS)**<br>Styrelsen for Samfundssikkerhed (cyber threat assessments, national risk picture) | cyber | cyber threat assessment, Nationalt Risikobillede | [da archive](https://samsik.dk/publikations-kategori/da/trusselsvurderinger/) · [da series](https://samsik.dk/nationalt-risikobillede/) · [en current](https://samsik.dk/en/) |
-| **BRS**<br>Beredskabsstyrelsen (Danish Emergency Management Agency) | civil-protection | Nationalt Risikobillede, publications | [da series](https://www.brs.dk/da/redningsberedskab-myndighed/krisestyring2-og-beredskabsplanlagning/nationalt-risikobillede/) · [da archive](https://www.brs.dk/da/nyheder-og-publikationer/publikationer2/) · [en current](https://www.brs.dk/en/) |
+| **BRS**<br>Beredskabsstyrelsen (Danish Emergency Management Agency) | civil-protection | Nationalt Risikobillede, publications | [da series](https://www.brs.dk/da/redningsberedskab-myndighed/krisestyring2-og-beredskabsplanlagning/nationalt-risikobillede/) · [da archive](https://www.brs.dk/da/nyheder-og-publikationer/publikationer2/) · [en current](https://www.brs.dk/en/nyheder-og-publikationer/publikationer2/alle-publikationer/2022/national-risk-profile/) |
 
 ## Netherlands
 
@@ -117,7 +117,7 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 | Agency | Type | Reports | Links |
 |---|---|---|---|
 | **SGDSN**<br>Secrétariat général de la défense et de la sécurité nationale | civil-protection | Revue nationale stratégique, activity report | [fr archive](https://www.sgdsn.gouv.fr/publications) |
-| **ANSSI**<br>Agence nationale de la sécurité des systèmes d'information | cyber | Panorama de la cybermenace, activity report | [fr archive](https://cyber.gouv.fr/nous-connaitre/publications/) · [en archive](https://cyber.gouv.fr/en/publications/) |
+| **ANSSI**<br>Agence nationale de la sécurité des systèmes d'information | cyber | Panorama de la cybermenace, activity report | [fr series](https://cyber.gouv.fr/nous-connaitre/publications/panoramas-de-la-cybermenace/) · [fr series](https://www.cert.ssi.gouv.fr/cti/) · [fr archive](https://cyber.gouv.fr/nous-connaitre/publications/) · [en archive](https://cyber.gouv.fr/en/publications/) |
 | **VIGINUM**<br>VIGINUM (SGDSN – foreign digital interference) | intelligence-civil | FIMI threat reports | [fr current](https://www.sgdsn.gouv.fr/nos-missions/proteger/proteger-le-debat-public-contre-les-ingerences-numeriques-etrangeres) |
 
 ## Italy
@@ -140,7 +140,7 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 | Agency | Type | Reports | Links |
 |---|---|---|---|
-| **SSI**<br>Sistema de Segurança Interna – Relatório Anual de Segurança Interna (RASI) | police-ct | RASI | [pt archive](https://ssi.gov.pt/publicacoes/relatorio-anual-de-seguranca-interna/) · [pt current](https://www.portugal.gov.pt/pt/gc25/comunicacao/documentos/rasi-2025-relatorio-anual-de-seguranca-interna) |
+| **SSI**<br>Sistema de Segurança Interna – Relatório Anual de Segurança Interna (RASI) | police-ct | RASI | [pt archive ⚠](https://ssi.gov.pt/publicacoes/relatorio-anual-de-seguranca-interna/) · [pt current](https://www.portugal.gov.pt/pt/gc25/comunicacao/documentos/rasi-2025-relatorio-anual-de-seguranca-interna) |
 | **CNCS**<br>Centro Nacional de Cibersegurança – Observatório | cyber | Riscos & Conflitos | [pt archive ⚠](https://www.cncs.gov.pt/pt/observatorio/) |
 
 ## Hungary
@@ -167,7 +167,7 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 
 | Agency | Type | Reports | Links |
 |---|---|---|---|
-| **SOA**<br>Sigurnosno-obavještajna agencija | intelligence-civil | javno izvješće / public report<br>_Public reports 2014–2022; none published for 2023._ | [hr archive](https://www.soa.hr/hr/dokumenti/javna-izvjesca/) · [en archive](https://www.soa.hr/en/documents/public-reports/) |
+| **SOA**<br>Sigurnosno-obavještajna agencija | intelligence-civil | javno izvješće / public report<br>_Public reports 2014–2022 and 2025; none found for 2023–2024._ | [hr archive](https://soa.hr/hr/javni-dokumenti-soa-e/194) · [en archive](https://soa.hr/en/public-documents-soa/194) |
 
 ## Slovenia
 
@@ -213,7 +213,7 @@ Link label = `language · kind` (current = latest edition, archive = older editi
 | **Frontex**<br>European Border and Coast Guard Agency | eu-body | risk analysis | [en archive](https://www.frontex.europa.eu/publications/) · [en series](https://www.frontex.europa.eu/publications/?category=riskanalysis) |
 | **ECDC**<br>European Centre for Disease Prevention and Control | eu-body | annual epidemiological reports, threat reports | [en archive](https://www.ecdc.europa.eu/en/publications-data) · [en archive](https://www.ecdc.europa.eu/en/publications-data/monitoring/all-annual-epidemiological-reports) |
 | **DG ECHO**<br>EU Civil Protection – disaster risk overviews | eu-body | Overview of natural and man-made disaster risks | [en current](https://civil-protection-knowledge-network.europa.eu/disaster-prevention-and-risk-management) |
-| **JRC DRMKC**<br>Joint Research Centre – Disaster Risk Management Knowledge Centre | eu-body | Science for Disaster Risk Management | [en archive](https://drmkc.jrc.ec.europa.eu/science-for-drm/scientific-output) |
+| **JRC DRMKC**<br>Joint Research Centre – Disaster Risk Management Knowledge Centre | eu-body | Science for Disaster Risk Management<br>_Site answers with a bot-challenge page – add reports manually._ | [en archive](https://drmkc.jrc.ec.europa.eu/science-for-drm/scientific-output) |
 | **EUISS**<br>EU Institute for Security Studies | eu-body | Chaillot papers, briefs | [en archive](https://www.iss.europa.eu/publications) |
 | **Hybrid CoE**<br>European Centre of Excellence for Countering Hybrid Threats | eu-body | research reports, papers | [en archive](https://www.hybridcoe.fi/all-content/?_type=hcoe20_publications) |
 | **EU Preparedness**<br>European Commission – Preparedness Union Strategy / Niinistö report | eu-body | preparedness report | [en current](https://commission.europa.eu/topics/defence/safer-together-path-towards-fully-prepared-union_en) |
