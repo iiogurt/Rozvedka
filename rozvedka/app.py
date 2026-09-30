@@ -49,6 +49,12 @@ def coalition_members_of(country: str) -> set[str]:
     return set(countries.memberships(country)) | ({country} if country in ("EU", "NATO") else set())
 
 
+def in_coalition_order(keys) -> list[str]:
+    """Coalition keys in the display order of countries.yaml (EU, NATO, Five Eyes, …)."""
+    order = list(countries.coalitions())
+    return sorted(keys, key=lambda k: order.index(k) if k in order else len(order))
+
+
 def coalition_tags(country: str) -> list[dict]:
     """Coalition chips for a country, in the order of countries.yaml."""
     mine = countries.memberships(country)
@@ -190,14 +196,15 @@ def map_data():
     agencies = [{**dict(r), "flag": flag_url(r["country"]), "logo": f"/logo/{r['id']}" if r["logo_path"] else None,
                  "type_name": TYPE_NAMES.get(r["type"], r["type"]),
                  "country_name": COUNTRY_NAMES.get(r["country"], r["country"]),
-                 "coalitions": sorted(coalition_members_of(r["country"]))} for r in rows if r["lat"] is not None]
+                 "coalitions": in_coalition_order(coalition_members_of(r["country"]))}
+                for r in rows if r["lat"] is not None]
     per_country: dict[str, dict] = {}
     for r in rows:
         if r["country"] in ("EU", "NATO", "OTHER"):
             continue   # organisations, not territories
         c = per_country.setdefault(r["country"], {"name": COUNTRY_NAMES.get(r["country"], r["country"]),
                                                   "agencies": 0, "docs": 0,
-                                                  "coalitions": sorted(countries.memberships(r["country"]))})
+                                                  "coalitions": in_coalition_order(countries.memberships(r["country"]))})
         c["agencies"] += 1
         c["docs"] += r["n_docs"]
     return {"agencies": agencies, "countries": per_country,

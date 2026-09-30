@@ -186,3 +186,88 @@ h2.region { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; c
 .changelog h2 { font-size: 18px; margin-top: 28px; }
 .changelog h3 { font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 16px 0 4px; }
 .changelog code { background: var(--chip); padding: 0 4px; border-radius: 4px; font-size: 12.5px; }
+
+/* ══ Dark theme (map page) ══ */
+body.theme-dark {
+  --bg: #0d1117; --panel: #161b22; --ink: #e6edf3; --muted: #8b949e; --line: #2d333b; --chip: #21262d;
+  --accent: #79b8ff; --ok: #56d364; --warn: #e3b341; --err: #f47067;
+  color-scheme: dark; background: var(--bg); color: var(--ink);
+}
+.theme-dark .top { background: #010409; border-bottom-color: var(--line); }
+.theme-dark .top nav a.on, .theme-dark .brand { color: #fff; }
+.theme-dark input, .theme-dark select, .theme-dark button { background: var(--chip); border-color: var(--line); color: var(--ink); }
+.theme-dark .map { background: #0b0f14; border-color: var(--line); }
+.theme-dark .dot.hollow { background: var(--panel); }
+.theme-dark .maplist li:hover { background: #1f2630; }
+.theme-dark .type-dot-intelligence-civil { --c: #5aa9ff; } .theme-dark .type-dot-intelligence-military { --c: #9ccc65; }
+.theme-dark .type-dot-cyber { --c: #c792ea; } .theme-dark .type-dot-civil-protection { --c: #ffab40; }
+.theme-dark .type-dot-police-ct { --c: #ff6b6b; } .theme-dark .type-dot-eu-body { --c: #82b1ff; }
+.theme-dark .type-dot-nato { --c: #4dd0e1; } .theme-dark .type-dot-other { --c: #b0bec5; }
+.theme-dark .shade-legend { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); margin: -4px 0 0 22px; }
+.theme-dark .shade-legend i { flex: 0 0 90px; height: 8px; border-radius: 4px;
+                              background: linear-gradient(90deg, hsl(205,70%,24%), hsl(205,70%,58%)); }
+/* Leaflet chrome */
+.theme-dark .leaflet-bar a { background: var(--panel); color: var(--ink); border-bottom-color: var(--line); }
+.theme-dark .leaflet-bar a:hover { background: #1f2630; }
+.theme-dark .leaflet-bar a.leaflet-disabled { background: #10141a; color: #555; }
+.theme-dark .leaflet-control-attribution { background: rgba(13,17,23,.8); color: var(--muted); }
+.theme-dark .leaflet-control-attribution a { color: var(--accent); }
+/* pins and clusters on dark */
+.theme-dark .pin-dot { border-color: #0d1117; box-shadow: 0 0 0 1.5px var(--c), 0 0 8px rgba(0,0,0,.6); }
+.theme-dark .pin-dot.hollow { background: #0d1117; border-color: var(--c); }
+.pin { transition: transform .12s ease; }
+.pin:hover, .pin.pin-hot { transform: scale(1.45); z-index: 1000 !important; }
+.pin.pin-hot .pin-dot { box-shadow: 0 0 0 3px #fff, 0 0 14px var(--c); }
+.theme-dark .leaflet-marker-icon.cluster { background: rgba(121,184,255,.9); color: #0d1117;
+  box-shadow: 0 0 0 5px rgba(121,184,255,.22), 0 1px 6px rgba(0,0,0,.6); }
+/* hover card (tooltip) */
+.leaflet-tooltip.hq-tip { background: #161b22; color: #e6edf3; border: 1px solid #30363d; border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.55); padding: 0; white-space: normal; font: 13px/1.45 system-ui, sans-serif; }
+.leaflet-tooltip.hq-tip::before { border-top-color: #30363d; }
+.leaflet-tooltip.country-tip { padding: 6px 10px; }
+.hc { width: 290px; padding: 12px 14px 10px; }
+.hc-head { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+.hc-logo { width: 48px; height: 48px; flex: none; object-fit: contain; background: #fff; border-radius: 8px; padding: 3px; }
+.hc-initials { display: grid; place-items: center; font-weight: 800; color: #1f4e79; font-size: 14px; }
+.hc-names { min-width: 0; }
+.hc-acr { font-weight: 800; font-size: 15px; display: flex; align-items: center; gap: 6px; }
+.hc-flag { width: 20px; height: 15px; border-radius: 2px; box-shadow: 0 0 0 1px rgba(255,255,255,.2); }
+.hc-en { font-weight: 600; color: #c9d1d9; }
+.hc-local { font-size: 12px; font-style: italic; color: #8b949e; }
+.hc-type { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--c); }
+.hc-type .dot { width: 9px; height: 9px; border-width: 0; background: var(--c); }
+.hc-coal { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
+.hc-coal .ctag, .pop-coal .ctag, .cl-card .ctag { font-size: 10px; }
+.hc-desc { margin: 8px 0; color: #c9d1d9; font-size: 12.5px; }
+.hc-foot { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: #8b949e;
+           border-top: 1px solid #30363d; padding-top: 7px; }
+.hc-foot b { color: #e6edf3; }
+.hc-hint { font-size: 11px; color: #6e7681; margin-top: 4px; text-align: right; }
+/* coalition chips on dark */
+.hq-tip .ctag, .dark-popup .ctag { background: transparent; filter: brightness(1.6) saturate(.8); }
+/* cluster hover list */
+.cl-card { min-width: 220px; max-width: 300px; padding: 10px 12px; }
+.cl-h { font-weight: 700; margin-bottom: 6px; }
+.cl-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font-size: 12.5px; }
+.cl-card li { display: flex; align-items: center; gap: 6px; }
+.cl-card li img { width: 16px; height: 12px; border-radius: 2px; }
+.cl-card .dot { width: 8px; height: 8px; border-width: 0; background: var(--c); }
+.hq-tip .muted { color: #8b949e; }
+/* click popup on dark */
+.dark-popup .leaflet-popup-content-wrapper, .dark-popup .leaflet-popup-tip { background: #161b22; color: #e6edf3;
+  border: 1px solid #30363d; box-shadow: 0 8px 28px rgba(0,0,0,.6); }
+.dark-popup .leaflet-popup-content-wrapper { border-radius: 12px; }
+.dark-popup .pop { color: #e6edf3; }
+.dark-popup .pop a { color: #79b8ff; }
+.dark-popup .pop-local, .dark-popup .muted { color: #8b949e; }
+.dark-popup .pop-logo { background: #fff; border-color: #30363d; }
+.dark-popup .pop-desc { color: #c9d1d9; }
+.dark-popup a.leaflet-popup-close-button { color: #8b949e; }
+/* OpenStreetMap tiles turned into a dark basemap: invert, rotate hues back, soften */
+.dark-tiles { filter: invert(1) hue-rotate(180deg) brightness(.82) contrast(.9) saturate(.35); }
+.theme-dark .pin-key .dot { --c: #79b8ff; }
+.theme-dark .leaflet-container .leaflet-control-attribution { background: rgba(13,17,23,.85); color: var(--muted); }
+.cl-card li { display: grid; grid-template-columns: 16px 8px minmax(0, 1fr) auto; gap: 6px; align-items: center; }
+.cl-card li b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cl-card li.muted { display: block; }
+.hc-foot { align-items: baseline; }

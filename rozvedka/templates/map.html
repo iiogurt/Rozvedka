@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Map · Rozvedka{% endblock %}
+{% block body_class %}theme-dark map-page{% endblock %}
 {% block head %}
 <link rel="stylesheet" href="/static/vendor/leaflet/leaflet.css">
 <link rel="stylesheet" href="/static/vendor/markercluster/MarkerCluster.css">
@@ -9,7 +10,8 @@
 <div class="mapwrap">
   <aside class="mappanel" aria-label="Map filters">
     <h2 class="panel-h">Agency headquarters</h2>
-    <p class="muted small">Pins sit on the publicly listed headquarters or contact address.
+    <p class="muted small">Hover a pin for the agency card, click for details and links.
+      Pins sit on the publicly listed headquarters or contact address.
       <span class="pin-key"><span class="dot solid"></span> exact building</span>
       <span class="pin-key"><span class="dot hollow"></span> street or city only</span></p>
     <div class="views" role="group" aria-label="Zoom to region">
@@ -29,7 +31,8 @@
       {% endfor %}
     </fieldset>
     <label class="chk"><input type="checkbox" id="shade" checked> Shade countries by number of reports</label>
-    <label class="chk"><input type="checkbox" id="tiles" checked> Street map background (OpenStreetMap)</label>
+    <div class="shade-legend" aria-hidden="true"><span>fewer</span><i></i><span>more reports</span></div>
+    <label class="chk"><input type="checkbox" id="tiles" checked> Street map (OpenStreetMap, darkened)</label>
     <input type="search" id="find" placeholder="Find agency…" aria-label="Find agency">
     <ol id="list" class="maplist"></ol>
   </aside>
