@@ -7,6 +7,13 @@ SOURCES = load()
 TYPES = {"intelligence-civil", "intelligence-military", "cyber", "civil-protection", "police-ct", "eu-body", "nato", "other"}
 ACCESS = {"auto", "browser-ua", "tls-lenient", "browser-js", "manual"}
 KINDS = {"current", "archive", "series"}
+# rough (lat_min, lat_max, lon_min, lon_max) per country; EU members, EU bodies and NATO use the Europe box
+EUROPE = (34, 71, -11, 35)
+BOXES = {
+    "GB": (49, 61, -9, 2), "NO": (57, 72, 4, 32), "CH": (45.8, 48, 5.9, 10.6), "US": (24, 50, -125, -66),
+    "CA": (41, 84, -141, -52), "AU": (-44, -10, 112, 154), "NZ": (-48, -34, 166, 179), "JP": (24, 46, 122, 146),
+    "KR": (33, 39, 124, 132), "TW": (21, 26, 119, 123), "OTHER": (-90, 90, -180, 180),
+}
 
 
 def test_keys_unique():
@@ -38,8 +45,6 @@ def test_hq_location(s):
     assert hq, "every source needs an hq entry for the map"
     assert hq["precision"] in {"address", "street", "city"}
     assert hq["address"]
-    if s["country"] == "OTHER":
-        assert -90 <= hq["lat"] <= 90 and -180 <= hq["lon"] <= 180
-    else:
-        # EU member states, EU bodies and NATO HQs all lie inside this box (Lisbon … Nicosia, Crete … Lapland)
-        assert 34 <= hq["lat"] <= 71 and -11 <= hq["lon"] <= 35, (hq["lat"], hq["lon"])
+    lat0, lat1, lon0, lon1 = BOXES.get(s["country"], EUROPE)
+    # a pin outside its country's box means the geocoder matched a namesake (London, Ontario …)
+    assert lat0 <= hq["lat"] <= lat1 and lon0 <= hq["lon"] <= lon1, (s["country"], hq["lat"], hq["lon"])

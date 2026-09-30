@@ -156,3 +156,8 @@ td.src a { display: inline-flex; align-items: center; gap: 6px; white-space: now
 .mappanel input[type=search] { flex: none; max-width: none; }
 .leaflet-marker-icon.cluster { background: rgba(29, 33, 38, .82); color: #fff; border-radius: 50%; display: grid; place-items: center;
            font-weight: 700; font-size: 13px; box-shadow: 0 0 0 4px rgba(29, 33, 38, .18), 0 1px 4px rgba(0,0,0,.4); }
+h2.region { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); border: 0;
+            margin: 36px 0 -10px; }
+.flagsep { width: 1px; align-self: stretch; background: var(--line); margin: 0 4px; }
+.views { display: flex; flex-wrap: wrap; gap: 4px; }
+.views button { font-size: 12px; padding: 3px 8px; }

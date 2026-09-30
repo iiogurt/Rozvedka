@@ -116,3 +116,15 @@ def test_extract_respects_base_href_and_skips_junk():
         "https://www.bsi.bund.de/SharedDocs/Downloads/DE/Lagebericht2025.pdf?__blob=publicationFile"]
     assert subs == [("https://www.bsi.bund.de/DE/Service-Navi/Publikationen/Lagebericht/archiv.html",
                      "Lageberichte Archiv")]
+
+
+def test_domain_family_and_official_filter():
+    from rozvedka.crawler import domain_family, official_families
+    assert domain_family("https://assets.publishing.service.gov.uk/media/x.pdf") == "gov.uk"
+    assert domain_family("https://www.bis.cz/vyrocni-zpravy/") == "bis.cz"
+    src = {"homepage": "https://www.cyber.gc.ca/", "domains": ""}
+    fams = official_families(src, "https://www.cyber.gc.ca/en/guidance/ncta")
+    assert domain_family("https://www.cyber.gc.ca/sites/default/files/ncta.pdf") in fams
+    assert domain_family("https://www.justice.gov/d9/complaint.pdf") not in fams      # cited in a footnote
+    odni = {"homepage": "https://www.dni.gov/", "domains": "odni.gov"}
+    assert domain_family("https://www.odni.gov/files/ATA-2026.pdf") in official_families(odni, None)

@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS sources (
     lat         REAL,
     lon         REAL,
     hq_precision TEXT,                         -- address | street | city
+    domains     TEXT,                          -- extra official domains, comma-separated
     type        TEXT,
     access      TEXT,
     frequency   TEXT,
@@ -92,7 +93,7 @@ def session():
 MIGRATIONS = {
     "sources": {"name_local": "TEXT", "name_en": "TEXT", "homepage": "TEXT", "description": "TEXT",
                 "logo_url": "TEXT", "logo_path": "TEXT", "hq_address": "TEXT", "lat": "REAL", "lon": "REAL",
-                "hq_precision": "TEXT"},
+                "hq_precision": "TEXT", "domains": "TEXT"},
 }
 
 

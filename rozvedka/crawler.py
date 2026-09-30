@@ -155,9 +155,23 @@ def is_poor_title(title: str | None, url: str) -> bool:
             or title == humanize_filename(url) or bool(re.fullmatch(r"[\w .%()-]+\.pdf", title, re.I)))
 
 
-def _store(con, source_id, page_id, docs, page_lang, allowed) -> int:
+def domain_family(url_or_host: str) -> str:
+    """'assets.publishing.service.gov.uk' -> 'gov.uk', 'www.bis.cz' -> 'bis.cz' (government domain families)."""
+    host = urlsplit(url_or_host).hostname if "//" in url_or_host else url_or_host
+    return ".".join((host or "").lower().split(".")[-2:])
+
+
+def official_families(src, page_url: str | None) -> set[str]:
+    fams = {domain_family(page_url or ""), domain_family(src["homepage"] or "")}
+    fams |= {domain_family(d.strip()) for d in (src["domains"] or "").split(",") if d.strip()}
+    return fams - {""}
+
+
+def _store(con, source_id, page_id, docs, page_lang, allowed, families: set[str] | None = None) -> int:
     new = 0
     for d in docs:
+        if families and domain_family(d["url"]) not in families:
+            continue   # cited third-party document (footnote, partner report) – not this agency's publication
         lang = guess_lang(d["url"], d["title"], page_lang, allowed)
         year = guess_year(d["title"], d["url"])
         hidden = 1 if LOW_RELEVANCE_RE.search(d["title"] + " " + unquote(d["url"])) else 0
@@ -190,6 +204,7 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
     resp = get_page(page["url"], src)
     if resp.status != 200:
         return f"http {resp.status}", 0
+    families = official_families(src, page["url"])
     if "pdf" in resp.content_type:
         return "ok", _store(con, src["id"], page["id"], [{"url": page["url"], "title": page["note"] or src["agency"]}],
                             page["lang"], allowed_langs)
@@ -226,7 +241,7 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
                 log.debug("sub-page %s failed: %s", url, e)
     uniq = {d["url"]: d for d in docs}
     return f"ok ({len(uniq)} docs, {followed} sub-pages)", _store(con, src["id"], page["id"], uniq.values(),
-                                                                  page["lang"], allowed_langs)
+                                                                  page["lang"], allowed_langs, families)
 
 
 def add_patterns(con, src) -> int:

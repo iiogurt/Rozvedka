@@ -21,8 +21,27 @@ COUNTRY_NAMES = {
     "DK": "Denmark", "EE": "Estonia", "FI": "Finland", "FR": "France", "DE": "Germany", "GR": "Greece",
     "HU": "Hungary", "IE": "Ireland", "IT": "Italy", "LV": "Latvia", "LT": "Lithuania", "LU": "Luxembourg",
     "MT": "Malta", "NL": "Netherlands", "PL": "Poland", "PT": "Portugal", "RO": "Romania", "SK": "Slovakia",
-    "SI": "Slovenia", "ES": "Spain", "SE": "Sweden", "EU": "EU bodies", "NATO": "NATO", "OTHER": "Other",
+    "SI": "Slovenia", "ES": "Spain", "SE": "Sweden", "EU": "EU bodies", "NATO": "NATO", "OTHER": "International",
+    "GB": "United Kingdom", "NO": "Norway", "CH": "Switzerland", "US": "United States", "CA": "Canada",
+    "AU": "Australia", "NZ": "New Zealand", "JP": "Japan", "KR": "South Korea", "TW": "Taiwan",
 }
+# regions for grouping on the Sources page, in display order
+REGIONS = [
+    ("EU member states", {"AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT",
+                          "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"}),
+    ("EU and NATO", {"EU", "NATO"}),
+    ("Other European democracies", {"GB", "NO", "CH"}),
+    ("Americas", {"US", "CA"}),
+    ("Asia-Pacific", {"AU", "NZ", "JP", "KR", "TW"}),
+    ("International", {"OTHER"}),
+]
+
+
+def region_of(country: str) -> tuple[int, str]:
+    for i, (name, members) in enumerate(REGIONS):
+        if country in members:
+            return i, name
+    return len(REGIONS), "Other"
 TYPE_NAMES = {
     "intelligence-civil": "Civil intelligence", "intelligence-military": "Military / foreign intelligence",
     "cyber": "Cyber security", "civil-protection": "Civil protection & crisis", "police-ct": "Police / counter-terrorism",
@@ -125,14 +144,19 @@ def sources(request: Request):
         pages = {}
         for p in con.execute("SELECT * FROM pages WHERE active=1 ORDER BY lang, kind"):
             pages.setdefault(p["source_id"], []).append(p)
-    # member states alphabetically by name, then EU bodies, NATO, other
-    tail = {"EU": 1, "NATO": 2, "OTHER": 3}
+    # countries by region (EU members first), alphabetically by name within a region
     groups: dict[str, list] = {}
     for r in rows:
         groups.setdefault(r["country"], []).append(r)
-    ordered = sorted(groups.items(), key=lambda kv: (tail.get(kv[0], 0), COUNTRY_NAMES.get(kv[0], kv[0])))
-    return tpl.TemplateResponse(request, "sources.html", {"sources": rows, "groups": ordered, "pages": pages,
-                                                         "jobs": dict(_jobs)})
+    ordered = sorted(groups.items(), key=lambda kv: (region_of(kv[0])[0], COUNTRY_NAMES.get(kv[0], kv[0])))
+    regions: list[tuple[str, list]] = []
+    for country, items in ordered:
+        name = region_of(country)[1]
+        if not regions or regions[-1][0] != name:
+            regions.append((name, []))
+        regions[-1][1].append((country, items))
+    return tpl.TemplateResponse(request, "sources.html", {"sources": rows, "groups": ordered, "regions": regions,
+                                                         "pages": pages, "jobs": dict(_jobs)})
 
 
 @app.get("/map")
