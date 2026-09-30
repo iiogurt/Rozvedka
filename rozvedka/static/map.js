@@ -132,7 +132,7 @@
   function countryStyle(f) {
     const coal = document.getElementById("coalition").value;
     const st = countryStats[f.properties.iso];
-    const c = st && (!coal || st.coalitions.includes(coal)) ? st : null;
+    const c = st && st.docs > 0 && (!coal || st.coalitions.includes(coal)) ? st : null;
     const max = Math.max(1, ...Object.values(countryStats).map((x) => x.docs));
     return c ? { fillColor: shadeColor(c.docs, max), fillOpacity: 0.5, color: "#6aa7d8", weight: 1 }
              : { fillOpacity: 0, color: "#3a434e", weight: 0.4 };   // no sources: outline only
@@ -149,12 +149,19 @@
     shading = L.geoJSON(geo, {
       pane: "countries", style: countryStyle,
       onEachFeature: (f, layer) => {
-        const c = countryStats[f.properties.iso];
-        if (!c) return;
-        const tags = c.coalitions.map((k) => esc((coalitionNames[k] || {}).short || k)).join(" · ");
-        layer.bindTooltip(`<b>${esc(c.name)}</b><br>${c.agencies} agencies · ${c.docs} documents` +
-                          (tags ? `<br><span class="muted">${tags}</span>` : ""), { sticky: true, className: "hq-tip country-tip" });
-        layer.on("click", () => { window.location.href = `/?country=${encodeURIComponent(f.properties.iso)}`; });
+        if (!countryStats[f.properties.iso]) return;
+        layer.bindTooltip(() => {
+          const c = countryStats[f.properties.iso] || { name: f.properties.name, agencies: 0, docs: 0, coalitions: [] };
+          const tags = c.coalitions.map((k) => esc((coalitionNames[k] || {}).short || k)).join(" · ");
+          const topicName = document.getElementById("topic").selectedOptions[0]?.text;
+          return `<b>${esc(c.name)}</b><br>${c.agencies} agencies · ${c.docs} documents` +
+                 (document.getElementById("topic").value ? ` on <i>${esc(topicName)}</i>` : "") +
+                 (tags ? `<br><span class="muted">${tags}</span>` : "");
+        }, { sticky: true, className: "hq-tip country-tip" });
+        layer.on("click", () => {
+          const t = document.getElementById("topic").value;
+          window.location.href = `/?country=${encodeURIComponent(f.properties.iso)}${t ? `&topic=${encodeURIComponent(t)}` : ""}`;
+        });
         layer.on("mouseover", () => layer.setStyle({ weight: 2.5, color: "#9fd0ff" }));
         layer.on("mouseout", () => { shading.resetStyle(layer); fadeShading(); });
       },
@@ -198,10 +205,23 @@
   }
 
   // ── data ──
-  fetch("/api/map").then((r) => r.json()).then(async (data) => {
+  let firstLoad = true;
+  async function load(topic) {
+    const data = await fetch(`/api/map${topic ? `?topic=${encodeURIComponent(topic)}` : ""}`).then((r) => r.json());
     coalitionNames = data.coalitions;
     countryStats = data.countries;
-    markers = data.agencies.map((a) => {
+    const sel = document.getElementById("topic");
+    if (sel.options.length === 1) {                       // fill the topic list once, grouped by category
+      let group = null;
+      for (const t of data.topic_list) {
+        if (!group || group.label !== t.category) { group = document.createElement("optgroup"); group.label = t.category; sel.appendChild(group); }
+        group.appendChild(new Option(t.name, t.key));
+      }
+      if (topic) sel.value = topic;
+    }
+    // with a topic, agencies without reports on it are hidden
+    const agencies = topic ? data.agencies.filter((a) => a.n_docs > 0) : data.agencies;
+    markers = agencies.map((a) => {
       const m = L.marker([a.lat, a.lon], { icon: pinIcon(a), keyboard: true, agency: a, riseOnHover: true,
                                            alt: `${a.agency} – ${a.name_en}` });
       // hover: compact agency card; click: full card with links (the hover card closes while the popup is open)
@@ -214,8 +234,21 @@
       el.textContent = `(${data.agencies.filter((a) => a.type === el.dataset.type).length})`;
     }
     render();
-    if (!window.location.hash) map.fitBounds(L.latLngBounds(markers.map(({ m }) => m.getLatLng())), { padding: [30, 30] });
-    focusFromHash();
-    try { await loadCountries(); } catch (e) { console.warn("country shapes unavailable", e); }
+    if (firstLoad) {
+      if (!window.location.hash && markers.length) map.fitBounds(L.latLngBounds(markers.map(({ m }) => m.getLatLng())), { padding: [30, 30] });
+      focusFromHash();
+      try { await loadCountries(); } catch (e) { console.warn("country shapes unavailable", e); }
+      firstLoad = false;
+    } else if (shading) {
+      shading.setStyle(countryStyle); fadeShading();
+    }
+  }
+  const initialTopic = params.get("topic") || "";
+  load(initialTopic);
+  document.getElementById("topic").addEventListener("change", (e) => {
+    const url = new URL(window.location);
+    e.target.value ? url.searchParams.set("topic", e.target.value) : url.searchParams.delete("topic");
+    history.replaceState(null, "", url);
+    load(e.target.value);
   });
 })();

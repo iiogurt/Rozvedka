@@ -271,3 +271,23 @@ body.theme-dark {
 .cl-card li b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cl-card li.muted { display: block; }
 .hc-foot { align-items: baseline; }
+
+/* ── Topics ── */
+.topic-chip { display: inline-block; font-size: 11.5px; padding: 1px 8px; margin: 2px 3px 0 0; border-radius: 999px;
+              background: var(--chip); color: var(--ink); border: 1px solid var(--line); white-space: nowrap; }
+.topic-chip:hover { border-color: var(--accent); text-decoration: none; }
+.topic-chip.on { background: var(--accent); color: var(--panel); border-color: var(--accent); }
+.doc-topics { margin-top: 3px; }
+.chosen-topics { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: -4px 0 8px; }
+.snippet { font-size: 12.5px; color: var(--ink); opacity: .85; margin-top: 3px; line-height: 1.4; }
+.snippet mark { background: #ffe58a; color: #1d2126; border-radius: 2px; padding: 0 1px; }
+.topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 14px; }
+.topic-cat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 4px 16px 12px; }
+.topic-cat h2 { margin: 12px 0 6px; border: 0; font-size: 15px; }
+.topic-cat ul { list-style: none; margin: 0; padding: 0; }
+.topic-cat li { display: grid; grid-template-columns: minmax(0, 1fr) 90px 64px; gap: 2px 10px; align-items: center;
+                padding: 5px 0; border-top: 1px solid var(--line); }
+.topic-cat .tmeta { grid-column: 1 / -1; margin-top: -2px; }
+.topic-cat .bar { height: 7px; background: var(--chip); border-radius: 4px; overflow: hidden; }
+.topic-cat .bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+.topic-cat .tnum { text-align: right; font-size: 12.5px; white-space: nowrap; }

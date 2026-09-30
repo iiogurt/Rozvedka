@@ -3,12 +3,14 @@ import threading
 from pathlib import Path
 from urllib.parse import urlencode
 
-from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi import FastAPI, Form, HTTPException, Query, Request
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import __version__, countries, crawler, db, downloader, logos, registry
+from markupsafe import escape
+
+from . import __version__, countries, crawler, db, downloader, logos, registry, topics
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -95,7 +97,9 @@ def startup():
 @app.get("/")
 def index(request: Request, country: str = "", type: str = "", lang: str = "", year: str = "",
           status: str = "", q: str = "", source: int = 0, page: int = 1, show_hidden: int = 0,
-          coalition: str = ""):
+          coalition: str = "", topic: list[str] = Query(default=[]), sort: str = ""):
+    tax = topics.taxonomy()["topics"]
+    chosen = [t for t in topic if t in tax]
     where, args = ["s.active=1"], []
     if coalition in countries.coalitions():
         codes = sorted(coalition_scope(coalition))
@@ -109,19 +113,53 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
         where.append("d.year=?"); args.append(int(year))
     if source:
         where.append("s.id=?"); args.append(source)
-    if q:
-        where.append("(d.title LIKE ? OR d.url LIKE ? OR s.agency LIKE ? OR s.name_local LIKE ? OR s.name_en LIKE ?)")
-        args += [f"%{q}%"] * 5
+    fts = topics.fts_query(q) if q.strip() else ""
+    if q.strip():
+        # metadata match OR full-text match inside the report
+        where.append("""(d.title LIKE ? OR s.agency LIKE ? OR s.name_local LIKE ? OR s.name_en LIKE ?
+                         OR d.id IN (SELECT rowid FROM doc_text WHERE doc_text MATCH ?))""")
+        args += [f"%{q}%"] * 4 + [fts or '""']
+    base_where, base_args = " AND ".join(where), list(args)      # everything except the topic filter
+    for t in chosen:                                              # several topics: a document must have all
+        where.append("d.id IN (SELECT doc_id FROM doc_topics WHERE topic=?)"); args.append(t)
     sql_where = " AND ".join(where)
+    sort = sort or ("relevance" if chosen or q.strip() else "year")
+    if sort == "relevance" and chosen:
+        order = f"""(SELECT SUM(score) FROM doc_topics WHERE doc_id=d.id AND topic IN ({','.join('?' * len(chosen))})) DESC,
+                    d.year DESC NULLS LAST"""
+        order_args = list(chosen)
+    elif sort == "relevance" and fts:
+        order = "(SELECT bm25(doc_text) FROM doc_text WHERE doc_text MATCH ? AND rowid=d.id) ASC NULLS LAST, d.year DESC NULLS LAST"
+        order_args = [fts]
+    else:
+        order, order_args = "d.year DESC NULLS LAST, s.country, s.agency, d.lang", []
     per_page = 100
     with db.session() as con:
+        topics.init()
         total = con.execute(f"SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id WHERE {sql_where}",
                             args).fetchone()[0]
-        docs = con.execute(
+        docs = [dict(r) for r in con.execute(
             f"""SELECT d.*, s.country, s.agency, s.type, s.name_en, s.logo_path
                 FROM documents d JOIN sources s ON s.id=d.source_id
-                WHERE {sql_where} ORDER BY d.year DESC NULLS LAST, s.country, s.agency, d.lang
-                LIMIT ? OFFSET ?""", (*args, per_page, (page - 1) * per_page)).fetchall()
+                WHERE {sql_where} ORDER BY {order} LIMIT ? OFFSET ?""",
+            (*args, *order_args, per_page, (page - 1) * per_page))]
+        ids = [d["id"] for d in docs]
+        by_doc: dict[int, list] = {}
+        if ids:
+            for r in con.execute(f"""SELECT doc_id, topic, score FROM doc_topics WHERE doc_id IN ({','.join('?' * len(ids))})
+                                     ORDER BY score DESC""", ids):
+                by_doc.setdefault(r["doc_id"], []).append(r["topic"])
+            if fts:
+                for r in con.execute(f"""SELECT rowid, snippet(doc_text, 1, char(2), char(3), '…', 14) AS snip FROM doc_text
+                                         WHERE doc_text MATCH ? AND rowid IN ({','.join('?' * len(ids))})""", (fts, *ids)):
+                    for d in docs:
+                        if d["id"] == r["rowid"]:
+                            d["snippet"] = highlight(r["snip"])
+        for d in docs:   # subject topics first (by score), meta topics such as "agency activity" last
+            d["topics"] = sorted(by_doc.get(d["id"], []), key=lambda t: bool(tax.get(t, {}).get("meta")))
+        topic_counts = dict(con.execute(
+            f"""SELECT t.topic, COUNT(DISTINCT t.doc_id) FROM doc_topics t JOIN documents d ON d.id=t.doc_id
+                JOIN sources s ON s.id=d.source_id WHERE {base_where} GROUP BY t.topic""", base_args).fetchall())
         facets = {
             "country": con.execute("SELECT DISTINCT country FROM sources WHERE active=1 ORDER BY country").fetchall(),
             "type": con.execute("SELECT DISTINCT type FROM sources WHERE active=1 ORDER BY type").fetchall(),
@@ -130,13 +168,38 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
         }
         counts = dict(con.execute("SELECT status, COUNT(*) FROM documents GROUP BY status").fetchall())
     params = dict(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source or "",
-                  coalition=coalition,
+                  coalition=coalition, topic=chosen, sort=sort if sort != "year" or chosen or q else "",
                   show_hidden=show_hidden or "")
+
+    def qs(**kw):
+        merged = {**params, **kw}
+        return urlencode({k: v for k, v in merged.items() if v not in ("", 0, None, [])}, doseq=True)
+
     return tpl.TemplateResponse(request, "index.html", {
         "docs": docs, "total": total, "page": page, "pages": (total + per_page - 1) // per_page,
-        "facets": facets, "f": params, "counts": counts, "jobs": dict(_jobs),
-        "qs": lambda **kw: urlencode({k: v for k, v in {**params, **kw}.items() if v not in ("", 0, None)}),
+        "facets": facets, "f": params, "counts": counts, "jobs": dict(_jobs), "qs": qs,
+        "TOPICS": tax, "CATEGORIES": topics.taxonomy()["categories"], "topic_counts": topic_counts,
     })
+
+
+def highlight(snippet: str) -> str:
+    """FTS snippet → safe HTML: escape the report text first, then turn our \\x02/\\x03 markers into <mark>."""
+    return str(escape(snippet)).replace("\x02", "<mark>").replace("\x03", "</mark>")
+
+
+@app.get("/topics")
+def topics_page(request: Request):
+    tax = topics.taxonomy()
+    with db.session() as con:
+        topics.init()
+        rows = {r["topic"]: dict(r) for r in con.execute(
+            """SELECT t.topic, COUNT(DISTINCT t.doc_id) AS docs, COUNT(DISTINCT d.source_id) AS sources,
+                      COUNT(DISTINCT s.country) AS countries, MIN(d.year) AS y0, MAX(d.year) AS y1
+               FROM doc_topics t JOIN documents d ON d.id=t.doc_id JOIN sources s ON s.id=d.source_id
+               WHERE d.hidden=0 AND s.active=1 GROUP BY t.topic""")}
+        indexed = con.execute("SELECT COUNT(*), SUM(taxonomy_hash IS NOT NULL) FROM doc_index").fetchone()
+    return tpl.TemplateResponse(request, "topics.html", {"tax": tax, "stats": rows, "indexed": indexed,
+                                                        "jobs": dict(_jobs)})
 
 
 @app.get("/sources")
@@ -183,16 +246,20 @@ def world_map(request: Request):
 
 
 @app.get("/api/map")
-def map_data():
-    """Agencies with HQ coordinates and document counts, plus per-country totals for shading."""
+def map_data(topic: str = ""):
+    """Agencies with HQ coordinates and document counts (optionally only documents on one topic),
+    plus per-country totals for shading."""
+    topic = topic if topic in topics.taxonomy()["topics"] else ""
     with db.session() as con:
+        topics.init()
         rows = con.execute(
             """SELECT s.id, s.country, s.agency, s.name_en, s.name_local, s.type, s.description, s.homepage,
                       s.hq_address, s.lat, s.lon, s.hq_precision, s.logo_path,
                       COUNT(d.id) AS n_docs, COALESCE(SUM(d.status='downloaded'), 0) AS n_ok,
                       MIN(d.year) AS y0, MAX(d.year) AS y1
                FROM sources s LEFT JOIN documents d ON d.source_id=s.id AND d.hidden=0
-               WHERE s.active=1 GROUP BY s.id""").fetchall()
+                    AND (? = '' OR d.id IN (SELECT doc_id FROM doc_topics WHERE topic = ?))
+               WHERE s.active=1 GROUP BY s.id""", (topic, topic)).fetchall()
     agencies = [{**dict(r), "flag": flag_url(r["country"]), "logo": f"/logo/{r['id']}" if r["logo_path"] else None,
                  "type_name": TYPE_NAMES.get(r["type"], r["type"]),
                  "country_name": COUNTRY_NAMES.get(r["country"], r["country"]),
@@ -207,7 +274,10 @@ def map_data():
                                                   "coalitions": in_coalition_order(countries.memberships(r["country"]))})
         c["agencies"] += 1
         c["docs"] += r["n_docs"]
-    return {"agencies": agencies, "countries": per_country,
+    tax = topics.taxonomy()
+    return {"agencies": agencies, "countries": per_country, "topic": topic,
+            "topic_list": [{"key": k, "name": tax["topics"][k]["name"], "category": c["name"]}
+                           for c in tax["categories"].values() for k in c["topics"]],
             "coalitions": {k: {"short": v["short"], "name": v["name"]} for k, v in countries.coalitions().items()}}
 
 
