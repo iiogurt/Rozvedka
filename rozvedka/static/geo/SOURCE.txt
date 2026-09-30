@@ -1,0 +1,2 @@
+countries.geojson: Natural Earth 1:110m Admin 0 countries (public domain, https://www.naturalearthdata.com/),
+reduced to ISO code, name and geometry with coordinates rounded to 0.01 degrees.
