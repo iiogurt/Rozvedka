@@ -53,7 +53,8 @@ def improve_titles() -> int:
             if not is_poor_title(r["title"], r["url"]):
                 continue
             _, pdf_title = pdf_info(FILES / r["local_path"])
-            if good_pdf_title(pdf_title):
+            # the PDF's own title must itself be a real title (some PDFs store just their filename)
+            if good_pdf_title(pdf_title) and not is_poor_title(pdf_title.strip(), r["url"]):
                 con.execute("UPDATE documents SET title=? WHERE id=?", (pdf_title.strip()[:300], r["id"]))
                 changed += 1
     return changed
@@ -95,7 +96,8 @@ def download_one(doc_id: int) -> str:
                 fields = {"sha256": sha, "size": len(data), "local_path": str(dest.relative_to(FILES)),
                           "pages_count": pages, "mime": "application/pdf",
                           "downloaded_at": datetime.now().isoformat(timespec="seconds")}
-                if good_pdf_title(pdf_title) and is_poor_title(doc["title"], doc["url"]):
+                if (good_pdf_title(pdf_title) and is_poor_title(doc["title"], doc["url"])
+                        and not is_poor_title(pdf_title.strip(), doc["url"])):
                     fields["title"] = pdf_title.strip()[:300]
     except fetch.Blocked:
         error = "blocked by robots.txt"

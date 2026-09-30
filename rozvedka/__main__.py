@@ -27,6 +27,7 @@ def main():
 
     logging.basicConfig(level=logging.DEBUG if a.verbose else logging.INFO, format="%(asctime)s %(name)s %(message)s")
     logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("pypdf").setLevel(logging.ERROR)   # noisy about harmless PDF quirks
     db.init()
     if a.cmd == "sync-registry":
         print(registry.sync())
