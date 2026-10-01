@@ -18,7 +18,7 @@
     light: ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"],
     dark: ["#1b2a3d", "#184f95", "#256abf", "#3987e5", "#6da7ec", "#9ec5f4", "#cde2fb"],
   };
-  const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  const darkQuery = window.rzDark;
   const mode = () => (darkQuery.matches ? "dark" : "light");
   const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   const ink = () => ({ text: css("--ink"), muted: css("--muted"), line: css("--line"), panel: css("--panel") });

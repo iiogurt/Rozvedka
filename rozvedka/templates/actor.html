@@ -149,7 +149,7 @@
 (function () {
   const data = {{ timeline|tojson }};
   const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-  const dark = matchMedia("(prefers-color-scheme: dark)");
+  const dark = window.rzDark;
   const chart = echarts.init(document.getElementById("timeline"), null, { renderer: "svg" });
   function draw() {
     const ink = css("--ink"), muted = css("--muted"), line = css("--line"), panel = css("--panel");

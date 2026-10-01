@@ -7,7 +7,7 @@
   const kindBox = $("#kinds");
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-  const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  const darkQuery = window.rzDark;
   const pct = (v) => Math.round(v * 100) + "%";
   const flag = (c) => `/static/flags/${String(c || "other").toLowerCase()}.svg`;
   // sequential blue: weak association recedes toward the surface in both modes

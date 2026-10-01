@@ -27,6 +27,17 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.14.0] – 2026-10-01
+
+### Added
+- Light and dark theme with a toggle in the header. Dark is the default; the choice is remembered in the browser
+  (localStorage) and applied before the page is drawn. Charts (Trends, Network, actor pages, mind map) redraw in
+  the matching palette. The map pages stay dark.
+
+### Changed
+- The theme no longer follows the operating system's light/dark setting.
+- README screenshots in the dark theme.
+
 ## [0.13.0] – 2026-10-01
 
 ### Changed
@@ -241,7 +252,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/iiogurt/Rozvedka/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/iiogurt/Rozvedka/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/iiogurt/Rozvedka/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/iiogurt/Rozvedka/compare/v0.11.0...v0.11.1
