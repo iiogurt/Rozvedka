@@ -27,6 +27,13 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.9.2] – 2026-10-01
+
+### Fixed
+- Report years no longer come from horizon years in titles ("NATO 2030", "Trendanalyse 2035"): years after the
+  current one are skipped and the next candidate (filename, upload path) is used. The next crawl corrects years
+  stored earlier (6 documents).
+
 ## [0.9.1] – 2026-09-30
 
 ### Added
@@ -157,7 +164,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.9.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.9.2...HEAD
+[0.9.2]: https://github.com/iiogurt/Rozvedka/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/iiogurt/Rozvedka/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/iiogurt/Rozvedka/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/iiogurt/Rozvedka/compare/v0.7.0...v0.8.0
