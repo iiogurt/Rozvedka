@@ -99,8 +99,10 @@ def guess_lang(url: str, text: str, page_lang: str, allowed: set[str]) -> str:
 
 
 def guess_year(title: str, url: str) -> int | None:
+    # years after the current one are horizons ("NATO 2030", "Trends 2035"), not publication years
+    now = datetime.now().year
     for s in (title, unquote(urlsplit(url).path.rsplit("/", 1)[-1]), unquote(urlsplit(url).path)):
-        years = [int(y) for y in YEAR_RE.findall(s or "")]
+        years = [y for y in map(int, YEAR_RE.findall(s or "")) if y <= now]
         if years:
             return years[0] if s is title else max(years)
     return None
@@ -270,10 +272,19 @@ def add_patterns(con, src) -> int:
     return new
 
 
+def fix_future_years(con) -> int:
+    """Re-guess years stored before guess_year ignored horizon years (a report cannot be from the future)."""
+    rows = con.execute("SELECT id, title, url FROM documents WHERE year > ?", (datetime.now().year,)).fetchall()
+    for r in rows:
+        con.execute("UPDATE documents SET year=? WHERE id=?", (guess_year(r["title"], r["url"]), r["id"]))
+    return len(rows)
+
+
 def crawl(country: str | None = None, agency: str | None = None) -> dict:
     registry.sync()
     stats = {"pages": 0, "new_docs": 0, "errors": 0, "skipped": 0}
     with db.session() as con:
+        stats["years_fixed"] = fix_future_years(con)
         q = "SELECT * FROM sources WHERE active=1"
         args = []
         if country:

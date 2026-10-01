@@ -47,6 +47,8 @@ def test_guess_lang(url, text, page_lang, allowed, expected):
     ("Report", "https://x/2020/04/21/report-2019.pdf", 2019),   # filename (covered year) beats publish-date path
     ("Report", "https://x/2021/05/annual-report.pdf", 2021),     # only the path has a year
     ("Nothing here", "https://x/report.pdf", None),
+    ("Cyber Threats and NATO 2030", "https://x/uploads/2020/12/NATO-2030.pdf", 2020),   # horizon year is not the date
+    ("Trendanalyse Bevölkerungsschutz 2035", "https://x/Trends2035_D.pdf", None),
 ])
 def test_guess_year(title, url, expected):
     assert guess_year(title, url) == expected
