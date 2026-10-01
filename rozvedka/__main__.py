@@ -26,7 +26,8 @@ def main():
     ix.add_argument("--reextract", action="store_true", help="extract text again for all documents")
     ix.add_argument("--limit", type=int, help="only extract this many new documents (for trying it out)")
     ix.add_argument("--workers", type=int, default=4)
-    sub.add_parser("fetch-actors", help="download the actor gazetteer (Wikidata, Wikipedia, MITRE ATT&CK)")
+    fa = sub.add_parser("fetch-actors", help="download the actor gazetteer (Wikidata, Wikipedia, MITRE ATT&CK)")
+    fa.add_argument("--refresh", action="store_true", help="read the Wikipedia infoboxes again instead of the cache")
     ia = sub.add_parser("index-actors", help="find the gazetteer's actors in the report texts")
     ia.add_argument("--rematch", action="store_true", help="match every document again")
     ia.add_argument("--workers", type=int, default=4)
@@ -55,7 +56,7 @@ def main():
             print(actors.index())
     elif a.cmd == "fetch-actors":
         from . import actor_sources
-        print(actor_sources.fetch())
+        print(actor_sources.fetch(refresh=a.refresh))
     elif a.cmd == "index-actors":
         from . import actors
         print(actors.index(a.workers, rematch=a.rematch))

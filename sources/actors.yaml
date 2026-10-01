@@ -21,7 +21,9 @@ classes:            # Wikidata class → kind shown in the portal (instances and
   Q4335775: crime          # organized crime group
   Q1260006: crime          # drug cartel
 
-# Key actors in security reporting that the classes above do not reach (movements, campaigns, people).
+# Key actors in security reporting that the classes above do not reach (movements, campaigns, people, parties,
+# companies, think tanks, media). Their connections – members, leaders, founders, parent organisations – are
+# fetched from the Wikipedia infobox and Wikidata, and the connected people are added to the index too.
 # Give the English Wikipedia title; the Wikidata item is resolved from it. `aliases` are extra names matched
 # in the text in addition to Wikidata's (e.g. surnames, which Wikidata rarely lists as aliases).
 seeds:
@@ -37,7 +39,7 @@ seeds:
   - {wikipedia: Wagner Group, kind: armed}
   - {wikipedia: Africa Corps (Russia), kind: armed}
   - {wikipedia: Internet Research Agency, kind: state}
-  - {wikipedia: Doppelganger (disinformation campaign), kind: state}
+  - {wikipedia: Doppelganger (disinformation campaign), kind: state, aliases: [Social Design Agency]}
   - {wikipedia: Russian shadow fleet, kind: state}
   - {wikipedia: Main Directorate of the General Staff of the Armed Forces of the Russian Federation, kind: state}
   - {wikipedia: Federal Security Service, kind: state}
@@ -91,6 +93,41 @@ seeds:
   - {wikipedia: Killnet, kind: cyber}
   - {wikipedia: NoName057(16), kind: cyber}
   - {wikipedia: Anonymous Sudan, kind: cyber}
+  # political parties named in security reports (kind "party")
+  - {wikipedia: Alternative for Germany, kind: party}
+  - {wikipedia: Die Heimat, kind: party}
+  - {wikipedia: The III. Path, kind: party}
+  - {wikipedia: Freedom Party of Austria, kind: party}
+  - {wikipedia: National Rally, kind: party}
+  - {wikipedia: Golden Dawn (political party), kind: party}
+  - {wikipedia: Revival (Bulgaria), kind: party}
+  - {wikipedia: Shor Party, kind: party}
+  - {wikipedia: Opposition Platform — For Life, kind: party}
+  - {wikipedia: United Russia, kind: party}
+  - {wikipedia: Chinese Communist Party, kind: party}
+  - {wikipedia: Workers' Party of Korea, kind: party}
+  # companies, think tanks, foundations and media (kind "org")
+  - {wikipedia: Cambridge Analytica, kind: org}
+  - {wikipedia: SCL Group, kind: org}
+  - {wikipedia: Heritage Foundation, kind: org}
+  - {wikipedia: Concord Management and Consulting, kind: org}
+  - {wikipedia: RT (TV network), kind: org}
+  - {wikipedia: Russkiy Mir Foundation, kind: org}
+  - {wikipedia: Rossotrudnichestvo, kind: org}
+  - {wikipedia: Confucius Institute, kind: org}
+  - {wikipedia: Huawei, kind: org}
+  - {wikipedia: ZTE, kind: org}
+  - {wikipedia: ByteDance, kind: org}
+  - {wikipedia: Kaspersky Lab, kind: org}
+  - {wikipedia: NSO Group, kind: org}
+  - {wikipedia: Gazprom, kind: org}
+  - {wikipedia: Rosatom, kind: org}
+  - {wikipedia: Rosneft, kind: org}
+  # organised crime and violent networks
+  - {wikipedia: Solntsevskaya Bratva, kind: crime}
+  - {wikipedia: Tambov Gang, kind: crime}
+  - {wikipedia: Thief in law, kind: crime}
+  - {wikipedia: Night Wolves, kind: movement}
 
 # Names that are never matched, for any actor: ordinary words and abbreviations with other common meanings.
 ignore_aliases: [IS, ETA, IRA, Base, Al, ISI, MI, Mafia, Kartell, Cartel, The Company,

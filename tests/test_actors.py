@@ -158,3 +158,12 @@ def test_exclude_sources(library):
     with db.session() as con:
         assert con.execute("SELECT COUNT(*) FROM doc_actors WHERE actor_key='Q5'").fetchone()[0] == 0
         assert con.execute("SELECT COUNT(*) FROM doc_actors WHERE actor_key='Q3'").fetchone()[0] == 1
+
+
+def test_person_names_inside_other_names_are_skipped():
+    g = gaz(("Q30", "person", "class", ["Alan Turing"]), ("Q31", "person", "class", ["Theodore Roosevelt"]))
+    names = actors.prepare_names(g, {})
+    actors._init_matcher(names)
+    ids = {(r["actor_key"], r["name"]): r["id"] for r in names}
+    f = found("Alan Turing broke Enigma. The Alan Turing Institute. USS Theodore Roosevelt; Theodore Roosevelt said.", ids)
+    assert f == {("Q30", "Alan Turing"): ["Alan Turing"], ("Q31", "Theodore Roosevelt"): ["Theodore Roosevelt"]}

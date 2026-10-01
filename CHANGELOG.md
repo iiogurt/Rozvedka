@@ -27,6 +27,31 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.16.0] – 2026-10-01
+
+### Added
+- Connections of every actor – members, leaders, founders, key people, parent organisations, subsidiaries and
+  wings, allies and opponents, employers and party memberships – from the infobox of its English Wikipedia
+  article and from Wikidata statements in both directions, each with its source (article, infobox field and
+  revision; or Wikidata statement and cited reference). Shown on the actor pages, grouped by relation, with the
+  reports naming both in one passage.
+- Connected people are added to the actor index and found by their full names.
+- Passages list the actors named nearby and mark those with a known connection; pair pages show the documented
+  connection; the Network marks known connections with ⛓.
+- New kinds: political parties and companies, think tanks & media. New seeds include AfD, Die Heimat, Der III.
+  Weg, FPÖ, Rassemblement National, Golden Dawn, Revival, Shor Party, United Russia, the CCP, the Workers' Party
+  of Korea, Cambridge Analytica, SCL Group, Heritage Foundation, Concord, Social Design Agency, RT, Russkiy Mir,
+  Rossotrudnichestvo, Confucius Institute, Huawei, ZTE, ByteDance, Kaspersky, NSO Group, Gazprom, Rosatom,
+  Rosneft, Solntsevskaya Bratva, Tambov Gang, thieves in law and the Night Wolves.
+
+### Changed
+- Mixed-case three-letter abbreviations ("AfD") count as names on their own.
+- A person's name inside the name of something else is not counted ("Alan Turing Institute", "USS Theodore
+  Roosevelt", "… Airport", "… Prize").
+- `fetch-actors` caches its slow stages (Wikipedia infoboxes, incoming Wikidata links, item kinds) in
+  `data/gazetteer/`, so an interrupted run continues; `fetch-actors --refresh` reads them again.
+- Redirects to the same Wikipedia article are resolved for every spelling.
+
 ## [0.15.0] – 2026-10-01
 
 ### Added
@@ -269,7 +294,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/iiogurt/Rozvedka/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/iiogurt/Rozvedka/compare/v0.14.1...v0.15.0
 [0.14.1]: https://github.com/iiogurt/Rozvedka/compare/v0.14.0...v0.14.1
 [0.14.0]: https://github.com/iiogurt/Rozvedka/compare/v0.13.0...v0.14.0
