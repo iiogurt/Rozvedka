@@ -131,3 +131,30 @@ well-known facts (Five Eyes members, Finland and Sweden in NATO, …).
 - Limits: keyword matching finds what a report *talks about*, not what it concludes. Scanned PDFs without a text
   layer have no text to index. Coverage is strongest in English, German, French and the Central European and
   Nordic languages.
+
+## Trends (`/trends`)
+
+Three views built on the topic index and the full-text search:
+
+- **Topics over time** – the share of reports tagged with each topic, per year (up to 8 topics), or the share of
+  publishing agencies that reported on it. Below it: how many reports each year holds, and the topics whose share
+  rose or fell most between the last two complete years and the three before.
+- **Term trends** – the same for any words: one line per series, `OR` for translations
+  (`drone OR Drohne OR dron`), `"quotes"` for phrases. Terms match in the language typed.
+- **Who reports on what** – countries or agencies × topics for a period: the share of each one's reports tagged
+  with each topic.
+
+Tracing a number back:
+
+- Every point, bar and cell opens the Documents page filtered to exactly the documents it counts
+  (`indexed=1` limits the list to documents with classified text, as the charts do). Each view also has a table
+  view and a CSV export with a source link on every row, plus a "Where these numbers come from" section: method,
+  filters, documents left out (undated, not yet indexed), the taxonomy version.
+- Shares are counts of documents, not of mentions. Years with fewer than 30 reports are shaded; by default the
+  charts start once every year has at least 30. More attention is not necessarily a larger threat.
+- Event markers come from `sources/events.yaml`. Only the English Wikipedia title and a label are written by
+  hand; `python3 tools/build_events.py` looks up the Wikidata item and takes its date from "point in time" (P585),
+  "start time" (P580) or "inception" (P571), and stores the Wikipedia and Wikidata links and the retrieval date.
+  The portal lists every marker with these sources.
+- Charts use Apache ECharts 6.1.0 (Apache-2.0), vendored in `rozvedka/static/vendor/echarts` and checked against
+  the npm release hash.

@@ -1,0 +1,160 @@
+# Reference events drawn as markers on the trend charts.
+#
+# Only `wikipedia` (English article title) and `label` are written by hand. Everything else – Wikidata item,
+# date and the source links – is filled in from Wikipedia/Wikidata by `python3 tools/build_events.py`, so every
+# marker can be traced back: the date is Wikidata's "point in time" (P585) or "start time" (P580) or "inception" (P571) of that item;
+# events whose item has none of these are listed but not drawn.
+# Do not edit the generated fields by hand; re-run the tool instead.
+events:
+- wikipedia: September 11 attacks
+  label: 9/11 attacks
+  wikidata: Q10806
+  date: '2001-09-11'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/September_11_attacks
+  wikidata_url: https://www.wikidata.org/wiki/Q10806#P585
+  retrieved: '2026-10-01'
+- wikipedia: 2004 Madrid train bombings
+  label: Madrid train bombings
+  wikidata: Q213531
+  date: '2004-03-11'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/2004_Madrid_train_bombings
+  wikidata_url: https://www.wikidata.org/wiki/Q213531#P585
+  retrieved: '2026-10-01'
+- wikipedia: 7 July 2005 London bombings
+  label: London bombings
+  wikidata: Q10818
+  date: '2005-07-07'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/7_July_2005_London_bombings
+  wikidata_url: https://www.wikidata.org/wiki/Q10818#P585
+  retrieved: '2026-10-01'
+- wikipedia: Russo-Georgian War
+  label: Russo-Georgian war
+  wikidata: Q620735
+  date: '2008-08-08'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/Russo-Georgian_War
+  wikidata_url: https://www.wikidata.org/wiki/Q620735#P585
+  retrieved: '2026-10-01'
+- wikipedia: Annexation of Crimea by the Russian Federation
+  label: Annexation of Crimea
+  wikidata: Q15920546
+  date: '2014'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/2014_Russian_annexation_of_Crimea
+  wikidata_url: https://www.wikidata.org/wiki/Q15920546#P585
+  retrieved: '2026-10-01'
+- wikipedia: 2015 European migrant crisis
+  label: European migrant crisis
+  wikidata: Q20857240
+  date: '2014'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/2015_European_migrant_crisis
+  wikidata_url: https://www.wikidata.org/wiki/Q20857240#P585
+  retrieved: '2026-10-01'
+- wikipedia: November 2015 Paris attacks
+  label: Paris attacks
+  wikidata: Q21479779
+  date: '2015-11-13'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/November_2015_Paris_attacks
+  wikidata_url: https://www.wikidata.org/wiki/Q21479779#P585
+  retrieved: '2026-10-01'
+- wikipedia: WannaCry ransomware attack
+  label: WannaCry
+  wikidata: Q29957041
+  date: '2017-05-12'
+  date_property: P580 (start time)
+  wikipedia_url: https://en.wikipedia.org/wiki/WannaCry_ransomware_attack
+  wikidata_url: https://www.wikidata.org/wiki/Q29957041#P580
+  retrieved: '2026-10-01'
+- wikipedia: 2017 Ukraine ransomware attacks
+  label: NotPetya
+  wikidata: Q30898126
+  date: '2017-06-27'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/2017_Ukraine_ransomware_attacks
+  wikidata_url: https://www.wikidata.org/wiki/Q30898126#P585
+  retrieved: '2026-10-01'
+- wikipedia: Poisoning of Sergei and Yulia Skripal
+  label: Skripal poisoning
+  wikidata: Q50415393
+  date: '2018-03-04'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/Poisoning_of_Sergei_and_Yulia_Skripal
+  wikidata_url: https://www.wikidata.org/wiki/Q50415393#P585
+  retrieved: '2026-10-01'
+- wikipedia: COVID-19 pandemic
+  label: COVID-19 pandemic
+  wikidata: Q81068910
+  date: '2019-11-15'
+  date_property: P580 (start time)
+  wikipedia_url: https://en.wikipedia.org/wiki/COVID-19_pandemic
+  wikidata_url: https://www.wikidata.org/wiki/Q81068910#P580
+  retrieved: '2026-10-01'
+- wikipedia: 2020 United States federal government data breach
+  label: SolarWinds breach
+  wikidata: Q104236216
+  date: 2020-03
+  date_property: P571 (inception)
+  wikipedia_url: https://en.wikipedia.org/wiki/2020_United_States_federal_government_data_breach
+  wikidata_url: https://www.wikidata.org/wiki/Q104236216#P571
+  retrieved: '2026-10-01'
+- wikipedia: 2021 Belarus–European Union border crisis
+  label: Belarus–EU border crisis
+  wikidata: Q108047194
+  date: '2021'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/Belarus%E2%80%93European_Union_border_crisis
+  wikidata_url: https://www.wikidata.org/wiki/Q108047194#P585
+  retrieved: '2026-10-01'
+- wikipedia: January 6 United States Capitol attack
+  label: US Capitol attack
+  wikidata: Q104705419
+  date: '2021-01-06'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/January_6_United_States_Capitol_attack
+  wikidata_url: https://www.wikidata.org/wiki/Q104705419#P585
+  retrieved: '2026-10-01'
+- wikipedia: Fall of Kabul (2021)
+  label: Fall of Kabul
+  wikidata: Q108102583
+  date: '2021-08-15'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/Fall_of_Kabul_%282021%29
+  wikidata_url: https://www.wikidata.org/wiki/Q108102583#P585
+  retrieved: '2026-10-01'
+- wikipedia: Russian invasion of Ukraine
+  label: Russian invasion of Ukraine
+  wikidata: Q110999040
+  date: '2022-02-24'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/Russo-Ukrainian_war_%282022%E2%80%93present%29
+  wikidata_url: https://www.wikidata.org/wiki/Q110999040#P585
+  retrieved: '2026-10-01'
+- wikipedia: 2022 Nord Stream pipeline sabotage
+  label: Nord Stream sabotage
+  wikidata: Q114245504
+  date: '2022-09-26'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/Nord_Stream_pipelines_sabotage
+  wikidata_url: https://www.wikidata.org/wiki/Q114245504#P585
+  retrieved: '2026-10-01'
+- wikipedia: October 7 attacks
+  label: 7 October attacks
+  wikidata: Q122976243
+  date: 2023-10
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/October_7_attacks
+  wikidata_url: https://www.wikidata.org/wiki/Q122976243#P585
+  retrieved: '2026-10-01'
+- wikipedia: Crocus City Hall attack
+  label: Crocus City Hall attack
+  wikidata: Q125092492
+  date: '2024-03-22'
+  date_property: P585 (point in time)
+  wikipedia_url: https://en.wikipedia.org/wiki/Crocus_City_Hall_attack
+  wikidata_url: https://www.wikidata.org/wiki/Q125092492#P585
+  retrieved: '2026-10-01'
