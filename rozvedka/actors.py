@@ -39,7 +39,7 @@ from . import db, paging, topics, trends
 from .actor_sources import CONFIG, GAZETTEER
 
 log = logging.getLogger("rozvedka.actors")
-MATCHER_VERSION = "8"
+MATCHER_VERSION = "11"
 MAX_OFFSETS = 300        # positions kept per name and document
 WINDOW = 600             # characters: two actors this close count as mentioned together (one passage)
 SNIPPET = 260            # characters of context on each side of a match
@@ -47,7 +47,8 @@ TOKEN = re.compile(r"\w+")
 CJK = topics._CJK
 KINDS = {"state": "State services & state-linked", "cyber": "Cyber threat groups", "terror": "Terrorist-designated groups",
          "armed": "Armed groups & private military", "crime": "Organised crime", "movement": "Movements & networks",
-         "person": "People", "other": "Other", "country": "Countries"}
+         "person": "People", "party": "Political parties", "org": "Companies, think tanks & media",
+         "other": "Other", "country": "Countries"}
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS actors (
@@ -71,6 +72,14 @@ CREATE TABLE IF NOT EXISTS actor_pairs (          -- two actors named within WIN
     doc_id INTEGER NOT NULL, a TEXT NOT NULL, b TEXT NOT NULL, n INTEGER, PRIMARY KEY (doc_id, a, b));
 CREATE INDEX IF NOT EXISTS ix_actor_pairs_ab ON actor_pairs(a, b);
 CREATE INDEX IF NOT EXISTS ix_actor_pairs_b ON actor_pairs(b);
+CREATE TABLE IF NOT EXISTS actor_links (            -- connections from Wikipedia infoboxes and Wikidata statements
+    id INTEGER PRIMARY KEY, a TEXT NOT NULL, b TEXT NOT NULL, a_says TEXT, b_says TEXT, start TEXT, until TEXT,
+    role TEXT, note TEXT, source TEXT);
+CREATE INDEX IF NOT EXISTS ix_actor_links_a ON actor_links(a);
+CREATE INDEX IF NOT EXISTS ix_actor_links_b ON actor_links(b);
+CREATE TABLE IF NOT EXISTS link_entities (           -- connected people/organisations that are not actors
+    qid TEXT PRIMARY KEY, label TEXT, description TEXT, wikipedia TEXT, human INTEGER, org INTEGER);
+CREATE TABLE IF NOT EXISTS link_totals (actor TEXT, prop TEXT, n INTEGER, PRIMARY KEY (actor, prop));
 CREATE TABLE IF NOT EXISTS actor_meta (k TEXT PRIMARY KEY, v TEXT);
 """
 
@@ -162,6 +171,7 @@ def prepare_names(gaz: dict, cfg: dict) -> list[dict]:
             r = rows.setdefault(key, {"actor_key": a["key"], "name": name, "tokens": list(toks), "cjk": cjk,
                                       "langs": set(), "origins": set(), "manual": False, "seed": False,
                                       "person": a["kind"] == "person", "country": a["kind"] == "country",
+                                      "connected": bool(a.get("connected")),
                                       "surname": (name_tokens(a["label"]) or ("",))[-1]})
             if n["lang"]:
                 r["langs"].add(n["lang"])
@@ -190,20 +200,22 @@ def prepare_names(gaz: dict, cfg: dict) -> list[dict]:
             reason = "on the ignore list (sources/actors.yaml)"
         elif toks in excluded.get(actor, set()):
             reason = "excluded for this actor (sources/actors.yaml)"
+        elif r["connected"] and len(toks) == 1:
+            reason = "one word of the name of a connected person (only full names are matched)"
         elif r["person"] and len(toks) == 1 and not r["manual"] and toks[0] != r["surname"]:
             reason = "one word of a person's name that is not the surname (first names are shared by many people)"
         elif len(toks) == 1 and is_generic(toks):
             reason = "a generic word"
         elif len(toks) == 1 and len(toks[0]) < 3 and not (r["country"] and toks[0].isupper() and len(toks[0]) == 2):
             reason = "shorter than 3 characters"
-        elif len(toks) == 1 and len(toks[0]) == 3 and not toks[0].isupper():
+        elif len(toks) == 1 and len(toks[0]) == 3 and not toks[0].isupper() and not any(c.isupper() for c in toks[0][1:]):
             reason = "3 letters without being an abbreviation"
         elif len(owners.get(k, ())) > 1:
             others = owners[k] - {actor}
             seeded = [o for o in owners[k] if rows[(o, k)]["seed"]]
             if not (r["seed"] and len(seeded) == 1):
                 reason = "shared with " + ", ".join(sorted(others)[:5])
-        out.append({"actor_key": actor, "name": r["name"], "tokens": r["tokens"], "cjk": r["cjk"],
+        out.append({"actor_key": actor, "name": r["name"], "tokens": r["tokens"], "cjk": r["cjk"], "person": r["person"],
                     "langs": sorted(r["langs"]), "origins": sorted(r["origins"]), "manual": r["manual"],
                     "status": "used" if reason is None else "ignored", "reason": reason,
                     "weak": toks in weak_cfg.get(actor, set()) or (r["country"] and len(toks) == 1 and len(toks[0]) == 2)})
@@ -224,8 +236,20 @@ def names_hash(gaz: dict, cfg: dict) -> str:
 _M: dict = {}
 
 
+# a person's name inside the name of something else: "Alan Turing Institute", "USS Theodore Roosevelt"
+NAMED_AFTER = set("""institute institut instituto istituto instytut airport flughafen aeroport aeropuerto aeroporto
+foundation stiftung fondation fundacion fondazione fundacja centre center zentrum centro university universitat
+universite universidad universita college school schule gymnasium hospital clinic prize award preis prix premio
+medal lecture lectures street strasse avenue boulevard square platz plaza bridge brucke station building library
+museum memorial hall park trust fund society gesellschaft doctrine programme program plan act line stadium arena
+bay island port ring cup trophy scholarship fellowship room barracks kaserne base camp dam canal tunnel highway
+expressway""".split())
+SHIP_PREFIX = {"uss", "hms", "hmcs", "hmas", "hmnzs", "ss", "mv", "rv", "ins", "usns", "frs", "fgs"}
+
+
 def _init_matcher(names: list[dict]) -> None:
     first, single_long, upper, lower, cjk = {}, {}, {}, {}, []
+    _M["people"] = {n["id"] for n in names if n.get("person")}
     for n in names:
         if n["status"] != "used":
             continue
@@ -258,7 +282,12 @@ def match_text(text: str) -> tuple[dict[int, list], dict[int, int]]:
     first, single_long, upper, low = _M["first"], _M["single_long"], _M["upper"], _M["lower"]
     n = len(folded)
 
+    people = _M.get("people", set())
+
     def add(name_id, i, j):
+        if name_id in people and ((j + 1 < n and folded[j + 1].casefold() in NAMED_AFTER)
+                                  or (i > 0 and folded[i - 1].casefold() in SHIP_PREFIX)):
+            return        # a building, prize, ship … named after the person
         lst = hits.setdefault(name_id, [])
         if len(lst) < MAX_OFFSETS:
             lst.append([spans[i][0], spans[j][1]])
@@ -339,6 +368,8 @@ def index(workers: int = 4, batch: int = 50, rematch: bool = False) -> dict:
             con.execute("INSERT OR REPLACE INTO actor_meta VALUES('names_hash', ?)", (h,))
             con.execute("INSERT OR REPLACE INTO actor_meta VALUES('gazetteer_retrieved', ?)", (gaz["retrieved"],))
             con.commit()
+        load_links(con, gaz)
+        con.commit()
         todo = [tuple(r) for r in con.execute(
             """SELECT i.doc_id, t.body FROM doc_index i JOIN doc_text t ON t.rowid=i.doc_id
                WHERE i.error IS NULL AND (i.actors_hash IS NULL OR i.actors_hash != ?)""", (h,))]
@@ -360,6 +391,24 @@ def index(workers: int = 4, batch: int = 50, rematch: bool = False) -> dict:
     finally:
         con.close()
     return stats
+
+
+def _ymd(v):
+    return v if v and re.match(r"-?\d{4}", v) else None
+
+
+def load_links(con, gaz: dict) -> None:
+    """Connections of the gazetteer → actor_links / link_entities / link_totals (replaced on every run)."""
+    con.executescript("DELETE FROM actor_links; DELETE FROM link_entities; DELETE FROM link_totals;")
+    con.executemany("INSERT INTO actor_links(a,b,a_says,b_says,start,until,role,note,source) VALUES(?,?,?,?,?,?,?,?,?)",
+                    [(l["a"], l["b"], l["a_says"], l["b_says"], _ymd(l["start"]), _ymd(l["end"]), l["role"], l["note"],
+                      json.dumps(l["source"], ensure_ascii=False)) for l in gaz.get("links", [])])
+    ents = gaz.get("entities", {})
+    con.executemany("INSERT OR REPLACE INTO link_entities VALUES(?,?,?,?,?,?)",
+                    [(q, e["label"], e["description"], e["wikipedia"], int(e["human"]), int(e["org"]))
+                     for q, e in ents.items() if q != "_totals"])
+    con.executemany("INSERT OR REPLACE INTO link_totals VALUES(?,?,?)",
+                    [(*k.split("|"), n) for k, n in ents.get("_totals", {}).items()])
 
 
 def derive(con, cfg: dict | None = None) -> dict:
@@ -554,21 +603,123 @@ def actor_detail(key: str, passages: int = 40, page: int | str = 1) -> dict | No
                                                    GROUP BY topic ORDER BY n DESC LIMIT 15""", doc_ids)
                           if not tax.get(r["topic"], {}).get("meta")]
             related = _related(con, key, docs, marks, doc_ids)
+        conns = connections_of(con, key, where, args)
+        linked = {}
+        for g in conns:
+            for c in g["entries"]:
+                linked.setdefault(c["key"], []).extend(x for x in c["says"] if x not in linked.get(c["key"], []))
+        linked = {k: " · ".join(v) for k, v in linked.items()}
         shown = []
         offset = paging.page_offset(len(docs), page, passages)
         for d in docs[offset:offset + passages]:
             body = con.execute("SELECT body FROM doc_text WHERE rowid=?", (d["doc_id"],)).fetchone()[0] or ""
             s, e = json.loads(d["spans"])[0]
+            near = nearby(con, d["doc_id"], key, s, e, linked)
             pages = json.loads(d["pages"]) if d["pages"] else None
             page = topics.page_of(pages, s)
             shown.append({**{k: d[k] for k in ("doc_id", "title", "year", "agency", "country", "lang", "hits", "url")},
-                          "names": json.loads(d["names"]), "page": page, **_snippet(body, s, e),
+                          "names": json.loads(d["names"]), "page": page, **_snippet(body, s, e), "nearby": near,
                           "open": f"/doc/{d['doc_id']}" + (f"#page={page}" if page else "")})
     return {"actor": data, "row": dict(row), "names": names, "docs": len(docs), "timeline": timeline,
             "agencies": sorted(agencies.values(), key=lambda a: -a["docs"]), "topics": topic_rows,
             "related": related, "passages": shown, "kind_name": kind_name(row["kind"]), "window": WINDOW,
+            "connections": conns,
             "before": [{**{k: d[k] for k in ("doc_id", "title", "year", "agency", "country")},
                         "names": json.loads(d["names"])} for d in before]}
+
+
+# relations (as seen from the actor) grouped into a few categories, in display order
+CONNECTION_GROUPS = [
+    ("Leadership", {"led by", "chaired by", "directed by", "chief executive"}),
+    ("Founders", {"founded by"}),
+    ("Members & people", {"members", "party members", "employees", "personnel", "key people", "board members", "affiliated"}),
+    ("Memberships & roles", {"member of", "member of the party", "employed by", "serves in", "affiliated with",
+                             "leader of", "founder of", "founded", "chair of", "director of", "chief executive of",
+                             "board member of", "key person in"}),
+    ("Organisation", {"parent organisation", "part of", "subsidiaries and units", "parts", "owned by", "owns"}),
+    ("Allies & opponents", {"allied with", "opposed to"}),
+    ("Predecessors & successors", {"predecessor", "successor"}),
+]
+
+
+def connection_group(says: str) -> str:
+    return next((name for name, rels in CONNECTION_GROUPS if says in rels), "Other")
+
+
+def connections_of(con, key: str, where: str, args: list) -> list[dict]:
+    """The actor's connections, grouped by relation as seen from the actor, each with its sources and – when the
+    other side is in the actor index – its reports and the reports naming both in one passage."""
+    rows = con.execute("SELECT * FROM actor_links WHERE a=? OR b=?", (key, key)).fetchall()
+    if not rows:
+        return []
+    merged: dict[tuple, dict] = {}
+    for r in rows:
+        mine = r["a"] == key
+        other, says = (r["b"], r["a_says"]) if mine else (r["a"], r["b_says"])
+        if other == key:
+            continue
+        m = merged.setdefault((connection_group(says), other),
+                              {"key": other, "says": [], "sources": [], "start": None, "end": None, "roles": set(),
+                               "notes": set(), "props": set()})
+        if says not in m["says"]:
+            m["says"].append(says)
+        src = json.loads(r["source"])
+        if src not in m["sources"]:
+            m["sources"].append(src)
+        if src.get("type") == "wikidata":
+            m["props"].add(src["property"])
+        m["start"] = m["start"] or r["start"]
+        m["end"] = m["end"] or r["until"]
+        if r["role"]:
+            m["roles"].add(r["role"])
+        if r["note"]:
+            m["notes"].add(r["note"])
+    others = sorted({k for _, k in merged})
+    marks = ",".join("?" * len(others))
+    known = {r["key"]: dict(r) for r in con.execute(f"SELECT key, label, kind FROM actors WHERE key IN ({marks})", others)}
+    ents = {r["qid"]: dict(r) for r in con.execute(f"SELECT * FROM link_entities WHERE qid IN ({marks})", others)}
+    docs = dict(con.execute(
+        f"""SELECT da.actor_key, COUNT(DISTINCT da.doc_id) FROM doc_actors da JOIN actors a ON a.key=da.actor_key
+            JOIN documents d ON d.id=da.doc_id JOIN sources s ON s.id=d.source_id
+            WHERE da.actor_key IN ({marks}) AND {where} AND {NOT_BEFORE_FOUNDED} GROUP BY da.actor_key""",
+        (*others, *args)).fetchall())
+    together = {}
+    for r in con.execute(
+            f"""SELECT CASE WHEN p.a=? THEN p.b ELSE p.a END other, COUNT(DISTINCT p.doc_id) n FROM actor_pairs p
+                JOIN documents d ON d.id=p.doc_id JOIN sources s ON s.id=d.source_id
+                JOIN actors a1 ON a1.key=p.a JOIN actors a2 ON a2.key=p.b
+                WHERE (p.a=? OR p.b=?) AND (p.a IN ({marks}) OR p.b IN ({marks})) AND {where} AND {PAIR_FOUNDED}
+                GROUP BY other""", (key, key, key, *others, *others, *args)):
+        together[r["other"]] = r["n"]
+    totals = dict(((r["prop"]), r["n"]) for r in con.execute("SELECT prop, n FROM link_totals WHERE actor=?", (key,)))
+    groups: dict[str, list] = {}
+    for (group, other), m in merged.items():
+        k, e = known.get(other), ents.get(other, {})
+        groups.setdefault(group, []).append({
+            **m, "roles": sorted(m["roles"]), "notes": sorted(m["notes"]), "props": sorted(m["props"]),
+            "label": (k or e).get("label", other), "description": e.get("description", ""),
+            "actor": bool(k), "kind": (k or {}).get("kind") or ("person" if e.get("human") else "org"),
+            "wikipedia": e.get("wikipedia"), "docs": docs.get(other, 0), "together": together.get(other, 0),
+            "pair_link": f"/actors/{key}/with/{other}" if k else None})
+    order = [name for name, _ in CONNECTION_GROUPS] + ["Other"]
+    out = []
+    for group in sorted(groups, key=order.index):
+        items = groups[group]
+        items.sort(key=lambda x: (-x["together"], -x["docs"], not x["actor"], x["label"]))
+        total = max((totals.get(p, 0) for it in items for p in it["props"]), default=0)
+        out.append({"group": group, "entries": items, "total": total if total > len(items) else 0})
+    return out
+
+
+def nearby(con, doc_id: int, key: str, s: int, e: int, linked: dict[str, str], limit: int = 10) -> list[dict]:
+    """Other actors named within WINDOW characters of a passage; those connected to the actor first."""
+    out = []
+    for r in con.execute("""SELECT da.actor_key, da.spans, a.label, a.kind FROM doc_actors da
+                            JOIN actors a ON a.key=da.actor_key WHERE da.doc_id=? AND da.actor_key != ?""", (doc_id, key)):
+        if any(s - WINDOW <= x <= e + WINDOW for x, _ in json.loads(r["spans"])):
+            out.append({"key": r["actor_key"], "label": r["label"], "kind": r["kind"], "says": linked.get(r["actor_key"])})
+    out.sort(key=lambda x: (x["says"] is None, x["kind"] == "country", x["label"]))
+    return out[:limit]
 
 
 # a pair counts in a report only when the report is not dated before either actor was founded
@@ -633,7 +784,10 @@ def pair_detail(a: str, b: str, year_from: int | None = None, year_to: int | Non
                           "page": page, "before": snip["before"], "first": " ".join(body[s1:e1].split()),
                           "middle": mid, "second": " ".join(body[s2:e2].split()) if s2 >= e1 else "",
                           "after": snip["after"], "open": f"/doc/{d['doc_id']}" + (f"#page={page}" if page else "")})
-    return {"a": actors_[a], "b": actors_[b], "docs": len(docs), "passages": shown, "window": WINDOW,
+        known = [{"a_says": r["a_says"], "b_says": r["b_says"], "from_a": r["a"] == a, "source": json.loads(r["source"]),
+                  "start": r["start"], "end": r["until"], "role": r["role"], "note": r["note"]}
+                 for r in con.execute("SELECT * FROM actor_links WHERE (a=? AND b=?) OR (a=? AND b=?)", (a, b, b, a))]
+    return {"a": actors_[a], "b": actors_[b], "docs": len(docs), "passages": shown, "window": WINDOW, "known": known,
             "filters": {k: v for k, v in {"year_from": year_from, "year_to": year_to, "coalition": coalition,
                                           "topic": topic, "type": type}.items() if v}}
 

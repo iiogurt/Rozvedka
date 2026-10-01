@@ -96,6 +96,35 @@
 </section>
 </div>
 
+{% macro src_links(sources) %}{% set wp = sources|selectattr('type', 'equalto', 'wikipedia')|list %}{% set wd = sources|selectattr('type', 'equalto', 'wikidata')|list %}{% if wp %}<a class="src-tag" href="{{ wp[0].revision_url or wp[0].url }}" title="English Wikipedia: {{ wp[0].article }}, infobox field “{{ wp|map(attribute='field')|unique|join('”, “') }}”, revision {{ wp[0].revision }}, retrieved {{ wp[0].retrieved }}">WP</a>{% endif %}{% if wd %}<a class="src-tag" href="{{ wd[0].url }}" title="Wikidata statement{{ 's' if wd|length > 1 }} {{ wd|map(attribute='property')|unique|join(', ') }}, retrieved {{ wd[0].retrieved }}">WD</a>{% set refs = wd|selectattr('ref')|list %}{% if refs %}<a class="src-tag" href="{{ refs[0].ref }}" rel="noopener" title="Reference cited by Wikidata{{ ' (' ~ refs|length ~ ')' if refs|length > 1 }}">ref{{ refs|length if refs|length > 1 }}</a>{% endif %}{% endif %}{% endmacro %}
+{% if connections %}
+<section class="viz-card" id="connections">
+  <h2 class="viz-title">Connections</h2>
+  <p class="muted small viz-sub">People and organisations linked to {{ a.label }} in the infobox of its English Wikipedia article
+    and in Wikidata statements (each with its source). Where the other side is in the actor index: the reports naming it, and
+    – the most telling number – the reports naming both in one passage. Greyed: not named in any report.
+    WP = Wikipedia infobox, WD = Wikidata statement, ref = the source cited there (hover for details).</p>
+  <div class="conn-grid">
+  {% for g in connections %}
+    <div class="conn-group">
+      <h3 class="viz-mini">{{ g.group }} <span class="muted small">{{ g.entries|length }}{% if g.total %} – the most notable of {{ g.total }} on Wikidata{% endif %}</span></h3>
+      <ul class="conn-list">
+      {% for c in g.entries[:40] %}
+        <li class="{{ 'cn-quiet' if not c.docs }}">
+          <span class="cn-name"><i class="kdot kind-{{ c.kind }}"></i>{% if c.actor %}<a href="/actors/{{ c.key }}">{{ c.label }}</a>{% elif c.wikipedia %}<a href="{{ c.wikipedia }}" rel="noopener">{{ c.label }}</a>{% else %}<a href="https://www.wikidata.org/wiki/{{ c.key }}" rel="noopener">{{ c.label }}</a>{% endif %}
+            <span class="cn-says">{{ c.says|join(' · ') }}{% if c.roles or c.notes %}, {{ (c.roles + c.notes)|join(', ') }}{% endif %}{% if c.start or c.end %} {{ (c.start or '')[:4] }}–{{ (c.end or '')[:4] }}{% endif %}</span></span>
+          <span class="cn-src">{{ src_links(c.sources) }}</span>
+          <span class="cn-num small">{% if c.together %}<a href="{{ c.pair_link }}" title="reports naming both in one passage"><b>{{ c.together }}</b> together</a>{% elif c.docs %}<span class="muted" title="reports naming {{ c.label }}">{{ c.docs }} rep.</span>{% endif %}</span>
+        </li>
+      {% endfor %}
+      </ul>
+      {% if g.entries|length > 40 %}<p class="muted small">and {{ g.entries|length - 40 }} more</p>{% endif %}
+    </div>
+  {% endfor %}
+  </div>
+</section>
+{% endif %}
+
 <section class="viz-card" id="passages">
   <h2 class="viz-title">Passages</h2>
   <p class="muted small viz-sub">The first mention in each report, newest reports first (<a href="/?actor={{ a.key }}">as a document list</a>).
@@ -107,6 +136,8 @@
       <div class="p-head"><img class="flag-sm" src="{{ flag_url(p.country) }}" alt=""> <b>{{ p.agency }}</b>
         {% if p.year %}{{ p.year }} · {% endif %}<span class="p-title">{{ p.title }}</span></div>
       <blockquote class="p-text">{{ p.before }}<mark>{{ p.match }}</mark>{{ p.after }}</blockquote>
+      {% if p.nearby %}<div class="p-near small"><span class="muted">Named nearby:</span>
+        {% for n in p.nearby %}<a class="mchip {{ 'linked' if n.says }}" href="/actors/{{ a.key }}/with/{{ n.key }}" title="{{ 'Connected: ' ~ n.says ~ ' – ' if n.says }}passages naming both"><i class="kdot kind-{{ n.kind }}"></i>{{ n.label }}{% if n.says %} <span class="cn-rel">{{ n.says }}</span>{% endif %}</a>{% endfor %}</div>{% endif %}
       <div class="p-foot small">
         <a href="{{ p.open }}">{% if p.page %}p. {{ p.page }}{% else %}open report{% endif %}</a> ·
         <a href="{{ p.url }}" rel="noopener">original</a> ·

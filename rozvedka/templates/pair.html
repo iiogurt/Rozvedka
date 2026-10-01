@@ -9,6 +9,11 @@
   Below is the closest such passage in each report, newest reports first.
   Being named together is not evidence of a connection – read what the passage says.</p>
 
+{% if known %}<div class="viz-card known-link"><h2 class="viz-title">Known connection</h2><ul class="plain">
+  {% for k in known %}<li><b>{{ (a if k.from_a else b).label }}</b> – {{ k.a_says }} – <b>{{ (b if k.from_a else a).label }}</b>
+    {% if k.role or k.note %}<span class="muted">({{ k.role or k.note }})</span>{% endif %}{% if k.start or k.end %} <span class="muted">{{ (k.start or '')[:4] }}–{{ (k.end or '')[:4] }}</span>{% endif %}
+    · <span class="small">{% if k.source.type == 'wikipedia' %}<a href="{{ k.source.revision_url or k.source.url }}">Wikipedia infobox ({{ k.source.article }}, “{{ k.source.field }}”)</a>{% else %}<a href="{{ k.source.url }}">Wikidata {{ k.source.property }}</a>{% if k.source.ref %} · <a href="{{ k.source.ref }}" rel="noopener">reference</a>{% endif %}{% endif %}</span></li>{% endfor %}
+</ul></div>{% endif %}
 {{ pager(pg, "reports") }}
 <ol class="passages">
 {% for p in passages %}

@@ -24,6 +24,7 @@ from pathlib import Path
 
 import yaml
 
+from . import connections
 from .config import DATA, ROOT
 
 log = logging.getLogger("rozvedka.actors")
@@ -40,7 +41,8 @@ DELAY = 1.0
 NOT_ACTORS = {"Q6256": "country", "Q7275": "state", "Q4830453": "business"}
 
 
-def _get(url: str, params: dict | None = None, accept: str = "application/json", timeout: int = 180):
+def _get(url: str, params: dict | None = None, accept: str = "application/json", timeout: int = 180,
+         delay: float = DELAY):
     if params:
         url += "?" + urllib.parse.urlencode(params)
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": accept})
@@ -48,7 +50,7 @@ def _get(url: str, params: dict | None = None, accept: str = "application/json",
         try:
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 data = json.load(r)
-            time.sleep(DELAY)
+            time.sleep(delay)
             return data
         except Exception as e:  # noqa: BLE001 - retry rate limits and timeouts, then give up loudly
             if attempt == 3:
@@ -128,21 +130,26 @@ def link_attack_by_name(groups: list[dict], ents: dict, found: dict, attack_qids
     return linked
 
 
-def resolve_titles(titles: list[str]) -> dict[str, str]:
-    """English Wikipedia title → Wikidata QID (following redirects)."""
+def resolve_titles(titles: list[str], what: str = "seed") -> dict[str, str]:
+    """English Wikipedia title → Wikidata QID (following redirects; several spellings may lead to one article)."""
     out = {}
     for chunk in _chunks(titles, 50):
         d = _get(WP_API, {"action": "query", "prop": "pageprops", "ppprop": "wikibase_item", "redirects": 1,
                           "titles": "|".join(chunk), "format": "json", "formatversion": 2})["query"]
-        back = {}
+        back: dict[str, set] = {}
         for n in d.get("normalized", []) + d.get("redirects", []):
-            back[n["to"]] = back.get(n["from"], n["from"])
+            back.setdefault(n["to"], set()).update(back.get(n["from"], set()) | {n["from"]})
         for p in d["pages"]:
             if "pageprops" in p:
-                out[back.get(p["title"], p["title"])] = p["pageprops"]["wikibase_item"]
+                for original in back.get(p["title"], set()) | {p["title"]}:
+                    if original in chunk:
+                        out[original] = p["pageprops"]["wikibase_item"]
     missing = set(titles) - set(out)
-    for t in sorted(missing):
-        log.warning("seed %r: no Wikipedia article / Wikidata item – skipped", t)
+    if what == "seed":
+        for t in sorted(missing):
+            log.warning("seed %r: no Wikipedia article / Wikidata item – skipped", t)
+    elif missing:
+        log.info("%d %s without a Wikipedia article / Wikidata item (red links) – left out", len(missing), what)
     return out
 
 
@@ -248,7 +255,175 @@ def country_actors(cfg: dict, today: str) -> list[dict]:
     return out
 
 
-def fetch(config: Path = CONFIG, out: Path = GAZETTEER) -> dict:
+class _Cache:
+    """A JSON file under data/gazetteer/ that keeps the results of a slow fetch stage between runs."""
+
+    def __init__(self, name: str, refresh: bool = False):
+        self.path = GAZETTEER.parent / name
+        self.data = {} if refresh or not self.path.exists() else json.loads(self.path.read_text(encoding="utf-8"))
+
+    def save(self):
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self.path.write_text(json.dumps(self.data, ensure_ascii=False), encoding="utf-8")
+
+
+def _sparql_batches(make_query, items: list[str], size: int) -> list[dict]:
+    """Run a VALUES query in batches; a batch that times out is retried item by item."""
+    rows = []
+    for chunk in _chunks(items, size):
+        try:
+            rows += sparql(make_query(chunk))
+        except Exception as e:  # noqa: BLE001
+            log.warning("batch of %d failed (%s); retrying one by one", len(chunk), e)
+            for one in chunk:
+                try:
+                    rows += sparql(make_query([one]))
+                except Exception as e2:  # noqa: BLE001
+                    log.warning("  %s: %s", one, e2)
+    return rows
+
+
+def _kinds_of(qids: list[str], refresh: bool = False) -> tuple[set[str], set[str]]:
+    """Which of these items are people (P31 human) and which are organisations (a class that is a subclass of
+    organization, Q43229). Direct classes are read first; only the distinct classes climb the class tree."""
+    kinds = _Cache("kinds.json", refresh)
+    classes = _Cache("org_classes.json", refresh)
+    todo = [q for q in qids if q not in kinds.data]
+    p31: dict[str, set] = {}
+    for r in _sparql_batches(lambda c: "SELECT ?i ?c WHERE { VALUES ?i { %s } ?i wdt:P31 ?c . }"
+                             % " ".join(f"wd:{q}" for q in c), todo, 200):
+        p31.setdefault(_qid(r["i"]["value"]), set()).add(_qid(r["c"]["value"]))
+    new_classes = sorted({c for cs in p31.values() for c in cs} - set(classes.data) - {"Q5"})
+    is_org = set()
+    for r in _sparql_batches(lambda c: "SELECT DISTINCT ?c WHERE { VALUES ?c { %s } ?c wdt:P279* wd:Q43229 . }"
+                             % " ".join(f"wd:{q}" for q in c), new_classes, 40):
+        is_org.add(_qid(r["c"]["value"]))
+    classes.data.update({c: c in is_org for c in new_classes})
+    classes.save()
+    for q in todo:
+        cs = p31.get(q, set())
+        kinds.data[q] = "human" if "Q5" in cs else "org" if any(classes.data.get(c) or c == "Q43229" for c in cs) else "other"
+    kinds.save()
+    humans = {q for q in qids if kinds.data.get(q) == "human"}
+    orgs = {q for q in qids if kinds.data.get(q) == "org"}
+    return humans, orgs
+
+
+def connect(actors: list[dict], ents: dict, today: str, refresh: bool = False) -> tuple[list[dict], dict, list[dict]]:
+    """Links between actors and the people/organisations around them (see rozvedka/connections.py).
+
+    Returns (links, entities, people): every link with its source; label, description and Wikipedia article of
+    each connected item; and the connected people, to be added to the actor index (full names only)."""
+    by_key = {a["key"]: a for a in actors}
+    qids = [a["qid"] for a in actors if a["qid"]]
+    people_titles = {a["wikipedia"]["title"] for a in actors if a["kind"] == "person" and a.get("wikipedia")}
+    titles = sorted({a["wikipedia"]["title"] for a in actors if a.get("wikipedia")})
+    boxes = connections.fetch_infoboxes(lambda u, p: _get(u, p, delay=0.25), titles, WP_API, people_titles, delay=0,
+                                        cache=GAZETTEER.parent / "infoboxes.json", refresh=refresh)
+    link_titles = sorted({l["title"] for b in boxes.values() for l in b["links"]})
+    title_qid = resolve_titles(link_titles, "infobox links") if link_titles else {}
+    actor_by_title = {a["wikipedia"]["title"]: a["key"] for a in actors if a.get("wikipedia")}
+
+    raw = []   # (actor side, other side, …) before filtering by kind of the other item
+    for title, box in boxes.items():
+        a = actor_by_title.get(title)
+        for l in box["links"]:
+            b = title_qid.get(l["title"])
+            if not a or not b or b == a:
+                continue
+            raw.append({"a": a, "b": b, "a_says": l["relation"], "b_says": l["inverse"], "start": None, "end": None,
+                        "role": None, "note": l["note"],
+                        "source": {"type": "wikipedia", "article": title, "field": l["field"],
+                                   "revision": box["revision"], "url": connections.wiki_url(title),
+                                   "revision_url": f"https://en.wikipedia.org/w/index.php?oldid={box['revision']}",
+                                   "retrieved": today}})
+    cached = _Cache("incoming.json", refresh)
+    missing = [q for q in qids if q not in cached.data]
+    got, failed = connections.incoming(sparql, missing)
+    for row in got:
+        cached.data.setdefault(row["object"], []).append(row)
+    for q in missing:
+        if q not in failed:
+            cached.data.setdefault(q, [])
+        else:
+            cached.data.pop(q, None)          # not cached: tried again on the next run
+    cached.save()
+    inc = [r for q in qids for r in cached.data.get(q, [])]
+    # most notable per actor and relation; record how many there are in all
+    groups: dict[tuple, list] = {}
+    for r in inc:
+        groups.setdefault((r["object"], r["prop"]), []).append(r)
+    totals = {}
+    for (obj, prop), lst in groups.items():
+        lst.sort(key=lambda r: -r["sitelinks"])
+        seen, kept = set(), []
+        for r in lst:
+            if r["subject"] not in seen:
+                seen.add(r["subject"]); kept.append(r)
+        totals[f"{obj}|{prop}"] = len(kept)
+        groups[(obj, prop)] = kept[:connections.PER_RELATION]
+    wd_rows = [r for lst in groups.values() for r in lst] + connections.outgoing(
+        {q: e for q, e in ents.items() if q in by_key}, lambda v: _time(v) if v else None)
+    for r in wd_rows:
+        a_says, b_says = connections.RELATIONS[r["prop"]]
+        raw.append({"a": r["subject"], "b": r["object"], "a_says": a_says, "b_says": b_says, "start": r["start"],
+                    "end": r["end"], "role": r["role"], "note": "",
+                    "source": {"type": "wikidata", "property": r["prop"], "statement": r["statement"],
+                               "url": connections.statement_url(r["subject"], r["prop"]), "ref": r["ref"],
+                               "stated_in": r["stated_in"], "retrieved": today}})
+    others = sorted({x for r in raw for x in (r["a"], r["b"]) if x not in by_key})
+    humans, orgs = _kinds_of(others, refresh)
+    keep = humans | orgs | set(by_key)
+    links = [r for r in raw if r["a"] in keep and r["b"] in keep and by_key.get(r["a"], {}).get("kind") != "country"
+             and by_key.get(r["b"], {}).get("kind") != "country"]
+    extra = sorted({x for r in links for x in (r["a"], r["b"]) if x not in by_key}
+                   | {r["role"] for r in links if r["role"]} | {r["source"].get("stated_in") for r in links if r["source"].get("stated_in")})
+    info = entities(extra, "labels|aliases|descriptions|sitelinks/urls|info", LANGS)
+    label = lambda e, q: next((e["labels"][lg]["value"] for lg in ("en", "mul") if lg in e.get("labels", {})),  # noqa: E731
+                              next(iter(e.get("labels", {}).values()), {}).get("value", q))
+    ent_out = {}
+    for q, e in info.items():
+        t = e.get("sitelinks", {}).get("enwiki", {}).get("title")
+        ent_out[q] = {"label": label(e, q), "description": e.get("descriptions", {}).get("en", {}).get("value", ""),
+                      "wikipedia": connections.wiki_url(t) if t else None, "human": q in humans, "org": q in orgs}
+    for r in links:
+        if r["role"]:
+            r["role"] = ent_out.get(r["role"], {}).get("label", r["role"])
+        if r["source"].get("stated_in"):
+            r["source"]["stated_in_label"] = ent_out.get(r["source"]["stated_in"], {}).get("label")
+    # connected people become actors (found by their full names only)
+    reasons: dict[str, list] = {}
+    for r in links:
+        for me, other, says in ((r["a"], r["b"], r["b_says"]), (r["b"], r["a"], r["a_says"])):
+            if me in humans and me not in by_key and other in by_key:
+                reasons.setdefault(me, []).append(
+                    {"via": "connection", "kind": "person",
+                     "text": f"Connected to {by_key[other]['label']}: {says} "
+                             f"({'Wikipedia infobox' if r['source']['type'] == 'wikipedia' else 'Wikidata'})"})
+    people = []
+    for q, rs in reasons.items():
+        e = info.get(q)
+        if not e:
+            continue
+        names = [{"name": v["value"], "lang": lg, "origin": "Wikidata label"} for lg, v in e.get("labels", {}).items()]
+        names += [{"name": a["value"], "lang": lg, "origin": "Wikidata alias"} for lg, al in e.get("aliases", {}).items() for a in al]
+        t = e.get("sitelinks", {}).get("enwiki", {}).get("title")
+        people.append({
+            "key": q, "qid": q, "kind": "person", "connected": True, "label": ent_out[q]["label"],
+            "description": ent_out[q]["description"], "instance_of": [], "countries": [], "inception": None,
+            "dissolved": None, "designations": [], "image": None, "names": names, "reasons": rs[:5],
+            "wikidata": {"url": f"https://www.wikidata.org/wiki/{q}", "revision": e.get("lastrevid"),
+                         "revision_url": f"https://www.wikidata.org/w/index.php?title={q}&oldid={e.get('lastrevid')}",
+                         "retrieved": today},
+            "wikipedia": t and {"title": t, "url": connections.wiki_url(t), "extract": "", "revision": None,
+                                "revision_url": None, "revision_time": None, "retrieved": today,
+                                "licence": "CC BY-SA 4.0"},
+            "attack": None})
+    log.info("connections: %d links, %d connected people added", len(links), len(people))
+    return links, {**ent_out, "_totals": totals}, people
+
+
+def fetch(config: Path = CONFIG, out: Path = GAZETTEER, refresh: bool = False) -> dict:
     cfg = yaml.safe_load(config.read_text(encoding="utf-8"))
     today = dt.date.today().isoformat()
     found, attack_qids = candidates(cfg)
@@ -346,6 +521,9 @@ def fetch(config: Path = CONFIG, out: Path = GAZETTEER) -> dict:
             "names": [{"name": n, "lang": "", "origin": f"MITRE ATT&CK {g['id']}"} for n in [g["name"], *g["aliases"]]],
             "reasons": [{"via": "attack", "kind": "cyber", "text": f"MITRE ATT&CK group {g['id']}"}],
             "wikidata": None, "wikipedia": None, "attack": {**g, "retrieved": today}})
+    links, link_entities, people = connect(actors, ents, today, refresh)
+    have = {a["key"] for a in actors}
+    actors += [p for p in people if p["key"] not in have]
     have = {a["key"] for a in actors}
     for c in country_actors(cfg, today):
         if c["key"] in have:      # a state that is also listed as an actor (e.g. a seed): keep one entry, as country
@@ -355,7 +533,8 @@ def fetch(config: Path = CONFIG, out: Path = GAZETTEER) -> dict:
             "sources": {"wikidata": {"sparql": SPARQL, "api": WD_API, "licence": "CC0"},
                         "wikipedia": {"api": WP_API, "licence": "CC BY-SA 4.0"},
                         "attack": {**attack_meta, "licence": "MITRE ATT&CK terms of use (attribution)"}},
-            "actors": sorted(actors, key=lambda a: a["label"].lower())}
+            "actors": sorted(actors, key=lambda a: a["label"].lower()),
+            "links": links, "entities": link_entities}
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = out.with_suffix(".tmp")
     tmp.write_text(json.dumps(data, ensure_ascii=False, indent=0), encoding="utf-8")

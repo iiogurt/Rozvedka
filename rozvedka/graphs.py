@@ -97,6 +97,11 @@ def associations(year_from=None, year_to=None, coalition="", type="", topic="", 
                         GROUP BY p.a, p.b""", (*keys, *keys, *args)):
                 pairs[(r["a"], r["b"])] = r["n"]
         sim = {k: npmi(n, info[k[0]]["docs"], info[k[1]]["docs"], n_docs) for k, n in pairs.items() if n >= min_pair}
+        known = {}   # documented connections (Wikipedia infobox / Wikidata) between the shown actors
+        if keys:
+            for r in con.execute(f"SELECT a, b, a_says FROM actor_links WHERE a IN ({marks}) AND b IN ({marks})", (*keys, *keys)):
+                k = (r["a"], r["b"]) if r["a"] < r["b"] else (r["b"], r["a"])
+                known.setdefault(k, f"{info[r['a']]['label']} – {r['a_says']} – {info[r['b']]['label']}")
         groups = cluster(keys, sim, threshold)
         multi = [g for g in groups if len(g) > 1]
         single = [g[0] for g in groups if len(g) == 1]
@@ -104,8 +109,8 @@ def associations(year_from=None, year_to=None, coalition="", type="", topic="", 
         multi.sort(key=lambda g: -sum(info[k]["docs"] for k in g))
         order = [k for g in multi for k in sorted(g, key=lambda k: -info[k]["docs"])] + \
             sorted(single, key=lambda k: -info[k]["docs"])
-        clusters = [_cluster_summary(con, g, info, pairs, sim, where, args, params, qs, n_docs) for g in multi]
-    cells = [{"a": a, "b": b, "docs": n, "npmi": round(sim.get((a, b), 0.0), 3),
+        clusters = [_cluster_summary(con, g, info, pairs, sim, where, args, params, qs, n_docs, known) for g in multi]
+    cells = [{"a": a, "b": b, "docs": n, "npmi": round(sim.get((a, b), 0.0), 3), "known": known.get((a, b)),
               "link": f"/actors/{a}/with/{b}" + (f"?{qs}" if qs else "")} for (a, b), n in pairs.items()]
     for n in nodes:
         n["link"] = f"/actors/{n['key']}"
@@ -125,7 +130,7 @@ def associations(year_from=None, year_to=None, coalition="", type="", topic="", 
                 "gazetteer": actors.stamp().get("gazetteer_retrieved")}}
 
 
-def _cluster_summary(con, members, info, pairs, sim, where, args, params, qs, n_docs) -> dict:  # noqa: ARG001
+def _cluster_summary(con, members, info, pairs, sim, where, args, params, qs, n_docs, known=None) -> dict:  # noqa: ARG001
     """What a cluster's reports are about: members, strongest ties, characteristic topics, years, agencies."""
     sql, sargs = actors.cluster_clause(members)
     docs = [dict(r) for r in con.execute(
@@ -164,7 +169,8 @@ def _cluster_summary(con, members, info, pairs, sim, where, args, params, qs, n_
             "docs": len(ids), "docs_link": trends.docs_url({**params, "cluster": ",".join(sorted(members))}),
             "cohesion": round(sum(sim.get(t, 0) for t in ties) / max(1, len(members) * (len(members) - 1) / 2), 3),
             "ties": [{"a": a, "b": b, "la": info[a]["label"], "lb": info[b]["label"], "docs": pairs[(a, b)],
-                      "npmi": round(sim[(a, b)], 2), "link": f"/actors/{a}/with/{b}" + (f"?{qs}" if qs else "")}
+                      "npmi": round(sim[(a, b)], 2), "link": f"/actors/{a}/with/{b}" + (f"?{qs}" if qs else ""),
+                      "known": (known or {}).get((a, b))}
                      for a, b in ties[:4]],
             "topics": topics_out[:5], "years": sorted(years.items()),
             "agencies": sorted(agencies.values(), key=lambda g: -g["docs"])[:4]}

@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.15.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.16.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -100,6 +100,20 @@ crawled from (with language and current/archive), and a link to its headquarters
 - Each actor page: reference data with its source and revision, the Wikipedia lead, mentions per year, which
   agencies report on it, the topics of those reports, actors named in the same passage, and **the passages
   themselves with a link to the cited page of the PDF**.
+<img src="docs/images/connections.png" alt="Connections of an actor: leadership, founders, members with sources and reports naming both" width="900">
+
+- **Connections** – the people and organisations around each actor: members, leaders, founders, key people,
+  parent organisations, subsidiaries and wings, allies, employers, party memberships. They come from the
+  infobox of the actor's English Wikipedia article and from Wikidata statements (in both directions), each with
+  its source – article, infobox field and revision, or Wikidata statement and cited reference. The connected
+  people are added to the index and found by their full names, so a report naming e.g. Alexander Nix shows his
+  link to Cambridge Analytica.
+- In the reports: every passage lists the actors named nearby and marks those with a known connection
+  ("member of the party", "led by" …); pair pages show the documented connection above the passages, and the
+  Network marks connected ties with ⛓.
+- Beyond security services and armed groups the index covers political parties (AfD, FPÖ, Rassemblement
+  National, United Russia, CCP …) and companies, think tanks and media (Cambridge Analytica, Heritage Foundation,
+  RT, Huawei, Gazprom …); add more as seeds in `sources/actors.yaml`.
 - Name matching is rule-based and transparent: every name used (or not used, with the reason) is listed, and
   `/actors/names` shows the most frequent matches for review.
 
@@ -196,7 +210,7 @@ sudo loginctl enable-linger "$USER"
 | `crawl [--country CZ] [--agency BIS]` | find new documents on the report pages (no download) |
 | `download [--country CZ] [--limit N] [--retry-failed]` | download discovered documents |
 | `index-topics [--reextract]` | extract text for full-text search and tag topics; re-classifies after `topics.yaml` changes |
-| `fetch-actors` | download the actor gazetteer from Wikidata, Wikipedia and MITRE ATT&CK (network) |
+| `fetch-actors [--refresh]` | download the actor gazetteer and connections from Wikidata, Wikipedia and MITRE ATT&CK (network; Wikipedia infoboxes are cached in `data/gazetteer/` – `--refresh` reads them again) |
 | `index-actors [--rematch]` | find the actors in the report texts (offline) |
 | `fetch-logos [--refresh]` | download agency logos from their home pages |
 | `improve-titles` | replace poor document titles with the title stored in the PDF |
@@ -265,6 +279,12 @@ Pages that turn out to be empty JavaScript shells are rendered with Chromium aut
 - **Countries** are actors too (kind *country*): sovereign states from Wikidata with their labels, aliases and
   demonyms ("Russian", "russe"), so the portal can count which countries' reports name which countries. Two-letter
   forms ("UK", "US") count only together with another name.
+- **Connections:** Wikipedia infobox fields (leader, founder, key people, parent, subsidiaries, wings, allies,
+  opponents, owner; for people: party, branch, unit, employer, organisation) and Wikidata properties (member of
+  P463, party P102, employer P108, affiliation P1416, military branch P241, parent P749, part of P361, owned by
+  P127, founded by P112, chair P488, director P1037, CEO P169, board P3320). Only links to people and
+  organisations are kept; incoming Wikidata links are ranked by notability (Wikipedia language versions) and the
+  25 most notable per relation are kept, with the total. Connected people are matched by full name only.
 - **Named together:** two actors named within 600 characters in a report are stored as a pair; the network, the
   actor pages and the passage pages (`/actors/<a>/with/<b>`) all count these pairs per report.
 - **Correcting it:** `/actors/names` lists the names with the most matches. Add a wrong one under

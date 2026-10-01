@@ -60,7 +60,7 @@
       <div class="cl-members">${cl.members.map((m) => `<a class="mchip" href="/actors/${esc(m.key)}" title="${esc(data.kinds[m.kind] || m.kind)} · named in ${m.docs} reports">
         <i class="kdot kind-${esc(m.kind)}"></i>${esc(m.label)} <span class="muted">${m.docs}</span></a>`).join("")}</div>
       <div class="cl-cols">
-        <div><h4>Strongest ties</h4><ul class="cl-list">${cl.ties.map((t) => `<li><span class="cl-l" title="${esc(t.la)} – ${esc(t.lb)}">${esc(t.la)} – ${esc(t.lb)}</span>
+        <div><h4>Strongest ties</h4><ul class="cl-list">${cl.ties.map((t) => `<li><span class="cl-l" title="${esc(t.known ? "Known connection: " + t.known : t.la + " – " + t.lb)}">${t.known ? '<span class="cn-rel" aria-label="known connection">⛓</span> ' : ""}${esc(t.la)} – ${esc(t.lb)}</span>
           ${bar(t.npmi)}<a href="${esc(t.link)}" title="passages naming both">${t.docs}</a></li>`).join("")}</ul></div>
         <div><h4>Main topics of these reports</h4><ul class="cl-list">${cl.topics.map((t) => `<li><span class="cl-l" title="${esc(t.name)}">${esc(t.name)}</span>
           ${bar(t.share, "topic")}<a href="${esc(t.link)}" title="reports with this among their main topics">${t.docs}</a></li>`).join("") || '<li class="muted">–</li>'}</ul></div>
@@ -108,7 +108,7 @@
           if (!p.data || !p.data.c) return "";
           const c = p.data.c, a = byKey[c.a], b = byKey[c.b];
           return `<b>${esc(a.label)}</b> and <b>${esc(b.label)}</b><br>named together in ${c.docs} reports
-            (${esc(a.label)}: ${a.docs}, ${esc(b.label)}: ${b.docs})<br>association ${c.npmi.toFixed(2)}${c.docs < data.min_pair ? " – below the tie threshold" : ""}<br><span style="color:${muted}">click for details</span>`;
+            (${esc(a.label)}: ${a.docs}, ${esc(b.label)}: ${b.docs})<br>association ${c.npmi.toFixed(2)}${c.docs < data.min_pair ? " – below the tie threshold" : ""}${c.known ? `<br>⛓ ${esc(c.known)}` : ""}<br><span style="color:${muted}">click for details</span>`;
         } },
       visualMap: { show: false, seriesIndex: 0, min: 0, max: 0.8, inRange: { color: ramp } },
       series: [
@@ -142,7 +142,8 @@
       <tr><th>${esc(a.label)}</th><td><a href="${esc(a.docs_link)}">${a.docs} reports</a></td></tr>
       <tr><th>${esc(b.label)}</th><td><a href="${esc(b.docs_link)}">${b.docs} reports</a></td></tr>
       <tr><th>Expected by chance</th><td>${expected.toFixed(1)} reports (of ${data.n_docs})</td></tr>
-      <tr><th>Association</th><td>${c.npmi.toFixed(2)}${c.docs < data.min_pair ? " (below the tie threshold)" : ""}</td></tr></table>
+      <tr><th>Association</th><td>${c.npmi.toFixed(2)}${c.docs < data.min_pair ? " (below the tie threshold)" : ""}</td></tr>
+      ${c.known ? `<tr><th>Known connection</th><td>⛓ ${esc(c.known)} <span class="muted">(Wikipedia/Wikidata – sources on the passages page)</span></td></tr>` : ""}</table>
       <p class="small"><a href="${esc(c.link)}">Read the passages →</a></p>
       <p class="small"><a href="#" data-key="${esc(c.a)}">${esc(a.label)}'s ties</a> · <a href="#" data-key="${esc(c.b)}">${esc(b.label)}'s ties</a></p>`;
   }
