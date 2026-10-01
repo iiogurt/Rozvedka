@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}{{ views[view] }} · Trends · Rozvedka{% endblock %}
+{% block head %}<script src="/static/vendor/echarts/echarts.min.js"></script>{% endblock %}
+{% block main %}
+<nav class="subnav" aria-label="Trend views">
+  {% for key, name in views.items() %}
+  <a href="/trends{{ '' if key == 'topics' else '/' ~ key }}" class="{{ 'on' if key == view }}">{{ name }}</a>
+  {% endfor %}
+</nav>
+
+<form class="filters trend-filters" id="scope" onsubmit="return false">
+  {% if view != 'matrix' %}
+  <select name="country" aria-label="Country"><option value="">All countries</option>
+    {% for c in countries %}<option value="{{ c }}">{{ COUNTRY_NAMES.get(c, c) }}</option>{% endfor %}
+  </select>
+  {% endif %}
+  <select name="coalition" aria-label="Coalition"><option value="">All coalitions</option>
+    {% for key, c in COALITIONS.items() %}<option value="{{ key }}">{{ c.name }}</option>{% endfor %}
+  </select>
+  <select name="type" aria-label="Agency type"><option value="">All agency types</option>
+    {% for key, name in TYPE_NAMES.items() %}<option value="{{ key }}">{{ name }}</option>{% endfor %}
+  </select>
+  {% if view == 'matrix' %}
+  <label class="chk">from <select name="year_from">{% for y in years %}<option>{{ y }}</option>{% endfor %}</select></label>
+  <label class="chk">to <select name="year_to">{% for y in years %}<option>{{ y }}</option>{% endfor %}</select></label>
+  <span class="seg" role="group" aria-label="Rows">
+    <label><input type="radio" name="by" value="country" checked> countries</label>
+    <label><input type="radio" name="by" value="agency"> agencies</label>
+  </span>
+  {% else %}
+  <span class="seg" role="group" aria-label="Measure">
+    <label title="Documents tagged ÷ all documents in scope that year"><input type="radio" name="measure" value="docs" checked> share of reports</label>
+    <label title="Agencies with at least one such report ÷ agencies that published that year"><input type="radio" name="measure" value="agencies"> share of agencies</label>
+  </span>
+  <label class="chk" title="Years before the first year with at least 30 reports in scope are noisy">from
+    <select name="since"><option value="">since reports are steady (30+/year)</option><option value="all">all years</option>
+      {% for y in years|reverse %}<option>{{ y }}</option>{% endfor %}</select></label>
+  <label class="chk"><input type="checkbox" name="events" checked> events ◆</label>
+  {% endif %}
+</form>
+
+{% if view == 'topics' %}
+<div class="trend-pick">
+  <select id="add-topic" aria-label="Add topic">
+    <option value="">+ Add topic (up to 8)…</option>
+    {% for ckey, cat in CATEGORIES.items() %}<optgroup label="{{ cat.name }}">
+      {% for t in cat.topics %}<option value="{{ t }}">{{ TOPICS[t].name }}</option>{% endfor %}
+    </optgroup>{% endfor %}
+  </select>
+  <span id="chips" class="trend-chips"></span>
+</div>
+{% elif view == 'terms' %}
+<div class="trend-pick terms">
+  <label for="terms" class="muted small">One line per series. Words match by prefix and without accents; use
+    <code>"quotes"</code> for phrases and <code>OR</code> for translations, e.g.
+    <code>drone OR Drohne OR dron</code>. Terms are matched in the language you type.</label>
+  <textarea id="terms" rows="4" spellcheck="false"></textarea>
+  <button type="button" id="terms-go">Show</button>
+</div>
+{% endif %}
+
+<section class="viz-card" aria-labelledby="chart-title">
+  <div class="viz-head">
+    <h2 id="chart-title" class="viz-title">{{ views[view] }}</h2>
+    <span class="viz-actions">
+      <a id="csv" href="#" download>CSV</a>
+      <a id="permalink" href="#" title="Link to this exact view">link</a>
+    </span>
+  </div>
+  <p id="viz-sub" class="muted small viz-sub"></p>
+  <div id="chart" class="chart {{ 'chart-matrix' if view == 'matrix' }}" role="img" aria-describedby="viz-sub"></div>
+  {% if view != 'matrix' %}
+  <h3 class="viz-mini">Reports in scope per year <span class="muted small">– the base of every share above; click a bar for the list</span></h3>
+  <div id="chart-den" class="chart chart-den" role="img" aria-label="Number of reports in scope per year"></div>
+  {% endif %}
+  <p class="muted small hint">Click any point, bar or cell to open the documents it counts.</p>
+  <details class="viz-table" id="table-wrap"><summary>Table view</summary><div id="table"></div></details>
+</section>
+
+{% if view == 'topics' %}
+<section class="viz-card" aria-labelledby="rising-title">
+  <h2 id="rising-title" class="viz-title">Rising and falling topics</h2>
+  <p id="rising-sub" class="muted small viz-sub"></p>
+  <div class="rising-grid">
+    <div><h3 class="viz-mini">Gaining attention</h3><ol id="rising" class="rising"></ol></div>
+    <div><h3 class="viz-mini">Losing attention</h3><ol id="falling" class="rising"></ol></div>
+  </div>
+</section>
+{% endif %}
+
+<section class="viz-card provenance" aria-labelledby="prov-title">
+  <h2 id="prov-title" class="viz-title">Where these numbers come from</h2>
+  <div id="prov"></div>
+  {% if view != 'matrix' %}
+  <h3 class="viz-mini">Event markers</h3>
+  <p class="muted small">Dates come from Wikidata (property named per event), resolved from the English Wikipedia
+    article by <code>tools/build_events.py</code>; the list is <code>sources/events.yaml</code>.</p>
+  <ul id="events" class="events"></ul>
+  {% endif %}
+</section>
+
+<script>window.TREND_VIEW = {{ view|tojson }}; window.TOPIC_NAMES = {{ topic_names|tojson }};</script>
+<script src="/static/trends.js"></script>
+{% endblock %}

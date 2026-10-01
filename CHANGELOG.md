@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.10.0] – 2026-10-01
+
+### Added
+- Trends pages (`/trends`): topics over time (share of reports or of agencies, per year), rising and falling
+  topics, term trends for any words with `OR` translations, and a countries/agencies × topics matrix for a period.
+- Every point, bar and cell links to exactly the documents it counts; table views, CSV export with a source link on
+  every row, and a "Where these numbers come from" section on each view.
+- Reference event markers from `sources/events.yaml`, dated from Wikidata by `tools/build_events.py`, each with its
+  Wikipedia and Wikidata link and retrieval date.
+- Documents page: `year_from`/`year_to` range, `indexed=1` (classified text only) and `OR` in searches.
+- Apache ECharts 6.1.0, vendored.
+
 ## [0.9.3] – 2026-10-01
 
 ### Fixed
@@ -171,7 +183,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.9.3...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/iiogurt/Rozvedka/compare/v0.9.3...v0.10.0
 [0.9.3]: https://github.com/iiogurt/Rozvedka/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/iiogurt/Rozvedka/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/iiogurt/Rozvedka/compare/v0.9.0...v0.9.1

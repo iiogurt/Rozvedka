@@ -34,6 +34,11 @@ def memberships(country: str) -> dict[str, int]:
     return dict(_data()["countries"].get(country, {}).get("coalitions") or {})
 
 
+def scope(coalition: str) -> set[str]:
+    """Registry country codes in a coalition; the EU and NATO filters also include their own institutions."""
+    return members(coalition) | ({coalition} if coalition in ("EU", "NATO") else set())
+
+
 def members(coalition: str) -> set[str]:
     return {code for code, c in _data()["countries"].items() if coalition in (c.get("coalitions") or {})}
 

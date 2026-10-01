@@ -1,16 +1,19 @@
 """Web portal: browse, filter, download and add security reports."""
+import csv
+import datetime as dt
+import io
 import threading
 from pathlib import Path
 from urllib.parse import urlencode
 
 from fastapi import FastAPI, Form, HTTPException, Query, Request
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from markupsafe import escape
 
-from . import __version__, build_version, countries, crawler, db, downloader, logos, registry, topics
+from . import __version__, build_version, countries, crawler, db, downloader, logos, registry, topics, trends
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -42,8 +45,7 @@ def initials(agency: str) -> str:
 
 
 def coalition_scope(coalition: str) -> set[str]:
-    """Registry country codes in a coalition; the EU and NATO filters also include their own institutions."""
-    return countries.members(coalition) | ({coalition} if coalition in ("EU", "NATO") else set())
+    return countries.scope(coalition)
 
 
 def coalition_members_of(country: str) -> set[str]:
@@ -98,7 +100,8 @@ def startup():
 @app.get("/")
 def index(request: Request, country: str = "", type: str = "", lang: str = "", year: str = "",
           status: str = "", q: str = "", source: int = 0, page: int = 1, show_hidden: int = 0,
-          coalition: str = "", topic: list[str] = Query(default=[]), sort: str = ""):
+          coalition: str = "", topic: list[str] = Query(default=[]), sort: str = "",
+          year_from: str = "", year_to: str = "", indexed: int = 0):
     tax = topics.taxonomy()["topics"]
     chosen = [t for t in topic if t in tax]
     where, args = ["s.active=1"], []
@@ -112,11 +115,20 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
             where.append(f"{col}=?"); args.append(val)
     if year:
         where.append("d.year=?"); args.append(int(year))
+    if year_from.strip().isdigit():
+        where.append("d.year>=?"); args.append(int(year_from))
+    if year_to.strip().isdigit():
+        where.append("d.year<=?"); args.append(int(year_to))
+    if indexed:   # links from the Trends charts count only documents whose text is topic-classified
+        where.append(trends.CLASSIFIED)
     if source:
         where.append("s.id=?"); args.append(source)
-    fts = topics.fts_query(q) if q.strip() else ""
-    if q.strip():
-        # metadata match OR full-text match inside the report
+    fts = trends.or_query(q) if q.strip() else ""
+    if q.strip() and indexed:
+        # link from a Trends chart: exactly the full-text match the chart counted
+        where.append("d.id IN (SELECT rowid FROM doc_text WHERE doc_text MATCH ?)"); args.append(fts or '""')
+    elif q.strip():
+        # metadata match OR full-text match inside the report ("a OR b" is handled by the full-text match)
         where.append("""(d.title LIKE ? OR s.agency LIKE ? OR s.name_local LIKE ? OR s.name_en LIKE ?
                          OR d.id IN (SELECT rowid FROM doc_text WHERE doc_text MATCH ?))""")
         args += [f"%{q}%"] * 4 + [fts or '""']
@@ -170,7 +182,7 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
         counts = dict(con.execute("SELECT status, COUNT(*) FROM documents GROUP BY status").fetchall())
     params = dict(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source or "",
                   coalition=coalition, topic=chosen, sort=sort if sort != "year" or chosen or q else "",
-                  show_hidden=show_hidden or "")
+                  show_hidden=show_hidden or "", year_from=year_from, year_to=year_to, indexed=indexed or "")
 
     def qs(**kw):
         merged = {**params, **kw}
@@ -239,6 +251,102 @@ def changelog(request: Request):
 @app.get("/api/version")
 def version():
     return {"version": __version__, "build": build_version()}
+
+
+TREND_VIEWS = {"topics": "Topics over time", "terms": "Term trends", "matrix": "Who reports on what"}
+
+
+def _trend_page(request: Request, view: str):
+    tax = topics.taxonomy()
+    with db.session() as con:
+        years = [r[0] for r in con.execute("SELECT DISTINCT year FROM documents WHERE year >= ? ORDER BY year DESC",
+                                           (trends.MIN_YEAR,))]
+        present = {r[0] for r in con.execute("SELECT DISTINCT country FROM sources WHERE active=1")}
+    return tpl.TemplateResponse(request, "trends.html", {
+        "view": view, "views": TREND_VIEWS, "TOPICS": tax["topics"], "CATEGORIES": tax["categories"],
+        "topic_names": {k: t["name"] for k, t in tax["topics"].items()},
+        "years": years, "countries": sorted(present, key=lambda c: COUNTRY_NAMES.get(c, c)), "jobs": dict(_jobs)})
+
+
+@app.get("/trends")
+def trends_topics(request: Request):
+    return _trend_page(request, "topics")
+
+
+@app.get("/trends/terms")
+def trends_terms(request: Request):
+    return _trend_page(request, "terms")
+
+
+@app.get("/trends/matrix")
+def trends_matrix(request: Request):
+    return _trend_page(request, "matrix")
+
+
+def _csv(name: str, header: list[str], rows) -> Response:
+    """Chart data as CSV; every row keeps the link to the documents it counts."""
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(header)
+    w.writerows(rows)
+    return Response(buf.getvalue(), media_type="text/csv; charset=utf-8",
+                    headers={"Content-Disposition": f'attachment; filename="rozvedka-{name}.csv"'})
+
+
+def _abs(request: Request, link: str) -> str:
+    return str(request.base_url).rstrip("/") + link
+
+
+def _series_csv(request: Request, name: str, data: dict) -> Response:
+    rows = []
+    den = data["denominator"]
+    for s in data["series"]:
+        for i, y in enumerate(data["years"]):
+            rows.append([s["name"], y, s["docs"][i], den["docs"][i], s["share_docs"][i], s["agencies"][i],
+                         den["agencies"][i], s["share_agencies"][i], _abs(request, s["links"][i])])
+    return _csv(name, ["series", "year", "documents", "documents_in_scope", "share_of_documents", "agencies",
+                       "agencies_in_scope", "share_of_agencies", "source_documents"], rows)
+
+
+@app.get("/api/trends/topics")
+def api_trend_topics(request: Request, topic: list[str] = Query(default=[]), country: str = "", coalition: str = "",
+                     type: str = "", format: str = "json"):
+    data = trends.topic_trends(topic[:8], country, coalition, type)
+    return _series_csv(request, "topic-trends", data) if format == "csv" else data
+
+
+@app.get("/api/trends/terms")
+def api_trend_terms(request: Request, term: list[str] = Query(default=[]), country: str = "", coalition: str = "",
+                    type: str = "", format: str = "json"):
+    data = trends.term_trends([t for t in term if t.strip()][:8], country, coalition, type)
+    return _series_csv(request, "term-trends", data) if format == "csv" else data
+
+
+@app.get("/api/trends/rising")
+def api_trend_rising(country: str = "", coalition: str = "", type: str = ""):
+    return trends.rising(country, coalition, type)
+
+
+@app.get("/api/trends/matrix")
+def api_trend_matrix(request: Request, year_from: int = 0, year_to: int = 0, by: str = "country",
+                     coalition: str = "", type: str = "", format: str = "json"):
+    now = dt.date.today().year
+    year_to = year_to or now - 1
+    year_from = year_from or year_to - 2
+    data = trends.matrix(year_from, year_to, "agency" if by == "agency" else "country", coalition, type)
+    if format != "csv":
+        return data
+    rows_by_key = {r["key"]: r for r in data["rows"]}
+    names = {t["key"]: t["name"] for t in data["topics"]}
+    return _csv(f"matrix-{year_from}-{year_to}", ["row", "topic", "documents_with_topic", "documents_of_row", "share",
+                                                 "source_documents"],
+                ([rows_by_key[c["row"]]["label"], names[c["topic"]], c["n"], rows_by_key[c["row"]]["docs"],
+                  c["share"], _abs(request, c["link"])] for c in data["cells"]))
+
+
+@app.get("/api/events")
+def api_events():
+    return trends.events()
 
 
 @app.get("/map")
