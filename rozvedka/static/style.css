@@ -110,6 +110,9 @@ h2 { margin: 28px 0 8px; font-size: 16px; border-bottom: 1px solid var(--line); 
 /* documents table: flag + small logo next to the agency */
 td.src a { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .logo-sm { width: 18px; height: 18px; object-fit: contain; background: #fff; border-radius: 3px; }
+/* white logos made for dark headers (detected by logos.js) */
+img.logo-light, .has-logo-light, .dark-popup img.pop-logo.logo-light { background: #1f2933; }
+.has-logo-light { border-color: #1f2933; }
 @media (max-width: 700px) { .flagbar { position: static; } .country { scroll-margin-top: 60px; } }
 
 /* ── World map ── */
