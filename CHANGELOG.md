@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.15.0] – 2026-10-01
+
+### Added
+- One pager for every list (`rozvedka/paging.py`, `templates/_pager.html`): numbered pages with first/last and
+  gaps (« ‹ 1 … 5 6 7 8 9 … 61 › »), a "go to page" box, the position ("301–350 of 3,017 documents") and the
+  number per page (25, 50, 100, 200, 500). Filters and page size are kept in every link; out-of-range pages
+  show the last page.
+- Paging on the Documents page (above and below the table), the Actors list, the actor-names review, and the
+  passages on actor and pair pages – which previously stopped at the 40 newest reports.
+
 ## [0.14.1] – 2026-10-01
 
 ### Added
@@ -259,7 +269,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.14.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.15.0...HEAD
+[0.15.0]: https://github.com/iiogurt/Rozvedka/compare/v0.14.1...v0.15.0
 [0.14.1]: https://github.com/iiogurt/Rozvedka/compare/v0.14.0...v0.14.1
 [0.14.0]: https://github.com/iiogurt/Rozvedka/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/iiogurt/Rozvedka/compare/v0.12.0...v0.13.0

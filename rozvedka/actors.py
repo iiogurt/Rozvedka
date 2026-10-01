@@ -35,7 +35,7 @@ from functools import lru_cache
 
 import yaml
 
-from . import db, topics, trends
+from . import db, paging, topics, trends
 from .actor_sources import CONFIG, GAZETTEER
 
 log = logging.getLogger("rozvedka.actors")
@@ -502,7 +502,7 @@ def _snippet(body: str, start: int, end: int) -> dict:
             "after": " " + clean(body[end:b]) + ("…" if b < len(body) else "")}
 
 
-def actor_detail(key: str, passages: int = 40) -> dict | None:
+def actor_detail(key: str, passages: int = 40, page: int | str = 1) -> dict | None:
     where, args, _ = trends.scope()
     with db.session() as con:
         init()
@@ -555,7 +555,8 @@ def actor_detail(key: str, passages: int = 40) -> dict | None:
                           if not tax.get(r["topic"], {}).get("meta")]
             related = _related(con, key, docs, marks, doc_ids)
         shown = []
-        for d in docs[:passages]:
+        offset = paging.page_offset(len(docs), page, passages)
+        for d in docs[offset:offset + passages]:
             body = con.execute("SELECT body FROM doc_text WHERE rowid=?", (d["doc_id"],)).fetchone()[0] or ""
             s, e = json.loads(d["spans"])[0]
             pages = json.loads(d["pages"]) if d["pages"] else None
@@ -593,7 +594,7 @@ def _related(con, key: str, docs: list[dict], marks: str, doc_ids: list[int], li
 
 
 def pair_detail(a: str, b: str, year_from: int | None = None, year_to: int | None = None, coalition: str = "",
-                topic: str = "", type: str = "", passages: int = 40) -> dict | None:
+                topic: str = "", type: str = "", passages: int = 40, page: int | str = 1) -> dict | None:
     """Reports in which actors a and b are named in the same passage, with those passages."""
     a, b = sorted((a, b))
     where, args, params = trends.scope("", coalition, type)
@@ -615,7 +616,8 @@ def pair_detail(a: str, b: str, year_from: int | None = None, year_to: int | Non
                 WHERE p.a=? AND p.b=? AND {where} AND {PAIR_FOUNDED}
                 ORDER BY d.year DESC NULLS LAST, p.n DESC""", (a, b, *args))]
         shown = []
-        for d in docs[:passages]:
+        offset = paging.page_offset(len(docs), page, passages)
+        for d in docs[offset:offset + passages]:
             spans = {r["actor_key"]: json.loads(r["spans"]) for r in con.execute(
                 "SELECT actor_key, spans FROM doc_actors WHERE doc_id=? AND actor_key IN (?,?)", (d["doc_id"], a, b))}
             best = _closest(spans.get(a, []), spans.get(b, []))
@@ -656,13 +658,20 @@ def stamp() -> dict:
         return dict(con.execute("SELECT k, v FROM actor_meta").fetchall())
 
 
-def top_names(limit: int = 300, status: str = "used") -> list[dict]:
+def count_names(status: str = "used") -> int:
+    with db.session() as con:
+        init()
+        return con.execute("SELECT COUNT(*) FROM actor_names WHERE status=? AND docs > 0", (status,)).fetchone()[0]
+
+
+def top_names(limit: int = 300, status: str = "used", offset: int = 0) -> list[dict]:
     """Names with the most matches – the place to spot a name that means something else."""
     with db.session() as con:
         init()
         rows = [dict(r) for r in con.execute(
             """SELECT n.*, a.label, a.kind FROM actor_names n JOIN actors a ON a.key=n.actor_key
-               WHERE n.status=? AND n.docs > 0 ORDER BY n.docs DESC, n.hits DESC LIMIT ?""", (status, limit))]
+               WHERE n.status=? AND n.docs > 0 ORDER BY n.docs DESC, n.hits DESC, n.id LIMIT ? OFFSET ?""",
+            (status, limit, offset))]
     for r in rows:
         r["origins"] = json.loads(r["origins"] or "[]")
         r["weak"] = is_weak(tuple(json.loads(r["tokens"] or "[]")))

@@ -1,9 +1,11 @@
 {% extends "base.html" %}
+{% from "_pager.html" import pager %}
 {% block title %}Actors · Rozvedka{% endblock %}
 {% block main %}
 <form class="filters" method="get" action="/actors">
   <input type="search" name="q" value="{{ f.q }}" placeholder="Find actor or alias…" aria-label="Find actor">
   {% if f.kind %}<input type="hidden" name="kind" value="{{ f.kind }}">{% endif %}
+  {% if f.per_page %}<input type="hidden" name="per_page" value="{{ f.per_page }}">{% endif %}
   <label class="chk">mentioned in at least
     <select name="min_docs" onchange="this.form.submit()">
       {% for n in [1, 2, 5, 10, 25] %}<option value="{{ n }}" {{ 'selected' if f.min_docs == n }}>{{ n }}</option>{% endfor %}
@@ -13,9 +15,9 @@
   <a class="small" href="/actors/names">review the names used for matching</a>
 </form>
 <div class="chosen-topics">
-  <a class="topic-chip {{ 'on' if not f.kind }}" href="/actors?q={{ f.q|urlencode }}&min_docs={{ f.min_docs }}">All actors ({{ counts.values()|sum - counts.get('country', 0) }})</a>
+  <a class="topic-chip {{ 'on' if not f.kind }}" href="/actors?q={{ f.q|urlencode }}&min_docs={{ f.min_docs }}{{ '&per_page=' ~ f.per_page if f.per_page }}">All actors ({{ counts.values()|sum - counts.get('country', 0) }})</a>
   {% for k, name in kinds.items() %}{% if counts.get(k) %}
-  <a class="topic-chip {{ 'on' if f.kind == k }}" href="/actors?kind={{ k }}&q={{ f.q|urlencode }}&min_docs={{ f.min_docs }}">{{ name }} ({{ counts[k] }})</a>
+  <a class="topic-chip {{ 'on' if f.kind == k }}" href="/actors?kind={{ k }}&q={{ f.q|urlencode }}&min_docs={{ f.min_docs }}{{ '&per_page=' ~ f.per_page if f.per_page }}">{{ name }} ({{ counts[k] }})</a>
   {% endif %}{% endfor %}
 </div>
 
@@ -24,6 +26,7 @@
   <code>python -m rozvedka index-actors</code>.</p>
 {% endif %}
 
+{{ pager(pg, "actors") }}
 <table class="actors">
   <thead><tr><th>Actor</th><th>Kind</th><th>Reports</th><th class="num">Agencies</th><th class="num">Countries</th><th>Years</th></tr></thead>
   <tbody>
@@ -41,6 +44,7 @@
   {% endfor %}
   </tbody>
 </table>
+{{ pager(pg, "actors") }}
 {% if not rows and meta.get('names_hash') %}<p class="muted">No actor matches.</p>{% endif %}
 
 <section class="viz-card provenance">

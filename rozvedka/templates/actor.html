@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_pager.html" import pager %}
 {% set a = actor %}
 {% block title %}{{ a.label }} · Actors · Rozvedka{% endblock %}
 {% block head %}<script src="/static/vendor/echarts/echarts.min.js"></script>{% endblock %}
@@ -95,10 +96,11 @@
 </section>
 </div>
 
-<section class="viz-card">
+<section class="viz-card" id="passages">
   <h2 class="viz-title">Passages</h2>
-  <p class="muted small viz-sub">The first mention in each report, newest reports first{% if docs > passages|length %} ({{ passages|length }} of {{ docs }}; <a href="/?actor={{ a.key }}">all reports</a>){% endif %}.
+  <p class="muted small viz-sub">The first mention in each report, newest reports first (<a href="/?actor={{ a.key }}">as a document list</a>).
     "p." opens the downloaded report at that page; "original" is the agency's own copy.</p>
+  {{ pager(pg, "reports") }}
   <ol class="passages">
   {% for p in passages %}
     <li>
@@ -114,6 +116,7 @@
     </li>
   {% endfor %}
   </ol>
+  {{ pager(pg, "reports") }}
 </section>
 
 {% if before %}
