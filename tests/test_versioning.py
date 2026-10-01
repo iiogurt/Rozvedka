@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
-from bump_version import bump, release_changelog  # noqa: E402
+from bump_version import bump, readme_badge, release_changelog  # noqa: E402
 
 from rozvedka import __version__, build_version  # noqa: E402
 
@@ -53,3 +53,14 @@ def test_release_refuses_empty_unreleased():
 
 def test_build_version_starts_with_release_version():
     assert build_version() == __version__ or build_version().startswith(__version__ + "+")
+
+
+def test_readme_badge_follows_version():
+    text = "![version](https://img.shields.io/badge/version-0.11.0-1f4e79)\n![python](https://img.shields.io/badge/python-3.13-3776ab)"
+    out = readme_badge(text, "0.12.0")
+    assert "badge/version-0.12.0-1f4e79" in out and "python-3.13" in out
+
+
+def test_readme_badge_matches_current_version():
+    readme = (Path(__file__).resolve().parent.parent / "README.md").read_text(encoding="utf-8")
+    assert f"badge/version-{__version__}-" in readme

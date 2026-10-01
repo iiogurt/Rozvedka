@@ -27,6 +27,14 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.11.1] – 2026-10-01
+
+### Changed
+- README rewritten in the usual GitHub layout: overview with badges and screenshots (`docs/images/`), the
+  portal's features page by page, quick start, command and configuration reference, a pipeline diagram,
+  development and release notes, and a table of data sources and licences.
+- `tools/bump_version.py` also updates the version badge in the README.
+
 ## [0.11.0] – 2026-10-01
 
 ### Added
@@ -199,7 +207,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.11.1...HEAD
+[0.11.1]: https://github.com/iiogurt/Rozvedka/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/iiogurt/Rozvedka/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/iiogurt/Rozvedka/compare/v0.9.3...v0.10.0
 [0.9.3]: https://github.com/iiogurt/Rozvedka/compare/v0.9.2...v0.9.3

@@ -5,7 +5,7 @@
     python3 tools/bump_version.py major      # 0.10.0 → 1.0.0  incompatible change needing manual migration
     python3 tools/bump_version.py patch --dry-run
 
-It edits rozvedka/__init__.py and CHANGELOG.md only. Commit, open a PR, merge, then tag the merge commit:
+It edits rozvedka/__init__.py, CHANGELOG.md and the version badge in README.md only. Commit, open a PR, merge, then tag the merge commit:
     git tag -a v<new> -m "Rozvedka <new>" && git push origin v<new>
 """
 import argparse
@@ -17,6 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 INIT = ROOT / "rozvedka" / "__init__.py"
 CHANGELOG = ROOT / "CHANGELOG.md"
+README = ROOT / "README.md"
 REPO = "https://github.com/iiogurt/Rozvedka"
 
 
@@ -44,6 +45,11 @@ def release_changelog(text: str, old: str, new: str, date: str) -> str:
     return text
 
 
+def readme_badge(text: str, new: str) -> str:
+    """The static version badge (the repository is private, so shields.io cannot read the release)."""
+    return re.sub(r"(img\.shields\.io/badge/version-)[0-9.]+(-)", rf"\g<1>{new}\g<2>", text, count=1)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("level", choices=["patch", "minor", "major"])
@@ -59,6 +65,8 @@ def main() -> None:
         return
     INIT.write_text(re.sub(r'^__version__ = "[^"]+"', f'__version__ = "{new}"', init, count=1, flags=re.M), encoding="utf-8")
     CHANGELOG.write_text(changelog, encoding="utf-8")
+    if README.exists():
+        README.write_text(readme_badge(README.read_text(encoding="utf-8"), new), encoding="utf-8")
     print(f"{old} → {new} ({a.level})")
     print(f"next: commit, open a PR, merge, then: git tag -a v{new} -m 'Rozvedka {new}' <merge commit> && git push origin v{new}")
 
