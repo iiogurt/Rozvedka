@@ -15,23 +15,36 @@
     {% for ckey, cat in CATEGORIES.items() %}<optgroup label="{{ cat.name }}">
       {% for t in cat.topics %}<option value="{{ t }}">{{ TOPICS[t].name }}</option>{% endfor %}</optgroup>{% endfor %}
   </select>
-  <label class="chk" title="How many actors to show (those named in the most reports)">actors
-    <select name="nodes">{% for n in [40, 80, 120, 160] %}<option {{ 'selected' if n == 80 }}>{{ n }}</option>{% endfor %}</select></label>
-  <label class="chk" title="Hide links found in fewer reports">links in at least
-    <select name="min_link">{% for n in [1, 2, 3, 5, 10] %}<option {{ 'selected' if n == 2 }}>{{ n }}</option>{% endfor %}</select> reports</label>
-  <label class="chk"><input type="checkbox" name="countries_too" value="1"> include countries</label>
+  <label class="chk" title="The actors named in most reports">actors
+    <select name="actors_n">{% for n in [30, 45, 60, 80, 100] %}<option {{ 'selected' if n == 60 }}>{{ n }}</option>{% endfor %}</select></label>
+  <label class="chk" title="How strongly actors must be associated to form a cluster">clusters
+    <select name="threshold"><option value="0.2">loose</option><option value="0.25" selected>normal</option><option value="0.35">strict</option></select></label>
+  <label class="chk" title="Ties need at least this many reports">ties in ≥
+    <select name="min_pair">{% for n in [2, 3, 5, 10] %}<option {{ 'selected' if n == 3 }}>{{ n }}</option>{% endfor %}</select> reports</label>
 </form>
+<fieldset class="kind-filter" id="kinds">
+  <legend class="muted small">Kinds of actor</legend>
+  {% for k, name in kinds.items() %}{% if k not in ('other',) %}
+  <label class="kind-chip"><input type="checkbox" name="kind" value="{{ k }}" {{ '' if k == 'country' else 'checked' }}>
+    <i class="kdot kind-{{ k }}"></i>{{ name }}</label>{% endif %}{% endfor %}
+</fieldset>
 
-<section class="viz-card" aria-labelledby="net-title">
+<p id="summary" class="net-summary"></p>
+<section id="clusters" class="cluster-grid" aria-label="Clusters"></section>
+
+<section class="viz-card" aria-labelledby="mx-title">
   <div class="viz-head">
-    <h2 id="net-title" class="viz-title">Actors named in the same passage</h2>
+    <h2 id="mx-title" class="viz-title">Who is named with whom</h2>
     <span class="viz-actions"><a id="permalink" href="#">link</a></span>
   </div>
-  <p id="net-sub" class="muted small viz-sub"></p>
-  <div id="net" class="chart chart-net" role="img" aria-describedby="net-sub"></div>
-  <p class="muted small hint">Drag to move, scroll to zoom. Click an actor for its page, a link for the passages
-    that name both. Click a kind in the legend to hide it.</p>
-  <details class="viz-table" id="table-wrap"><summary>Table view – strongest links</summary><div id="table"></div></details>
+  <p class="muted small viz-sub">Each cell: two actors named in the same passage. Darker = more strongly associated
+    (named together more often than their frequency predicts); grey = named together, but in fewer reports than the
+    tie threshold. Actors are ordered by cluster; the bands mark the clusters. Click a name or a cell for details.</p>
+  <div class="mx-grid">
+    <div class="mx-scroll"><div id="matrix" class="chart" role="img" aria-label="Actor association matrix"></div></div>
+    <aside id="panel" class="tree-panel mx-panel" aria-live="polite"><p class="muted small">Click an actor's name or a
+      cell. The details and links to the passages appear here.</p></aside>
+  </div>
 </section>
 
 <section class="viz-card provenance" aria-labelledby="prov-title">

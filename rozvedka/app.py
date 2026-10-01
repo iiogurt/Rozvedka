@@ -102,7 +102,8 @@ def startup():
 def index(request: Request, country: str = "", type: str = "", lang: str = "", year: str = "",
           status: str = "", q: str = "", source: int = 0, page: int = 1, show_hidden: int = 0,
           coalition: str = "", topic: list[str] = Query(default=[]), sort: str = "",
-          year_from: str = "", year_to: str = "", indexed: int = 0, actor: str = "", main: int = 0):
+          year_from: str = "", year_to: str = "", indexed: int = 0, actor: str = "", main: int = 0,
+          cluster: str = ""):
     tax = topics.taxonomy()["topics"]
     chosen = [t for t in topic if t in tax]
     where, args = ["s.active=1"], []
@@ -125,6 +126,10 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
     actor_row = None
     if actor:
         where.append(actors.doc_clause()); args.append(actor)
+    cluster_keys = [k for k in cluster.split(",") if k][:200]
+    if cluster_keys:   # link from a Network cluster: reports naming two of these actors in one passage
+        sql, cargs = actors.cluster_clause(cluster_keys)
+        where.append(sql); args += cargs
         with db.session() as con:
             actors.init()
             actor_row = con.execute("SELECT key, label FROM actors WHERE key=?", (actor,)).fetchone()
@@ -194,7 +199,7 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
     params = dict(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source or "",
                   coalition=coalition, topic=chosen, sort=sort if sort != "year" or chosen or q else "",
                   show_hidden=show_hidden or "", year_from=year_from, year_to=year_to, indexed=indexed or "",
-                  actor=actor, main=main or "")
+                  actor=actor, main=main or "", cluster=cluster)
 
     def qs(**kw):
         merged = {**params, **kw}
@@ -402,9 +407,10 @@ def network_page(request: Request):
 
 @app.get("/api/network")
 def api_network(year_from: int = 0, year_to: int = 0, coalition: str = "", type: str = "", topic: str = "",
-                kind: list[str] = Query(default=[]), countries_too: int = 0, nodes: int = 80, min_link: int = 2):
-    return graphs.network(year_from or None, year_to or None, coalition, type, topic, kind, bool(countries_too),
-                          max(10, min(nodes, 200)), max(1, min_link))
+                countries_too: int = 0, actors_n: int = 60, min_pair: int = 3, threshold: float = 0.25,
+                kind: list[str] = Query(default=[])):
+    return graphs.associations(year_from or None, year_to or None, coalition, type, topic, bool(countries_too),
+                               max(10, min(actors_n, 120)), max(1, min_pair), min(max(threshold, 0.05), 0.9), kind)
 
 
 @app.get("/map/mentions")

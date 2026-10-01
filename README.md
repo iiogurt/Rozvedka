@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.12.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.13.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -103,11 +103,19 @@ crawled from (with language and current/archive), and a link to its headquarters
 
 ### 🕸️ Network
 
-<img src="docs/images/network.png" alt="Network of actors named in the same passage, coloured by kind" width="900">
+<img src="docs/images/network.png" alt="Network: clusters of actors named together, with ties, main topics, timeline and reporting agencies" width="900">
 
-Actors linked when the reports name them in the same passage (within 600 characters), sized by the number of
-reports and coloured by kind – filter by period, reporting coalition, agency type and topic. Every link opens the
-passages that name both actors, with page links into the PDFs.
+Which actors the reports name **together more often than their frequency predicts** – not just most often:
+
+- **Clusters** of strongly associated actors (e.g. *Wagner Group · Prigozhin · Internet Research Agency*,
+  *Fancy Bear · Cozy Bear · Turla · Ghostwriter*, *LockBit · Conti · Akira*), each as a card with its members,
+  strongest ties, the main topics of its reports, a timeline and the agencies that report on it.
+- **Association matrix** of all actors, ordered by cluster: each cell is a pair named in the same passage, shaded
+  by association strength (normalised pointwise mutual information); clusters appear as blocks.
+- **Details panel**: an actor's most strongly associated and most frequent partners, or a pair's counts against
+  what chance would predict.
+- Filter by period, reporting coalition, agency type, topic and kind of actor. Every number opens the passages or
+  reports it counts.
 
 ### 🗺️ Map
 
@@ -289,7 +297,7 @@ flowchart LR
 | `rozvedka/topics.py` | text extraction with page offsets, FTS5 index, topic classification (all CPU cores) |
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
-| `rozvedka/graphs.py` | network, who-reports-on-whom and topic mind map data, with the same links |
+| `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |
 | `rozvedka/app.py`, `templates/`, `static/` | the server-rendered portal |
 
 ## Development
