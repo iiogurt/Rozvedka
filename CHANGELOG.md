@@ -27,6 +27,22 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.11.0] – 2026-10-01
+
+### Added
+- Actor index (`/actors`): about 1,500 actors from Wikidata, MITRE ATT&CK and a hand-kept list
+  (`sources/actors.yaml`), found by name in the report texts. New commands `fetch-actors` and `index-actors`;
+  the weekly `update` re-indexes actors.
+- Actor pages with sourced reference data (Wikidata revision, Wikipedia lead with revision and licence, ATT&CK
+  description), mentions per year, reporting agencies, topics, actors named in the same passage, the passages with
+  page links, and every name used for matching with the reason any name is not used.
+- Matching rules against false matches, each shown with its reason on the actor pages: ignore lists and per-actor
+  exclusions, generic names and short abbreviations only together with another name, longest match wins, surnames
+  only for people, no counts from reports dated before an actor was founded. Review of the most frequent names at
+  `/actors/names`. Checked on samples: 50 of 50 cited pages contain the passage.
+- Documents page: `actor=` filter.
+- Text extraction records where each PDF page starts, so passages cite page numbers (re-extracted automatically).
+
 ## [0.10.0] – 2026-10-01
 
 ### Added
@@ -183,7 +199,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/iiogurt/Rozvedka/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/iiogurt/Rozvedka/compare/v0.9.3...v0.10.0
 [0.9.3]: https://github.com/iiogurt/Rozvedka/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/iiogurt/Rozvedka/compare/v0.9.1...v0.9.2

@@ -1,0 +1,129 @@
+# Actor index – which named actors (organisations, groups, people) are recognised in the reports.
+#
+# Most actors come automatically from public reference data, fetched by `python -m rozvedka fetch-actors`:
+#   - Wikidata items of the classes below (with an English Wikipedia article, not dissolved before 2000)
+#   - Wikidata items "designated as terrorist by" (P3461) any authority
+#   - MITRE ATT&CK groups (threat actors) with their aliases; linked to Wikidata through P9025 where it exists
+# Names and aliases come from Wikidata in the report languages, plus MITRE ATT&CK aliases. Each actor page says
+# where every fact and every alias comes from.
+#
+# This file adds what those sources miss and corrects ambiguous names. Everything here is shown as
+# "added by hand in sources/actors.yaml".
+
+classes:            # Wikidata class → kind shown in the portal (instances and subclasses are included)
+  Q47913: state            # intelligence agency
+  Q214183: state           # secret police
+  Q2801262: cyber          # hacker group
+  Q4686357: cyber          # advanced persistent threat
+  Q1057214: armed          # private military company
+  Q207320: armed           # paramilitary organization
+  Q17127659: terror        # terrorist organization
+  Q4335775: crime          # organized crime group
+  Q1260006: crime          # drug cartel
+
+# Key actors in security reporting that the classes above do not reach (movements, campaigns, people).
+# Give the English Wikipedia title; the Wikidata item is resolved from it. `aliases` are extra names matched
+# in the text in addition to Wikidata's (e.g. surnames, which Wikidata rarely lists as aliases).
+seeds:
+  - {wikipedia: Vladimir Putin, kind: person, aliases: [Putin, Putins, Putina, Putinem, Putinovi, Poutine]}
+  - {wikipedia: Xi Jinping, kind: person}
+  - {wikipedia: Ali Khamenei, kind: person, aliases: [Khamenei, Chamenei, Chameneí, Jamenei]}
+  - {wikipedia: Kim Jong Un, kind: person}
+  - {wikipedia: Alexander Lukashenko, kind: person, aliases: [Lukashenko, Lukaschenko, Lukašenko, Lukaszenka, Loukachenko]}
+  - {wikipedia: Yevgeny Prigozhin, kind: person, aliases: [Prigozhin, Prigoschin, Prigožin, Prigożyn]}
+  - {wikipedia: Ramzan Kadyrov, kind: person, aliases: [Kadyrov, Kadyrow]}
+  - {wikipedia: Volodymyr Zelenskyy, kind: person, aliases: [Zelenskyy, Zelensky, Selenskyj, Zelenskij, Zełenski]}
+  - {wikipedia: Donald Trump, kind: person}
+  - {wikipedia: Wagner Group, kind: armed}
+  - {wikipedia: Africa Corps (Russia), kind: armed}
+  - {wikipedia: Internet Research Agency, kind: state}
+  - {wikipedia: Doppelganger (disinformation campaign), kind: state}
+  - {wikipedia: Russian shadow fleet, kind: state}
+  - {wikipedia: Main Directorate of the General Staff of the Armed Forces of the Russian Federation, kind: state}
+  - {wikipedia: Federal Security Service, kind: state}
+  - {wikipedia: Foreign Intelligence Service (Russia), kind: state}
+  - {wikipedia: Ministry of State Security (China), kind: state}
+  - {wikipedia: United Front Work Department, kind: state}
+  - {wikipedia: Islamic Revolutionary Guard Corps, kind: state}
+  - {wikipedia: Quds Force, kind: state}
+  - {wikipedia: Ministry of Intelligence (Iran), kind: state}
+  - {wikipedia: Reconnaissance General Bureau, kind: state}
+  - {wikipedia: State Security Committee of the Republic of Belarus, kind: state}
+  - {wikipedia: Reichsbürger movement, kind: movement}
+  - {wikipedia: Identitarian movement, kind: movement}
+  - {wikipedia: QAnon, kind: movement}
+  - {wikipedia: Sovereign citizen movement, kind: movement}
+  - {wikipedia: Muslim Brotherhood, kind: movement}
+  - {wikipedia: Hizb ut-Tahrir, kind: movement}
+  - {wikipedia: Grey Wolves (organization), kind: movement}
+  - {wikipedia: Antifa (Germany), kind: movement}
+  - {wikipedia: Atomwaffen Division, kind: terror}
+  - {wikipedia: The Base (hate group), kind: terror}
+  - {wikipedia: Nordic Resistance Movement, kind: movement}
+  - {wikipedia: Combat 18, kind: movement}
+  - {wikipedia: Blood & Honour, kind: movement}
+  - {wikipedia: Hells Angels, kind: crime}
+  - {wikipedia: "'Ndrangheta", kind: crime}
+  - {wikipedia: Camorra, kind: crime}
+  - {wikipedia: Sicilian Mafia, kind: crime}
+  - {wikipedia: Sinaloa Cartel, kind: crime}
+  - {wikipedia: Jalisco New Generation Cartel, kind: crime}
+  - {wikipedia: Tren de Aragua, kind: crime}
+  - {wikipedia: Primeiro Comando da Capital, kind: crime}
+  - {wikipedia: Comando Vermelho, kind: crime}
+  - {wikipedia: MS-13, kind: crime}
+  - {wikipedia: Clan del Golfo, kind: crime}
+  - {wikipedia: Hamas, kind: terror}
+  - {wikipedia: Hezbollah, kind: terror}
+  - {wikipedia: Houthis, kind: armed}
+  - {wikipedia: Islamic State, kind: terror}
+  - {wikipedia: Islamic State – Khorasan Province, kind: terror}
+  - {wikipedia: Al-Qaeda, kind: terror}
+  - {wikipedia: Taliban, kind: armed}
+  - {wikipedia: "Kurdistan Workers' Party", kind: terror}
+  - {wikipedia: Lazarus Group, kind: cyber}
+  - {wikipedia: Sandworm (hacker group), kind: cyber}
+  - {wikipedia: Fancy Bear, kind: cyber}
+  - {wikipedia: Cozy Bear, kind: cyber}
+  - {wikipedia: Volt Typhoon, kind: cyber}
+  - {wikipedia: Salt Typhoon, kind: cyber}
+  - {wikipedia: LockBit, kind: cyber}
+  - {wikipedia: Killnet, kind: cyber}
+  - {wikipedia: NoName057(16), kind: cyber}
+  - {wikipedia: Anonymous Sudan, kind: cyber}
+
+# Names that are never matched, for any actor: ordinary words and abbreviations with other common meanings.
+ignore_aliases: [IS, ETA, IRA, Base, Al, ISI, MI, Mafia, Kartell, Cartel, The Company,
+                 Organisation, Organization, Group, Gruppe, Service, Dienst, Agency, State, Ministry, Bureau,
+                 Directorate, Department, Committee, Center, Centre, Office, Unit, Army, Navy, Police, Polizei,
+                 Guard, Corps, Front, Party, Movement, Network, Brigade, Battalion, Legion,
+                 # regions and places used as aliases of regional branches (review 2026-10-01)
+                 East Asia, West Africa, Central Africa, Sahel, Somalia, Yemen, Khorasan, Caucasus, Sinai]
+
+# Per actor (by Wikidata item or MITRE ATT&CK group id): names not to match, because they mean something else
+# in the reports.
+# Per actor: names that count in a report only when the report also uses another name of the same actor –
+# for names that are also common surnames or words in other contexts.
+weak_aliases: {}                    # e.g.  Q123: [Name]
+
+# Per actor: sources (registry key country/agency) whose reports use the actor's name for something else.
+exclude_sources:
+  Q36597284: [OTHER/IPCC]                     # Wagner Group: "Wagner" in IPCC reports are authors' surnames
+
+# Review of the most frequent matches, 2026-10-01: each entry was checked against sample passages.
+exclude_aliases:
+  Q7747: [Vladimir, Volodymyr]
+  Q115923383: [Patriot]                       # Patriot (PMC): matches the Patriot air-defence system
+  Q18112628: [Khorasan, Khurāsān, Chorasan]   # Khorasan group: the reports mean Islamic State Khorasan Province
+  Q197581: [17. November, November 17]        # 17 November (Greece): matches dates
+  Q152993: [Abwehr]                           # Abwehr (1920–1944): German word for "defence"
+  Q19294807: [Equation]                       # Equation Group: matches equation numbers (IPCC reports)
+  Q127784: [Mara]                             # MS-13: a place and family name in Latin American reports
+  Q36597284: [Liga]                           # Wagner Group: "Liga" is a common word (league)
+  Q106503397: [Machete]                       # El Machete: Spanish word
+  Q5474411: [Emet]                            # Hebrew word, matches names and places
+  Q100701388: [Mirage]                        # matches the Mirage fighter aircraft
+  Q106492897: [Armageddon]                    # Gamaredon alias; an ordinary word
+  Q244527: [Varsovia]                         # Zwi Migdal: Spanish name of Warsaw
+  Q17125354: [Stewards]
+  Q1778907: [Revolutionary Cells]             # Revolutionary Nuclei: the name of other groups

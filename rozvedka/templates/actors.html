@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Actors · Rozvedka{% endblock %}
+{% block main %}
+<form class="filters" method="get" action="/actors">
+  <input type="search" name="q" value="{{ f.q }}" placeholder="Find actor or alias…" aria-label="Find actor">
+  {% if f.kind %}<input type="hidden" name="kind" value="{{ f.kind }}">{% endif %}
+  <label class="chk">mentioned in at least
+    <select name="min_docs" onchange="this.form.submit()">
+      {% for n in [1, 2, 5, 10, 25] %}<option value="{{ n }}" {{ 'selected' if f.min_docs == n }}>{{ n }}</option>{% endfor %}
+    </select> reports</label>
+  <button>Filter</button>
+  <a class="reset" href="/actors">Reset</a>
+  <a class="small" href="/actors/names">review the names used for matching</a>
+</form>
+<div class="chosen-topics">
+  <a class="topic-chip {{ 'on' if not f.kind }}" href="/actors?q={{ f.q|urlencode }}&min_docs={{ f.min_docs }}">All ({{ counts.values()|sum }})</a>
+  {% for k, name in kinds.items() %}{% if counts.get(k) %}
+  <a class="topic-chip {{ 'on' if f.kind == k }}" href="/actors?kind={{ k }}&q={{ f.q|urlencode }}&min_docs={{ f.min_docs }}">{{ name }} ({{ counts[k] }})</a>
+  {% endif %}{% endfor %}
+</div>
+
+{% if not meta.get('names_hash') %}
+<p class="muted">The actor index is empty. Run <code>python -m rozvedka fetch-actors</code> and then
+  <code>python -m rozvedka index-actors</code>.</p>
+{% endif %}
+
+<table class="actors">
+  <thead><tr><th>Actor</th><th>Kind</th><th>Reports</th><th class="num">Agencies</th><th class="num">Countries</th><th>Years</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td><a class="a-name" href="/actors/{{ r.key }}">{{ r.label }}</a>
+        {% if r.description %}<div class="muted small">{{ r.description }}</div>{% endif %}</td>
+      <td class="small">{{ kinds.get(r.kind, r.kind) }}</td>
+      <td class="a-docs"><a href="/?actor={{ r.key }}">{{ r.docs }}</a>
+        <span class="bar" aria-hidden="true"><i style="width: {{ (r.docs / maxdocs * 100)|round(1) }}%"></i></span></td>
+      <td class="num">{{ r.agencies }}</td>
+      <td class="num">{{ r.countries }}</td>
+      <td class="small">{{ r.y0 or '' }}{% if r.y1 and r.y1 != r.y0 %}–{{ r.y1 }}{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% if not rows and meta.get('names_hash') %}<p class="muted">No actor matches.</p>{% endif %}
+
+<section class="viz-card provenance">
+  <h2 class="viz-title">Where the actors come from</h2>
+  <ul class="prov-list">
+    <li><b>Who is listed:</b> Wikidata items of selected classes (intelligence agencies, hacker groups, private military
+      companies, paramilitary and terrorist organisations, organised crime groups, cartels), items designated as terrorist
+      (Wikidata property P3461), MITRE ATT&amp;CK threat groups, and actors added by hand in <code>sources/actors.yaml</code>.
+      Each actor page says why the actor is listed.</li>
+    <li><b>How mentions are found:</b> by name. A report mentions an actor when one of the actor's names – Wikidata labels
+      and aliases in the report languages, MITRE ATT&amp;CK aliases, hand-added names – occurs in its text. Names likely to
+      mean something else are dropped; each actor page lists its names with the reason any of them is not used.</li>
+    <li><b>Counts</b> are reports (documents), not mentions; the same filters as the Documents page apply.</li>
+    <li class="muted">Reference data retrieved {{ meta.get('gazetteer_retrieved', '–') }}: Wikidata (CC0), English Wikipedia
+      (CC BY-SA 4.0), MITRE ATT&amp;CK® (© The MITRE Corporation, reproduced with permission).</li>
+  </ul>
+</section>
+{% endblock %}

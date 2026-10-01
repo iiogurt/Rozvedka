@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% set a = actor %}
+{% block title %}{{ a.label }} · Actors · Rozvedka{% endblock %}
+{% block head %}<script src="/static/vendor/echarts/echarts.min.js"></script>{% endblock %}
+{% block main %}
+<p class="small"><a href="/actors">← Actors</a></p>
+<header class="actor-head">
+  <h1>{{ a.label }}</h1>
+  <span class="topic-chip on">{{ kind_name }}</span>
+  {% if a.description %}<p class="actor-desc">{{ a.description }}
+    <span class="src">– {% if a.wikidata %}<a href="{{ a.wikidata.url }}">Wikidata</a>{% else %}<a href="{{ a.attack.url }}">MITRE ATT&amp;CK</a>{% endif %}</span></p>{% endif %}
+</header>
+
+<div class="actor-grid">
+<section class="viz-card">
+  <h2 class="viz-title">In the reports</h2>
+  <p class="viz-sub muted small"><b>{{ docs }}</b> reports by <b>{{ agencies|length }}</b> agencies mention {{ a.label }}
+    · <a href="/?actor={{ a.key }}">list them</a></p>
+  {% if timeline %}
+  <div id="timeline" class="chart chart-actor" role="img" aria-label="Share of reports per year that mention {{ a.label }}"></div>
+  <p class="muted small hint">Share of each year's reports that mention the actor (same base as the Trends pages). Click a bar for the list.</p>
+  <details class="viz-table"><summary>Table view</summary>
+    <table class="vt"><tr><th>Year</th><th>Reports mentioning</th><th>Reports in scope</th><th>Share</th></tr>
+    {% for t in timeline|reverse %}<tr><td>{{ t.year }}</td><td><a href="{{ t.link }}">{{ t.docs }}</a></td><td>{{ t.of }}</td>
+      <td>{{ '%.1f%%'|format(t.share * 100) if t.share is not none else '–' }}</td></tr>{% endfor %}</table>
+  </details>
+  {% endif %}
+
+  {% if agencies %}
+  <h3 class="viz-mini">Reporting agencies</h3>
+  <ul class="actor-list">
+    {% for g in agencies[:20] %}<li><img class="flag-sm" src="{{ flag_url(g.country) }}" alt="">
+      <a href="/?actor={{ a.key }}&source={{ g.source_id }}">{{ g.agency }}</a>
+      <span class="muted small">{{ g.docs }} report{{ 's' if g.docs != 1 }}{% if g.y0 %} · {{ g.y0 }}{% if g.y1 != g.y0 %}–{{ g.y1 }}{% endif %}{% endif %}</span></li>{% endfor %}
+  </ul>
+  {% if agencies|length > 20 %}<p class="muted small">and {{ agencies|length - 20 }} more</p>{% endif %}
+  {% endif %}
+
+  {% if topics %}
+  <h3 class="viz-mini">Topics of these reports</h3>
+  <div class="chips">{% for t in topics %}<a class="topic-chip" href="{{ t.link }}">{{ t.name }} <span class="muted">{{ t.docs }}</span></a>{% endfor %}</div>
+  {% endif %}
+
+  {% if related %}
+  <h3 class="viz-mini">Mentioned together with</h3>
+  <p class="muted small">Actors named within {{ window }} characters of {{ a.label }} – roughly the same paragraph – in the
+    number of reports shown. Being named together is not evidence of a connection; read the passages.</p>
+  <ul class="actor-list cols">
+    {% for r in related %}<li><a href="/actors/{{ r.key }}">{{ r.label }}</a> <span class="muted small">{{ r.docs }}</span></li>{% endfor %}
+  </ul>
+  {% endif %}
+</section>
+
+<section class="viz-card facts">
+  <h2 class="viz-title">Reference data</h2>
+  <table class="facts-t">
+    {% if a.wikidata %}<tr><th>Wikidata</th><td><a href="{{ a.wikidata.url }}">{{ a.qid }}</a></td>
+      <td class="src"><a href="{{ a.wikidata.revision_url }}">revision {{ a.wikidata.revision }}</a>, retrieved {{ a.wikidata.retrieved }}</td></tr>{% endif %}
+    {% if a.instance_of %}<tr><th>Instance of</th><td>{% for i in a.instance_of %}<a href="https://www.wikidata.org/wiki/{{ i.id }}">{{ i.label }}</a>{{ ', ' if not loop.last }}{% endfor %}</td>
+      <td class="src"><a href="{{ a.wikidata.url }}#P31">Wikidata P31</a></td></tr>{% endif %}
+    {% if a.countries %}<tr><th>Country</th><td>{% for c in a.countries %}<a href="https://www.wikidata.org/wiki/{{ c.id }}">{{ c.label }}</a>{{ ', ' if not loop.last }}{% endfor %}</td>
+      <td class="src"><a href="{{ a.wikidata.url }}#P17">Wikidata P17</a></td></tr>{% endif %}
+    {% if a.inception %}<tr><th>Founded</th><td>{{ a.inception }}</td><td class="src"><a href="{{ a.wikidata.url }}#P571">Wikidata P571</a></td></tr>{% endif %}
+    {% if a.dissolved %}<tr><th>Dissolved</th><td>{{ a.dissolved }}</td><td class="src"><a href="{{ a.wikidata.url }}#P576">Wikidata P576</a></td></tr>{% endif %}
+    {% if a.designations %}<tr><th>Designated as terrorist by</th><td><ul class="plain">
+      {% for d in a.designations|sort(attribute='by_label') %}<li><a href="https://www.wikidata.org/wiki/{{ d.by }}">{{ d.by_label }}</a>{% if d.start %} <span class="muted">since {{ d.start }}</span>{% endif %}{% if d.end %} <span class="muted">until {{ d.end }}</span>{% endif %}</li>{% endfor %}</ul></td>
+      <td class="src"><a href="{{ a.wikidata.url }}#P3461">Wikidata P3461</a> – check each designation at its own source</td></tr>{% endif %}
+    {% if a.attack %}<tr><th>MITRE ATT&amp;CK</th><td><a href="{{ a.attack.url }}">{{ a.attack.id }}</a> {{ a.attack.name }}</td>
+      <td class="src">ATT&amp;CK Enterprise, modified {{ (a.attack.modified or '')[:10] }}, retrieved {{ a.attack.retrieved }}</td></tr>{% endif %}
+    {% if a.image %}<tr><th>Image</th><td><a href="{{ a.image }}">on Wikimedia Commons</a></td><td class="src"><a href="{{ a.wikidata.url }}#P154">Wikidata P154/P18</a></td></tr>{% endif %}
+    <tr><th>Listed because</th><td colspan="2"><ul class="plain">{% for r in a.reasons %}<li>{{ r.text }}{% if r.class %}
+      – <a href="https://www.wikidata.org/wiki/{{ r.class }}">{{ r.class }}</a>{% endif %}</li>{% endfor %}</ul></td></tr>
+  </table>
+
+  {% if a.wikipedia %}
+  <h3 class="viz-mini">Wikipedia</h3>
+  <blockquote class="wp">{% for para in a.wikipedia.extract.split('\n') %}<p>{{ para }}</p>{% endfor %}</blockquote>
+  <p class="src">From the English Wikipedia article <a href="{{ a.wikipedia.url }}">{{ a.wikipedia.title }}</a>,
+    <a href="{{ a.wikipedia.revision_url }}">revision {{ a.wikipedia.revision }}</a> ({{ (a.wikipedia.revision_time or '')[:10] }}),
+    retrieved {{ a.wikipedia.retrieved }}; text under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
+  {% endif %}
+  {% if a.attack and a.attack.description %}
+  <h3 class="viz-mini">MITRE ATT&amp;CK</h3>
+  <blockquote class="wp"><p>{{ a.attack.description }}</p></blockquote>
+  <p class="src">From <a href="{{ a.attack.url }}">MITRE ATT&amp;CK {{ a.attack.id }}</a> (citations removed), retrieved
+    {{ a.attack.retrieved }}. © The MITRE Corporation. This work is reproduced and distributed with the permission of
+    The MITRE Corporation.</p>
+  {% endif %}
+</section>
+</div>
+
+<section class="viz-card">
+  <h2 class="viz-title">Passages</h2>
+  <p class="muted small viz-sub">The first mention in each report, newest reports first{% if docs > passages|length %} ({{ passages|length }} of {{ docs }}; <a href="/?actor={{ a.key }}">all reports</a>){% endif %}.
+    "p." opens the downloaded report at that page; "original" is the agency's own copy.</p>
+  <ol class="passages">
+  {% for p in passages %}
+    <li>
+      <div class="p-head"><img class="flag-sm" src="{{ flag_url(p.country) }}" alt=""> <b>{{ p.agency }}</b>
+        {% if p.year %}{{ p.year }} · {% endif %}<span class="p-title">{{ p.title }}</span></div>
+      <blockquote class="p-text">{{ p.before }}<mark>{{ p.match }}</mark>{{ p.after }}</blockquote>
+      <div class="p-foot small">
+        <a href="{{ p.open }}">{% if p.page %}p. {{ p.page }}{% else %}open report{% endif %}</a> ·
+        <a href="{{ p.url }}" rel="noopener">original</a> ·
+        <span class="muted">{{ p.hits }} mention{{ 's' if p.hits != 1 }} in this report, as
+          {% for n, c in p.names.items() %}“{{ n }}” {{ c }}×{{ ', ' if not loop.last }}{% endfor %}</span>
+      </div>
+    </li>
+  {% endfor %}
+  </ol>
+</section>
+
+{% if before %}
+<section class="viz-card">
+  <h2 class="viz-title">Not counted: reports from before {{ row.since_year }}</h2>
+  <p class="muted small viz-sub">{{ a.label }} was founded in {{ row.since_year }} (<a href="{{ a.wikidata.url }}#P571">Wikidata P571</a>).
+    These {{ before|length }} reports are dated earlier, so the name most likely means something else there; they are left
+    out of every count on this page.</p>
+  <ul class="actor-list">{% for d in before %}<li><img class="flag-sm" src="{{ flag_url(d.country) }}" alt="">
+    <a href="/doc/{{ d.doc_id }}">{{ d.title }}</a> <span class="muted small">{{ d.agency }} {{ d.year }} · as
+    {% for n, c in d.names.items() %}“{{ n }}”{{ ', ' if not loop.last }}{% endfor %}</span></li>{% endfor %}</ul>
+</section>
+{% endif %}
+
+<section class="viz-card">
+  <h2 class="viz-title">Names used to find {{ a.label }}</h2>
+  <p class="muted small viz-sub">Matching is by name only. Names that would likely mean something else are not used; the
+    reason is given. Change the rules in <code>sources/actors.yaml</code>.</p>
+  <details class="viz-table" {{ 'open' if names|length < 12 }}><summary>{{ names|selectattr('status', 'equalto', 'used')|list|length }} names used, {{ names|rejectattr('status', 'equalto', 'used')|list|length }} not used</summary>
+  <table class="vt names-t">
+    <tr><th>Name</th><th>Languages</th><th>Source</th><th>Used</th><th class="num">Reports</th><th class="num">Matches</th></tr>
+    {% for n in names %}<tr class="{{ 'muted' if n.status != 'used' }}">
+      <td>{{ n.name }}</td><td>{{ n.langs }}</td><td>{{ n.origins|join(', ') }}</td>
+      <td>{% if n.status == 'used' %}yes{% if n.weak %} – only together with another name (sources/actors.yaml){% endif %}{% else %}no – {{ n.reason }}{% endif %}</td>
+      <td class="num">{{ n.docs }}</td><td class="num">{{ n.hits }}</td></tr>{% endfor %}
+  </table>
+  <p class="muted small">Reports and matches count raw name matches before the per-report check of abbreviations.</p>
+  </details>
+</section>
+
+{% if timeline %}
+<script>
+(function () {
+  const data = {{ timeline|tojson }};
+  const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const dark = matchMedia("(prefers-color-scheme: dark)");
+  const chart = echarts.init(document.getElementById("timeline"), null, { renderer: "svg" });
+  function draw() {
+    const ink = css("--ink"), muted = css("--muted"), line = css("--line"), panel = css("--panel");
+    const color = dark.matches ? "#3987e5" : "#2a78d6";
+    chart.setOption({
+      animation: false, grid: { left: 44, right: 12, top: 10, bottom: 24 },
+      tooltip: { trigger: "item", backgroundColor: panel, borderColor: line, textStyle: { color: ink, fontSize: 12 },
+                 formatter: (p) => `<b>${p.name}</b>: ${p.data.docs} of ${p.data.of} reports (${(p.data.value * 100).toFixed(1)}%)` +
+                   (p.data.of < 30 ? "<br><i>few reports this year</i>" : "") },
+      xAxis: { type: "category", data: data.map((d) => String(d.year)), axisLine: { lineStyle: { color: line } },
+               axisTick: { show: false }, axisLabel: { color: muted, fontSize: 11 } },
+      yAxis: { type: "value", min: 0, axisLabel: { color: muted, fontSize: 11, formatter: (v) => Math.round(v * 100) + "%" },
+               splitLine: { lineStyle: { color: line } } },
+      series: [{ type: "bar", barCategoryGap: "20%",
+                 data: data.map((d) => ({ value: d.share || 0, docs: d.docs, of: d.of, link: d.link,
+                   itemStyle: { color: d.of < 30 ? line : color, borderRadius: [4, 4, 0, 0] } })) }],
+    }, true);
+  }
+  draw();
+  chart.on("click", (p) => { if (p.data && p.data.link) location.href = p.data.link; });
+  window.addEventListener("resize", () => chart.resize());
+  dark.addEventListener("change", draw);
+})();
+</script>
+{% endif %}
+{% endblock %}

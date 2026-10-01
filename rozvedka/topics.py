@@ -4,6 +4,7 @@ Taxonomy: sources/topics.yaml (categories → topics → multilingual terms). Te
 (pdftotext, first MAX_PAGES pages, capped at MAX_CHARS) into an SQLite FTS5 table. Classification runs on the
 stored text, so editing the taxonomy only needs `index-topics` again – no re-download, no re-extraction.
 """
+import bisect
 import concurrent.futures as cf
 import hashlib
 import json
@@ -169,17 +170,41 @@ def classify(text: str, title: str = "") -> list[dict]:
 
 
 # ── text extraction ──
-def extract_text(path: Path) -> str:
+def _clean(page: str) -> str:
+    page = re.sub(r"[ \t\r]+", " ", page)
+    return re.sub(r"\n\s*\n+", "\n", page).strip("\n")
+
+
+def extract_pages(path: Path) -> tuple[str, list[int]]:
+    """Text of a PDF plus the offset where each page starts in it (page n starts at offsets[n-1])."""
     if PDFTOTEXT:
         out = subprocess.run([PDFTOTEXT, "-q", "-enc", "UTF-8", "-l", str(MAX_PAGES), str(path), "-"],
                              capture_output=True, timeout=300)
-        text = out.stdout.decode("utf-8", "replace")
+        pages = out.stdout.decode("utf-8", "replace").split("\f")    # pdftotext ends every page with a form feed
+        if pages and not pages[-1].strip():
+            pages.pop()
     else:   # slower pure-Python fallback
         from pypdf import PdfReader
         reader = PdfReader(str(path))
-        text = "\n".join((p.extract_text() or "") for p in reader.pages[:MAX_PAGES])
-    text = re.sub(r"[ \t\f\r]+", " ", text)
-    return re.sub(r"\n\s*\n+", "\n", text)[:MAX_CHARS]
+        pages = [(p.extract_text() or "") for p in reader.pages[:MAX_PAGES]]
+    text, offsets = "", []
+    for page in pages:
+        if len(text) >= MAX_CHARS:
+            break
+        offsets.append(len(text))
+        text += _clean(page) + "\n"
+    return text[:MAX_CHARS], offsets
+
+
+def extract_text(path: Path) -> str:
+    return extract_pages(path)[0]
+
+
+def page_of(offsets: list[int] | None, pos: int) -> int | None:
+    """1-based page number of a text offset, or None when page offsets are not known."""
+    if not offsets:
+        return None
+    return bisect.bisect_right(offsets, pos)
 
 
 # ── database ──
@@ -189,7 +214,8 @@ CREATE VIRTUAL TABLE IF NOT EXISTS doc_text USING fts5(
 CREATE TABLE IF NOT EXISTS doc_index (
     doc_id INTEGER PRIMARY KEY REFERENCES documents(id) ON DELETE CASCADE,
     chars INTEGER, words INTEGER, extracted_at TEXT, error TEXT,
-    taxonomy_hash TEXT, classified_at TEXT);
+    taxonomy_hash TEXT, classified_at TEXT,
+    pages TEXT);                                                    -- JSON: text offset where each page starts
 CREATE TABLE IF NOT EXISTS doc_topics (
     doc_id INTEGER NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
     topic TEXT NOT NULL, score REAL, hits INTEGER, distinct_terms INTEGER, title_hit INTEGER, terms TEXT,
@@ -201,15 +227,17 @@ CREATE INDEX IF NOT EXISTS ix_doc_topics_topic ON doc_topics(topic, score DESC);
 def init() -> None:
     with db.session() as con:
         con.executescript(SCHEMA)
+        if "pages" not in {r["name"] for r in con.execute("PRAGMA table_info(doc_index)")}:
+            con.execute("ALTER TABLE doc_index ADD COLUMN pages TEXT")
 
 
 def _process(doc: dict) -> dict:
     """Worker (separate process): extract a PDF's text and classify it."""
     try:
-        text = extract_text(FILES / doc["local_path"])
+        text, pages = extract_pages(FILES / doc["local_path"])
     except Exception as e:  # noqa: BLE001 - one broken PDF must not stop the run
-        return {"id": doc["id"], "text": None, "error": f"{type(e).__name__}: {e}"[:300], "found": []}
-    return {"id": doc["id"], "text": text, "error": None, "found": classify(text, doc["title"] or "")}
+        return {"id": doc["id"], "text": None, "pages": None, "error": f"{type(e).__name__}: {e}"[:300], "found": []}
+    return {"id": doc["id"], "text": text, "pages": pages, "error": None, "found": classify(text, doc["title"] or "")}
 
 
 def _classify_only(item: tuple[int, str, str]) -> dict:
@@ -240,12 +268,13 @@ def index(reextract: bool = False, limit: int | None = None, workers: int = 4, b
     with db.session() as con:
         q = """SELECT d.id, d.local_path, d.title FROM documents d LEFT JOIN doc_index i ON i.doc_id = d.id
                WHERE d.status = 'downloaded' AND d.local_path IS NOT NULL"""
-        if not reextract:
-            q += " AND i.extracted_at IS NULL"
+        if not reextract:   # new downloads, and text extracted before page offsets were recorded
+            q += " AND (i.extracted_at IS NULL OR (i.pages IS NULL AND i.error IS NULL))"
         todo = [dict(r) for r in con.execute(q + (f" LIMIT {int(limit)}" if limit else ""))]
 
     con = db.connect()
     con.execute("PRAGMA synchronous=NORMAL")     # WAL + NORMAL: safe on crash, far fewer SD-card flushes
+    index_cols = {r["name"] for r in con.execute("PRAGMA table_info(doc_index)")}
     try:
         with cf.ProcessPoolExecutor(workers) as ex:
             futures = [ex.submit(_process, d) for d in todo]
@@ -255,10 +284,14 @@ def index(reextract: bool = False, limit: int | None = None, workers: int = 4, b
                 title = next(d["title"] for d in todo if d["id"] == r["id"])
                 if r["text"] is not None:
                     con.execute("INSERT INTO doc_text(rowid, title, body) VALUES(?,?,?)", (r["id"], title, r["text"]))
-                con.execute("""INSERT INTO doc_index(doc_id, chars, words, extracted_at, error) VALUES(?,?,?,?,?)
+                con.execute("""INSERT INTO doc_index(doc_id, chars, words, extracted_at, error, pages) VALUES(?,?,?,?,?,?)
                                ON CONFLICT(doc_id) DO UPDATE SET chars=excluded.chars, words=excluded.words,
-                                 extracted_at=excluded.extracted_at, error=excluded.error, taxonomy_hash=NULL""",
-                            (r["id"], len(r["text"] or ""), len((r["text"] or "").split()), now(), r["error"]))
+                                 extracted_at=excluded.extracted_at, error=excluded.error, pages=excluded.pages,
+                                 taxonomy_hash=NULL""",   # (actor positions are reset below: they point into the old text)
+                            (r["id"], len(r["text"] or ""), len((r["text"] or "").split()), now(), r["error"],
+                             json.dumps(r["pages"]) if r["pages"] is not None else None))
+                if "actors_hash" in index_cols:
+                    con.execute("UPDATE doc_index SET actors_hash=NULL WHERE doc_id=?", (r["id"],))
                 if r["error"]:
                     stats["extract_errors"] += 1
                 else:
