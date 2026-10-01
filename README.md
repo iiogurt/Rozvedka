@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.11.1-1f4e79)
+![version](https://img.shields.io/badge/version-0.12.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -29,7 +29,7 @@ local library, so you can follow how state security, social resilience and disas
 |---|---|
 | **Coverage** | 120 agencies and institutions in 46 countries and bodies: 26 EU member states, EU bodies and NATO, the UK, Norway, Switzerland, Ukraine, the USA, Canada, six Latin American countries, Australia, New Zealand, Japan, South Korea and Taiwan |
 | **Library** | about 3,100 reports in 25 languages, with archives back to 2000, downloaded as PDF |
-| **Index** | full text of every report, 64 topics from a 3,800-term multilingual keyword list, about 1,500 named actors |
+| **Index** | full text of every report, 64 topics from a 3,800-term multilingual keyword list, about 1,550 named actors and 189 countries |
 | **Runs on** | a Raspberry Pi (or any Linux box) – Python, SQLite and the browser; no cloud service, no account |
 
 > [!IMPORTANT]
@@ -101,12 +101,36 @@ crawled from (with language and current/archive), and a link to its headquarters
 - Name matching is rule-based and transparent: every name used (or not used, with the reason) is listed, and
   `/actors/names` shows the most frequent matches for review.
 
+### 🕸️ Network
+
+<img src="docs/images/network.png" alt="Network of actors named in the same passage, coloured by kind" width="900">
+
+Actors linked when the reports name them in the same passage (within 600 characters), sized by the number of
+reports and coloured by kind – filter by period, reporting coalition, agency type and topic. Every link opens the
+passages that name both actors, with page links into the PDFs.
+
 ### 🗺️ Map
 
-<img src="docs/images/map.png" alt="Dark world map with agency headquarters, clustered and coloured by agency type" width="900">
+<table>
+<tr>
+<td width="50%"><img src="docs/images/map.png" alt="Dark world map with agency headquarters"></td>
+<td width="50%"><img src="docs/images/mentions.png" alt="World map shaded by the share of each country's reports naming China"></td>
+</tr>
+<tr>
+<td><b>Headquarters</b> – every agency on a dark world map, coloured by type, with a hover card.</td>
+<td><b>Who reports on whom</b> – the share of each country's reports that name a country, or what one country or coalition reports on.</td>
+</tr>
+</table>
 
-Agency headquarters on a dark world map, coloured by agency type, with a hover card for each agency; countries
-shaded by number of reports; filters by topic, coalition and agency type.
+Countries are recognised by their names and demonyms in the report languages (from Wikidata); a country's own
+reports are left out, and selections with fewer than 10 reports are greyed out.
+
+### 🧠 Topic mind map
+
+<img src="docs/images/mindmap.png" alt="Topic mind map: categories, topics and their most characteristic actors" width="900">
+
+Categories → topics → the actors most characteristic of each topic (counted in the reports that have the topic
+among their three main topics), with a details panel and links to every count.
 
 ### 🔄 Automatic updates
 
@@ -178,7 +202,7 @@ Everything that defines *what* Rozvedka collects and recognises is a hand-editab
 | [`registry.yaml`](sources/registry.yaml) | the agencies: names, type, home page, description, headquarters, report pages (language, current/archive), how to fetch them |
 | [`countries.yaml`](sources/countries.yaml) | country names, regions, coalition memberships with year joined |
 | [`topics.yaml`](sources/topics.yaml) | topic taxonomy: categories → topics → keywords per language |
-| [`actors.yaml`](sources/actors.yaml) | which Wikidata classes and hand-listed seeds make up the actor index, and matching corrections |
+| [`actors.yaml`](sources/actors.yaml) | which Wikidata classes, hand-listed seeds and countries make up the actor index, and matching corrections |
 | [`events.yaml`](sources/events.yaml) | reference events for the trend charts (Wikipedia titles; dates are resolved from Wikidata) |
 
 <details>
@@ -223,6 +247,11 @@ Pages that turn out to be empty JavaScript shells are rendered with Chromium aut
   people other than the surname; generic names and short abbreviations ("FSB", "National Security Council") count
   only together with another name of the actor; the longest of overlapping names wins; reports dated before an
   actor was founded and reports of sources excluded for an actor are not counted.
+- **Countries** are actors too (kind *country*): sovereign states from Wikidata with their labels, aliases and
+  demonyms ("Russian", "russe"), so the portal can count which countries' reports name which countries. Two-letter
+  forms ("UK", "US") count only together with another name.
+- **Named together:** two actors named within 600 characters in a report are stored as a pair; the network, the
+  actor pages and the passage pages (`/actors/<a>/with/<b>`) all count these pairs per report.
 - **Correcting it:** `/actors/names` lists the names with the most matches. Add a wrong one under
   `ignore_aliases`, `exclude_aliases`, `weak_aliases` or `exclude_sources` in `actors.yaml` and run
   `index-actors` again.
@@ -260,6 +289,7 @@ flowchart LR
 | `rozvedka/topics.py` | text extraction with page offsets, FTS5 index, topic classification (all CPU cores) |
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
+| `rozvedka/graphs.py` | network, who-reports-on-whom and topic mind map data, with the same links |
 | `rozvedka/app.py`, `templates/`, `static/` | the server-rendered portal |
 
 ## Development

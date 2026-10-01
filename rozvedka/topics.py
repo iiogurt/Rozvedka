@@ -319,6 +319,18 @@ def index(reextract: bool = False, limit: int | None = None, workers: int = 4, b
     return stats
 
 
+MAIN_TOPICS = 3   # a report's main topics: the ones with the highest keyword score
+
+
+def main_topic_clause() -> tuple[str, list]:
+    """SQL: document d has topic ? among its MAIN_TOPICS non-meta topics (bind the topic after the returned args)."""
+    meta = [t for t, v in taxonomy()["topics"].items() if v.get("meta")]
+    sql = f"""d.id IN (SELECT doc_id FROM (SELECT doc_id, topic, ROW_NUMBER() OVER (PARTITION BY doc_id
+                  ORDER BY score DESC, topic) rk FROM doc_topics WHERE topic NOT IN ({','.join('?' * len(meta))}))
+              WHERE rk <= {MAIN_TOPICS} AND topic=?)"""
+    return sql, meta
+
+
 def fts_query(q: str) -> str:
     """User search text → safe FTS5 query: every word must occur (prefix match); quoted phrases kept."""
     phrases = re.findall(r'"([^"]+)"', q)

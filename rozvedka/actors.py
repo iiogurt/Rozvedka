@@ -39,7 +39,7 @@ from . import db, topics, trends
 from .actor_sources import CONFIG, GAZETTEER
 
 log = logging.getLogger("rozvedka.actors")
-MATCHER_VERSION = "5"
+MATCHER_VERSION = "8"
 MAX_OFFSETS = 300        # positions kept per name and document
 WINDOW = 600             # characters: two actors this close count as mentioned together (one passage)
 SNIPPET = 260            # characters of context on each side of a match
@@ -47,12 +47,13 @@ TOKEN = re.compile(r"\w+")
 CJK = topics._CJK
 KINDS = {"state": "State services & state-linked", "cyber": "Cyber threat groups", "terror": "Terrorist-designated groups",
          "armed": "Armed groups & private military", "crime": "Organised crime", "movement": "Movements & networks",
-         "person": "People", "other": "Other"}
+         "person": "People", "other": "Other", "country": "Countries"}
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS actors (
     key TEXT PRIMARY KEY, qid TEXT, kind TEXT, label TEXT, description TEXT, data TEXT,
-    since_year INTEGER);                          -- founded (Wikidata P571): earlier reports mean something else
+    since_year INTEGER,                           -- founded (Wikidata P571): earlier reports mean something else
+    iso TEXT);                                    -- ISO 3166 code for actors of kind "country"
 CREATE TABLE IF NOT EXISTS actor_names (
     id INTEGER PRIMARY KEY, actor_key TEXT NOT NULL, name TEXT NOT NULL, tokens TEXT, langs TEXT, origins TEXT,
     status TEXT, reason TEXT, docs INTEGER DEFAULT 0, hits INTEGER DEFAULT 0, lower_hits INTEGER DEFAULT 0,
@@ -66,6 +67,10 @@ CREATE TABLE IF NOT EXISTS doc_actors (           -- what the portal shows: acto
     doc_id INTEGER NOT NULL, actor_key TEXT NOT NULL, hits INTEGER, spans TEXT, names TEXT,
     PRIMARY KEY (doc_id, actor_key));
 CREATE INDEX IF NOT EXISTS ix_doc_actors_actor ON doc_actors(actor_key);
+CREATE TABLE IF NOT EXISTS actor_pairs (          -- two actors named within WINDOW characters (one passage)
+    doc_id INTEGER NOT NULL, a TEXT NOT NULL, b TEXT NOT NULL, n INTEGER, PRIMARY KEY (doc_id, a, b));
+CREATE INDEX IF NOT EXISTS ix_actor_pairs_ab ON actor_pairs(a, b);
+CREATE INDEX IF NOT EXISTS ix_actor_pairs_b ON actor_pairs(b);
 CREATE TABLE IF NOT EXISTS actor_meta (k TEXT PRIMARY KEY, v TEXT);
 """
 
@@ -78,6 +83,8 @@ def init() -> None:
             con.execute("ALTER TABLE doc_index ADD COLUMN actors_hash TEXT")
         if "since_year" not in {r["name"] for r in con.execute("PRAGMA table_info(actors)")}:
             con.execute("ALTER TABLE actors ADD COLUMN since_year INTEGER")
+        if "iso" not in {r["name"] for r in con.execute("PRAGMA table_info(actors)")}:
+            con.execute("ALTER TABLE actors ADD COLUMN iso TEXT")
         if "weak" not in {r["name"] for r in con.execute("PRAGMA table_info(actor_names)")}:
             con.execute("ALTER TABLE actor_names ADD COLUMN weak INTEGER DEFAULT 0")
 
@@ -105,7 +112,7 @@ def is_abbreviation(tokens: tuple[str, ...]) -> bool:
 # words that describe what an organisation is rather than which one: a name made only of these is "weak"
 GENERIC = set("""
 s the of for and against de del la el los las da do dos der die das des und für et du le les pour contre di e per
-national nacional nationale nazionale federal federale state estado staat etat security seguridad sicherheit securite
+national nacional nationale nazionale federal federale state states estado estados staat staaten etat etats security seguridad sicherheit securite
 sicurezza seguranca intelligence inteligencia inteligencia renseignement information informacion informations
 service services servicio servicios servizio dienst dienste council consejo conseil rat bureau office oficina amt
 agency agencia agence agenzia ministry ministerio ministere ministerium department departamento departement
@@ -116,12 +123,16 @@ investigation investigacion police policia polizei community communications head
 liberation people peoples popular revolutionary front frente organization organisation organizacion group grupo
 gruppe party partido partei movement movimiento bewegung crime crimen organized organised organizado branch special
 secret unit command staff operations forces force guard republic government gobierno institute executive board
-committee comite commission brigade battalion corps network action
+committee comite commission brigade battalion corps network action company compania empresa firma unternehmen societe
+sociedad enterprise
 """.split())
 
 
+_NUMBER = re.compile(r"\d+(st|nd|rd|th|e|er|eme|o|a)?", re.I)     # 12, 12th, 2e, 1er, 3o
+
+
 def is_generic(tokens: tuple[str, ...]) -> bool:
-    return all(t.casefold() in GENERIC or t.isdigit() for t in tokens)
+    return all(t.casefold() in GENERIC or _NUMBER.fullmatch(t) for t in tokens)
 
 
 def is_weak(tokens: tuple[str, ...]) -> bool:
@@ -150,7 +161,7 @@ def prepare_names(gaz: dict, cfg: dict) -> list[dict]:
             key = (a["key"], name if cjk else toks)
             r = rows.setdefault(key, {"actor_key": a["key"], "name": name, "tokens": list(toks), "cjk": cjk,
                                       "langs": set(), "origins": set(), "manual": False, "seed": False,
-                                      "person": a["kind"] == "person",
+                                      "person": a["kind"] == "person", "country": a["kind"] == "country",
                                       "surname": (name_tokens(a["label"]) or ("",))[-1]})
             if n["lang"]:
                 r["langs"].add(n["lang"])
@@ -183,7 +194,7 @@ def prepare_names(gaz: dict, cfg: dict) -> list[dict]:
             reason = "one word of a person's name that is not the surname (first names are shared by many people)"
         elif len(toks) == 1 and is_generic(toks):
             reason = "a generic word"
-        elif len(toks) == 1 and len(toks[0]) < 3:
+        elif len(toks) == 1 and len(toks[0]) < 3 and not (r["country"] and toks[0].isupper() and len(toks[0]) == 2):
             reason = "shorter than 3 characters"
         elif len(toks) == 1 and len(toks[0]) == 3 and not toks[0].isupper():
             reason = "3 letters without being an abbreviation"
@@ -195,7 +206,7 @@ def prepare_names(gaz: dict, cfg: dict) -> list[dict]:
         out.append({"actor_key": actor, "name": r["name"], "tokens": r["tokens"], "cjk": r["cjk"],
                     "langs": sorted(r["langs"]), "origins": sorted(r["origins"]), "manual": r["manual"],
                     "status": "used" if reason is None else "ignored", "reason": reason,
-                    "weak": toks in weak_cfg.get(actor, set())})
+                    "weak": toks in weak_cfg.get(actor, set()) or (r["country"] and len(toks) == 1 and len(toks[0]) == 2)})
     for i, r in enumerate(out, 1):
         r["id"] = i
     return out
@@ -226,7 +237,7 @@ def _init_matcher(names: list[dict]) -> None:
         if n["manual"] and len(toks) == 1 and len(toks[0]) >= 5 and not is_abbreviation(toks):
             single_long.setdefault(toks[0], []).append((toks, n["id"]))
         up = tuple(t.upper() for t in toks)
-        if up != toks and len("".join(up)) > 3:
+        if up != toks and len("".join(up)) >= 6:   # headings in capitals: short words in capitals are often other words
             upper.setdefault(up[0], []).append((up, n["id"]))
         if len(toks) == 1 and not is_abbreviation(toks):
             lower.setdefault(toks[0].lower(), []).append(n["id"])
@@ -314,11 +325,12 @@ def index(workers: int = 4, batch: int = 50, rematch: bool = False) -> dict:
     try:
         old = (con.execute("SELECT v FROM actor_meta WHERE k='names_hash'").fetchone() or [None])[0]
         if old != h or rematch:   # names changed: ids are new, every document is matched again
-            con.executescript("DELETE FROM actor_hits; DELETE FROM actor_lower; DELETE FROM doc_actors;"
+            con.executescript("DELETE FROM actor_hits; DELETE FROM actor_lower; DELETE FROM doc_actors; DELETE FROM actor_pairs;"
                               "DELETE FROM actor_names; DELETE FROM actors; UPDATE doc_index SET actors_hash=NULL;")
-            con.executemany("INSERT INTO actors(key,qid,kind,label,description,data,since_year) VALUES(?,?,?,?,?,?,?)",
+            con.executemany("INSERT INTO actors(key,qid,kind,label,description,data,since_year,iso) VALUES(?,?,?,?,?,?,?,?)",
                             [(a["key"], a["qid"], a["kind"], a["label"], a["description"],
-                              json.dumps(a, ensure_ascii=False), _year(a.get("inception"))) for a in gaz["actors"]])
+                              json.dumps(a, ensure_ascii=False), _year(a.get("inception")), a.get("iso"))
+                             for a in gaz["actors"]])
             con.executemany("""INSERT INTO actor_names(id,actor_key,name,tokens,langs,origins,status,reason,weak)
                                VALUES(?,?,?,?,?,?,?,?,?)""",
                             [(n["id"], n["actor_key"], n["name"], json.dumps(n["tokens"], ensure_ascii=False),
@@ -377,6 +389,7 @@ def derive(con, cfg: dict | None = None) -> dict:
                     (status, reason, d, n, low, nid))
     weak = {nid for nid, r in name_rows.items() if r["weak"] or is_weak(tuple(json.loads(r["tokens"] or "[]")))}
     con.execute("DELETE FROM doc_actors")
+    con.execute("DELETE FROM actor_pairs")
     cur = con.execute("SELECT doc_id, name_id, spans FROM actor_hits ORDER BY doc_id")
     written = 0
 
@@ -394,6 +407,8 @@ def derive(con, cfg: dict | None = None) -> dict:
                          json.dumps(used, ensure_ascii=False)))
         con.executemany("INSERT INTO doc_actors VALUES(?,?,?,?,?)", rows)
         written += len(rows)
+        con.executemany("INSERT INTO actor_pairs VALUES(?,?,?,?)",
+                        [(doc_id, a, b, n) for (a, b), n in pairs_in({r[1]: json.loads(r[3]) for r in rows}).items()])
 
     current, by_actor = None, {}
     for r in cur:
@@ -424,12 +439,28 @@ def doc_clause() -> str:
                         JOIN documents d ON d.id=da.doc_id WHERE da.actor_key=? AND {NOT_BEFORE_FOUNDED})"""
 
 
+def pairs_in(spans_by_actor: dict[str, list]) -> dict[tuple[str, str], int]:
+    """(a, b) → how many times a and b are named within WINDOW characters of each other in one document."""
+    marks = sorted((s, key) for key, spans in spans_by_actor.items() for s, _ in spans)
+    out: dict[tuple[str, str], int] = {}
+    for i, (s, a) in enumerate(marks):
+        seen = set()
+        for s2, b in marks[i + 1:]:
+            if s2 - s > WINDOW:
+                break
+            if b != a and b not in seen:
+                seen.add(b)
+                k = (a, b) if a < b else (b, a)
+                out[k] = out.get(k, 0) + 1
+    return out
+
+
 # ── queries for the portal ──
 def kind_name(kind: str) -> str:
     return KINDS.get(kind, kind)
 
 
-def actor_list(kind: str = "", q: str = "", min_docs: int = 1) -> list[dict]:
+def actor_list(kind: str = "", q: str = "", min_docs: int = 1, include_countries: bool = False) -> list[dict]:
     where, args, _ = trends.scope()
     sql = f"""SELECT a.key, a.qid, a.kind, a.label, a.description, COUNT(DISTINCT da.doc_id) docs,
                      COUNT(DISTINCT d.source_id) agencies, COUNT(DISTINCT s.country) countries,
@@ -438,6 +469,8 @@ def actor_list(kind: str = "", q: str = "", min_docs: int = 1) -> list[dict]:
               JOIN sources s ON s.id=d.source_id WHERE {where} AND {NOT_BEFORE_FOUNDED}"""
     if kind:
         sql += " AND a.kind=?"; args.append(kind)
+    elif not include_countries:
+        sql += " AND a.kind != 'country'"
     if q.strip():
         sql += " AND (a.label LIKE ? OR a.key IN (SELECT actor_key FROM actor_names WHERE name LIKE ?))"
         args += [f"%{q.strip()}%"] * 2
@@ -502,7 +535,7 @@ def actor_detail(key: str, passages: int = 40) -> dict | None:
             if d["year"]:
                 a["y0"] = min(a["y0"] or d["year"], d["year"]); a["y1"] = max(a["y1"] or d["year"], d["year"])
         doc_ids = [d["doc_id"] for d in docs]
-        topic_rows, related = [], []
+        topic_rows, related = [], {"actors": [], "countries": []}
         if doc_ids:
             marks = ",".join("?" * len(doc_ids))
             tax = topics.taxonomy()["topics"]
@@ -528,24 +561,84 @@ def actor_detail(key: str, passages: int = 40) -> dict | None:
                         "names": json.loads(d["names"])} for d in before]}
 
 
-def _related(con, key: str, docs: list[dict], marks: str, doc_ids: list[int], limit: int = 25) -> list[dict]:
-    """Actors mentioned within WINDOW characters of this actor (same passage), counted per document."""
-    mine = {d["doc_id"]: [s for s, _ in json.loads(d["spans"])] for d in docs}
-    together: dict[str, set] = {}
-    for r in con.execute(f"SELECT doc_id, actor_key, spans FROM doc_actors WHERE doc_id IN ({marks}) AND actor_key != ?",
-                         (*doc_ids, key)):
-        own = mine[r["doc_id"]]
-        for s, _ in json.loads(r["spans"]):
-            i = bisect.bisect_left(own, s - WINDOW)
-            if i < len(own) and own[i] <= s + WINDOW:
-                together.setdefault(r["actor_key"], set()).add(r["doc_id"])
-                break
-    if not together:
-        return []
-    labels = {r["key"]: (r["label"], r["kind"]) for r in con.execute(
-        f"SELECT key, label, kind FROM actors WHERE key IN ({','.join('?' * len(together))})", list(together))}
-    out = [{"key": k, "label": labels[k][0], "kind": labels[k][1], "docs": len(v)} for k, v in together.items()]
-    return sorted(out, key=lambda x: (-x["docs"], x["label"]))[:limit]
+# a pair counts in a report only when the report is not dated before either actor was founded
+PAIR_FOUNDED = """(a1.since_year IS NULL OR d.year IS NULL OR d.year >= a1.since_year)
+                  AND (a2.since_year IS NULL OR d.year IS NULL OR d.year >= a2.since_year)"""
+
+
+def _related(con, key: str, docs: list[dict], marks: str, doc_ids: list[int], limit: int = 25) -> dict:
+    """Actors and countries named within WINDOW characters of this actor (same passage), counted per report."""
+    rows = con.execute(
+        f"""SELECT CASE WHEN p.a=? THEN p.b ELSE p.a END other, COUNT(DISTINCT p.doc_id) n
+            FROM actor_pairs p JOIN documents d ON d.id=p.doc_id
+            JOIN actors a1 ON a1.key=p.a JOIN actors a2 ON a2.key=p.b
+            WHERE (p.a=? OR p.b=?) AND p.doc_id IN ({marks}) AND {PAIR_FOUNDED}
+            GROUP BY other ORDER BY n DESC""", (key, key, key, *doc_ids)).fetchall()
+    if not rows:
+        return {"actors": [], "countries": []}
+    info = {r["key"]: (r["label"], r["kind"]) for r in con.execute(
+        f"SELECT key, label, kind FROM actors WHERE key IN ({','.join('?' * len(rows))})", [r["other"] for r in rows])}
+    out = [{"key": r["other"], "label": info[r["other"]][0], "kind": info[r["other"]][1], "docs": r["n"]} for r in rows]
+    return {"actors": [x for x in out if x["kind"] != "country"][:limit],
+            "countries": [x for x in out if x["kind"] == "country"][:limit]}
+
+
+def pair_detail(a: str, b: str, year_from: int | None = None, year_to: int | None = None, coalition: str = "",
+                topic: str = "", type: str = "", passages: int = 40) -> dict | None:
+    """Reports in which actors a and b are named in the same passage, with those passages."""
+    a, b = sorted((a, b))
+    where, args, params = trends.scope("", coalition, type)
+    if year_from:
+        where += " AND d.year >= ?"; args.append(year_from)
+    if year_to:
+        where += " AND d.year <= ?"; args.append(year_to)
+    if topic:
+        where += " AND d.id IN (SELECT doc_id FROM doc_topics WHERE topic=?)"; args.append(topic)
+    with db.session() as con:
+        init()
+        actors_ = {r["key"]: dict(r) for r in con.execute("SELECT key, label, kind FROM actors WHERE key IN (?,?)", (a, b))}
+        if len(actors_) < 2:
+            return None
+        docs = [dict(r) for r in con.execute(
+            f"""SELECT p.doc_id, p.n, d.title, d.year, d.url, s.agency, s.country, i.pages
+                FROM actor_pairs p JOIN documents d ON d.id=p.doc_id JOIN sources s ON s.id=d.source_id
+                JOIN doc_index i ON i.doc_id=d.id JOIN actors a1 ON a1.key=p.a JOIN actors a2 ON a2.key=p.b
+                WHERE p.a=? AND p.b=? AND {where} AND {PAIR_FOUNDED}
+                ORDER BY d.year DESC NULLS LAST, p.n DESC""", (a, b, *args))]
+        shown = []
+        for d in docs[:passages]:
+            spans = {r["actor_key"]: json.loads(r["spans"]) for r in con.execute(
+                "SELECT actor_key, spans FROM doc_actors WHERE doc_id=? AND actor_key IN (?,?)", (d["doc_id"], a, b))}
+            best = _closest(spans.get(a, []), spans.get(b, []))
+            if not best:
+                continue
+            body = con.execute("SELECT body FROM doc_text WHERE rowid=?", (d["doc_id"],)).fetchone()[0] or ""
+            (s1, e1), (s2, e2) = sorted(best)
+            page = topics.page_of(json.loads(d["pages"]) if d["pages"] else None, s1)
+            snip = _snippet(body, s1, e2)
+            # mark both names inside the joined passage
+            mid = " ".join(body[e1:s2].split()) if s2 > e1 else ""
+            shown.append({**{k: d[k] for k in ("doc_id", "title", "year", "agency", "country", "url", "n")},
+                          "page": page, "before": snip["before"], "first": " ".join(body[s1:e1].split()),
+                          "middle": mid, "second": " ".join(body[s2:e2].split()) if s2 >= e1 else "",
+                          "after": snip["after"], "open": f"/doc/{d['doc_id']}" + (f"#page={page}" if page else "")})
+    return {"a": actors_[a], "b": actors_[b], "docs": len(docs), "passages": shown, "window": WINDOW,
+            "filters": {k: v for k, v in {"year_from": year_from, "year_to": year_to, "coalition": coalition,
+                                          "topic": topic, "type": type}.items() if v}}
+
+
+def _closest(xs: list, ys: list):
+    """The two spans of a and b that are closest (they are within WINDOW in a report listed in actor_pairs)."""
+    best, dist = None, None
+    starts = [y[0] for y in ys]
+    for x in xs:
+        i = bisect.bisect_left(starts, x[0])
+        for j in (i - 1, i):
+            if 0 <= j < len(ys):
+                dd = abs(ys[j][0] - x[0])
+                if dist is None or dd < dist:
+                    best, dist = (tuple(x), tuple(ys[j])), dd
+    return best if dist is not None and dist <= WINDOW else None
 
 
 def stamp() -> dict:

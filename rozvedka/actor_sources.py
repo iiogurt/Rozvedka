@@ -76,11 +76,13 @@ def candidates(cfg: dict) -> tuple[dict[str, list[dict]], dict[str, str]]:
     # dissolved (P576) or ended (P582) before 2000: historical, left out
     alive = ("FILTER NOT EXISTS { ?i wdt:P576 ?end . FILTER(YEAR(?end) < 2000) } "
              "FILTER NOT EXISTS { ?i wdt:P582 ?end2 . FILTER(YEAR(?end2) < 2000) }")
-    # states and companies can be "designated as terrorist" too (by another state); they are not actors here
+    # states and companies can be "designated as terrorist" too (by another state); they are not actors here.
+    # Only states are excluded from the class queries: Wikidata files drug cartels and PMCs under "business".
     not_state_or_company = " ".join(f"FILTER NOT EXISTS {{ ?i wdt:P31/wdt:P279* wd:{c} . }}" for c in NOT_ACTORS)
+    not_state = " ".join(f"FILTER NOT EXISTS {{ ?i wdt:P31/wdt:P279* wd:{c} . }}" for c in NOT_ACTORS if c != "Q4830453")
     enwiki = "?a schema:about ?i ; schema:isPartOf <https://en.wikipedia.org/> ."
     for cls, kind in cfg["classes"].items():
-        q = f"SELECT DISTINCT ?i WHERE {{ ?i wdt:P31/wdt:P279* wd:{cls} . {enwiki} {alive} {not_state_or_company} }}"
+        q = f"SELECT DISTINCT ?i WHERE {{ ?i wdt:P31/wdt:P279* wd:{cls} . {enwiki} {alive} {not_state} }}"
         rows = sparql(q)
         log.info("class %s (%s): %d items", cls, kind, len(rows))
         for r in rows:
@@ -204,6 +206,48 @@ def attack_groups() -> tuple[list[dict], dict]:
     return groups, {"url": ATTACK_URL, "version": version}
 
 
+def country_actors(cfg: dict, today: str) -> list[dict]:
+    """Countries as actors: sovereign states (Q3624078) with an ISO code, plus the extra items in actors.yaml.
+
+    Names are the Wikidata labels and aliases and the demonyms (P1549: "Russian", "Russe") in the report languages,
+    so that "which countries' reports talk about which countries" can be counted like any other actor.
+    """
+    q = """SELECT DISTINCT ?i ?iso WHERE { ?i wdt:P31 wd:Q3624078 ; wdt:P297 ?iso .
+           FILTER NOT EXISTS { ?i wdt:P576 ?end } }"""
+    iso = {_qid(r["i"]["value"]): r["iso"]["value"] for r in sparql(q)}
+    extra = (cfg.get("countries") or {}).get("extra") or {}
+    iso.update(extra)
+    ents = entities(list(iso), "labels|aliases|descriptions|claims|sitelinks/urls|info", LANGS)
+    out = []
+    for qid, e in ents.items():
+        names = [{"name": v["value"], "lang": lg, "origin": "Wikidata label"} for lg, v in e.get("labels", {}).items()]
+        names += [{"name": a["value"], "lang": lg, "origin": "Wikidata alias"}
+                  for lg, al in e.get("aliases", {}).items() for a in al]
+        for c in _claims(e, "P1549"):
+            v = c["mainsnak"]["datavalue"]["value"]
+            if v["language"] in LANGS:
+                names.append({"name": v["text"], "lang": v["language"], "origin": "Wikidata demonym (P1549)"})
+        names += [{"name": n, "lang": "", "origin": "added by hand in sources/actors.yaml"}
+                  for n in ((cfg.get("countries") or {}).get("aliases") or {}).get(qid, [])]
+        title = e.get("sitelinks", {}).get("enwiki", {}).get("title")
+        out.append({
+            "key": qid, "qid": qid, "kind": "country", "iso": iso[qid],
+            "label": next((e["labels"][lg]["value"] for lg in ("en", "mul") if lg in e.get("labels", {})), qid),
+            "description": e.get("descriptions", {}).get("en", {}).get("value", ""),
+            "instance_of": [], "countries": [], "inception": None, "dissolved": None, "designations": [],
+            "image": None, "names": names,
+            "reasons": [{"via": "country", "kind": "country", "text": "Wikidata: instance of (P31) sovereign state (Q3624078) with an ISO code (P297)"
+                         if qid not in extra else "Added by hand in sources/actors.yaml (countries: extra)"}],
+            "wikidata": {"url": f"https://www.wikidata.org/wiki/{qid}", "revision": e.get("lastrevid"),
+                         "revision_url": f"https://www.wikidata.org/w/index.php?title={qid}&oldid={e.get('lastrevid')}",
+                         "retrieved": today},
+            "wikipedia": title and {"title": title, "url": "https://en.wikipedia.org/wiki/" + urllib.parse.quote(title.replace(" ", "_")),
+                                    "extract": "", "revision": None, "revision_url": None, "revision_time": None,
+                                    "retrieved": today, "licence": "CC BY-SA 4.0"},
+            "attack": None})
+    return out
+
+
 def fetch(config: Path = CONFIG, out: Path = GAZETTEER) -> dict:
     cfg = yaml.safe_load(config.read_text(encoding="utf-8"))
     today = dt.date.today().isoformat()
@@ -302,6 +346,11 @@ def fetch(config: Path = CONFIG, out: Path = GAZETTEER) -> dict:
             "names": [{"name": n, "lang": "", "origin": f"MITRE ATT&CK {g['id']}"} for n in [g["name"], *g["aliases"]]],
             "reasons": [{"via": "attack", "kind": "cyber", "text": f"MITRE ATT&CK group {g['id']}"}],
             "wikidata": None, "wikipedia": None, "attack": {**g, "retrieved": today}})
+    have = {a["key"] for a in actors}
+    for c in country_actors(cfg, today):
+        if c["key"] in have:      # a state that is also listed as an actor (e.g. a seed): keep one entry, as country
+            actors = [a for a in actors if a["key"] != c["key"]]
+        actors.append(c)
     data = {"retrieved": today, "config_hash": _hash(config),
             "sources": {"wikidata": {"sparql": SPARQL, "api": WD_API, "licence": "CC0"},
                         "wikipedia": {"api": WP_API, "licence": "CC BY-SA 4.0"},

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Topics · Rozvedka{% endblock %}
 {% block main %}
+<nav class="subnav" aria-label="Topic views"><a href="/topics" class="on">List</a><a href="/topics/map">Mind map</a></nav>
 <div class="summary">
   <span><b>{{ tax.topics|length }}</b> topics in <b>{{ tax.categories|length }}</b> categories</span>
   <span class="muted small">{{ indexed[1] or 0 }} of {{ indexed[0] or 0 }} extracted documents classified ·
