@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ a.label }} · {{ b.label }} · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/network">← Network</a> · <a href="/actors/{{ a.key }}">{{ a.label }}</a> · <a href="/actors/{{ b.key }}">{{ b.label }}</a></p>
+<h1 class="page-h">{{ a.label }} <span class="muted">and</span> {{ b.label }}</h1>
+<p class="muted">Named within {{ window }} characters of each other – roughly the same paragraph – in <b>{{ docs }}</b>
+  report{{ 's' if docs != 1 }}{% if filters %} ({% for k, v in filters.items() %}{{ k.replace('_', ' ') }} {{ TOPICS[v].name if k == 'topic' and v in TOPICS else v }}{{ ', ' if not loop.last }}{% endfor %}){% endif %}.
+  Below is the closest such passage in each report{% if docs > passages|length %} ({{ passages|length }} newest of {{ docs }}){% endif %}.
+  Being named together is not evidence of a connection – read what the passage says.</p>
+
+<ol class="passages">
+{% for p in passages %}
+  <li>
+    <div class="p-head"><img class="flag-sm" src="{{ flag_url(p.country) }}" alt=""> <b>{{ p.agency }}</b>
+      {% if p.year %}{{ p.year }} · {% endif %}<span class="p-title">{{ p.title }}</span></div>
+    <blockquote class="p-text">{{ p.before }}<mark>{{ p.first }}</mark>{% if p.second %} {{ p.middle }} <mark>{{ p.second }}</mark>{% endif %}{{ p.after }}</blockquote>
+    <div class="p-foot small">
+      <a href="{{ p.open }}">{% if p.page %}p. {{ p.page }}{% else %}open report{% endif %}</a> ·
+      <a href="{{ p.url }}" rel="noopener">original</a> ·
+      <span class="muted">named together {{ p.n }}× in this report</span>
+    </div>
+  </li>
+{% endfor %}
+</ol>
+{% if not passages %}<p class="muted">No report in this selection names both in one passage.</p>{% endif %}
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Who reports on whom · Map · Rozvedka{% endblock %}
+{% block body_class %}theme-dark map-page{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/vendor/leaflet/leaflet.css">{% endblock %}
+{% block main %}
+<div class="mapwrap">
+  <aside class="mappanel" aria-label="Map controls">
+    <nav class="subnav map-tabs" aria-label="Map views"><a href="/map">Headquarters</a><a href="/map/mentions" class="on">Who reports on whom</a></nav>
+    <form id="scope" onsubmit="return false">
+      <span class="seg" role="group" aria-label="Question">
+        <label><input type="radio" name="mode" value="about" checked> who reports on…</label>
+        <label><input type="radio" name="mode" value="from"> what … reports on</label>
+      </span>
+      <label class="coal-select" id="about-pick">Country named in the reports
+        <select name="about"></select></label>
+      <label class="coal-select" id="from-pick" hidden>Reports from
+        <select name="from">
+          <optgroup label="Coalitions">{% for key, c in COALITIONS.items() %}<option value="{{ key }}">{{ c.name }}</option>{% endfor %}</optgroup>
+          <optgroup label="Countries and bodies">{% for code, name in reporting %}<option value="{{ code }}">{{ name }}</option>{% endfor %}</optgroup>
+        </select></label>
+      <label class="coal-select">Years
+        <span class="row"><select name="year_from"><option value="">from</option>{% for y in years|reverse %}<option>{{ y }}</option>{% endfor %}</select>
+        <select name="year_to"><option value="">to</option>{% for y in years %}<option>{{ y }}</option>{% endfor %}</select></span></label>
+      <label class="coal-select">Agency type
+        <select name="type"><option value="">All agency types</option>
+          {% for key, name in TYPE_NAMES.items() %}<option value="{{ key }}">{{ name }}</option>{% endfor %}</select></label>
+    </form>
+    <p id="how" class="muted small"></p>
+    <div class="shade-legend" aria-hidden="true"><span>0%</span><i></i><span id="maxshare">more</span></div>
+    <div class="shade-legend thin-legend" aria-hidden="true"><b class="swatch"></b><span>fewer than 10 reports in the selection – too few to compare</span></div>
+    <p class="small"><a id="csv" href="#">CSV</a> · <a id="permalink" href="#">link</a></p>
+    <ol id="list" class="maplist mention-list"></ol>
+  </aside>
+  <div id="map" class="map" role="region" aria-label="World map shaded by share of reports"></div>
+</div>
+<script src="/static/vendor/leaflet/leaflet.js"></script>
+<script src="/static/mentions.js"></script>
+{% endblock %}

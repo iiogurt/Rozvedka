@@ -41,13 +41,19 @@
   <div class="chips">{% for t in topics %}<a class="topic-chip" href="{{ t.link }}">{{ t.name }} <span class="muted">{{ t.docs }}</span></a>{% endfor %}</div>
   {% endif %}
 
-  {% if related %}
-  <h3 class="viz-mini">Mentioned together with</h3>
-  <p class="muted small">Actors named within {{ window }} characters of {{ a.label }} – roughly the same paragraph – in the
-    number of reports shown. Being named together is not evidence of a connection; read the passages.</p>
-  <ul class="actor-list cols">
-    {% for r in related %}<li><a href="/actors/{{ r.key }}">{{ r.label }}</a> <span class="muted small">{{ r.docs }}</span></li>{% endfor %}
-  </ul>
+  {% if related.actors or related.countries %}
+  <h3 class="viz-mini">Named in the same passage</h3>
+  <p class="muted small">Actors and countries named within {{ window }} characters of {{ a.label }} – roughly the same
+    paragraph – with the number of reports. The number opens those passages. Being named together is not evidence
+    of a connection; read the passages.</p>
+  {% if related.actors %}<ul class="actor-list cols">
+    {% for r in related.actors %}<li><a href="/actors/{{ r.key }}">{{ r.label }}</a>
+      <a class="muted small" href="/actors/{{ a.key }}/with/{{ r.key }}" title="Passages naming both">{{ r.docs }}</a></li>{% endfor %}
+  </ul>{% endif %}
+  {% if related.countries %}<h3 class="viz-mini small">Countries</h3><ul class="actor-list cols">
+    {% for r in related.countries %}<li><a href="/actors/{{ r.key }}">{{ r.label }}</a>
+      <a class="muted small" href="/actors/{{ a.key }}/with/{{ r.key }}" title="Passages naming both">{{ r.docs }}</a></li>{% endfor %}
+  </ul>{% endif %}
   {% endif %}
 </section>
 

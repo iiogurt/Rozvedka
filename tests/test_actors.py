@@ -133,7 +133,7 @@ def test_index_applies_corpus_rules(library):
     assert "lowercase more often" in sandworm["reason"]
     d = actors.actor_detail("Q3")
     assert d["docs"] == 1 and d["passages"][0]["page"] == 1 and d["passages"][0]["match"] == "Federal Security Service"
-    assert [r["key"] for r in d["related"]] == ["Q5"]
+    assert [r["key"] for r in d["related"]["actors"]] == ["Q5"]
     assert actors.index(workers=1)["matched_docs"] == 0          # nothing new: nothing matched again
 
 

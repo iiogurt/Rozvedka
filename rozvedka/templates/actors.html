@@ -13,7 +13,7 @@
   <a class="small" href="/actors/names">review the names used for matching</a>
 </form>
 <div class="chosen-topics">
-  <a class="topic-chip {{ 'on' if not f.kind }}" href="/actors?q={{ f.q|urlencode }}&min_docs={{ f.min_docs }}">All ({{ counts.values()|sum }})</a>
+  <a class="topic-chip {{ 'on' if not f.kind }}" href="/actors?q={{ f.q|urlencode }}&min_docs={{ f.min_docs }}">All actors ({{ counts.values()|sum - counts.get('country', 0) }})</a>
   {% for k, name in kinds.items() %}{% if counts.get(k) %}
   <a class="topic-chip {{ 'on' if f.kind == k }}" href="/actors?kind={{ k }}&q={{ f.q|urlencode }}&min_docs={{ f.min_docs }}">{{ name }} ({{ counts[k] }})</a>
   {% endif %}{% endfor %}

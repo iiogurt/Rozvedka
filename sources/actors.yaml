@@ -127,3 +127,16 @@ exclude_aliases:
   Q244527: [Varsovia]                         # Zwi Migdal: Spanish name of Warsaw
   Q17125354: [Stewards]
   Q1778907: [Revolutionary Cells]             # Revolutionary Nuclei: the name of other groups
+  Q30: [America, América, Amérique, Amerika, Ameryka, États]   # United States: "Latin America", "América Latina"
+  Q884: [Korea, Corea, Corée, Korea Południowa]                # South Korea: "Korea" alone may mean either
+  Q2940548: [Valencia]                        # Milenio Cartel: a city and a family name
+
+# Countries are actors too (kind "country"), so the portal can show which countries' reports talk about which
+# countries. They come from Wikidata: sovereign states (Q3624078) with an ISO code, with their labels, aliases and
+# demonyms (P1549). `extra` adds territories that are not on that list (Wikidata item: ISO code).
+countries:
+  extra:
+    Q865: TW          # Taiwan
+    Q1246: XK         # Kosovo
+    Q219060: PS       # State of Palestine
+  aliases: {}

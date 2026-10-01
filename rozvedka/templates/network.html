@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Network · Rozvedka{% endblock %}
+{% block head %}<script src="/static/vendor/echarts/echarts.min.js"></script>{% endblock %}
+{% block main %}
+<form class="filters trend-filters" id="scope" onsubmit="return false">
+  <label class="chk">from <select name="year_from"><option value="">all</option>{% for y in years|reverse %}<option>{{ y }}</option>{% endfor %}</select></label>
+  <label class="chk">to <select name="year_to"><option value="">all</option>{% for y in years %}<option>{{ y }}</option>{% endfor %}</select></label>
+  <select name="coalition" aria-label="Reporting coalition"><option value="">Reports from all countries</option>
+    {% for key, c in COALITIONS.items() %}<option value="{{ key }}">Reports from {{ c.name }}</option>{% endfor %}
+  </select>
+  <select name="type" aria-label="Agency type"><option value="">All agency types</option>
+    {% for key, name in TYPE_NAMES.items() %}<option value="{{ key }}">{{ name }}</option>{% endfor %}
+  </select>
+  <select name="topic" aria-label="Only reports on a topic"><option value="">Reports on any topic</option>
+    {% for ckey, cat in CATEGORIES.items() %}<optgroup label="{{ cat.name }}">
+      {% for t in cat.topics %}<option value="{{ t }}">{{ TOPICS[t].name }}</option>{% endfor %}</optgroup>{% endfor %}
+  </select>
+  <label class="chk" title="How many actors to show (those named in the most reports)">actors
+    <select name="nodes">{% for n in [40, 80, 120, 160] %}<option {{ 'selected' if n == 80 }}>{{ n }}</option>{% endfor %}</select></label>
+  <label class="chk" title="Hide links found in fewer reports">links in at least
+    <select name="min_link">{% for n in [1, 2, 3, 5, 10] %}<option {{ 'selected' if n == 2 }}>{{ n }}</option>{% endfor %}</select> reports</label>
+  <label class="chk"><input type="checkbox" name="countries_too" value="1"> include countries</label>
+</form>
+
+<section class="viz-card" aria-labelledby="net-title">
+  <div class="viz-head">
+    <h2 id="net-title" class="viz-title">Actors named in the same passage</h2>
+    <span class="viz-actions"><a id="permalink" href="#">link</a></span>
+  </div>
+  <p id="net-sub" class="muted small viz-sub"></p>
+  <div id="net" class="chart chart-net" role="img" aria-describedby="net-sub"></div>
+  <p class="muted small hint">Drag to move, scroll to zoom. Click an actor for its page, a link for the passages
+    that name both. Click a kind in the legend to hide it.</p>
+  <details class="viz-table" id="table-wrap"><summary>Table view – strongest links</summary><div id="table"></div></details>
+</section>
+
+<section class="viz-card provenance" aria-labelledby="prov-title">
+  <h2 id="prov-title" class="viz-title">Where this comes from</h2>
+  <div id="prov"></div>
+</section>
+<script src="/static/network.js"></script>
+{% endblock %}

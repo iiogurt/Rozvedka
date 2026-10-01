@@ -27,6 +27,25 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.12.0] – 2026-10-01
+
+### Added
+- Network (`/network`): actors linked when named in the same passage, sized by reports, coloured by kind,
+  filtered by period, reporting coalition, agency type and topic; table view.
+- Passages of two actors named together (`/actors/<a>/with/<b>`), linked from every network link and from the
+  actor pages ("Named in the same passage", now with countries listed apart).
+- Who reports on whom (`/map/mentions`, a tab of the map): the share of each country's reports naming a chosen
+  country, or the countries named by one country or coalition; CSV export; thin selections (< 10 reports) greyed.
+- Topic mind map (`/topics/map`): categories → topics → the actors most characteristic of each topic, with a
+  details panel and links.
+- Countries as actors (189, from Wikidata with demonyms), shown under Actors → Countries.
+- Documents page: `main=1` (topic among each report's three main topics).
+
+### Changed
+- Name matching: "States", company words and ordinal numbers are generic; words in capitals match only from
+  6 letters; hand exclusions for "America", "Korea", "Valencia". Drug cartels and private military companies are
+  no longer dropped by the company filter (it applies only to "designated as terrorist").
+
 ## [0.11.1] – 2026-10-01
 
 ### Changed
@@ -207,7 +226,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.11.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/iiogurt/Rozvedka/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/iiogurt/Rozvedka/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/iiogurt/Rozvedka/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/iiogurt/Rozvedka/compare/v0.9.3...v0.10.0

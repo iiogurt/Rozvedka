@@ -13,7 +13,8 @@ from fastapi.templating import Jinja2Templates
 
 from markupsafe import escape
 
-from . import __version__, actors, build_version, countries, crawler, db, downloader, logos, registry, topics, trends
+from . import (__version__, actors, build_version, countries, crawler, db, downloader, graphs, logos, registry,
+               topics, trends)
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -101,7 +102,7 @@ def startup():
 def index(request: Request, country: str = "", type: str = "", lang: str = "", year: str = "",
           status: str = "", q: str = "", source: int = 0, page: int = 1, show_hidden: int = 0,
           coalition: str = "", topic: list[str] = Query(default=[]), sort: str = "",
-          year_from: str = "", year_to: str = "", indexed: int = 0, actor: str = ""):
+          year_from: str = "", year_to: str = "", indexed: int = 0, actor: str = "", main: int = 0):
     tax = topics.taxonomy()["topics"]
     chosen = [t for t in topic if t in tax]
     where, args = ["s.active=1"], []
@@ -140,7 +141,11 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
         args += [f"%{q}%"] * 4 + [fts or '""']
     base_where, base_args = " AND ".join(where), list(args)      # everything except the topic filter
     for t in chosen:                                              # several topics: a document must have all
-        where.append("d.id IN (SELECT doc_id FROM doc_topics WHERE topic=?)"); args.append(t)
+        if main:   # link from the topic mind map: the topic must be one of the report's main topics
+            sql, margs = topics.main_topic_clause()
+            where.append(sql); args += [*margs, t]
+        else:
+            where.append("d.id IN (SELECT doc_id FROM doc_topics WHERE topic=?)"); args.append(t)
     sql_where = " AND ".join(where)
     sort = sort or ("relevance" if chosen or q.strip() else "year")
     if sort == "relevance" and chosen:
@@ -189,7 +194,7 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
     params = dict(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source or "",
                   coalition=coalition, topic=chosen, sort=sort if sort != "year" or chosen or q else "",
                   show_hidden=show_hidden or "", year_from=year_from, year_to=year_to, indexed=indexed or "",
-                  actor=actor)
+                  actor=actor, main=main or "")
 
     def qs(**kw):
         merged = {**params, **kw}
@@ -354,11 +359,11 @@ def api_trend_matrix(request: Request, year_from: int = 0, year_to: int = 0, by:
 
 @app.get("/actors")
 def actors_page(request: Request, kind: str = "", q: str = "", min_docs: int = 2):
-    every = actors.actor_list("", q, max(1, min_docs))
+    every = actors.actor_list("", q, max(1, min_docs), include_countries=True)
     counts: dict[str, int] = {}
     for r in every:
         counts[r["kind"]] = counts.get(r["kind"], 0) + 1
-    rows = [r for r in every if not kind or r["kind"] == kind]
+    rows = [r for r in every if r["kind"] == kind] if kind else [r for r in every if r["kind"] != "country"]
     maxdocs = max((r["docs"] for r in rows), default=1)
     return tpl.TemplateResponse(request, "actors.html", {
         "rows": rows, "kinds": actors.KINDS, "counts": counts, "f": {"kind": kind, "q": q, "min_docs": min_docs},
@@ -370,6 +375,62 @@ def actor_names_page(request: Request, status: str = "used"):
     return tpl.TemplateResponse(request, "actor_names.html", {
         "rows": actors.top_names(400, "ignored" if status == "ignored" else "used"), "status": status,
         "kinds": actors.KINDS, "jobs": dict(_jobs)})
+
+
+@app.get("/actors/{a}/with/{b}")
+def actor_pair_page(request: Request, a: str, b: str, year_from: int = 0, year_to: int = 0, coalition: str = "",
+                    topic: str = "", type: str = ""):
+    d = actors.pair_detail(a, b, year_from or None, year_to or None, coalition, topic, type)
+    if d is None:
+        raise HTTPException(404, "unknown actor")
+    return tpl.TemplateResponse(request, "pair.html", {**d, "TOPICS": topics.taxonomy()["topics"], "jobs": dict(_jobs)})
+
+
+def _years_desc():
+    with db.session() as con:
+        return [r[0] for r in con.execute("SELECT DISTINCT year FROM documents WHERE year >= ? ORDER BY year DESC",
+                                          (trends.MIN_YEAR,))]
+
+
+@app.get("/network")
+def network_page(request: Request):
+    tax = topics.taxonomy()
+    return tpl.TemplateResponse(request, "network.html", {
+        "kinds": actors.KINDS, "years": _years_desc(), "TOPICS": tax["topics"], "CATEGORIES": tax["categories"],
+        "jobs": dict(_jobs)})
+
+
+@app.get("/api/network")
+def api_network(year_from: int = 0, year_to: int = 0, coalition: str = "", type: str = "", topic: str = "",
+                kind: list[str] = Query(default=[]), countries_too: int = 0, nodes: int = 80, min_link: int = 2):
+    return graphs.network(year_from or None, year_to or None, coalition, type, topic, kind, bool(countries_too),
+                          max(10, min(nodes, 200)), max(1, min_link))
+
+
+@app.get("/map/mentions")
+def mentions_page(request: Request):
+    return tpl.TemplateResponse(request, "mentions.html", {"years": _years_desc(), "jobs": dict(_jobs),
+                                                         "reporting": sorted(COUNTRY_NAMES.items(), key=lambda x: x[1])})
+
+
+@app.get("/api/mentions")
+def api_mentions(request: Request, mode: str = "about", target: str = "", year_from: int = 0, year_to: int = 0,
+                 type: str = "", format: str = "json"):
+    d = graphs.geography("from" if mode == "from" else "about", target, year_from or None, year_to or None, type)
+    if format != "csv":
+        return d
+    return _csv(f"mentions-{mode}-{target}", ["country", "iso", "reports_naming", "reports_in_scope", "share", "source_documents"],
+                ([r["name"], r["iso"], r["docs"], r["of"], r["share"], _abs(request, r["link"])] for r in d["rows"]))
+
+
+@app.get("/topics/map")
+def topic_map_page(request: Request):
+    return tpl.TemplateResponse(request, "topic_map.html", {"years": _years_desc(), "jobs": dict(_jobs)})
+
+
+@app.get("/api/topics/tree")
+def api_topic_tree(coalition: str = "", year_from: int = 0, year_to: int = 0, per_topic: int = 6):
+    return graphs.topic_tree(max(0, min(per_topic, 12)), coalition, year_from or None, year_to or None)
 
 
 @app.get("/actors/{key}")

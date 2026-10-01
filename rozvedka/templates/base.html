@@ -14,10 +14,11 @@
   <nav>
     <a href="/" class="{{ 'on' if request.url.path == '/' }}">Documents</a>
     <a href="/sources" class="{{ 'on' if request.url.path == '/sources' }}">Sources</a>
-    <a href="/topics" class="{{ 'on' if request.url.path == '/topics' }}">Topics</a>
+    <a href="/topics" class="{{ 'on' if request.url.path.startswith('/topics') }}">Topics</a>
     <a href="/trends" class="{{ 'on' if request.url.path.startswith('/trends') }}">Trends</a>
     <a href="/actors" class="{{ 'on' if request.url.path.startswith('/actors') }}">Actors</a>
-    <a href="/map" class="{{ 'on' if request.url.path == '/map' }}">Map</a>
+    <a href="/network" class="{{ 'on' if request.url.path == '/network' }}">Network</a>
+    <a href="/map" class="{{ 'on' if request.url.path.startswith('/map') }}">Map</a>
   </nav>
 </header>
 {% if jobs %}
