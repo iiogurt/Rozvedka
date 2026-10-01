@@ -1,191 +1,308 @@
+<div align="center">
+
 # Rozvedka
 
-A local library of the public reports that intelligence, cyber-security, civil-protection and police agencies publish: the EU member states, EU bodies and NATO, plus other democracies (UK, Norway, Switzerland, Ukraine, USA, Canada, Mexico, Brazil, Argentina, Chile, Colombia, Peru, Australia, New Zealand, Japan, South Korea, Taiwan). It runs on this Raspberry Pi.
+**A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
+collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-- `sources/registry.yaml` lists the agencies and their report pages (language + current/archive). Edit it by hand.
-- `sources/sources.md` is the readable version of the registry. Rebuild it with `python3 tools/build_sources_md.py`.
-- `data/rozvedka.db` is the SQLite catalogue of sources, pages and documents.
-- `data/files/<country>/<agency>/<year>_<lang>_<name>.pdf` holds the downloaded reports.
+![version](https://img.shields.io/badge/version-0.11.1-1f4e79)
+![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
+![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
+![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
+![platform](https://img.shields.io/badge/runs%20on-Raspberry%20Pi-c51a4a?logo=raspberrypi&logoColor=white)
 
-## Commands
+[Features](#features) · [Quick start](#quick-start) · [Commands](#commands) · [Configuration](#configuration) ·
+[How it works](#how-it-works) · [Development](#development) · [Sources & licences](#data-sources-and-licences)
 
-```bash
-.venv/bin/python -m rozvedka sync-registry            # load registry.yaml into the DB
-.venv/bin/python -m rozvedka crawl [--country CZ] [--agency BIS]   # find documents (no download)
-.venv/bin/python -m rozvedka download [--country CZ] [--limit N] [--retry-failed]
-.venv/bin/python -m rozvedka update                   # crawl + download (what the weekly timer runs)
-.venv/bin/python -m rozvedka serve                    # portal on http://<pi>:8080
-.venv/bin/python -m rozvedka stats
-.venv/bin/python -m rozvedka fetch-logos [--refresh]  # agency logos from home pages -> data/logos/
-.venv/bin/python -m rozvedka improve-titles           # poor titles -> title stored in the PDF
-python3 tools/check_registry.py                       # check that every registry URL still loads
-```
+<img src="docs/images/trends.png" alt="Trends page: share of reports per topic and year, with event markers" width="900">
 
-## How sources are fetched (`access` in the registry)
+</div>
 
-| access | behaviour |
+## About
+
+Intelligence services, cyber-security centres, civil-protection authorities and police agencies publish annual
+reports, threat assessments and risk analyses. Rozvedka gathers them from the agencies' own websites into one
+local library, so you can follow how state security, social resilience and disaster preparedness are developing
+– and who reports on what.
+
+| | |
 |---|---|
-| `auto` | plain HTTP fetch |
-| `browser-ua` | same, with curl fallback for servers that reject Python's TLS handshake |
-| `tls-lenient` | skip certificate verification (server sends an incomplete chain) |
-| `browser-js` | page is rendered with headless Chromium (`/usr/bin/chromium`) |
-| `manual` | bot-protected; add documents in the portal (Sources → "Add a document by URL") |
+| **Coverage** | 120 agencies and institutions in 46 countries and bodies: 26 EU member states, EU bodies and NATO, the UK, Norway, Switzerland, Ukraine, the USA, Canada, six Latin American countries, Australia, New Zealand, Japan, South Korea and Taiwan |
+| **Library** | about 3,100 reports in 25 languages, with archives back to 2000, downloaded as PDF |
+| **Index** | full text of every report, 64 topics from a 3,800-term multilingual keyword list, about 1,500 named actors |
+| **Runs on** | a Raspberry Pi (or any Linux box) – Python, SQLite and the browser; no cloud service, no account |
 
-Pages that turn out to be empty JavaScript shells are rendered with Chromium automatically.
-Fetching is polite: it waits 2 s between requests to the same host and respects robots.txt.
+> [!IMPORTANT]
+> **Everything is traceable.** Every number on every chart opens the list of documents it counts; every actor
+> mention links to the page of the PDF it was found on; every external fact (an event date, a Wikidata
+> designation, a Wikipedia summary) carries its source, revision and retrieval date. Nothing is estimated or
+> generated – counts are counts of documents.
 
-## Setup
+## Features
+
+### 📚 Documents
+
+The library itself: every report with its agency, country, language, year and topics.
+
+- Filter by country, coalition (EU, NATO, Five Eyes, G7, Schengen, AUKUS, JEF, NATO IP4), agency type, language,
+  year or year range, download status, topic (several at once) and actor.
+- **Full-text search inside the reports** – `"quoted phrases"`, `OR` for translations
+  (`drone OR Drohne OR dron`), results with highlighted snippets, sorted by relevance or year.
+- Open a downloaded PDF, or the agency's original; correct a title, language or year; hide irrelevant files; add a
+  document by URL for sites that block automatic downloads.
+
+### 🏛️ Sources
+
+One card per agency: flag, logo, official name in the original language and in English, home page, a short
+description of what its reports cover, coalition tags with the year each country joined, the report pages it is
+crawled from (with language and current/archive), and a link to its headquarters on the map.
+
+### 🏷️ Topics and full-text index
+
+<img src="docs/images/topics.png" alt="Topics page: categories and topics with document counts" width="900">
+
+- 64 topics in 9 categories – extremism, state threats, geopolitics, cyber, crime, migration, hazards,
+  resilience, governance – e.g. *right-wing extremism*, *Russia – intelligence, influence & hybrid activity*,
+  *drones & emerging military technology*, *floods & extreme weather*, *civil defence*.
+- Each topic is defined by keywords in 28 languages in [`sources/topics.yaml`](sources/topics.yaml); a report gets
+  a topic only when it mentions it substantially, not in passing.
+
+### 📈 Trends
+
+<table>
+<tr>
+<td width="50%"><img src="docs/images/terms.png" alt="Term trends: share of reports containing each term"></td>
+<td width="50%"><img src="docs/images/matrix.png" alt="Who reports on what: countries × topics heatmap"></td>
+</tr>
+<tr>
+<td><b>Term trends</b> – any words over time, one line per term, with translations joined by <code>OR</code>.</td>
+<td><b>Who reports on what</b> – countries or agencies × topics for a period.</td>
+</tr>
+</table>
+
+- **Topics over time** – share of reports (or of reporting agencies) per year for up to 8 topics, with the number
+  of reports per year beneath, plus the topics that rose and fell most in the last two years.
+- **Reference events** (9/11, the annexation of Crimea, COVID-19, the invasion of Ukraine, …) marked on the time
+  axis, dated from Wikidata.
+- Every view has a permalink, a table view, a CSV export with a source link on every row and a *Where these
+  numbers come from* section (method, filters, excluded documents, taxonomy version).
+
+### 🕵️ Actors
+
+<img src="docs/images/actor.png" alt="Actor page: mentions per year, reporting agencies and sourced reference data" width="900">
+
+- An index of state services, cyber threat groups, terrorist-designated and armed groups, organised crime,
+  movements and key people, built from **Wikidata**, **Wikipedia** and **MITRE ATT&CK**, and found by name in the
+  report texts – in all report languages and with the aliases of each group (APT28 = Fancy Bear = Sofacy =
+  Forest Blizzard).
+- Each actor page: reference data with its source and revision, the Wikipedia lead, mentions per year, which
+  agencies report on it, the topics of those reports, actors named in the same passage, and **the passages
+  themselves with a link to the cited page of the PDF**.
+- Name matching is rule-based and transparent: every name used (or not used, with the reason) is listed, and
+  `/actors/names` shows the most frequent matches for review.
+
+### 🗺️ Map
+
+<img src="docs/images/map.png" alt="Dark world map with agency headquarters, clustered and coloured by agency type" width="900">
+
+Agency headquarters on a dark world map, coloured by agency type, with a hover card for each agency; countries
+shaded by number of reports; filters by topic, coalition and agency type.
+
+### 🔄 Automatic updates
+
+A weekly job crawls every report page, downloads new reports, improves poor titles from the PDF metadata, and
+indexes the new texts for search, topics and actors. Crawling is polite: robots.txt is respected and each host
+gets at most one request every 2 seconds.
+
+## Quick start
 
 ```bash
 git clone https://github.com/iiogurt/Rozvedka.git ~/Documents/Projects/Rozvedka
 cd ~/Documents/Projects/Rozvedka
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+sudo apt install poppler-utils chromium      # pdftotext (text extraction), Chromium (JavaScript-only sites)
+
+.venv/bin/python -m rozvedka update          # crawl, download, extract and index (first run: hours)
+.venv/bin/python -m rozvedka fetch-actors    # reference data for the actor index (a few minutes)
+.venv/bin/python -m rozvedka index-actors
+.venv/bin/python -m rozvedka serve           # → http://<host>:8080
 ```
 
-`data/` is not in git. It is created on first run and holds the database and the downloaded PDFs. Back it up separately.
+> [!WARNING]
+> The portal has no login. It listens on your LAN; do not expose it to the internet.
 
-## Run as a service (systemd user units, no root needed)
+> [!NOTE]
+> `data/` is not in git. It holds the database (`rozvedka.db`), the downloaded PDFs (`files/`, 12+ GB), logos and
+> the actor gazetteer. Back it up separately.
+
+### Run as a service
+
+systemd user units, no root needed (except once for `enable-linger`, which keeps them running without a login):
 
 ```bash
 systemctl --user link "$PWD/deploy/rozvedka-web.service" "$PWD/deploy/rozvedka-update.service" "$PWD/deploy/rozvedka-update.timer"
 systemctl --user daemon-reload
-systemctl --user enable --now rozvedka-web.service rozvedka-update.timer
-sudo loginctl enable-linger "$USER"      # keep user services running without a login session
+systemctl --user enable --now rozvedka-web.service rozvedka-update.timer   # portal + weekly update (Sun 03:00)
+sudo loginctl enable-linger "$USER"
 ```
 
-The portal has no login. It listens on your LAN (port 8080), so don't expose it to the internet.
+## Commands
 
-## Git workflow
+`python -m rozvedka <command>` (from the project directory, with `.venv/bin/python`):
 
-- `main` always holds working code. Make changes on a branch (`feat/…`, `fix/…`, `sources/…`) and merge through a pull request.
-- Never commit `data/`, `.env` or credentials. `.gitignore` covers these.
-- Edits to the registry go in their own commits (e.g. `sources: add Latvian SAB reports page`), so the list of sources has a clear history.
+| Command | What it does |
+|---|---|
+| `update [--country CZ]` | everything the weekly timer runs: crawl → download → improve titles → index topics → index actors |
+| `sync-registry` | load `sources/registry.yaml` into the database |
+| `crawl [--country CZ] [--agency BIS]` | find new documents on the report pages (no download) |
+| `download [--country CZ] [--limit N] [--retry-failed]` | download discovered documents |
+| `index-topics [--reextract]` | extract text for full-text search and tag topics; re-classifies after `topics.yaml` changes |
+| `fetch-actors` | download the actor gazetteer from Wikidata, Wikipedia and MITRE ATT&CK (network) |
+| `index-actors [--rematch]` | find the actors in the report texts (offline) |
+| `fetch-logos [--refresh]` | download agency logos from their home pages |
+| `improve-titles` | replace poor document titles with the title stored in the PDF |
+| `serve [--host] [--port]` | run the portal (default `0.0.0.0:8080`) |
+| `stats` | documents found and downloaded per country |
+| `--version` | release version and git build |
 
-## Agency profiles, flags and logos
+Tools in `tools/`: `check_registry.py` (does every registry URL still load), `build_sources_md.py` (regenerate
+[`sources/sources.md`](sources/sources.md)), `geocode_hq.py`, `find_variants.py`, `build_events.py` (resolve event
+markers against Wikidata), `bump_version.py` (cut a release).
 
-- Every registry entry has `name_local` (official name in the original language), `name_en` (official English name),
-  `homepage` and a short `description` of what its reports cover.
-- Flags in `rozvedka/static/flags/` come from [flag-icons](https://github.com/lipis/flag-icons) (MIT, see
-  `LICENSE.flag-icons`). `nato.svg` and `other.svg` were drawn for this project.
-- Logos are the agencies' own marks. `fetch-logos` downloads them into `data/logos/`, which is not committed. When the
-  automatic pick is wrong, set `logo: "https://…"` on the registry entry and run `fetch-logos --refresh`.
-  Agencies without a logo show an initials badge.
+## Configuration
 
-## World map (`/map`)
+Everything that defines *what* Rozvedka collects and recognises is a hand-editable YAML file in `sources/`:
 
-- The map page has a dark theme. Hovering a pin shows the agency card, hovering a cluster lists the agencies
-  inside it, and clicking opens the full card with links.
-- A pin marks each agency's headquarters, coloured by agency type. Solid pins are an exact building address. Hollow
-  pins are street or city level, used where the house number didn't match or the service doesn't publish its address.
-- Countries are shaded by number of reports. Clicking a country opens its documents, and clicking a pin shows the
-  agency's profile. Agencies in the same city are grouped into clusters.
-- `/map#s-<id>` zooms to one agency (linked from each card on the Sources page). `/map?tiles=0` hides the street map,
-  and the country outlines still work offline.
-- Addresses are the publicly listed headquarters or contact addresses, stored in the registry as
-  `hq: {address, lat, lon, precision}`. Coordinates were geocoded once with OpenStreetMap Nominatim, and the portal
-  makes no geocoding calls at runtime.
-- Third-party code and data in `rozvedka/static/`: Leaflet 1.9.4 (BSD-2), Leaflet.markercluster 1.5.3 (MIT) and Natural
-  Earth country outlines (public domain). Street tiles load from the OpenStreetMap tile servers in the viewer's browser,
-  under the OSM tile usage policy (© OpenStreetMap contributors). They are darkened with a CSS filter, so no
-  dark-tile provider or API key is needed.
+| File | Contents |
+|---|---|
+| [`registry.yaml`](sources/registry.yaml) | the agencies: names, type, home page, description, headquarters, report pages (language, current/archive), how to fetch them |
+| [`countries.yaml`](sources/countries.yaml) | country names, regions, coalition memberships with year joined |
+| [`topics.yaml`](sources/topics.yaml) | topic taxonomy: categories → topics → keywords per language |
+| [`actors.yaml`](sources/actors.yaml) | which Wikidata classes and hand-listed seeds make up the actor index, and matching corrections |
+| [`events.yaml`](sources/events.yaml) | reference events for the trend charts (Wikipedia titles; dates are resolved from Wikidata) |
 
-## Countries and coalitions
+<details>
+<summary><b>How sources are fetched</b> (<code>access</code> in the registry)</summary>
 
-`sources/countries.yaml` holds each country's display name, region and coalition memberships, with the year it
-joined: EU, NATO, Five Eyes, G7, Schengen, AUKUS, the Joint Expeditionary Force and NATO's Indo-Pacific partners.
-The portal shows them as tags and uses them as filters, e.g. `/?coalition=FVEY`, `/sources?coalition=JEF` or
-`/map?coalition=NATO`. When a country joins or leaves a coalition, edit this file. The tests check a few
-well-known facts (Five Eyes members, Finland and Sweden in NATO, …).
+| `access` | Behaviour |
+|---|---|
+| `auto` | plain HTTP fetch |
+| `browser-ua` | same, with a curl fallback for servers that reject Python's TLS handshake |
+| `tls-lenient` | skip certificate verification (server sends an incomplete chain) |
+| `browser-js` | the page is rendered with headless Chromium |
+| `manual` | bot-protected; add documents in the portal (Sources → *Add a document by URL*) |
 
-## Versions and releases
+Pages that turn out to be empty JavaScript shells are rendered with Chromium automatically. Report pages marked
+`verified: false` are listed but not crawled.
 
-- Version numbers follow [Semantic Versioning](https://semver.org), raised by significance: **patch** for fixes,
-  new or corrected sources, keyword changes and visual tweaks; **minor** for new capabilities; **major** for
-  incompatible changes. The full table is in `CHANGELOG.md` under "Versioning".
-- The release version lives in `rozvedka/__init__.py`. Between releases, the footer, `/api/version` and
-  `python -m rozvedka --version` also show the git build (e.g. `0.9.1+3.g1a2b3c4`).
-- `CHANGELOG.md` ([Keep a Changelog](https://keepachangelog.com)) lists every release, and the portal shows it at
-  `/changelog`. Note changes under **Unreleased** while working.
-- Releasing:
+</details>
+
+<details>
+<summary><b>How topics are assigned</b></summary>
+
+- Keyword syntax: `word` (whole word), `stem*` (words starting with the stem), `two words` (a phrase; each token may
+  end in `*`), Japanese/Chinese/Korean terms as substrings. Case and accents are ignored; every language's terms
+  apply to every document.
+- A topic is assigned when the title matches, or when at least 2 different keywords occur and the hits keep up with
+  the length (≥ 3, and at least one per 15,000 words).
+- Text is extracted from the first 150 pages (up to 400,000 characters). After editing `topics.yaml`, run
+  `index-topics` again – documents are re-classified from the stored text.
+
+</details>
+
+<details>
+<summary><b>How actors are recognised</b></summary>
+
+- **Who is listed:** Wikidata items of the classes in `actors.yaml` (with an English Wikipedia article, not
+  dissolved before 2000, no states or companies), items "designated as terrorist by" (P3461), MITRE ATT&CK
+  groups (joined to Wikidata through P9025 or a unique shared name), and hand-listed seeds.
+- **How mentions are found:** by name – Wikidata labels and aliases in the report languages, ATT&CK aliases,
+  hand-added names; case-sensitive, accent-insensitive, headings in capitals included.
+- **Rules against false matches** (each shown with its reason on the actor page): ignore lists and per-actor
+  exclusions; lowercase, very short and generic one-word names; names shared by several actors; one-word names of
+  people other than the surname; generic names and short abbreviations ("FSB", "National Security Council") count
+  only together with another name of the actor; the longest of overlapping names wins; reports dated before an
+  actor was founded and reports of sources excluded for an actor are not counted.
+- **Correcting it:** `/actors/names` lists the names with the most matches. Add a wrong one under
+  `ignore_aliases`, `exclude_aliases`, `weak_aliases` or `exclude_sources` in `actors.yaml` and run
+  `index-actors` again.
+
+</details>
+
+<details>
+<summary><b>Map data</b></summary>
+
+Headquarters are the publicly listed headquarters or contact addresses (`hq: {address, lat, lon, precision}` in the
+registry), geocoded once with OpenStreetMap Nominatim; the portal makes no geocoding calls. Solid pins are exact
+buildings, hollow pins street or city level. `/map#s-<id>` zooms to one agency, `/map?tiles=0` works offline.
+
+</details>
+
+## How it works
+
+```mermaid
+flowchart LR
+    R[sources/*.yaml<br>registry · topics · actors · events] --> C[crawl]
+    W[(agency websites)] --> C
+    C --> D[download<br>PDF + SHA-256]
+    D --> T[index-topics<br>text · pages · topics]
+    K[(Wikidata · Wikipedia<br>MITRE ATT&CK)] --> F[fetch-actors<br>gazetteer]
+    T --> A[index-actors]
+    F --> A
+    T & A --> DB[(SQLite + FTS5)]
+    DB --> P[portal<br>FastAPI · Jinja · ECharts · Leaflet]
+```
+
+| Module | Role |
+|---|---|
+| `rozvedka/registry.py`, `crawler.py`, `fetch.py` | load the registry, find document links (robots.txt, per-host delay, curl and Chromium fallbacks) |
+| `rozvedka/downloader.py` | download, check the PDF header, de-duplicate by SHA-256, improve titles |
+| `rozvedka/topics.py` | text extraction with page offsets, FTS5 index, topic classification (all CPU cores) |
+| `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
+| `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
+| `rozvedka/app.py`, `templates/`, `static/` | the server-rendered portal |
+
+## Development
+
+```bash
+.venv/bin/pip install -r requirements-dev.txt
+.venv/bin/python -m pytest -q
+```
+
+- **Workflow:** `main` always holds working code. Work on a branch (`feat/…`, `fix/…`, `sources/…`, `docs/…`) and
+  merge through a pull request. Registry edits go in their own commits (`sources: add Latvian SAB reports page`).
+- **Never commit** `data/`, `.env` or credentials – `.gitignore` covers them.
+- **Versioning:** [Semantic Versioning](https://semver.org) by significance – *patch* for fixes, sources, keywords
+  and visual changes; *minor* for new capabilities; *major* for incompatible changes (table in
+  [`CHANGELOG.md`](CHANGELOG.md#versioning)). The portal footer, `/api/version` and `--version` show the git build
+  between releases (`0.11.0+3.g1a2b3c4`).
+- **Releasing:**
   ```bash
-  python3 tools/bump_version.py patch        # or minor / major; --dry-run to preview
-  git commit -am "release: <version>" && git push      # open and merge the pull request
+  python3 tools/bump_version.py minor      # patch | minor | major; --dry-run to preview
+  # commit, open and merge the pull request, then tag the merge commit:
   git switch main && git pull
   git tag -a v<version> -m "Rozvedka <version>" && git push origin v<version>
   ```
-  GitHub releases carry the changelog section as release notes.
+  `bump_version.py` updates `rozvedka/__init__.py`, the changelog and the version badge above. GitHub releases
+  carry the changelog section as notes; the portal shows the changelog at `/changelog`.
 
-## Topics and full-text search
+## Data sources and licences
 
-- `sources/topics.yaml` holds the topic taxonomy: categories → topics → keywords per language. Keyword syntax:
-  `word` (whole word), `stem*` (words starting with the stem), `two words` (a phrase; each token may end in `*`),
-  and Japanese, Chinese and Korean terms as plain substrings. Matching ignores case and accents. Every language's
-  terms apply to every document.
-- `python -m rozvedka index-topics` extracts the text of new downloads into an SQLite FTS5 index (first 150 pages,
-  up to 400,000 characters) and tags the documents with topics. It uses every CPU core and writes results as it
-  goes. After editing `topics.yaml`, run it again: documents are re-classified from the stored text only.
-- A topic is assigned when the title matches, or when at least 2 different keywords appear and the hits keep up
-  with the length (≥ 3, and at least one per 15,000 words). A single passing mention is not enough.
-- In the portal: pick topics on the documents list (several must all match), search inside the reports (use
-  `"quotes"` for phrases), see all topics at `/topics`, and filter the map by topic.
-- Limits: keyword matching finds what a report *talks about*, not what it concludes. Scanned PDFs without a text
-  layer have no text to index. Coverage is strongest in English, German, French and the Central European and
-  Nordic languages.
+| Component | Source | Licence / terms |
+|---|---|---|
+| Reports | the agencies' official websites, listed in [`sources/sources.md`](sources/sources.md) | the publishers' terms; downloaded for personal reference, not redistributed |
+| Agency logos | the agencies' home pages (`data/logos/`, not committed) | the agencies' marks |
+| Flags | [flag-icons](https://github.com/lipis/flag-icons) | MIT ([`LICENSE.flag-icons`](rozvedka/static/flags/LICENSE.flag-icons)); `nato.svg`, `other.svg` drawn for this project |
+| Actor reference data | [Wikidata](https://www.wikidata.org) | CC0 |
+| Actor summaries | [English Wikipedia](https://en.wikipedia.org) | CC BY-SA 4.0, attributed with article and revision on each page (also in the actor screenshot above) |
+| Threat groups | [MITRE ATT&CK®](https://attack.mitre.org) | © The MITRE Corporation, reproduced with permission |
+| Event dates | Wikidata via `tools/build_events.py` | CC0 |
+| Charts | [Apache ECharts](https://echarts.apache.org) 6.1.0, vendored | Apache-2.0 |
+| Map | [Leaflet](https://leafletjs.com) 1.9.4, Leaflet.markercluster 1.5.3, [Natural Earth](https://www.naturalearthdata.com) outlines | BSD-2, MIT, public domain |
+| Street tiles | [OpenStreetMap](https://www.openstreetmap.org/copyright), loaded in the viewer's browser | ODbL, © OpenStreetMap contributors; OSM tile usage policy |
 
-## Trends (`/trends`)
-
-Three views built on the topic index and the full-text search:
-
-- **Topics over time** – the share of reports tagged with each topic, per year (up to 8 topics), or the share of
-  publishing agencies that reported on it. Below it: how many reports each year holds, and the topics whose share
-  rose or fell most between the last two complete years and the three before.
-- **Term trends** – the same for any words: one line per series, `OR` for translations
-  (`drone OR Drohne OR dron`), `"quotes"` for phrases. Terms match in the language typed.
-- **Who reports on what** – countries or agencies × topics for a period: the share of each one's reports tagged
-  with each topic.
-
-Tracing a number back:
-
-- Every point, bar and cell opens the Documents page filtered to exactly the documents it counts
-  (`indexed=1` limits the list to documents with classified text, as the charts do). Each view also has a table
-  view and a CSV export with a source link on every row, plus a "Where these numbers come from" section: method,
-  filters, documents left out (undated, not yet indexed), the taxonomy version.
-- Shares are counts of documents, not of mentions. Years with fewer than 30 reports are shaded; by default the
-  charts start once every year has at least 30. More attention is not necessarily a larger threat.
-- Event markers come from `sources/events.yaml`. Only the English Wikipedia title and a label are written by
-  hand; `python3 tools/build_events.py` looks up the Wikidata item and takes its date from "point in time" (P585),
-  "start time" (P580) or "inception" (P571), and stores the Wikipedia and Wikidata links and the retrieval date.
-  The portal lists every marker with these sources.
-- Charts use Apache ECharts 6.1.0 (Apache-2.0), vendored in `rozvedka/static/vendor/echarts` and checked against
-  the npm release hash.
-
-## Actors (`/actors`)
-
-An index of named actors – state services, cyber threat groups, terrorist-designated and armed groups, organised
-crime, movements and a few people – and the reports that mention them.
-
-- `python -m rozvedka fetch-actors` builds the gazetteer `data/gazetteer/actors.json` (not committed) from
-  public reference data:
-  - **Wikidata** (CC0): items of the classes listed in `sources/actors.yaml` that have an English Wikipedia article
-    and were not dissolved before 2000, items "designated as terrorist by" (P3461), and the hand-listed seeds;
-    their names in the report languages, description, country, dates and designations.
-  - **English Wikipedia** (CC BY-SA 4.0): the lead of each actor's article, with the revision it was taken from.
-  - **MITRE ATT&CK** Enterprise (STIX from github.com/mitre-attack/attack-stix-data): threat groups and their
-    aliases, joined to Wikidata through P9025 or – when exactly one Wikidata hacker group shares a name – by
-    that name (the actor page says which).
-- `python -m rozvedka index-actors` finds the actors in the report texts (offline; the weekly `update` runs it).
-  Matching is by name, case-sensitive and accent-insensitive. Names likely to mean something else are not used,
-  with the reason shown on the actor page: ignore list and per-actor exclusions in `sources/actors.yaml`,
-  lowercase or very short names, names shared by several actors, one-word names the reports use more often in
-  lowercase than capitalised, generic names and short abbreviations ("FSB", "National Security Council") unless
-  the same report also uses another name, one-word names of people other than the surname, and reports dated
-  before the actor was founded. Where names overlap, the longest wins. `/actors/names` lists the names with the
-  most matches for review; fix a wrong one in `sources/actors.yaml` (`ignore_aliases`, `exclude_aliases`,
-  `weak_aliases`, `exclude_sources`) and run `index-actors` again.
-- Each actor page shows: every reference fact with its source (Wikidata property and revision, Wikipedia
-  revision, ATT&CK id), why the actor is listed, the reports per year (share, same base as Trends), the reporting
-  agencies, the topics of those reports, actors named in the same passage (within 600 characters), the passages
-  themselves with a link to the page in the downloaded PDF and to the agency's original, and all names used.
-- Page numbers come from the page breaks recorded at text extraction (`doc_index.pages`); documents indexed
-  before 0.11.0 get them on the next `index-topics` run.
-- Documents page: `?actor=<Wikidata id or ATT&CK id>` lists the reports that mention an actor.
+> [!CAUTION]
+> **Reading the results.** Topics and actors are recognised by keywords and names, not by understanding: they show
+> what reports *talk about*, not what they conclude. More mentions mean more attention, not necessarily a larger
+> threat, and agencies publish different kinds of reports at different rhythms. Scanned PDFs without a text layer
+> cannot be indexed. Check any surprising number by following its link to the documents and passages.
