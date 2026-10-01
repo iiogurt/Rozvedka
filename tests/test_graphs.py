@@ -53,15 +53,37 @@ def library(tmp_path, monkeypatch):
     return tmp_path
 
 
-def test_network_nodes_links_and_their_links(library):
-    n = graphs.network(min_link=1)
-    nodes = {x["key"]: x["docs"] for x in n["nodes"]}
-    assert nodes == {"Q5": 2, "Q9": 3}                            # countries are left out by default
-    links = {(x["a"], x["b"]): x for x in n["links"]}
-    assert links[("Q5", "Q9")]["docs"] == 1                       # doc 3: too far apart to count
-    assert links[("Q5", "Q9")]["link"] == "/actors/Q5/with/Q9"
-    with_countries = {x["key"] for x in graphs.network(min_link=1, include_countries=True)["nodes"]}
-    assert "Q159" in with_countries
+def test_npmi():
+    assert graphs.npmi(10, 10, 10, 100) == pytest.approx(1.0)        # always together
+    assert graphs.npmi(1, 10, 10, 100) == 0.0                           # exactly as often as chance
+    assert graphs.npmi(0, 10, 10, 100) == 0.0
+
+
+def test_cluster_merges_strong_pairs_only():
+    sim = {("A", "B"): 0.8, ("C", "D"): 0.6, ("B", "C"): 0.1}
+    groups = sorted(sorted(g) for g in graphs.cluster(["A", "B", "C", "D", "E"], sim, 0.25))
+    assert groups == [["A", "B"], ["C", "D"], ["E"]]
+
+
+def test_associations_cells_clusters_and_links(library):
+    assert graphs.associations(min_pair=1)["cells"][0]["npmi"] == 0.0   # 1 of 4 reports: less often than chance
+    h = topics.taxonomy()["hash"]
+    with db.session() as con:                                         # four neutral reports raise the baseline
+        for i in range(5, 9):
+            con.execute("INSERT INTO documents(id,source_id,url,year,status) VALUES(?,2,?,2024,'downloaded')", (i, f"u{i}"))
+            con.execute("INSERT INTO doc_text(rowid,title,body) VALUES(?,?,?)", (i, "", "Weather report."))
+            con.execute("INSERT INTO doc_index(doc_id,chars,taxonomy_hash,pages) VALUES(?,?,?,?)", (i, 15, h, "[0]"))
+    actors.index(workers=1)
+    d = graphs.associations(min_pair=1, threshold=0.05)
+    assert {a["key"]: a["docs"] for a in d["actors"]} == {"Q5": 2, "Q9": 3}   # countries left out by default
+    cell = {(c["a"], c["b"]): c for c in d["cells"]}[("Q5", "Q9")]
+    assert cell["docs"] == 1 and cell["link"] == "/actors/Q5/with/Q9"     # doc 3: too far apart to count
+    assert len(d["clusters"]) == 1
+    cl = d["clusters"][0]
+    assert cl["docs"] == 1 and {m["key"] for m in cl["members"]} == {"Q5", "Q9"}
+    assert parse_qs(urlsplit(cl["docs_link"]).query) == {"indexed": ["1"], "cluster": ["Q5,Q9"]}
+    assert "Q159" in {a["key"] for a in graphs.associations(min_pair=1, include_countries=True)["actors"]}
+    assert {a["key"] for a in graphs.associations(min_pair=1, kinds=["cyber"])["actors"]} == {"Q9"}
 
 
 def test_pair_detail_passages(library):

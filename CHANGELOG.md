@@ -27,6 +27,21 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.13.0] – 2026-10-01
+
+### Changed
+- Network (`/network`) redesigned. Instead of a force graph of raw co-occurrence counts, it measures association –
+  how much more often two actors are named in the same passage than their frequency predicts (normalised pointwise
+  mutual information) – and shows:
+  - clusters of strongly associated actors as cards: members, strongest ties, main topics of their reports,
+    timeline, reporting agencies, links to every count;
+  - an actors × actors association matrix ordered by cluster, with all names visible;
+  - a details panel for an actor (strongest and most frequent partners) or a pair (counts vs. chance).
+- Filters for kind of actor, cluster strictness and the minimum number of reports per tie.
+
+### Added
+- Documents page: `cluster=` (reports naming two of the listed actors in one passage).
+
 ## [0.12.0] – 2026-10-01
 
 ### Added
@@ -226,7 +241,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/iiogurt/Rozvedka/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/iiogurt/Rozvedka/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/iiogurt/Rozvedka/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/iiogurt/Rozvedka/compare/v0.10.0...v0.11.0

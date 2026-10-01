@@ -455,6 +455,15 @@ def pairs_in(spans_by_actor: dict[str, list]) -> dict[tuple[str, str], int]:
     return out
 
 
+def cluster_clause(keys: list[str]) -> tuple[str, list]:
+    """SQL: document d names at least two of these actors in one passage (founding-year rule as everywhere)."""
+    marks = ",".join("?" * len(keys))
+    sql = f"""d.id IN (SELECT p.doc_id FROM actor_pairs p JOIN actors a1 ON a1.key=p.a JOIN actors a2 ON a2.key=p.b
+                       JOIN documents d ON d.id=p.doc_id
+                       WHERE p.a IN ({marks}) AND p.b IN ({marks}) AND {PAIR_FOUNDED})"""
+    return sql, [*keys, *keys]
+
+
 # ── queries for the portal ──
 def kind_name(kind: str) -> str:
     return KINDS.get(kind, kind)
