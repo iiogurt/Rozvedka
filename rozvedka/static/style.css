@@ -52,7 +52,6 @@ table.docs { width: 100%; border-collapse: collapse; }
 .actions summary { list-style: none; cursor: pointer; border: 1px solid var(--line); border-radius: 6px; background: var(--chip); }
 .edit { display: flex; gap: 4px; margin-top: 4px; }
 .empty { text-align: center; padding: 40px; color: var(--muted); }
-.pager { display: flex; gap: 16px; justify-content: center; margin: 16px 0; }
 h2 { margin: 28px 0 8px; font-size: 16px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
 .source { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; }
 .shead { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
@@ -456,3 +455,22 @@ ul.cl-list li > a:last-child { text-align: right; font-variant-numeric: tabular-
 .theme-toggle .sun { display: none; }
 [data-theme="dark"] .theme-toggle .sun { display: block; }
 [data-theme="dark"] .theme-toggle .moon { display: none; }
+
+/* ── Pager (templates/_pager.html), the same on every list ── */
+.pager { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; justify-content: space-between;
+         margin: 10px 0; font-size: 13px; }
+.pg-info { color: var(--muted); }
+.pg-info b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.pg-links { display: inline-flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+.pg-links a, .pg-cur, .pg-off { min-width: 30px; height: 30px; padding: 0 6px; display: inline-grid; place-items: center;
+                                border-radius: 6px; font-variant-numeric: tabular-nums; }
+.pg-links a { border: 1px solid var(--line); background: var(--panel); }
+.pg-links a:hover { border-color: var(--accent); text-decoration: none; }
+.pg-cur { background: var(--accent); color: var(--bg); font-weight: 700; }
+.pg-off { color: var(--line); }
+.pg-gap { color: var(--muted); padding: 0 2px; }
+.pg-go { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); }
+.pg-go input[type=number] { width: 72px; padding: 4px 6px; }
+.pg-go button { padding: 4px 10px; }
+.pg-size { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); }
+.pg-size b { color: var(--ink); }

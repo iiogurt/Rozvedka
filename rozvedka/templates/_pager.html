@@ -1,0 +1,28 @@
+{# Pager shared by every list. p = paging.paginate(...); label = what is counted ("documents", "actors" …). #}
+{% macro pager(p, label="items", per_page_choice=True) %}
+<nav class="pager" aria-label="Pages of {{ label }}">
+  <span class="pg-info">{% if p.total %}<b>{{ "{:,}".format(p.first) }}–{{ "{:,}".format(p.last) }}</b> of {{ "{:,}".format(p.total) }} {{ label }}{% else %}No {{ label }}{% endif %}</span>
+  {% if p.pages > 1 %}
+  <span class="pg-links">
+    {% if p.first_href %}<a href="{{ p.first_href }}" title="First page" aria-label="First page">«</a>{% else %}<span class="pg-off" aria-hidden="true">«</span>{% endif %}
+    {% if p.prev %}<a href="{{ p.prev }}" rel="prev" title="Previous page" aria-label="Previous page">‹</a>{% else %}<span class="pg-off" aria-hidden="true">‹</span>{% endif %}
+    {% for it in p.numbers %}
+      {% if it.n is none %}<span class="pg-gap" aria-hidden="true">…</span>
+      {% elif it.current %}<span class="pg-cur" aria-current="page">{{ it.n }}</span>
+      {% else %}<a href="{{ it.href }}" aria-label="Page {{ it.n }}">{{ it.n }}</a>{% endif %}
+    {% endfor %}
+    {% if p.next %}<a href="{{ p.next }}" rel="next" title="Next page" aria-label="Next page">›</a>{% else %}<span class="pg-off" aria-hidden="true">›</span>{% endif %}
+    {% if p.last_href %}<a href="{{ p.last_href }}" title="Last page" aria-label="Last page">»</a>{% else %}<span class="pg-off" aria-hidden="true">»</span>{% endif %}
+  </span>
+  <form class="pg-go" method="get" action="{{ p.path }}{{ p.anchor }}">
+    {% for k, v in p.keep.items() %}{% if v is iterable and v is not string %}{% for x in v %}<input type="hidden" name="{{ k }}" value="{{ x }}">{% endfor %}{% else %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endif %}{% endfor %}
+    {% if p.per_page != p.default %}<input type="hidden" name="per_page" value="{{ p.per_page }}">{% endif %}
+    <label>page <input type="number" name="page" min="1" max="{{ p.pages }}" value="{{ p.page }}" aria-label="Go to page"> of {{ p.pages }}</label>
+    <button>Go</button>
+  </form>
+  {% endif %}
+  {% if per_page_choice and p.total > 25 %}
+  <span class="pg-size">per page {% for c in p.choices %}{% if c.current %}<b aria-current="true">{{ c.n }}</b>{% else %}<a href="{{ c.href }}">{{ c.n }}</a>{% endif %}{% endfor %}</span>
+  {% endif %}
+</nav>
+{% endmacro %}

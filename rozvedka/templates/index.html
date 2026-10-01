@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_pager.html" import pager %}
 {% block main %}
 <form class="filters" method="get" action="/">
   <input type="search" name="q" value="{{ f.q }}" placeholder="Search titles and full text…" title='Searches inside the reports. Use "quotes" for phrases.'>
@@ -27,7 +28,7 @@
   <select name="status"><option value="">Any status</option>
     {% for s in ['downloaded','new','browser-only','failed'] %}<option value="{{ s }}" {{ 'selected' if f.status == s }}>{{ s }}</option>{% endfor %}
   </select>
-  {% for k in ('year_from', 'year_to', 'indexed', 'actor', 'main', 'cluster') %}{% if f[k] %}<input type="hidden" name="{{ k }}" value="{{ f[k] }}">{% endif %}{% endfor %}
+  {% for k in ('year_from', 'year_to', 'indexed', 'actor', 'main', 'cluster', 'per_page') %}{% if f[k] %}<input type="hidden" name="{{ k }}" value="{{ f[k] }}">{% endif %}{% endfor %}
   <label class="chk"><input type="checkbox" name="show_hidden" value="1" {{ 'checked' if f.show_hidden }}> hidden too</label>
   <button>Filter</button>
   <a class="reset" href="/">Reset</a>
@@ -59,6 +60,7 @@
 </div>
 
 <div class="tablewrap">
+{{ pager(pg, "documents") }}
 <table class="docs">
   <thead><tr><th>Year</th><th>Source</th><th>Title</th><th>Lang</th><th>Status</th><th></th></tr></thead>
   <tbody>
@@ -103,11 +105,5 @@
 </table>
 </div>
 
-{% if pages > 1 %}
-<nav class="pager">
-  {% if page > 1 %}<a href="/?{{ qs(page=page-1) }}">← prev</a>{% endif %}
-  <span>page {{ page }} / {{ pages }}</span>
-  {% if page < pages %}<a href="/?{{ qs(page=page+1) }}">next →</a>{% endif %}
-</nav>
-{% endif %}
+{{ pager(pg, "documents") }}
 {% endblock %}

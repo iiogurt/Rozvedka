@@ -13,8 +13,8 @@ from fastapi.templating import Jinja2Templates
 
 from markupsafe import escape
 
-from . import (__version__, actors, build_version, countries, crawler, db, downloader, graphs, logos, registry,
-               topics, trends)
+from . import (__version__, actors, build_version, countries, crawler, db, downloader, graphs, logos, paging,
+               registry, topics, trends)
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -100,7 +100,7 @@ def startup():
 
 @app.get("/")
 def index(request: Request, country: str = "", type: str = "", lang: str = "", year: str = "",
-          status: str = "", q: str = "", source: int = 0, page: int = 1, show_hidden: int = 0,
+          status: str = "", q: str = "", source: int = 0, page: str = "1", per_page: str = "", show_hidden: int = 0,
           coalition: str = "", topic: list[str] = Query(default=[]), sort: str = "",
           year_from: str = "", year_to: str = "", indexed: int = 0, actor: str = "", main: int = 0,
           cluster: str = ""):
@@ -162,16 +162,22 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
         order_args = [fts]
     else:
         order, order_args = "d.year DESC NULLS LAST, s.country, s.agency, d.lang", []
-    per_page = 100
+    size = paging.per_page_of(per_page)
+    params = dict(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source or "",
+                  coalition=coalition, topic=chosen, sort=sort if sort != "year" or chosen or q else "",
+                  show_hidden=show_hidden or "", year_from=year_from, year_to=year_to, indexed=indexed or "",
+                  actor=actor, main=main or "", cluster=cluster,
+                  per_page=size if size != paging.PER_PAGE_CHOICES[2] else "")
     with db.session() as con:
         topics.init()
         total = con.execute(f"SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id WHERE {sql_where}",
                             args).fetchone()[0]
+        pg = paging.paginate(total, page, size, "/", params)
         docs = [dict(r) for r in con.execute(
             f"""SELECT d.*, s.country, s.agency, s.type, s.name_en, s.logo_path
                 FROM documents d JOIN sources s ON s.id=d.source_id
                 WHERE {sql_where} ORDER BY {order} LIMIT ? OFFSET ?""",
-            (*args, *order_args, per_page, (page - 1) * per_page))]
+            (*args, *order_args, size, pg["offset"]))]
         ids = [d["id"] for d in docs]
         by_doc: dict[int, list] = {}
         if ids:
@@ -196,17 +202,13 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
             "year": con.execute("SELECT DISTINCT year FROM documents WHERE year IS NOT NULL ORDER BY year DESC").fetchall(),
         }
         counts = dict(con.execute("SELECT status, COUNT(*) FROM documents GROUP BY status").fetchall())
-    params = dict(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source or "",
-                  coalition=coalition, topic=chosen, sort=sort if sort != "year" or chosen or q else "",
-                  show_hidden=show_hidden or "", year_from=year_from, year_to=year_to, indexed=indexed or "",
-                  actor=actor, main=main or "", cluster=cluster)
 
     def qs(**kw):
         merged = {**params, **kw}
         return urlencode({k: v for k, v in merged.items() if v not in ("", 0, None, [])}, doseq=True)
 
     return tpl.TemplateResponse(request, "index.html", {
-        "docs": docs, "total": total, "page": page, "pages": (total + per_page - 1) // per_page,
+        "docs": docs, "total": total, "pg": pg,
         "facets": facets, "f": params, "counts": counts, "jobs": dict(_jobs), "qs": qs,
         "TOPICS": tax, "CATEGORIES": topics.taxonomy()["categories"], "topic_counts": topic_counts,
         "actor_row": actor_row,
@@ -363,32 +365,44 @@ def api_trend_matrix(request: Request, year_from: int = 0, year_to: int = 0, by:
 
 
 @app.get("/actors")
-def actors_page(request: Request, kind: str = "", q: str = "", min_docs: int = 2):
+def actors_page(request: Request, kind: str = "", q: str = "", min_docs: int = 2, page: str = "1", per_page: str = ""):
     every = actors.actor_list("", q, max(1, min_docs), include_countries=True)
     counts: dict[str, int] = {}
     for r in every:
         counts[r["kind"]] = counts.get(r["kind"], 0) + 1
     rows = [r for r in every if r["kind"] == kind] if kind else [r for r in every if r["kind"] != "country"]
+    size = paging.per_page_of(per_page)
+    f = {"kind": kind, "q": q, "min_docs": min_docs, "per_page": size if size != paging.PER_PAGE_CHOICES[2] else ""}
+    pg = paging.paginate(len(rows), page, size, "/actors", f)
     maxdocs = max((r["docs"] for r in rows), default=1)
     return tpl.TemplateResponse(request, "actors.html", {
-        "rows": rows, "kinds": actors.KINDS, "counts": counts, "f": {"kind": kind, "q": q, "min_docs": min_docs},
+        "rows": rows[pg["offset"]:pg["offset"] + size], "pg": pg, "kinds": actors.KINDS, "counts": counts, "f": f,
         "maxdocs": maxdocs, "meta": actors.stamp(), "jobs": dict(_jobs)})
 
 
 @app.get("/actors/names")
-def actor_names_page(request: Request, status: str = "used"):
+def actor_names_page(request: Request, status: str = "used", page: str = "1", per_page: str = ""):
+    status = "ignored" if status == "ignored" else "used"
+    size = paging.per_page_of(per_page)
+    pg = paging.paginate(actors.count_names(status), page, size, "/actors/names",
+                         {"status": status if status == "ignored" else ""})
     return tpl.TemplateResponse(request, "actor_names.html", {
-        "rows": actors.top_names(400, "ignored" if status == "ignored" else "used"), "status": status,
+        "rows": actors.top_names(size, status, pg["offset"]), "pg": pg, "status": status,
         "kinds": actors.KINDS, "jobs": dict(_jobs)})
 
 
 @app.get("/actors/{a}/with/{b}")
 def actor_pair_page(request: Request, a: str, b: str, year_from: int = 0, year_to: int = 0, coalition: str = "",
-                    topic: str = "", type: str = ""):
-    d = actors.pair_detail(a, b, year_from or None, year_to or None, coalition, topic, type)
+                    topic: str = "", type: str = "", page: str = "1", per_page: str = ""):
+    size = paging.per_page_of(per_page, 25)
+    d = actors.pair_detail(a, b, year_from or None, year_to or None, coalition, topic, type, size, page)
     if d is None:
         raise HTTPException(404, "unknown actor")
-    return tpl.TemplateResponse(request, "pair.html", {**d, "TOPICS": topics.taxonomy()["topics"], "jobs": dict(_jobs)})
+    filters = {"year_from": year_from or "", "year_to": year_to or "", "coalition": coalition, "topic": topic,
+               "type": type, "per_page": size if size != 25 else ""}
+    pg = paging.paginate(d["docs"], page, size, f"/actors/{a}/with/{b}", filters, default=25)
+    return tpl.TemplateResponse(request, "pair.html", {**d, "pg": pg, "TOPICS": topics.taxonomy()["topics"],
+                                                      "jobs": dict(_jobs)})
 
 
 def _years_desc():
@@ -440,11 +454,14 @@ def api_topic_tree(coalition: str = "", year_from: int = 0, year_to: int = 0, pe
 
 
 @app.get("/actors/{key}")
-def actor_page(request: Request, key: str):
-    d = actors.actor_detail(key)
+def actor_page(request: Request, key: str, page: str = "1", per_page: str = ""):
+    size = paging.per_page_of(per_page, 25)
+    d = actors.actor_detail(key, size, page)
     if d is None:
         raise HTTPException(404, "unknown actor")
-    return tpl.TemplateResponse(request, "actor.html", {**d, "kinds": actors.KINDS, "meta": actors.stamp(),
+    pg = paging.paginate(d["docs"], page, size, f"/actors/{key}", {"per_page": size if size != 25 else ""},
+                         anchor="#passages", default=25)
+    return tpl.TemplateResponse(request, "actor.html", {**d, "pg": pg, "kinds": actors.KINDS, "meta": actors.stamp(),
                                                        "TOPICS": topics.taxonomy()["topics"], "jobs": dict(_jobs)})
 
 

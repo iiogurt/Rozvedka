@@ -78,6 +78,8 @@ Project conventions agreed with the owner. Follow them in every session, on ever
 
 - Python 3.13, FastAPI + Jinja (server-rendered), SQLite with FTS5, vendored front-end libraries (Leaflet,
   ECharts) – no CDN at runtime. Match the surrounding code's style and comment density.
+- Every list in the portal uses the shared pager (`rozvedka/paging.py` + `templates/_pager.html`): numbered pages,
+  first/last, "go to page", page-size choice, filters kept in every link. Never cap a list silently.
 - Every change keeps `python -m pytest -q` green; new behaviour gets tests (temporary database fixtures as in
   `tests/test_trends.py`, `tests/test_actors.py`, `tests/test_graphs.py`).
 - Check UI changes in headless Chromium (screenshots, and the DevTools protocol for interactions) in both themes.

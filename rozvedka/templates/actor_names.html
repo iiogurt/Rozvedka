@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+{% from "_pager.html" import pager %}
 {% block title %}Actor names · Rozvedka{% endblock %}
 {% block main %}
 <p class="small"><a href="/actors">← Actors</a></p>
-<h1 class="page-h">Names with the most matches</h1>
+<h1 class="page-h">Names by number of matching reports</h1>
 <p class="muted">Actors are found by name. This list shows which names match most often, so a name that means
   something else in the reports stands out. To stop matching a name, add it under <code>exclude_aliases</code>
   (for one actor) or <code>ignore_aliases</code> (for all) in <code>sources/actors.yaml</code>, then run
@@ -11,6 +12,7 @@
   <a class="topic-chip {{ 'on' if status != 'ignored' }}" href="/actors/names">used</a>
   <a class="topic-chip {{ 'on' if status == 'ignored' }}" href="/actors/names?status=ignored">not used, but present in the reports</a>
 </div>
+{{ pager(pg, "names") }}
 <table class="actors">
   <thead><tr><th>Name</th><th>Actor</th><th>Source of the name</th><th class="num">Reports</th><th class="num">Matches</th>
     <th class="num" title="The same word written in lowercase">lowercase</th><th>{{ 'Reason' if status == 'ignored' else 'Note' }}</th></tr></thead>
@@ -24,4 +26,5 @@
   </tr>{% endfor %}
   </tbody>
 </table>
+{{ pager(pg, "names") }}
 {% endblock %}
