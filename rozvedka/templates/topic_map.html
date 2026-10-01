@@ -26,7 +26,7 @@
   const form = $("#scope");
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-  const dark = matchMedia("(prefers-color-scheme: dark)");
+  const dark = window.rzDark;
   const url = new URL(location);
   for (const el of form.elements) { const v = url.searchParams.get(el.name); if (v != null) el.value = v; }
   const chart = echarts.init($("#tree"), null, { renderer: "canvas" });
