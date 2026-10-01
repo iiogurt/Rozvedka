@@ -27,6 +27,13 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.14.1] – 2026-10-01
+
+### Added
+- `CLAUDE.md`: the project's working rules in one place – scope and source requirements, traceability and
+  visualisation principles, git/GitHub workflow, versioning and release steps, README and changelog conventions,
+  and notes for operating the Raspberry Pi installation. Linked from the README.
+
 ## [0.14.0] – 2026-10-01
 
 ### Added
@@ -252,7 +259,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.14.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.14.1...HEAD
+[0.14.1]: https://github.com/iiogurt/Rozvedka/compare/v0.14.0...v0.14.1
 [0.14.0]: https://github.com/iiogurt/Rozvedka/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/iiogurt/Rozvedka/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/iiogurt/Rozvedka/compare/v0.11.1...v0.12.0
