@@ -158,3 +158,34 @@ Tracing a number back:
   The portal lists every marker with these sources.
 - Charts use Apache ECharts 6.1.0 (Apache-2.0), vendored in `rozvedka/static/vendor/echarts` and checked against
   the npm release hash.
+
+## Actors (`/actors`)
+
+An index of named actors – state services, cyber threat groups, terrorist-designated and armed groups, organised
+crime, movements and a few people – and the reports that mention them.
+
+- `python -m rozvedka fetch-actors` builds the gazetteer `data/gazetteer/actors.json` (not committed) from
+  public reference data:
+  - **Wikidata** (CC0): items of the classes listed in `sources/actors.yaml` that have an English Wikipedia article
+    and were not dissolved before 2000, items "designated as terrorist by" (P3461), and the hand-listed seeds;
+    their names in the report languages, description, country, dates and designations.
+  - **English Wikipedia** (CC BY-SA 4.0): the lead of each actor's article, with the revision it was taken from.
+  - **MITRE ATT&CK** Enterprise (STIX from github.com/mitre-attack/attack-stix-data): threat groups and their
+    aliases, joined to Wikidata through P9025 or – when exactly one Wikidata hacker group shares a name – by
+    that name (the actor page says which).
+- `python -m rozvedka index-actors` finds the actors in the report texts (offline; the weekly `update` runs it).
+  Matching is by name, case-sensitive and accent-insensitive. Names likely to mean something else are not used,
+  with the reason shown on the actor page: ignore list and per-actor exclusions in `sources/actors.yaml`,
+  lowercase or very short names, names shared by several actors, one-word names the reports use more often in
+  lowercase than capitalised, generic names and short abbreviations ("FSB", "National Security Council") unless
+  the same report also uses another name, one-word names of people other than the surname, and reports dated
+  before the actor was founded. Where names overlap, the longest wins. `/actors/names` lists the names with the
+  most matches for review; fix a wrong one in `sources/actors.yaml` (`ignore_aliases`, `exclude_aliases`,
+  `weak_aliases`, `exclude_sources`) and run `index-actors` again.
+- Each actor page shows: every reference fact with its source (Wikidata property and revision, Wikipedia
+  revision, ATT&CK id), why the actor is listed, the reports per year (share, same base as Trends), the reporting
+  agencies, the topics of those reports, actors named in the same passage (within 600 characters), the passages
+  themselves with a link to the page in the downloaded PDF and to the agency's original, and all names used.
+- Page numbers come from the page breaks recorded at text extraction (`doc_index.pages`); documents indexed
+  before 0.11.0 get them on the next `index-topics` run.
+- Documents page: `?actor=<Wikidata id or ATT&CK id>` lists the reports that mention an actor.

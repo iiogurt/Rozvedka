@@ -13,7 +13,7 @@ from fastapi.templating import Jinja2Templates
 
 from markupsafe import escape
 
-from . import __version__, build_version, countries, crawler, db, downloader, logos, registry, topics, trends
+from . import __version__, actors, build_version, countries, crawler, db, downloader, logos, registry, topics, trends
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -101,7 +101,7 @@ def startup():
 def index(request: Request, country: str = "", type: str = "", lang: str = "", year: str = "",
           status: str = "", q: str = "", source: int = 0, page: int = 1, show_hidden: int = 0,
           coalition: str = "", topic: list[str] = Query(default=[]), sort: str = "",
-          year_from: str = "", year_to: str = "", indexed: int = 0):
+          year_from: str = "", year_to: str = "", indexed: int = 0, actor: str = ""):
     tax = topics.taxonomy()["topics"]
     chosen = [t for t in topic if t in tax]
     where, args = ["s.active=1"], []
@@ -121,6 +121,12 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
         where.append("d.year<=?"); args.append(int(year_to))
     if indexed:   # links from the Trends charts count only documents whose text is topic-classified
         where.append(trends.CLASSIFIED)
+    actor_row = None
+    if actor:
+        where.append(actors.doc_clause()); args.append(actor)
+        with db.session() as con:
+            actors.init()
+            actor_row = con.execute("SELECT key, label FROM actors WHERE key=?", (actor,)).fetchone()
     if source:
         where.append("s.id=?"); args.append(source)
     fts = trends.or_query(q) if q.strip() else ""
@@ -182,7 +188,8 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
         counts = dict(con.execute("SELECT status, COUNT(*) FROM documents GROUP BY status").fetchall())
     params = dict(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source or "",
                   coalition=coalition, topic=chosen, sort=sort if sort != "year" or chosen or q else "",
-                  show_hidden=show_hidden or "", year_from=year_from, year_to=year_to, indexed=indexed or "")
+                  show_hidden=show_hidden or "", year_from=year_from, year_to=year_to, indexed=indexed or "",
+                  actor=actor)
 
     def qs(**kw):
         merged = {**params, **kw}
@@ -192,6 +199,7 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
         "docs": docs, "total": total, "page": page, "pages": (total + per_page - 1) // per_page,
         "facets": facets, "f": params, "counts": counts, "jobs": dict(_jobs), "qs": qs,
         "TOPICS": tax, "CATEGORIES": topics.taxonomy()["categories"], "topic_counts": topic_counts,
+        "actor_row": actor_row,
     })
 
 
@@ -342,6 +350,35 @@ def api_trend_matrix(request: Request, year_from: int = 0, year_to: int = 0, by:
                                                  "source_documents"],
                 ([rows_by_key[c["row"]]["label"], names[c["topic"]], c["n"], rows_by_key[c["row"]]["docs"],
                   c["share"], _abs(request, c["link"])] for c in data["cells"]))
+
+
+@app.get("/actors")
+def actors_page(request: Request, kind: str = "", q: str = "", min_docs: int = 2):
+    every = actors.actor_list("", q, max(1, min_docs))
+    counts: dict[str, int] = {}
+    for r in every:
+        counts[r["kind"]] = counts.get(r["kind"], 0) + 1
+    rows = [r for r in every if not kind or r["kind"] == kind]
+    maxdocs = max((r["docs"] for r in rows), default=1)
+    return tpl.TemplateResponse(request, "actors.html", {
+        "rows": rows, "kinds": actors.KINDS, "counts": counts, "f": {"kind": kind, "q": q, "min_docs": min_docs},
+        "maxdocs": maxdocs, "meta": actors.stamp(), "jobs": dict(_jobs)})
+
+
+@app.get("/actors/names")
+def actor_names_page(request: Request, status: str = "used"):
+    return tpl.TemplateResponse(request, "actor_names.html", {
+        "rows": actors.top_names(400, "ignored" if status == "ignored" else "used"), "status": status,
+        "kinds": actors.KINDS, "jobs": dict(_jobs)})
+
+
+@app.get("/actors/{key}")
+def actor_page(request: Request, key: str):
+    d = actors.actor_detail(key)
+    if d is None:
+        raise HTTPException(404, "unknown actor")
+    return tpl.TemplateResponse(request, "actor.html", {**d, "kinds": actors.KINDS, "meta": actors.stamp(),
+                                                       "TOPICS": topics.taxonomy()["topics"], "jobs": dict(_jobs)})
 
 
 @app.get("/api/events")

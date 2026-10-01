@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Actor names · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/actors">← Actors</a></p>
+<h1 class="page-h">Names with the most matches</h1>
+<p class="muted">Actors are found by name. This list shows which names match most often, so a name that means
+  something else in the reports stands out. To stop matching a name, add it under <code>exclude_aliases</code>
+  (for one actor) or <code>ignore_aliases</code> (for all) in <code>sources/actors.yaml</code>, then run
+  <code>python -m rozvedka index-actors</code>.</p>
+<div class="chosen-topics">
+  <a class="topic-chip {{ 'on' if status != 'ignored' }}" href="/actors/names">used</a>
+  <a class="topic-chip {{ 'on' if status == 'ignored' }}" href="/actors/names?status=ignored">not used, but present in the reports</a>
+</div>
+<table class="actors">
+  <thead><tr><th>Name</th><th>Actor</th><th>Source of the name</th><th class="num">Reports</th><th class="num">Matches</th>
+    <th class="num" title="The same word written in lowercase">lowercase</th><th>{{ 'Reason' if status == 'ignored' else 'Note' }}</th></tr></thead>
+  <tbody>
+  {% for r in rows %}<tr>
+    <td><b>{{ r.name }}</b>{% if r.langs %} <span class="muted small">{{ r.langs }}</span>{% endif %}</td>
+    <td><a href="/actors/{{ r.actor_key }}">{{ r.label }}</a> <span class="muted small">{{ kinds.get(r.kind, r.kind) }}</span></td>
+    <td class="small">{{ r.origins|join(', ') }}</td>
+    <td class="num">{{ r.docs }}</td><td class="num">{{ r.hits }}</td><td class="num">{{ r.lower_hits }}</td>
+    <td class="small">{% if status == 'ignored' %}{{ r.reason }}{% elif r.weak %}weak: counts only with another name of the actor{% endif %}</td>
+  </tr>{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

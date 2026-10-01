@@ -1,4 +1,4 @@
-"""CLI: python -m rozvedka {sync-registry|crawl|download|update|serve|stats}"""
+"""CLI: python -m rozvedka {sync-registry|crawl|download|update|serve|stats|index-topics|fetch-actors|index-actors|…}"""
 import argparse
 import logging
 
@@ -26,6 +26,10 @@ def main():
     ix.add_argument("--reextract", action="store_true", help="extract text again for all documents")
     ix.add_argument("--limit", type=int, help="only extract this many new documents (for trying it out)")
     ix.add_argument("--workers", type=int, default=4)
+    sub.add_parser("fetch-actors", help="download the actor gazetteer (Wikidata, Wikipedia, MITRE ATT&CK)")
+    ia = sub.add_parser("index-actors", help="find the gazetteer's actors in the report texts")
+    ia.add_argument("--rematch", action="store_true", help="match every document again")
+    ia.add_argument("--workers", type=int, default=4)
     lg = sub.add_parser("fetch-logos", help="download agency logos from their home pages")
     lg.add_argument("--refresh", action="store_true", help="re-fetch logos that already exist")
     a = ap.parse_args()
@@ -45,8 +49,16 @@ def main():
         print(crawler.crawl(a.country))
         print(downloader.download(a.country))
         print({"titles_improved": downloader.improve_titles()})
-        from . import topics
+        from . import actor_sources, actors, topics
         print(topics.index())
+        if actor_sources.GAZETTEER.exists():
+            print(actors.index())
+    elif a.cmd == "fetch-actors":
+        from . import actor_sources
+        print(actor_sources.fetch())
+    elif a.cmd == "index-actors":
+        from . import actors
+        print(actors.index(a.workers, rematch=a.rematch))
     elif a.cmd == "index-topics":
         from . import topics
         print(topics.index(a.reextract, a.limit, a.workers))
