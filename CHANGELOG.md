@@ -27,6 +27,13 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.9.3] – 2026-10-01
+
+### Fixed
+- Logos drawn in white for dark site headers (SRI, MUST, ABW, Frontex, ISC, NCSC-UK, DHS, DIA, CENAPRED) were
+  invisible on the white logo tiles. The browser now samples each logo and gives white-on-transparent ones a dark
+  tile on the Sources page, in the documents table and on the map.
+
 ## [0.9.2] – 2026-10-01
 
 ### Fixed
@@ -164,7 +171,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.9.2...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.9.3...HEAD
+[0.9.3]: https://github.com/iiogurt/Rozvedka/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/iiogurt/Rozvedka/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/iiogurt/Rozvedka/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/iiogurt/Rozvedka/compare/v0.8.0...v0.9.0
