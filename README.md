@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.20.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.21.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -204,6 +204,7 @@ git clone https://github.com/iiogurt/Rozvedka.git ~/Documents/Projects/Rozvedka
 cd ~/Documents/Projects/Rozvedka
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 sudo apt install poppler-utils chromium      # pdftotext (text extraction), Chromium (JavaScript-only sites)
+sudo apt install ocrmypdf tesseract-ocr tesseract-ocr-eng tesseract-ocr-spa …   # optional: OCR for scanned reports
 
 .venv/bin/python -m rozvedka update          # crawl, download, extract and index (first run: hours)
 .venv/bin/python -m rozvedka fetch-actors    # reference data for the actor index (a few minutes)
@@ -240,6 +241,7 @@ sudo loginctl enable-linger "$USER"
 | `crawl [--country CZ] [--agency BIS]` | find new documents on the report pages (no download) |
 | `download [--country CZ] [--limit N] [--retry-failed]` | download discovered documents |
 | `index-topics [--reextract]` | extract text for full-text search and tag topics; re-classifies after `topics.yaml` changes |
+| `ocr [--limit N] [--workers 3]` | recognise the text of scanned reports (no text layer) with Tesseract via OCRmyPDF, in the report's language + English; stores the text with page breaks, marks it as OCR, leaves the PDF unchanged (part of `update` when installed) |
 | `date-documents [--check]` | give undated reports a year from their first pages – a report heading, else a publication date – with the evidence; `--check` measures accuracy on reports whose year is known (part of `update`) |
 | `fetch-actors [--refresh]` | download the actor gazetteer and connections from Wikidata, Wikipedia and MITRE ATT&CK (network; Wikipedia infoboxes are cached in `data/gazetteer/` – `--refresh` reads them again) |
 | `index-actors [--rematch]` | find the actors in the report texts (offline) |
@@ -419,5 +421,6 @@ flowchart LR
 > [!CAUTION]
 > **Reading the results.** Topics and actors are recognised by keywords and names, not by understanding: they show
 > what reports *talk about*, not what they conclude. More mentions mean more attention, not necessarily a larger
-> threat, and agencies publish different kinds of reports at different rhythms. Scanned PDFs without a text layer
-> cannot be indexed. Check any surprising number by following its link to the documents and passages.
+> threat, and agencies publish different kinds of reports at different rhythms. Text of scanned reports comes from
+> OCR and can contain misread words (marked *OCR*); years found in a report's text are marked with their evidence.
+> Check any surprising number by following its link to the documents and passages.

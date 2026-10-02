@@ -565,3 +565,4 @@ ol.editions li { border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .ed-delta { color: var(--muted); font-style: italic; }
 .ed-delta.up { color: var(--ink); }
 .yr-est { border-bottom: 1px dotted var(--muted); cursor: help; }
+.badge-ocr { font-size: 10.5px; padding: 0 5px; border-radius: 3px; border: 1px dashed var(--muted); color: var(--muted); margin-left: 6px; cursor: help; }

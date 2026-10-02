@@ -565,7 +565,7 @@ def actor_detail(key: str, passages: int = 40, page: int | str = 1) -> dict | No
             n["origins"] = json.loads(n["origins"] or "[]")
         docs = [dict(r) for r in con.execute(
             f"""SELECT da.doc_id, da.hits, da.spans, da.names, d.title, d.year, d.lang, d.url, d.status, d.local_path,
-                       s.id source_id, s.agency, s.country, s.name_en, i.pages
+                       s.id source_id, s.agency, s.country, s.name_en, i.pages, i.ocr
                 FROM doc_actors da JOIN documents d ON d.id=da.doc_id JOIN sources s ON s.id=d.source_id
                 JOIN doc_index i ON i.doc_id=d.id
                 WHERE da.actor_key=? AND {where} ORDER BY d.year DESC NULLS LAST, da.hits DESC""", (key, *args))]
@@ -618,6 +618,7 @@ def actor_detail(key: str, passages: int = 40, page: int | str = 1) -> dict | No
             pages = json.loads(d["pages"]) if d["pages"] else None
             page = topics.page_of(pages, s)
             shown.append({**{k: d[k] for k in ("doc_id", "title", "year", "agency", "country", "lang", "hits", "url")},
+                          "ocr": _ocr_note(d["ocr"]),
                           "names": json.loads(d["names"]), "page": page, **_snippet(body, s, e), "nearby": near,
                           "open": f"/doc/{d['doc_id']}" + (f"#page={page}" if page else "")})
     return {"actor": data, "row": dict(row), "names": names, "docs": len(docs), "timeline": timeline,
@@ -722,6 +723,16 @@ def nearby(con, doc_id: int, key: str, s: int, e: int, linked: dict[str, str], l
     return out[:limit]
 
 
+def _ocr_note(raw: str | None) -> str | None:
+    """'text from OCR (tesseract 5.5.0, spa+eng, 2026-10-02)' when a passage comes from recognised text."""
+    if not raw:
+        return None
+    o = json.loads(raw)
+    if "chars" not in o:
+        return None            # recognition failed or gained nothing: the text is the PDF's own
+    return f"text from OCR ({o.get('engine', 'tesseract')}, {o.get('langs', '')}, {o.get('date', '')})"
+
+
 # a pair counts in a report only when the report is not dated before either actor was founded
 PAIR_FOUNDED = """(a1.since_year IS NULL OR d.year IS NULL OR d.year >= a1.since_year)
                   AND (a2.since_year IS NULL OR d.year IS NULL OR d.year >= a2.since_year)"""
@@ -761,7 +772,7 @@ def pair_detail(a: str, b: str, year_from: int | None = None, year_to: int | Non
         if len(actors_) < 2:
             return None
         docs = [dict(r) for r in con.execute(
-            f"""SELECT p.doc_id, p.n, d.title, d.year, d.url, s.agency, s.country, i.pages
+            f"""SELECT p.doc_id, p.n, d.title, d.year, d.url, s.agency, s.country, i.pages, i.ocr
                 FROM actor_pairs p JOIN documents d ON d.id=p.doc_id JOIN sources s ON s.id=d.source_id
                 JOIN doc_index i ON i.doc_id=d.id JOIN actors a1 ON a1.key=p.a JOIN actors a2 ON a2.key=p.b
                 WHERE p.a=? AND p.b=? AND {where} AND {PAIR_FOUNDED}
@@ -781,6 +792,7 @@ def pair_detail(a: str, b: str, year_from: int | None = None, year_to: int | Non
             # mark both names inside the joined passage
             mid = " ".join(body[e1:s2].split()) if s2 > e1 else ""
             shown.append({**{k: d[k] for k in ("doc_id", "title", "year", "agency", "country", "url", "n")},
+                          "ocr": _ocr_note(d["ocr"]),
                           "page": page, "before": snip["before"], "first": " ".join(body[s1:e1].split()),
                           "middle": mid, "second": " ".join(body[s2:e2].split()) if s2 >= e1 else "",
                           "after": snip["after"], "open": f"/doc/{d['doc_id']}" + (f"#page={page}" if page else "")})

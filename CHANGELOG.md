@@ -27,6 +27,21 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.21.0] – 2026-10-02
+
+### Added
+- OCR for scanned reports (`rozvedka/ocr.py`, command `ocr`, part of `update` when installed): reports without a
+  usable text layer (< 2,000 characters, or < 120 per page) are recognised with Tesseract 5.5 via OCRmyPDF in the
+  report's language plus English (17 languages installed). Only the text is stored, with page breaks – the PDF is not
+  changed – and it goes through topics, dates and actors. 135 of 187 candidates recognised (4.6 million characters,
+  e.g. a full Bulgarian DANS annual report); 47 gained nothing (maps, image pages); 5 were XFA forms.
+- Recognised text is marked: *OCR* in the documents list (engine, languages, date on hover) and *OCR text* on actor
+  and pair passages.
+
+### Changed
+- `index-topics --reextract` keeps recognised text instead of bringing back the empty text layer.
+- Questionnaires and forms (`questionnaire`, `formulier`) count as low relevance; five AIVD screening forms hidden.
+
 ## [0.20.0] – 2026-10-02
 
 ### Added
@@ -363,7 +378,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.20.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.21.0...HEAD
+[0.21.0]: https://github.com/iiogurt/Rozvedka/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/iiogurt/Rozvedka/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/iiogurt/Rozvedka/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/iiogurt/Rozvedka/compare/v0.17.0...v0.18.0

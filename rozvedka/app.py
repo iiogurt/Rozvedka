@@ -2,6 +2,7 @@
 import csv
 import datetime as dt
 import io
+import json
 import re
 import threading
 from pathlib import Path
@@ -182,8 +183,9 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
         pg = paging.paginate(total, page, size, "/", params)
         docs = [dict(r) for r in con.execute(
             f"""SELECT d.*, s.country, s.agency, s.type, s.name_en, s.logo_path,
-                       u.added_at AS hand_added, u.official AS hand_official
+                       u.added_at AS hand_added, u.official AS hand_official, ix.ocr AS ocr
                 FROM documents d JOIN sources s ON s.id=d.source_id LEFT JOIN uploads u ON u.doc_id=d.id
+                LEFT JOIN doc_index ix ON ix.doc_id=d.id
                 WHERE {sql_where} ORDER BY {order} LIMIT ? OFFSET ?""",
             (*args, *order_args, size, pg["offset"]))]
         ids = [d["id"] for d in docs]
@@ -198,6 +200,8 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
                     for d in docs:
                         if d["id"] == r["rowid"]:
                             d["snippet"] = highlight(r["snip"])
+        for d in docs:
+            d["ocr"] = json.loads(d["ocr"]) if d.get("ocr") else None
         for d in docs:   # subject topics first (by score), meta topics such as "agency activity" last
             d["topics"] = sorted(by_doc.get(d["id"], []), key=lambda t: bool(tax.get(t, {}).get("meta")))
         topic_counts = dict(con.execute(
