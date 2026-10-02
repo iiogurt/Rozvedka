@@ -2,7 +2,7 @@
 {% from "_series.html" import grid %}
 {% block title %}Sources · Rozvedka{% endblock %}
 {% block main %}
-<nav class="subnav" aria-label="Source views"><a href="/sources" class="on">Agencies</a><a href="/sources/coverage">Coverage</a></nav>
+<nav class="subnav" aria-label="Source views"><a href="/sources" class="on">Agencies</a><a href="/sources/coverage">Coverage</a><a href="/collect">To collect</a></nav>
 <div class="summary">
   <span><b>{{ sources|length }}</b> agencies and institutions in <b>{{ groups|length }}</b> groups</span>
   <form method="post" action="/jobs/sync" class="inline"><button title="Reload sources/registry.yaml">Reload registry</button></form>

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}To collect · Sources · Rozvedka{% endblock %}
+{% macro upload(src, url="", title="", lang="", year="", series_name="", compact=False) %}
+<form class="up-form" method="post" action="/collect/upload" enctype="multipart/form-data">
+  <input type="hidden" name="source_id" value="{{ src.id }}">
+  {% if series_name %}<input type="hidden" name="series_name" value="{{ series_name }}">{% endif %}
+  <input type="file" name="file" accept="application/pdf,.pdf" required aria-label="PDF file">
+  <input type="url" name="url" value="{{ url }}" placeholder="Official URL of the report (where you got it)" required size="40"
+         aria-label="Official URL" {{ 'readonly' if url and compact }}>
+  {% if not compact %}<input name="title" value="{{ title }}" placeholder="Title" size="28" aria-label="Title">
+  <input name="year" value="{{ year }}" placeholder="Year" size="5" inputmode="numeric" aria-label="Year">
+  <input name="lang" value="{{ lang }}" placeholder="lang" size="3" aria-label="Language code">{% endif %}
+  <button>Upload</button>
+</form>
+{% endmacro %}
+{% block main %}
+<nav class="subnav" aria-label="Source views"><a href="/sources">Agencies</a><a href="/sources/coverage">Coverage</a><a href="/collect" class="on">To collect</a></nav>
+
+<div class="collect-head">
+  <p class="small">Data last crawled <b>{{ fresh.last_crawl[:10] if fresh.last_crawl else 'never' }}</b>{% if fresh.crawl_days is not none %}
+    ({{ fresh.crawl_days }} day{{ 's' if fresh.crawl_days != 1 }} ago){% endif %} · last download {{ fresh.last_download[:10] if fresh.last_download else '–' }}.
+    Updates run only when started.</p>
+  <form method="post" action="/jobs/update" class="inline"><button title="Crawl every source, download new reports and index them (takes a while)">Update now</button></form>
+  <form method="get" action="/collect" class="inline">
+    <input type="hidden" name="tab" value="{{ tab }}">
+    <select name="source" onchange="this.form.submit()" aria-label="Only one source"><option value="">All sources</option>
+      {% for s in all_sources %}<option value="{{ s.key }}" {{ 'selected' if s.key == source }}>{{ s.key }}</option>{% endfor %}</select>
+  </form>
+</div>
+
+{% if notice %}<div class="notice {{ 'bad' if notice.error or notice.status not in ('downloaded',) }}" role="status">
+  {% if notice.error %}Not added: {{ notice.error }}
+  {% elif notice.status == 'downloaded' %}Added as <a href="/doc/{{ notice.doc }}">report #{{ notice.doc }}</a> – text, topics and actors are being indexed.
+    {% if not notice.official %}<br><b>Note:</b> the URL is not on the agency's official domains – check that it is the agency's own copy.{% endif %}
+  {% elif notice.status == 'duplicate' %}This exact file is already in the library (see <a href="/?q=&source=">documents</a>); report #{{ notice.doc }} points to it.
+  {% else %}Report #{{ notice.doc }}: {{ notice.status }}{% endif %}
+</div>{% endif %}
+
+<nav class="subnav collect-tabs" aria-label="To collect">
+  {% for k, name in tabs.items() %}<a href="/collect?tab={{ k }}{{ '&source=' ~ source|urlencode if source }}" class="{{ 'on' if k == tab }}">{{ name }} <span class="muted">{{ counts[k] }}</span></a>{% endfor %}
+</nav>
+
+{% if tab == 'missing' %}
+<p class="muted small">Editions that confirmed <a href="/sources/coverage">report series</a> should have but the library lacks (✗), and the
+  next expected edition (…). If the edition is already in the library under another title, pick it below; otherwise find it on
+  the agency's report page and upload it, or mark it as not published.</p>
+{{ pager(pg, "editions") }}
+<ol class="collect-list">
+{% for m in items %}
+  <li id="s-{{ m.source.id }}">
+    <div class="cl-row"><span class="sg-{{ m.state }} cl-state">{{ '✗' if m.state == 'missing' else '…' }}</span>
+      <img class="flag-sm" src="{{ flag_url(m.source.country) }}" alt=""> <b>{{ m.source.agency }}</b> – {{ m.series }} <b>{{ m.year }}</b>
+      <span class="ctag">{{ m.lang }}</span> <span class="muted small">{{ 'missing' if m.state == 'missing' else 'expected – may not be published yet' }}</span></div>
+    <div class="cl-pages small">Look on: {% for p in m.pages[:4] %}<a href="{{ p.url }}" rel="noopener">{{ p.kind or 'page' }}{{ ' (' ~ p.lang ~ ')' if p.lang }}</a>{{ ' · ' if not loop.last }}{% endfor %}</div>
+    {% if m.candidates %}<div class="cl-cands small"><span class="muted">In the library for {{ m.year }} / {{ m.lang }}, not counted in the series:</span>
+      <ul>{% for d in m.candidates %}<li><a href="{{ '/doc/' ~ d.id if d.local_path else d.url }}">{{ d.title }}</a> <span class="muted">{{ d.status }}</span>
+        <form method="post" action="/collect/attach" class="inline"><input type="hidden" name="source" value="{{ m.source.key }}">
+          <input type="hidden" name="name" value="{{ m.series }}"><input type="hidden" name="url" value="{{ d.url }}">
+          <button class="linkish">this is the edition</button></form></li>{% endfor %}</ul></div>{% endif %}
+    <div class="cl-actions">
+      {{ upload(m.source, title=m.series ~ " " ~ m.year, lang=m.lang, year=m.year, series_name=m.series) }}
+      <form method="post" action="/series/absent" class="inline">
+        <input type="hidden" name="source" value="{{ m.source.key }}"><input type="hidden" name="name" value="{{ m.series }}">
+        <input type="hidden" name="year" value="{{ m.year }}"><input type="hidden" name="lang" value="{{ m.lang }}">
+        <input name="reason" placeholder="why (optional)" size="16" aria-label="Reason"><button>Not published</button></form>
+    </div>
+  </li>
+{% endfor %}
+</ol>
+{% if not items %}<p class="muted">Nothing missing in the confirmed series{{ ' of ' ~ source if source }}.</p>{% endif %}
+{{ pager(pg, "editions") }}
+
+{% elif tab == 'blocked' %}
+<p class="muted small">Reports the library has found but could not download: the site hands the file only to a browser (or the
+  download failed). Open the original, save the PDF, and upload it here – it is attached to the same report.</p>
+{{ pager(pg, "reports") }}
+<ol class="collect-list">
+{% for d in items %}
+  <li>
+    <div class="cl-row"><span class="sg-listed cl-state">↓</span><img class="flag-sm" src="{{ flag_url(d.source.country) }}" alt="">
+      <b>{{ d.source.agency }}</b> {{ d.year or '' }} · {{ d.title }} <span class="ctag">{{ d.lang }}</span>
+      <span class="muted small">{{ d.status }}</span></div>
+    <div class="cl-pages small"><a href="{{ d.url }}" rel="noopener">open the original ↗</a> <span class="muted">{{ d.error or '' }}</span></div>
+    <div class="cl-actions">{{ upload(d.source, url=d.url, compact=True) }}</div>
+  </li>
+{% endfor %}
+</ol>
+{% if not items %}<p class="muted">No blocked downloads.</p>{% endif %}
+{{ pager(pg, "reports") }}
+
+{% elif tab == 'manual' %}
+<p class="muted small">Sources the crawler cannot read – bot-protected sites, blocked report pages – or that never yielded a report.
+  Open their report pages, download new reports and upload them; "Checked" records that you looked. Sorted by when you last checked.</p>
+{{ pager(pg, "sources") }}
+<ol class="collect-list">
+{% for x in items %}
+  <li>
+    <div class="cl-row"><img class="flag-sm" src="{{ flag_url(x.source.country) }}" alt=""> <b>{{ x.source.agency }}</b>
+      <span class="muted small">{{ x.source.name_en or '' }} · {{ x.why }} · {{ x.docs }} reports in the library{% if x.latest %}, latest {{ x.latest }}{% endif %}</span>
+      <span class="small cl-check">{% if x.check %}checked {{ x.check.checked_at[:10] }}{% if x.check.note %} – {{ x.check.note }}{% endif %}{% else %}<span class="muted">never checked</span>{% endif %}</span></div>
+    <div class="cl-pages small">Report pages: {% for p in x.pages %}<a href="{{ p.url }}" rel="noopener">{{ p.kind or 'page' }}{{ ' (' ~ p.lang ~ ')' if p.lang }}</a>{{ ' · ' if not loop.last }}{% endfor %}</div>
+    <div class="cl-actions">
+      {{ upload(x.source) }}
+      <form method="post" action="/collect/checked" class="inline"><input type="hidden" name="source_id" value="{{ x.source.id }}">
+        <input name="note" placeholder="note (optional)" size="16" aria-label="Note"><button>Checked, nothing new</button></form>
+    </div>
+  </li>
+{% endfor %}
+</ol>
+{{ pager(pg, "sources") }}
+
+{% elif tab == 'inbox' %}
+<p class="muted small">PDFs placed in <code>data/inbox/</code> on the Pi (copy them over the network or from a USB stick; a sub-folder
+  named after the source – e.g. <code>CZ_BIS/</code> or <code>BIS/</code> – preselects it). Give each its official URL and import it; the
+  file is then moved into the library.</p>
+{{ pager(pg, "files") }}
+<ol class="collect-list">
+{% for f in items %}
+  <li>
+    <div class="cl-row"><b>{{ f.path }}</b> <span class="muted small">{{ (f.size / 1048576)|round(1) }} MB{{ '' if f.is_pdf else ' · not a PDF – will be refused' }}</span></div>
+    <form class="up-form" method="post" action="/collect/inbox">
+      <input type="hidden" name="path" value="{{ f.path }}">
+      <select name="source_id" required aria-label="Source"><option value="">Source…</option>
+        {% for s in all_sources %}<option value="{{ s.id }}" {{ 'selected' if s.id == f.source_id }}>{{ s.key }}</option>{% endfor %}</select>
+      <input type="url" name="url" placeholder="Official URL of the report" required size="36" aria-label="Official URL">
+      <input name="title" value="{{ f.title }}" size="28" aria-label="Title">
+      <input name="year" value="{{ f.year }}" placeholder="Year" size="5" aria-label="Year">
+      <input name="lang" value="{{ f.lang }}" placeholder="lang" size="3" aria-label="Language code">
+      <button>Import</button>
+    </form>
+  </li>
+{% endfor %}
+</ol>
+{% if not items %}<p class="muted">The inbox is empty.</p>{% endif %}
+{{ pager(pg, "files") }}
+{% endif %}
+{% endblock %}

@@ -243,3 +243,14 @@ def remove(source: str, name: str) -> None:
     data = load()
     data["series"] = [s for s in data["series"] if not (s["source"] == source and s["name"] == name)]
     save(data)
+
+
+def attach_url(source: str, name: str, url: str) -> None:
+    """Count a document whose title differs from the series' titles as an edition of the series."""
+    data = load()
+    for s in data["series"]:
+        if s["source"] == source and s["name"] == name:
+            urls = s.setdefault("urls", [])
+            if url not in urls:
+                urls.append(url)
+    save(data)

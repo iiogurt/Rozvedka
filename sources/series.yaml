@@ -42,6 +42,9 @@ series:
     en:
     - annual report security information service
   since: 2001
+  urls:
+  - https://www.bis.cz/public/site/bis.cz/content/vyrocni-zpravy/2021-vz-cz-2.pdf
+  - https://www.bis.cz/public/site/bis.cz/content/vvz-2019-web-en-k-publikaci.pdf
 - source: CZ/VZ
   name: Výroční zpráva
   per_year: 1

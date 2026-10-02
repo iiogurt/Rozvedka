@@ -27,6 +27,26 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.18.0] – 2026-10-02
+
+### Added
+- *Sources → To collect* (`rozvedka/collect.py`), four tabs with the shared pager:
+  - **Missing editions** of confirmed series and the next expected edition, with the source's documents of that year
+    and language to pick as the edition ("this is the edition" – stored as a URL of the series), an upload form and
+    "not published";
+  - **Blocked downloads** (browser-only, failed): open the original, upload the PDF to the same report;
+  - **Sources to check by hand** (bot-protected, blocked pages, no report found): report pages, "checked, nothing new"
+    with date and note;
+  - **Inbox**: PDFs copied to `data/inbox/` (a folder named after the source preselects it), imported with source,
+    official URL, title, year and language.
+- Reports added by hand keep the official URL, the date, how they came in (upload or inbox) and whether the URL is on
+  the agency's official domains; the documents list marks them *added by hand* (and *unofficial URL* when it is not).
+  They are indexed for search, topics and actors right after the upload.
+- *Update now* button and the age of the data on the To collect page (no periodic job).
+
+### Changed
+- The downloader and the hand import share one step that checks, de-duplicates (SHA-256) and files a PDF.
+
 ## [0.17.0] – 2026-10-02
 
 ### Added
@@ -316,7 +336,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.17.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/iiogurt/Rozvedka/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/iiogurt/Rozvedka/compare/v0.16.1...v0.17.0
 [0.16.1]: https://github.com/iiogurt/Rozvedka/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/iiogurt/Rozvedka/compare/v0.15.0...v0.16.0
