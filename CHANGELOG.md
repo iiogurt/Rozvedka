@@ -27,6 +27,20 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.20.0] – 2026-10-02
+
+### Added
+- Years for undated reports (`rozvedka/dating.py`, command `date-documents`, part of `update` and of the indexing
+  after a hand upload): from a report heading on the first pages, else from a publication date, each with the
+  evidence stored in `documents.year_source`. 282 of 463 undated reports dated (51 from a heading, 231 from a date).
+- `date-documents --check`: blind accuracy check on reports with a known year (headings 82 % exact, 89 % within one
+  year; publication dates 68 % / 83 %).
+- Documents page: the year shows where it came from on hover; years from a publication date are marked ≈.
+- Trends: the provenance section states how many years were found in the reports' text.
+
+### Changed
+- Editing a report's year marks it "set by hand"; such years are never changed by the dating.
+
 ## [0.19.0] – 2026-10-02
 
 ### Added
@@ -349,7 +363,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.19.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.20.0...HEAD
+[0.20.0]: https://github.com/iiogurt/Rozvedka/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/iiogurt/Rozvedka/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/iiogurt/Rozvedka/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/iiogurt/Rozvedka/compare/v0.16.1...v0.17.0

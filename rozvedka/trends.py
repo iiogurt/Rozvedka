@@ -55,12 +55,14 @@ def _years(con, where: str, args: list) -> list[int]:
 
 def _excluded(con, where: str, args: list) -> dict:
     r = con.execute(f"""SELECT COUNT(*) listed, SUM(d.year IS NULL) undated,
+                               SUM(d.year_source IS NOT NULL AND d.year_source != 'set by hand') estimated,
                                SUM(d.year IS NOT NULL AND d.id NOT IN (SELECT doc_id FROM doc_index
                                    WHERE taxonomy_hash IS NOT NULL AND error IS NULL)) unclassified,
                                SUM(d.year < ?) before
                         FROM documents d JOIN sources s ON s.id=d.source_id WHERE {where}""",
                     (MIN_YEAR, *args)).fetchone()
     return {"listed": r["listed"], "undated": r["undated"] or 0, "unclassified": r["unclassified"] or 0,
+            "estimated": r["estimated"] or 0,
             "before_min_year": r["before"] or 0}
 
 

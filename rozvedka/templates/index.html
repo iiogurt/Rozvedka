@@ -68,7 +68,7 @@
   <tbody>
   {% for d in docs %}
     <tr class="{{ 'hidden' if d.hidden }}">
-      <td class="num">{{ d.year or '—' }}</td>
+      <td class="num">{% if d.year and d.year_source %}<span class="yr-est" title="Year {{ 'set by hand' if d.year_source == 'set by hand' else 'from the report – ' ~ d.year_source }}">{{ '≈' if 'publication date' in d.year_source }}{{ d.year }}</span>{% else %}{{ d.year or '—' }}{% endif %}</td>
       <td class="src"><a href="/?{{ qs(source=d.source_id, page=1) }}" title="{{ d.name_en or '' }}">
         <img class="flag-sm" src="{{ flag_url(d.country) }}" alt="{{ d.country }}" width="20" height="15">
         {% if d.logo_path %}<img class="logo-sm" src="/logo/{{ d.source_id }}" alt="" loading="lazy">{% endif %}

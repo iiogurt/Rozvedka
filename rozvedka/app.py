@@ -378,8 +378,9 @@ def collect_page(request: Request, tab: str = "missing", source: str = "", page:
 
 
 def _index_new():
-    """Text, pages, topics and actors for reports added by hand – the same steps as `update` after a download."""
-    return {"topics": topics.index(), "actors": actors.index()}
+    """Text, pages, topics, dates and actors for new reports – the same steps as `update` after a download."""
+    from . import dating
+    return {"topics": topics.index(), "dates": dating.date_documents(), "actors": actors.index()}
 
 
 def _collect_redirect(request: Request, result: dict | None = None, error: str = ""):
@@ -743,8 +744,11 @@ def hide_doc(request: Request, doc_id: int, hidden: int = Form(1)):
 @app.post("/doc/{doc_id}/edit")
 def edit_doc(request: Request, doc_id: int, title: str = Form(...), lang: str = Form(""), year: str = Form("")):
     with db.session() as con:
-        con.execute("UPDATE documents SET title=?, lang=?, year=? WHERE id=?",
-                    (title.strip(), lang.strip().lower(), int(year) if year.strip().isdigit() else None, doc_id))
+        old = con.execute("SELECT year, year_source FROM documents WHERE id=?", (doc_id,)).fetchone()
+        new_year = int(year) if year.strip().isdigit() else None
+        source = old["year_source"] if old and old["year"] == new_year else ("set by hand" if new_year else None)
+        con.execute("UPDATE documents SET title=?, lang=?, year=?, year_source=? WHERE id=?",
+                    (title.strip(), lang.strip().lower(), new_year, source, doc_id))
     return _back(request)
 
 
