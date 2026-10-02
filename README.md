@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.16.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.16.1-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -337,6 +337,8 @@ flowchart LR
 - **Working rules:** [`CLAUDE.md`](CLAUDE.md) holds the project conventions – scope and source rules, the
   traceability and visualisation principles, git/GitHub workflow, versioning, changelog, README and release
   steps. Claude Code reads it automatically in every session.
+- **Roadmap:** [`docs/ROADMAP.md`](docs/ROADMAP.md) – where the project stands, measured gaps, and the
+  prioritised next steps.
 - **Workflow:** `main` always holds working code. Work on a branch (`feat/…`, `fix/…`, `sources/…`, `docs/…`) and
   merge through a pull request. Registry edits go in their own commits (`sources: add Latvian SAB reports page`).
 - **Never commit** `data/`, `.env` or credentials – `.gitignore` covers them.
