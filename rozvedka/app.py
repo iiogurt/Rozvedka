@@ -2,19 +2,20 @@
 import csv
 import datetime as dt
 import io
+import re
 import threading
 from pathlib import Path
 from urllib.parse import urlencode
 
-from fastapi import FastAPI, Form, HTTPException, Query, Request
+from fastapi import FastAPI, File, Form, HTTPException, Query, Request, UploadFile
 from fastapi.responses import FileResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from markupsafe import escape
 
-from . import (__version__, actors, build_version, countries, crawler, db, downloader, graphs, logos, paging,
-               registry, series, topics, trends)
+from . import (__version__, actors, build_version, collect, countries, crawler, db, downloader, graphs, logos,
+               paging, registry, series, topics, trends)
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -95,6 +96,7 @@ def _run_job(name: str, fn, *args):
 @app.on_event("startup")
 def startup():
     db.init()
+    collect.init()
     registry.sync()
 
 
@@ -174,8 +176,9 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
                             args).fetchone()[0]
         pg = paging.paginate(total, page, size, "/", params)
         docs = [dict(r) for r in con.execute(
-            f"""SELECT d.*, s.country, s.agency, s.type, s.name_en, s.logo_path
-                FROM documents d JOIN sources s ON s.id=d.source_id
+            f"""SELECT d.*, s.country, s.agency, s.type, s.name_en, s.logo_path,
+                       u.added_at AS hand_added, u.official AS hand_official
+                FROM documents d JOIN sources s ON s.id=d.source_id LEFT JOIN uploads u ON u.doc_id=d.id
                 WHERE {sql_where} ORDER BY {order} LIMIT ? OFFSET ?""",
             (*args, *order_args, size, pg["offset"]))]
         ids = [d["id"] for d in docs]
@@ -317,6 +320,94 @@ def series_absent(request: Request, source: str = Form(...), name: str = Form(..
 def series_remove(request: Request, source: str = Form(...), name: str = Form(...)):
     series.remove(source, name)
     return _back_to(request)
+
+
+COLLECT_TABS = {"missing": "Missing editions", "blocked": "Blocked downloads", "manual": "Sources to check by hand",
+                "inbox": "Inbox"}
+
+
+@app.get("/collect")
+def collect_page(request: Request, tab: str = "missing", source: str = "", page: str = "1", per_page: str = "",
+                 added: int = 0, status: str = "", official: str = "", error: str = ""):
+    tab = tab if tab in COLLECT_TABS else "missing"
+    items = {"missing": collect.missing_editions, "blocked": collect.blocked, "manual": collect.manual_sources,
+             "inbox": lambda source="": collect.inbox()}[tab](source)
+    size = paging.per_page_of(per_page, 25)
+    pg = paging.paginate(len(items), page, size, "/collect",
+                         {"tab": tab, "source": source, "per_page": size if size != 25 else ""}, default=25)
+    with db.session() as con:
+        all_sources = [dict(r) for r in con.execute("SELECT id, key, country, agency FROM sources WHERE active=1 ORDER BY key")]
+    notice = None
+    if added or error:
+        notice = {"doc": added, "status": status, "official": official == "1", "error": error}
+    return tpl.TemplateResponse(request, "collect.html", {
+        "tab": tab, "tabs": COLLECT_TABS, "counts": collect.status_counts(source), "items": items[pg["offset"]:pg["offset"] + size],
+        "pg": pg, "source": source, "all_sources": all_sources, "fresh": collect.freshness(), "notice": notice,
+        "today": dt.date.today(), "jobs": dict(_jobs)})
+
+
+def _index_new():
+    """Text, pages, topics and actors for reports added by hand – the same steps as `update` after a download."""
+    return {"topics": topics.index(), "actors": actors.index()}
+
+
+def _collect_redirect(request: Request, result: dict | None = None, error: str = ""):
+    ref = request.headers.get("referer") or "/collect"
+    base = re.sub(r"[?&](added|status|official|error)=[^&#]*", "", ref.split("#")[0])
+    q = urlencode({"added": result["doc_id"], "status": result["status"], "official": int(result["official"])}
+                  if result else {"error": error[:200]})
+    return RedirectResponse(base + ("&" if "?" in base else "?") + q, status_code=303)
+
+
+@app.post("/collect/upload")
+def collect_upload(request: Request, source_id: int = Form(...), url: str = Form(...), file: UploadFile = File(...),
+                   title: str = Form(""), lang: str = Form(""), year: str = Form(""), series_name: str = Form("")):
+    try:
+        result = collect.add_upload(source_id, url, file.file, file.filename or "", title=title, lang=lang, year=year)
+    except ValueError as e:
+        return _collect_redirect(request, error=str(e))
+    if series_name and result["status"] == "downloaded":
+        with db.session() as con:
+            key = con.execute("SELECT key FROM sources WHERE id=?", (source_id,)).fetchone()["key"]
+        series.attach_url(key, series_name, url.strip())
+    _run_job("index new reports", _index_new)
+    return _collect_redirect(request, result)
+
+
+@app.post("/collect/inbox")
+def collect_inbox(request: Request, path: str = Form(...), source_id: int = Form(...), url: str = Form(...),
+                  title: str = Form(""), lang: str = Form(""), year: str = Form("")):
+    try:
+        result = collect.import_inbox(path, source_id, url, title=title, lang=lang, year=year)
+    except ValueError as e:
+        return _collect_redirect(request, error=str(e))
+    _run_job("index new reports", _index_new)
+    return _collect_redirect(request, result)
+
+
+@app.post("/collect/attach")
+def collect_attach(request: Request, source: str = Form(...), name: str = Form(...), url: str = Form(...)):
+    series.attach_url(source, name, url)
+    return _back_to(request, "/collect")
+
+
+@app.post("/collect/checked")
+def collect_checked(request: Request, source_id: int = Form(...), note: str = Form("")):
+    collect.checked(source_id, note)
+    return _back_to(request, "/collect?tab=manual")
+
+
+def _update_all():
+    """What `python -m rozvedka update` does – started by hand (there is no periodic job)."""
+    out = {"crawl": crawler.crawl(), "download": downloader.download(), "titles_improved": downloader.improve_titles()}
+    out.update(_index_new())
+    return out
+
+
+@app.post("/jobs/update")
+def job_update(request: Request):
+    _run_job("update", _update_all)
+    return _back_to(request, "/collect")
 
 
 @app.get("/changelog")

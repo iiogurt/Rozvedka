@@ -47,7 +47,7 @@ Each item: why · what · done when · version step.
 
 1. ~~Weekly update running~~ – **decided against by the owner (2026-10-02): no periodic job.** Updates run on demand
    (`python -m rozvedka update` or an *Update now* button); views show how old the data is instead.
-2. **Hand-import workflow for blocked sources** – a *To collect* page listing, per manual or browser-only source,
+2. ✅ (0.18.0) **Hand-import workflow for blocked sources** – a *To collect* page listing, per manual or browser-only source,
    the report pages to open and the editions expected but missing; upload of a PDF in the portal (or a
    `data/inbox/<source>/` folder picked up by `update`), with the official URL it came from recorded as its
    source. *Done when* Säpo, PET, VSD, ASIO and CSIS reports are in the library with their official URLs. · minor
@@ -110,7 +110,7 @@ Each item: why · what · done when · version step.
 ## 4. Suggested next three steps
 
 1. **E19** – the data backed up (updates stay on demand – owner's decision).
-2. **A2 + A3** – hand-import and report series: fills the biggest content gap (26 blocked sources).
+2. ✅ **A2 + A3** – hand-import and report series (0.17.0, 0.18.0). Next: collect the blocked flagship reports by hand.
 3. **B5 + B6** – dates and OCR: brings ~700 reports into search, trends and actor counts.
 
 After that, C10–C12 turn the portal from an archive into a weekly reading tool.

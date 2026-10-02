@@ -60,6 +60,26 @@ def improve_titles() -> int:
     return changed
 
 
+def store_pdf(doc, dest: Path, tmp: Path) -> tuple[str, str | None, dict]:
+    """A fetched or uploaded PDF (at `tmp`) → its place in the library; duplicates by SHA-256 are not stored twice."""
+    data = tmp.read_bytes()
+    sha = hashlib.sha256(data).hexdigest()
+    with db.session() as con:
+        dup = con.execute("SELECT id, local_path FROM documents WHERE sha256=? AND id!=? AND local_path IS NOT NULL",
+                          (sha, doc["id"])).fetchone()
+    if dup:
+        return "duplicate", f"same file as document #{dup['id']}", {"sha256": sha, "size": len(data)}
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    tmp.replace(dest)
+    pages, pdf_title = pdf_info(dest)
+    fields = {"sha256": sha, "size": len(data), "local_path": str(dest.relative_to(FILES)), "pages_count": pages,
+              "mime": "application/pdf", "downloaded_at": datetime.now().isoformat(timespec="seconds")}
+    if (good_pdf_title(pdf_title) and is_poor_title(doc["title"], doc["url"])
+            and not is_poor_title(pdf_title.strip(), doc["url"])):
+        fields["title"] = pdf_title.strip()[:300]
+    return "downloaded", None, fields
+
+
 def download_one(doc_id: int) -> str:
     with db.session() as con:
         doc = con.execute("SELECT * FROM documents WHERE id=?", (doc_id,)).fetchone()
@@ -81,24 +101,7 @@ def download_one(doc_id: int) -> str:
             else:
                 status, error = "skipped", f"not a PDF ({resp.content_type or 'unknown type'})"
         else:
-            data = tmp.read_bytes()
-            sha = hashlib.sha256(data).hexdigest()
-            with db.session() as con:
-                dup = con.execute("SELECT id, local_path FROM documents WHERE sha256=? AND id!=? AND local_path IS NOT NULL",
-                                  (sha, doc_id)).fetchone()
-            if dup:
-                status, error = "duplicate", f"same file as document #{dup['id']}"
-                fields = {"sha256": sha, "size": len(data)}
-            else:
-                tmp.replace(dest)
-                pages, pdf_title = pdf_info(dest)
-                status = "downloaded"
-                fields = {"sha256": sha, "size": len(data), "local_path": str(dest.relative_to(FILES)),
-                          "pages_count": pages, "mime": "application/pdf",
-                          "downloaded_at": datetime.now().isoformat(timespec="seconds")}
-                if (good_pdf_title(pdf_title) and is_poor_title(doc["title"], doc["url"])
-                        and not is_poor_title(pdf_title.strip(), doc["url"])):
-                    fields["title"] = pdf_title.strip()[:300]
+            status, error, fields = store_pdf(doc, dest, tmp)
     except fetch.Blocked:
         error = "blocked by robots.txt"
     except Exception as e:  # noqa: BLE001

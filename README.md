@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.17.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.18.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -68,6 +68,19 @@ as **series**: for every year and language whether the edition is in the library
 (✗), expected but perhaps not yet published (…) or confirmed as not published (–). The library proposes series from
 recurring titles; confirm, rename, merge or reject them on *Sources → Coverage* (stored in
 [`sources/series.yaml`](sources/series.yaml)). Each source card shows its series as a compact grid.
+
+### 📥 To collect – hand import with provenance
+
+<img src="docs/images/collect.png" alt="To collect: missing editions with candidates, upload form and not-published marker" width="900">
+
+What the crawler cannot fetch, in four tabs: **missing editions** of confirmed series (with the source's documents of that
+year and language to pick as the edition, an upload form, or "not published"), **blocked downloads** (sites that hand the PDF
+only to a browser – open the original, save it, upload it to the same report), **sources to check by hand** (bot-protected
+sites with their report pages and the date you last checked) and the **inbox** (PDFs copied to `data/inbox/`, imported with a
+short form). Every report added by hand keeps its official URL, the date it was added and whether that URL is on the
+agency's official domains (marked *added by hand* in the documents list, with a warning when it is not); it is indexed for
+search, topics and actors right away. The page shows how old the data is, with an **Update now** button – there is no
+periodic job.
 
 ### 🏷️ Topics and full-text index
 
@@ -215,7 +228,7 @@ sudo loginctl enable-linger "$USER"
 
 | Command | What it does |
 |---|---|
-| `update [--country CZ]` | everything the weekly timer runs: crawl → download → improve titles → index topics → index actors |
+| `update [--country CZ]` | crawl → download → improve titles → index topics → index actors (also *To collect → Update now*; runs only when started) |
 | `sync-registry` | load `sources/registry.yaml` into the database |
 | `crawl [--country CZ] [--agency BIS]` | find new documents on the report pages (no download) |
 | `download [--country CZ] [--limit N] [--retry-failed]` | download discovered documents |
