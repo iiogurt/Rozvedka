@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.16.1-1f4e79)
+![version](https://img.shields.io/badge/version-0.17.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -58,6 +58,16 @@ The library itself: every report with its agency, country, language, year and to
 One card per agency: flag, logo, official name in the original language and in English, home page, a short
 description of what its reports cover, coalition tags with the year each country joined, the report pages it is
 crawled from (with language and current/archive), and a link to its headquarters on the map.
+
+### 📅 Report series and coverage
+
+<img src="docs/images/coverage.png" alt="Coverage: report series per source with editions per year and language" width="900">
+
+Recurring publications – the BIS annual report in Czech and English, KAPO's annual review, the Verfassungsschutzbericht –
+as **series**: for every year and language whether the edition is in the library (✓), listed but blocked (↓), missing
+(✗), expected but perhaps not yet published (…) or confirmed as not published (–). The library proposes series from
+recurring titles; confirm, rename, merge or reject them on *Sources → Coverage* (stored in
+[`sources/series.yaml`](sources/series.yaml)). Each source card shows its series as a compact grid.
 
 ### 🏷️ Topics and full-text index
 
@@ -232,6 +242,7 @@ Everything that defines *what* Rozvedka collects and recognises is a hand-editab
 | [`countries.yaml`](sources/countries.yaml) | country names, regions, coalition memberships with year joined |
 | [`topics.yaml`](sources/topics.yaml) | topic taxonomy: categories → topics → keywords per language |
 | [`actors.yaml`](sources/actors.yaml) | which Wikidata classes, hand-listed seeds and countries make up the actor index, and matching corrections |
+| [`series.yaml`](sources/series.yaml) | confirmed report series per source (title stems per language, editions per year, editions confirmed as not published) – written by the portal, editable by hand |
 | [`events.yaml`](sources/events.yaml) | reference events for the trend charts (Wikipedia titles; dates are resolved from Wikidata) |
 
 <details>

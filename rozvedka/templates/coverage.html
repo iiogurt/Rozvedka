@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% from "_series.html" import grid, legend %}
+{% block title %}Coverage · Sources · Rozvedka{% endblock %}
+{% block main %}
+<nav class="subnav" aria-label="Source views"><a href="/sources">Agencies</a><a href="/sources/coverage" class="on">Coverage</a></nav>
+<p class="net-summary"><b>{{ totals.series }}</b> confirmed report series{% if source %} of {{ source }} <a class="small" href="/sources/coverage">all sources</a>{% endif %}
+  · <b>{{ totals.complete }}</b> complete · <b>{{ totals.missing }}</b> editions missing · <b>{{ totals.listed }}</b> listed but not downloaded
+  <span class="muted">· {{ pg.total }} proposals to review</span></p>
+{{ legend() }}
+
+{% for c in coverage %}{% set s = c.series %}
+<section class="viz-card series-card" id="series-{{ loop.index }}">
+  <div class="viz-head">
+    <h2 class="viz-title"><img class="flag-sm" src="{{ flag_url(c.source.country) }}" alt=""> {{ c.source.agency }} – {{ s.name }}</h2>
+    <span class="viz-actions small">{{ s.per_year }}× a year · {{ s.languages|join(', ') }} · since {{ s.since }}
+      {% if c.complete %}<b class="sg-have">complete</b>{% endif %}
+      <a href="/sources#s-{{ c.source.id }}">report pages</a></span>
+  </div>
+  {{ grid(c) }}
+  <details class="small series-edit"><summary>Mark an edition as not published · remove the series</summary>
+    <form method="post" action="/series/absent" class="addform">
+      <input type="hidden" name="source" value="{{ s.source }}"><input type="hidden" name="name" value="{{ s.name }}">
+      <select name="year" aria-label="Year">{% for y in c.years|reverse %}<option>{{ y }}</option>{% endfor %}</select>
+      <select name="lang" aria-label="Language">{% for l in s.languages %}<option>{{ l }}</option>{% endfor %}</select>
+      <input name="reason" placeholder="Reason, e.g. “no English edition that year (checked archive)”" size="44">
+      <button>Not published</button>
+    </form>
+    {% for k, v in (s.absent or {}).items() %}<form method="post" action="/series/absent" class="inline">
+      <input type="hidden" name="source" value="{{ s.source }}"><input type="hidden" name="name" value="{{ s.name }}">
+      <input type="hidden" name="year" value="{{ k.split(' ')[0] }}"><input type="hidden" name="lang" value="{{ k.split(' ')[1] }}">
+      <input type="hidden" name="undo" value="1"><span class="muted">{{ k }}: {{ v }}</span> <button class="linkish">undo</button></form>{% endfor %}
+    <form method="post" action="/series/remove" class="inline" onsubmit="return confirm('Remove this series? Its editions stay in the library.')">
+      <input type="hidden" name="source" value="{{ s.source }}"><input type="hidden" name="name" value="{{ s.name }}">
+      <button class="linkish">remove series</button></form>
+  </details>
+</section>
+{% endfor %}
+{% if not coverage %}<p class="muted">No confirmed series yet – confirm proposals below.</p>{% endif %}
+
+<section class="viz-card" id="proposals">
+  <h2 class="viz-title">Proposed series</h2>
+  <p class="muted small viz-sub">Titles that recur in at least 3 years of one source, with the year taken out; languages whose
+    editions cover largely the same years are joined. Confirm (edit the name if needed), add to an existing series of the
+    same source, or reject. Confirmed series are written to <code>sources/series.yaml</code>.</p>
+  {{ pager(pg, "proposals") }}
+  <ul class="proposals">
+  {% for p in proposals %}
+    <li>
+      <div class="pr-head"><b>{{ p.source }}</b> <span class="muted small">{{ p.languages|join(', ') }} · {{ p.years|length }} years ({{ p.since }}–{{ p.years[-1] }}) · {{ p.per_year }}× a year</span></div>
+      <div class="pr-ex small muted">{% for l, t in p.examples.items() %}<span>{{ l }}: “{{ t }}”</span>{% endfor %}</div>
+      <div class="pr-years small" aria-label="Years with an edition">{% for y in range(p.since, p.years[-1] + 1) %}<span class="{{ 'on' if y in p.years }}" title="{{ y }}">{{ (y|string)[-2:] }}</span>{% endfor %}</div>
+      <form method="post" action="/series/confirm" class="addform">
+        <input type="hidden" name="key" value="{{ p.key }}">
+        <input name="name" value="{{ p.name }}" size="48" aria-label="Series name">
+        <label class="chk">per year <select name="per_year">{% for n in [1, 2, 4] %}<option {{ 'selected' if n == p.per_year }}>{{ n }}</option>{% endfor %}</select></label>
+        {% if confirmed_names.get(p.source) %}<label class="chk">or add to <select name="into"><option value="">– new series –</option>
+          {% for n in confirmed_names[p.source] %}<option>{{ n }}</option>{% endfor %}</select></label>{% endif %}
+        <button>Confirm</button>
+      </form>
+      <form method="post" action="/series/reject" class="inline"><input type="hidden" name="key" value="{{ p.key }}"><button class="linkish">reject</button></form>
+    </li>
+  {% endfor %}
+  </ul>
+  {{ pager(pg, "proposals") }}
+</section>
+{% endblock %}
