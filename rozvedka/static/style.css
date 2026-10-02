@@ -539,3 +539,28 @@ ol.collect-list > li { background: var(--panel); border: 1px solid var(--line); 
 .up-form input[type=file] { max-width: 260px; }
 .badge-hand { font-size: 10.5px; padding: 0 5px; border-radius: 3px; border: 1px solid var(--accent); color: var(--accent); }
 .badge-warn { border-color: var(--warn); color: var(--warn); }
+
+/* ── Series catalogue and series pages ── */
+.series-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 560px), 1fr)); gap: 12px; }
+.series-tile { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; min-width: 0; }
+.series-tile h2 { font-size: 14.5px; margin: 0 0 2px; border: 0; padding: 0; }
+.badge-series { font-size: 10.5px; padding: 0 5px; border-radius: 3px; background: var(--chip); color: var(--ink); margin-left: 6px; }
+.prof-scroll { overflow-x: auto; }
+table.prof { border-collapse: separate; border-spacing: 2px; font-size: 11.5px; }
+table.prof th { font-weight: 600; color: var(--muted); padding: 0 4px; white-space: nowrap; }
+table.prof th.prof-name { text-align: right; color: var(--ink); font-weight: 400; max-width: 300px; overflow: hidden; text-overflow: ellipsis; }
+table.prof tr.prof-sec th { text-align: left; padding-top: 8px; text-transform: uppercase; letter-spacing: .04em; font-size: 10.5px; }
+table.prof td { width: 24px; height: 20px; text-align: center; border-radius: 3px; padding: 0; }
+table.prof td a { display: block; color: inherit; text-decoration: none; line-height: 20px; }
+td.pt-2 { background: var(--k-state); color: #fff; }
+td.pt-1 { background: color-mix(in srgb, var(--k-state) 25%, transparent); color: var(--ink); }
+td.pa-on { background: color-mix(in srgb, var(--k-armed) calc(var(--a) * 85%), transparent); color: var(--ink); font-variant-numeric: tabular-nums; }
+.on-b { font-weight: 700; text-decoration: underline; }
+ol.editions { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+ol.editions li { border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.ed-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.ed-year { font-size: 16px; min-width: 44px; }
+.ed-file { display: inline-flex; gap: 6px; align-items: baseline; }
+.ed-line { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; margin-top: 4px; padding-left: 58px; }
+.ed-delta { color: var(--muted); font-style: italic; }
+.ed-delta.up { color: var(--ink); }

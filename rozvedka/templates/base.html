@@ -14,7 +14,8 @@
   <a class="brand" href="/">Rozvedka</a>
   <nav>
     <a href="/" class="{{ 'on' if request.url.path == '/' }}">Documents</a>
-    <a href="/sources" class="{{ 'on' if request.url.path == '/sources' }}">Sources</a>
+    <a href="/series" class="{{ 'on' if request.url.path.startswith('/series') }}">Series</a>
+    <a href="/sources" class="{{ 'on' if request.url.path.startswith('/sources') or request.url.path.startswith('/collect') }}">Sources</a>
     <a href="/topics" class="{{ 'on' if request.url.path.startswith('/topics') }}">Topics</a>
     <a href="/trends" class="{{ 'on' if request.url.path.startswith('/trends') }}">Trends</a>
     <a href="/actors" class="{{ 'on' if request.url.path.startswith('/actors') }}">Actors</a>

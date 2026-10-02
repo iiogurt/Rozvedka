@@ -99,3 +99,36 @@ def test_pages_render(library):
         r = client.get("/sources/coverage")
         assert r.status_code == 200 and "Annual Report" in r.text and "sg-missing" in r.text
         assert client.get("/sources").status_code == 200
+
+
+def test_series_reading_views(library):
+    from fastapi.testclient import TestClient
+
+    from rozvedka import actors, topics
+    from rozvedka.app import app
+    actors.init()
+    with db.session() as con:
+        s = series.confirm(series.propose(con)[0], name="Annual Report")
+        h = topics.taxonomy()["hash"]
+        for doc_id, tags in {1: ["russia", "china"], 3: ["china", "terrorism"], 5: ["china"]}.items():
+            con.execute("INSERT INTO doc_index(doc_id,chars,taxonomy_hash) VALUES(?,?,?)", (doc_id, 10, h))
+            for rank, t in enumerate(tags):
+                con.execute("INSERT INTO doc_topics(doc_id,topic,score) VALUES(?,?,?)", (doc_id, t, 10 - rank))
+    sid = series.sid(s)
+    assert series.get(sid)["name"] == "Annual Report"
+    idx = series.doc_index()
+    assert idx[1] == {"id": sid, "name": "Annual Report", "year": 2018, "lang": "cs"} and 99 not in idx
+    d = series.detail(sid, "cs")
+    assert [e["year"] for e in d["editions"]][:2] == [2024, 2023] and d["lang"] == "cs"
+    e2019 = next(e for e in d["editions"] if e["year"] == 2019)
+    assert [k for k, _ in e2019["main"]] == ["china", "terrorism"]
+    assert [k for k, _ in e2019["topics_in"]] == ["terrorism"] and [k for k, _ in e2019["topics_out"]] == ["russia"]
+    cat = series.catalogue()
+    assert cat[0]["id"] == sid and cat[0]["editions"] == 7
+    with TestClient(app) as client:
+        assert client.get("/series").status_code == 200
+        r = client.get(f"/series/{sid}")
+        assert r.status_code == 200 and "Edition by edition" in r.text
+        docs = client.get(f"/?series={sid}")
+        assert docs.status_code == 200 and "editions of CZ/BIS – Annual Report" in docs.text
+        assert client.get("/series/nope").status_code == 404

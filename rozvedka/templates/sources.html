@@ -59,7 +59,7 @@
       <a href="/?source={{ s.id }}"><b>{{ s.n_docs }}</b> documents · {{ s.n_ok or 0 }} downloaded</a>
       {% if s.lat is not none %}<a href="/map#s-{{ s.id }}" title="{{ s.hq_address }}">◉ on map</a>{% endif %}
     </div>
-    {% for c in series_by.get(s.key, []) %}<div class="src-series"><h4>{{ c.series.name }}{% if c.complete %} <span class="sg-have small">complete</span>{% endif %}
+    {% for c in series_by.get(s.key, []) %}<div class="src-series"><h4><a href="/series/{{ sid(c.series) }}">{{ c.series.name }}</a>{% if c.complete %} <span class="sg-have small">complete</span>{% endif %}
       <a class="small" href="/sources/coverage?source={{ s.key|urlencode }}">coverage</a></h4>{{ grid(c, compact=True) }}</div>{% endfor %}
     <details class="more"><summary>Report pages ({{ pages.get(s.id, [])|length }}) · crawl · add document</summary>
       <ul class="pages">
