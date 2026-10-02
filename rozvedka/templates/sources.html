@@ -1,6 +1,8 @@
 {% extends "base.html" %}
+{% from "_series.html" import grid %}
 {% block title %}Sources · Rozvedka{% endblock %}
 {% block main %}
+<nav class="subnav" aria-label="Source views"><a href="/sources" class="on">Agencies</a><a href="/sources/coverage">Coverage</a></nav>
 <div class="summary">
   <span><b>{{ sources|length }}</b> agencies and institutions in <b>{{ groups|length }}</b> groups</span>
   <form method="post" action="/jobs/sync" class="inline"><button title="Reload sources/registry.yaml">Reload registry</button></form>
@@ -57,6 +59,8 @@
       <a href="/?source={{ s.id }}"><b>{{ s.n_docs }}</b> documents · {{ s.n_ok or 0 }} downloaded</a>
       {% if s.lat is not none %}<a href="/map#s-{{ s.id }}" title="{{ s.hq_address }}">◉ on map</a>{% endif %}
     </div>
+    {% for c in series_by.get(s.key, []) %}<div class="src-series"><h4>{{ c.series.name }}{% if c.complete %} <span class="sg-have small">complete</span>{% endif %}
+      <a class="small" href="/sources/coverage?source={{ s.key|urlencode }}">coverage</a></h4>{{ grid(c, compact=True) }}</div>{% endfor %}
     <details class="more"><summary>Report pages ({{ pages.get(s.id, [])|length }}) · crawl · add document</summary>
       <ul class="pages">
         {% for p in pages.get(s.id, []) %}

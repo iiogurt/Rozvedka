@@ -14,7 +14,7 @@ from fastapi.templating import Jinja2Templates
 from markupsafe import escape
 
 from . import (__version__, actors, build_version, countries, crawler, db, downloader, graphs, logos, paging,
-               registry, topics, trends)
+               registry, series, topics, trends)
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -257,7 +257,66 @@ def sources(request: Request):
             regions.append((name, []))
         regions[-1][1].append((country, items))
     return tpl.TemplateResponse(request, "sources.html", {"sources": rows, "groups": ordered, "regions": regions,
-                                                         "pages": pages, "jobs": dict(_jobs)})
+                                                         "pages": pages, "series_by": series.by_source(),
+                                                         "jobs": dict(_jobs)})
+
+
+@app.get("/sources/coverage")
+def coverage_page(request: Request, source: str = "", page: str = "1", per_page: str = ""):
+    """Report series: coverage of the confirmed ones, and proposals to confirm."""
+    cov = [c for c in series.all_coverage() if not source or c["series"]["source"] == source]
+    with db.session() as con:
+        sid = con.execute("SELECT id FROM sources WHERE key=?", (source,)).fetchone() if source else None
+        props = series.propose(con, sid["id"] if sid else None)
+    size = paging.per_page_of(per_page, 25)
+    pg = paging.paginate(len(props), page, size, "/sources/coverage", {"source": source, "per_page": size if size != 25 else ""},
+                         anchor="#proposals", default=25)
+    confirmed_names: dict[str, list[str]] = {}
+    for s in series.load()["series"]:
+        confirmed_names.setdefault(s["source"], []).append(s["name"])
+    totals = {"series": len(cov), "complete": sum(c["complete"] for c in cov),
+              "missing": sum(c["counts"].get("missing", 0) for c in cov),
+              "listed": sum(c["counts"].get("listed", 0) for c in cov)}
+    return tpl.TemplateResponse(request, "coverage.html", {
+        "coverage": cov, "proposals": props[pg["offset"]:pg["offset"] + size], "pg": pg, "source": source,
+        "confirmed_names": confirmed_names, "totals": totals, "jobs": dict(_jobs)})
+
+
+def _back_to(request: Request, fallback: str = "/sources/coverage"):
+    return RedirectResponse(request.headers.get("referer") or fallback, status_code=303)
+
+
+@app.post("/series/confirm")
+def series_confirm(request: Request, key: str = Form(...), name: str = Form(""), per_year: int = Form(1),
+                   into: str = Form("")):
+    with db.session() as con:
+        prop = next((p for p in series.propose(con) if p["key"] == key), None)
+    if prop is None:
+        raise HTTPException(404, "proposal not found (already confirmed or rejected?)")
+    series.confirm(prop, name or None, max(1, min(per_year, 12)), into or None)
+    return _back_to(request)
+
+
+@app.post("/series/reject")
+def series_reject(request: Request, key: str = Form(...)):
+    series.reject(key)
+    return _back_to(request)
+
+
+@app.post("/series/absent")
+def series_absent(request: Request, source: str = Form(...), name: str = Form(...), year: int = Form(...),
+                  lang: str = Form(...), reason: str = Form(""), undo: str = Form("")):
+    if undo:
+        series.unmark_absent(source, name, year, lang)
+    else:
+        series.mark_absent(source, name, year, lang, reason)
+    return _back_to(request)
+
+
+@app.post("/series/remove")
+def series_remove(request: Request, source: str = Form(...), name: str = Form(...)):
+    series.remove(source, name)
+    return _back_to(request)
 
 
 @app.get("/changelog")

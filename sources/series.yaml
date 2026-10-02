@@ -1,0 +1,249 @@
+# Report series – recurring publications per source, confirmed in the portal (Sources → Coverage).
+#
+# Written by the portal when a proposed series is confirmed, renamed or rejected, or when an edition is marked as
+# not published; it may also be edited by hand. `titles` are the title stems (title without year, lowercase,
+# without accents and filler words) that identify the series' editions per language; `urls` adds editions whose
+# title differs. `absent` lists editions confirmed as not published ("2003 en": reason).
+series:
+- source: CH/BACS
+  name: Semi-annual report (MELANI / NCSC)
+  per_year: 2
+  languages:
+  - de
+  - en
+  titles:
+    de:
+    - melani halbjahresbericht april
+    en:
+    - melani semi annual report april
+    - ncsc semi annual report november
+  since: 2015
+- source: CH/NDB
+  name: Switzerland's Security – situation report
+  per_year: 1
+  languages:
+  - de
+  - en
+  titles:
+    de:
+    - sicherheit schweiz lagebericht nachrichtendienstes bundes juni
+    en:
+    - switzerland security situation report federal intelligence service june
+  since: 2021
+- source: CZ/BIS
+  name: Annual Report
+  per_year: 1
+  languages:
+  - cs
+  - en
+  titles:
+    cs:
+    - vyrocni zprava bezpecnostni informacni sluzby
+    en:
+    - annual report security information service
+  since: 2001
+- source: CZ/VZ
+  name: Výroční zpráva
+  per_year: 1
+  languages:
+  - cs
+  titles:
+    cs:
+    - vyrocni zprava
+  since: 2004
+- source: DE/BfV
+  name: Verfassungsschutzbericht
+  per_year: 1
+  languages:
+  - de
+  titles:
+    de:
+    - verfassungsschutzbericht datei ist barrierefrei barrierearm offnet im neuen fenster
+  since: 2020
+- source: EE/KAPO
+  name: Annual Review
+  per_year: 1
+  languages:
+  - en
+  titles:
+    en:
+    - annual review
+  since: 1998
+- source: EE/RIA
+  name: Cyber security yearbook
+  per_year: 1
+  languages:
+  - et
+  titles:
+    et:
+    - kuberturvalisuse aastaraamat
+    - cyber security in estonia
+  since: 2019
+- source: ES/DSN
+  name: Informe Anual de Seguridad Nacional
+  per_year: 1
+  languages:
+  - es
+  titles:
+    es:
+    - informe anual seguridad nacional
+  since: 2013
+- source: EU/Frontex
+  name: Risk Analysis
+  per_year: 1
+  languages:
+  - en
+  titles:
+    en:
+    - risk analysis
+  since: 2019
+- source: FI/Supo
+  name: National Security Overview
+  per_year: 1
+  languages:
+  - en
+  - sv
+  titles:
+    en:
+    - national security overview
+    - kansallisen turvallisuuden katsaus
+    sv:
+    - oversikt av den nationella sakerheten
+  since: 2020
+- source: FR/ANSSI
+  name: Panorama de la cybermenace / Cyber Threat Overview
+  per_year: 1
+  languages:
+  - fr
+  titles:
+    fr:
+    - panorama cybermenace ouvre une nouvelle fenetre
+    - cyber threat overview ouvre une nouvelle fenetre
+  since: 2021
+- source: GB/ISC
+  name: Annual Report
+  per_year: 1
+  languages:
+  - en
+  titles:
+    en:
+    - annual report
+  since: 2008
+- source: HR/SOA
+  name: Public report
+  per_year: 1
+  languages:
+  - en
+  - hr
+  titles:
+    en:
+    - public report
+    hr:
+    - javno izvjesce
+  since: 2014
+- source: IT/DIS / Sistema di informazione
+  name: Relazione annuale al Parlamento
+  per_year: 1
+  languages:
+  - it
+  titles:
+    it:
+    - relazione annuale intelligence
+    - relazione annuale
+    - relazione al parlamento
+  since: 2007
+- source: JP/Cabinet Office Disaster Management
+  name: White Paper on Disaster Management
+  per_year: 1
+  languages:
+  - en
+  titles:
+    en:
+    - white paper on disaster management
+    - white paper on disaster management all
+  since: 2015
+- source: JP/MOD Japan
+  name: DEFENSE OF JAPAN (white paper)
+  per_year: 1
+  languages:
+  - en
+  titles:
+    en:
+    - defense japan
+  since: 2020
+- source: LV/SAB
+  name: Annual public report
+  per_year: 1
+  languages:
+  - en
+  - lv
+  titles:
+    lv:
+    - gada darbibas parskats
+    en:
+    - annual public report
+  since: 2005
+- source: NATO/NATO
+  name: Secretary General's Annual Report
+  per_year: 1
+  languages:
+  - en
+  - fr
+  titles:
+    en:
+    - secretary general annual report
+    fr:
+    - rapport annuel secretaire general
+  since: 2011
+- source: NO/E-tjenesten
+  name: Fokus / Focus
+  per_year: 1
+  languages:
+  - en
+  titles:
+    en:
+    - fokus utskriftsvennlig
+    - focus printer friendly
+  since: 2022
+- source: PL/CERT Polska
+  name: Annual report – Krajobraz bezpieczeństwa / Security landscape of the Polish Internet
+  per_year: 1
+  languages:
+  - en
+  - pl
+  titles:
+    pl:
+    - krajobraz bezpieczenstwa polskiego internetu
+    en:
+    - security landscape polish internet
+  since: 1996
+- source: RO/SRI
+  name: Raport de activitate
+  per_year: 1
+  languages:
+  - ro
+  titles:
+    ro:
+    - raport activitate
+    - activity report
+    - raport activitate sri
+  since: 2002
+- source: SI/SI-CERT
+  name: Poročilo o kibernetski varnosti
+  per_year: 1
+  languages:
+  - sl
+  titles:
+    sl:
+    - porocilo kibernetski varnosti leto
+  since: 2018
+- source: US/FBI IC3
+  name: IC3 Annual Report
+  per_year: 1
+  languages:
+  - en
+  titles:
+    en:
+    - ic annual report
+  since: 2015
+rejected: []

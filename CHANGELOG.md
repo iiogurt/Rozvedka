@@ -27,6 +27,20 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.17.0] – 2026-10-02
+
+### Added
+- Report series (`rozvedka/series.py`): recurring publications of a source, recognised by their title without the
+  year, with languages joined when their editions cover the same years. *Sources → Coverage* shows every confirmed
+  series as a years × languages grid – in the library, listed but not downloaded, missing, expected, confirmed as
+  not published – and the proposed series to confirm, rename, merge into an existing series or reject.
+- Source cards show their series as a compact grid of the last 12 years.
+- `sources/series.yaml` stores confirmed series, editions marked as not published and rejected proposals; 23
+  flagship series (national annual reports and threat assessments) are confirmed to start with.
+
+### Changed
+- Roadmap: no periodic update job (owner's decision); updates run on demand.
+
 ## [0.16.1] – 2026-10-02
 
 ### Added
@@ -302,7 +316,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.16.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.17.0...HEAD
+[0.17.0]: https://github.com/iiogurt/Rozvedka/compare/v0.16.1...v0.17.0
 [0.16.1]: https://github.com/iiogurt/Rozvedka/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/iiogurt/Rozvedka/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/iiogurt/Rozvedka/compare/v0.14.1...v0.15.0

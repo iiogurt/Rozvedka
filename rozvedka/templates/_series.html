@@ -1,0 +1,29 @@
+{# Coverage grid of one report series: years × languages. c = series.coverage(...); compact = last 12 years only #}
+{% set SYMBOL = {"have": "✓", "listed": "↓", "missing": "✗", "expected": "…", "absent": "–"} %}
+{% set LABEL = {"have": "in the library", "listed": "listed, not downloaded (blocked or failed)",
+                "missing": "missing – an edition should exist", "expected": "expected – may not be published yet",
+                "absent": "confirmed as not published"} %}
+{% macro grid(c, compact=False) %}
+{% set s = c.series %}{% set years = c.years[-12:] if compact else c.years %}
+<div class="sg-wrap">
+<table class="sgrid" aria-label="{{ s.name }}: editions per year and language">
+  <tr><th></th>{% if compact and c.years|length > 12 %}<th class="muted small" title="earlier years on the Coverage page">…</th>{% endif %}
+    {% for y in years %}<th>{{ ("’" ~ (y|string)[-2:]) if compact else y }}</th>{% endfor %}</tr>
+  {% for r in c.rows %}
+  <tr><th>{{ r.lang }}</th>{% if compact and c.years|length > 12 %}<td></td>{% endif %}
+    {% for cell in (r.cells[-12:] if compact else r.cells) %}
+    {% set tip = cell.year ~ " " ~ r.lang ~ ": " ~ LABEL[cell.state] ~ (" (" ~ cell.note ~ ")" if cell.note else "") %}
+    <td class="sg-{{ cell.state }}" title="{{ tip }}">
+      {% if cell.state in ("have", "listed") %}<a href="/?source={{ c.source.id }}&year={{ cell.year }}&lang={{ r.lang }}" aria-label="{{ tip }}">{{ SYMBOL[cell.state] }}{% if cell.n > 1 %}<sub>{{ cell.n }}</sub>{% endif %}</a>
+      {% elif cell.state in ("missing", "expected") %}<a href="/sources#s-{{ c.source.id }}" aria-label="{{ tip }}">{{ SYMBOL[cell.state] }}</a>
+      {% else %}<span aria-label="{{ tip }}">{{ SYMBOL[cell.state] }}</span>{% endif %}
+    </td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+</table>
+</div>
+{% endmacro %}
+{% macro legend() %}
+<p class="sg-legend small">{% for k in ("have", "listed", "missing", "expected", "absent") %}<span class="sg-{{ k }}"><b>{{ SYMBOL[k] }}</b></span> {{ LABEL[k] }}{{ " · " if not loop.last }}{% endfor %}</p>
+{% endmacro %}
