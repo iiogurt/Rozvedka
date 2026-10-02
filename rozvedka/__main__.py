@@ -26,6 +26,8 @@ def main():
     ix.add_argument("--reextract", action="store_true", help="extract text again for all documents")
     ix.add_argument("--limit", type=int, help="only extract this many new documents (for trying it out)")
     ix.add_argument("--workers", type=int, default=4)
+    dd = sub.add_parser("date-documents", help="give undated reports a year from their first pages (with the evidence)")
+    dd.add_argument("--check", action="store_true", help="only measure accuracy on reports whose year is known")
     fa = sub.add_parser("fetch-actors", help="download the actor gazetteer (Wikidata, Wikipedia, MITRE ATT&CK)")
     fa.add_argument("--refresh", action="store_true", help="read the Wikipedia infoboxes again instead of the cache")
     ia = sub.add_parser("index-actors", help="find the gazetteer's actors in the report texts")
@@ -52,8 +54,13 @@ def main():
         print({"titles_improved": downloader.improve_titles()})
         from . import actor_sources, actors, topics
         print(topics.index())
+        from . import dating
+        print(dating.date_documents())
         if actor_sources.GAZETTEER.exists():
             print(actors.index())
+    elif a.cmd == "date-documents":
+        from . import dating
+        print(dating.check() if a.check else dating.date_documents())
     elif a.cmd == "fetch-actors":
         from . import actor_sources
         print(actor_sources.fetch(refresh=a.refresh))

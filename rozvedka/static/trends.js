@@ -259,6 +259,8 @@
             <a href="/sources">Sources</a>. Filters: ${f}.</li>
         <li><b>Left out:</b> ${x.undated} undated, ${x.unclassified} not yet text-indexed, ${x.before_min_year} from before 2000
             – of ${x.listed} listed documents in this filter.</li>
+        <li><b>Years:</b> from the title or address; for ${x.estimated || 0} reports found in their first pages – a report
+            heading, or a publication date (shown as ≈ on the Documents page, with the evidence on hover).</li>
         <li><b>Topic tags:</b> keyword index <code>${esc(p.taxonomy.file)}</code> (version ${esc(p.taxonomy.hash)}); see
             <a href="/topics">Topics</a> for the terms behind each topic.</li>
         <li><b>Caveat:</b> more mentions means more attention, not necessarily a larger threat; agencies publish

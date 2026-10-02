@@ -564,3 +564,4 @@ ol.editions li { border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .ed-line { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; margin-top: 4px; padding-left: 58px; }
 .ed-delta { color: var(--muted); font-style: italic; }
 .ed-delta.up { color: var(--ink); }
+.yr-est { border-bottom: 1px dotted var(--muted); cursor: help; }

@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.19.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.20.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -240,6 +240,7 @@ sudo loginctl enable-linger "$USER"
 | `crawl [--country CZ] [--agency BIS]` | find new documents on the report pages (no download) |
 | `download [--country CZ] [--limit N] [--retry-failed]` | download discovered documents |
 | `index-topics [--reextract]` | extract text for full-text search and tag topics; re-classifies after `topics.yaml` changes |
+| `date-documents [--check]` | give undated reports a year from their first pages – a report heading, else a publication date – with the evidence; `--check` measures accuracy on reports whose year is known (part of `update`) |
 | `fetch-actors [--refresh]` | download the actor gazetteer and connections from Wikidata, Wikipedia and MITRE ATT&CK (network; Wikipedia infoboxes are cached in `data/gazetteer/` – `--refresh` reads them again) |
 | `index-actors [--rematch]` | find the actors in the report texts (offline) |
 | `fetch-logos [--refresh]` | download agency logos from their home pages |
@@ -278,6 +279,19 @@ Everything that defines *what* Rozvedka collects and recognises is a hand-editab
 
 Pages that turn out to be empty JavaScript shells are rendered with Chromium automatically. Report pages marked
 `verified: false` are listed but not crawled.
+
+</details>
+
+<details>
+<summary><b>Where the year of a report comes from</b></summary>
+
+- From the title or the address of the file when they contain one (most reports).
+- Otherwise from the report's first pages (`date-documents`): a **report heading** – "Annual Report 2023",
+  "Jahresbericht 2022", "za rok 2021", "2023年版" (the covered year; a range gives its end year; the cover page counts
+  first) – else a **publication date** ("12 February 2022", "© 2024"), shown as *≈ 2024* on the Documents page. The
+  evidence is stored with the report (hover the year). A blind check on 500 reports with known years: headings 82 %
+  exact / 89 % within one year, publication dates 68 % / 83 %. PDF creation dates were tested and are not used.
+- Years set by hand are marked as such and never changed; no year is ever overwritten.
 
 </details>
 

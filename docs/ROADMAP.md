@@ -59,7 +59,7 @@ Each item: why · what · done when · version step.
 
 ### B. Data quality
 
-5. **Dates for undated reports** – from PDF metadata, the first page ("Annual Report 2023", "Jahresbericht 2022",
+5. ✅ (0.20.0: 463 → 181 undated) **Dates for undated reports** – from PDF metadata, the first page ("Annual Report 2023", "Jahresbericht 2022",
    publication dates) and the series model; show where each date came from, keep manual corrections.
    *Done when* undated reports drop from 465 to < 100, with a sampled accuracy check. · minor
 6. **OCR for scanned reports** – `ocrmypdf`/Tesseract (local, no model downloads beyond language packs) for the
