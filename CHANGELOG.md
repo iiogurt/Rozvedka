@@ -27,6 +27,14 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.16.1] – 2026-10-02
+
+### Added
+- `docs/ROADMAP.md`: assessment of the project at 0.16.0 with measured gaps (stale library, 32 sources without
+  reports, 74 blocked downloads, 465 undated and 257 text-less reports, no backup, no CI) and a prioritised
+  roadmap – complete and current library, data quality, a reading workflow, sourced enrichment, engineering.
+  Linked from `CLAUDE.md` and the README.
+
 ## [0.16.0] – 2026-10-01
 
 ### Added
@@ -294,7 +302,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.16.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.16.1...HEAD
+[0.16.1]: https://github.com/iiogurt/Rozvedka/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/iiogurt/Rozvedka/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/iiogurt/Rozvedka/compare/v0.14.1...v0.15.0
 [0.14.1]: https://github.com/iiogurt/Rozvedka/compare/v0.14.0...v0.14.1

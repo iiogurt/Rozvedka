@@ -3,6 +3,9 @@
 Project conventions agreed with the owner. Follow them in every session, on every machine. The README describes
 *what* the app does; this file describes *how* work on it is done.
 
+**Current plan:** [`docs/ROADMAP.md`](docs/ROADMAP.md) – the assessment of the project and the prioritised list of
+next steps. Read it at the start of a session; update it (mark items done, re-prioritise) when work lands.
+
 ## Purpose and scope
 
 - Rozvedka collects the public, regularly published reports (annual reports, threat assessments, risk analyses)
