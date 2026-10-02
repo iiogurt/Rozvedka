@@ -227,8 +227,11 @@ CREATE INDEX IF NOT EXISTS ix_doc_topics_topic ON doc_topics(topic, score DESC);
 def init() -> None:
     with db.session() as con:
         con.executescript(SCHEMA)
-        if "pages" not in {r["name"] for r in con.execute("PRAGMA table_info(doc_index)")}:
+        cols = {r["name"] for r in con.execute("PRAGMA table_info(doc_index)")}
+        if "pages" not in cols:
             con.execute("ALTER TABLE doc_index ADD COLUMN pages TEXT")
+        if "ocr" not in cols:   # JSON: engine, languages, date – the text came from optical character recognition
+            con.execute("ALTER TABLE doc_index ADD COLUMN ocr TEXT")
 
 
 def _process(doc: dict) -> dict:
@@ -270,6 +273,8 @@ def index(reextract: bool = False, limit: int | None = None, workers: int = 4, b
                WHERE d.status = 'downloaded' AND d.local_path IS NOT NULL"""
         if not reextract:   # new downloads, and text extracted before page offsets were recorded
             q += " AND (i.extracted_at IS NULL OR (i.pages IS NULL AND i.error IS NULL))"
+        else:               # recognised (OCR) text is kept: pdftotext would only bring back the empty layer
+            q += " AND (i.ocr IS NULL OR i.ocr LIKE '%\"error\"%' OR i.ocr LIKE '%no_gain%')"
         todo = [dict(r) for r in con.execute(q + (f" LIMIT {int(limit)}" if limit else ""))]
 
     con = db.connect()

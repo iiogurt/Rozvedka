@@ -26,6 +26,8 @@ def main():
     ix.add_argument("--reextract", action="store_true", help="extract text again for all documents")
     ix.add_argument("--limit", type=int, help="only extract this many new documents (for trying it out)")
     ix.add_argument("--workers", type=int, default=4)
+    oc = sub.add_parser("ocr", help="recognise the text of scanned reports (Tesseract via OCRmyPDF)")
+    oc.add_argument("--limit", type=int); oc.add_argument("--workers", type=int, default=3)
     dd = sub.add_parser("date-documents", help="give undated reports a year from their first pages (with the evidence)")
     dd.add_argument("--check", action="store_true", help="only measure accuracy on reports whose year is known")
     fa = sub.add_parser("fetch-actors", help="download the actor gazetteer (Wikidata, Wikipedia, MITRE ATT&CK)")
@@ -54,10 +56,16 @@ def main():
         print({"titles_improved": downloader.improve_titles()})
         from . import actor_sources, actors, topics
         print(topics.index())
+        from . import ocr
+        if ocr.available():
+            print(ocr.run())
         from . import dating
         print(dating.date_documents())
         if actor_sources.GAZETTEER.exists():
             print(actors.index())
+    elif a.cmd == "ocr":
+        from . import ocr
+        print(ocr.run(a.limit, a.workers))
     elif a.cmd == "date-documents":
         from . import dating
         print(dating.check() if a.check else dating.date_documents())

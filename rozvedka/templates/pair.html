@@ -24,6 +24,7 @@
     <div class="p-foot small">
       <a href="{{ p.open }}">{% if p.page %}p. {{ p.page }}{% else %}open report{% endif %}</a> ·
       <a href="{{ p.url }}" rel="noopener">original</a> ·
+      {% if p.ocr %}<span class="badge-ocr" title="{{ p.ocr }} – recognition can misread letters and words; check the PDF">OCR text</span> ·{% endif %}
       <span class="muted">named together {{ p.n }}× in this report</span>
     </div>
   </li>

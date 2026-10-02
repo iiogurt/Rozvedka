@@ -63,7 +63,7 @@ class _CallToAction:
 CALL_TO_ACTION = _CallToAction()
 # kept but hidden by default: administrative documents that are not security reports
 LOW_RELEVANCE_RE = re.compile((
-    r"contract|procurement|corrigendum|zakázk|veřejn[aá] zak|кандидат|конкурс|класиране|"
+    r"contract|procurement|corrigendum|questionnaire|formulier|zakázk|veřejn[aá] zak|кандидат|конкурс|класиране|"
     r"interes public|acces la informa|poskytov[aá]n[ií] informac|106/1999|access to information|freedom of information|"
     r"human resources|recruit|n[aá]bor|vacanc|stellenausschreibung|budget|rozpo[cč]et|bilan[tț] contabil|"
     r"sluzebni|služební|výběrov[eé] řízen|ausschreibung|relationarea .* cu publicul|"

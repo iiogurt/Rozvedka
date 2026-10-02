@@ -141,6 +141,7 @@
       <div class="p-foot small">
         <a href="{{ p.open }}">{% if p.page %}p. {{ p.page }}{% else %}open report{% endif %}</a> ·
         <a href="{{ p.url }}" rel="noopener">original</a> ·
+        {% if p.ocr %}<span class="badge-ocr" title="{{ p.ocr }} – recognition can misread letters and words; check the PDF">OCR text</span> ·{% endif %}
         <span class="muted">{{ p.hits }} mention{{ 's' if p.hits != 1 }} in this report, as
           {% for n, c in p.names.items() %}“{{ n }}” {{ c }}×{{ ', ' if not loop.last }}{% endfor %}</span>
       </div>
