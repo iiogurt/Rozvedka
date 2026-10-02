@@ -68,7 +68,7 @@ def coalition_tags(country: str) -> list[dict]:
             for k, c in countries.coalitions().items() if k in mine]
 
 
-tpl.env.globals.update(COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=TYPE_NAMES, flag_url=flag_url, initials=initials,
+tpl.env.globals.update(sid=series.sid, COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=TYPE_NAMES, flag_url=flag_url, initials=initials,
                        coalition_tags=coalition_tags, COALITIONS=countries.coalitions(), VERSION=__version__,
                        BUILD=build_version())
 
@@ -105,7 +105,7 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
           status: str = "", q: str = "", source: int = 0, page: str = "1", per_page: str = "", show_hidden: int = 0,
           coalition: str = "", topic: list[str] = Query(default=[]), sort: str = "",
           year_from: str = "", year_to: str = "", indexed: int = 0, actor: str = "", main: int = 0,
-          cluster: str = ""):
+          cluster: str = "", series_id: str = Query("", alias="series")):
     tax = topics.taxonomy()["topics"]
     chosen = [t for t in topic if t in tax]
     where, args = ["s.active=1"], []
@@ -128,6 +128,11 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
     actor_row = None
     if actor:
         where.append(actors.doc_clause()); args.append(actor)
+    editions = series.doc_index()
+    series_row = series.get(series_id) if series_id else None
+    if series_id:   # editions of one report series
+        ids = [d for d, e in editions.items() if e["id"] == series_id] or [0]
+        where.append(f"d.id IN ({','.join('?' * len(ids))})"); args += ids
     cluster_keys = [k for k in cluster.split(",") if k][:200]
     if cluster_keys:   # link from a Network cluster: reports naming two of these actors in one passage
         sql, cargs = actors.cluster_clause(cluster_keys)
@@ -168,7 +173,7 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
     params = dict(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source or "",
                   coalition=coalition, topic=chosen, sort=sort if sort != "year" or chosen or q else "",
                   show_hidden=show_hidden or "", year_from=year_from, year_to=year_to, indexed=indexed or "",
-                  actor=actor, main=main or "", cluster=cluster,
+                  actor=actor, main=main or "", cluster=cluster, series=series_id,
                   per_page=size if size != paging.PER_PAGE_CHOICES[2] else "")
     with db.session() as con:
         topics.init()
@@ -214,7 +219,7 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
         "docs": docs, "total": total, "pg": pg,
         "facets": facets, "f": params, "counts": counts, "jobs": dict(_jobs), "qs": qs,
         "TOPICS": tax, "CATEGORIES": topics.taxonomy()["categories"], "topic_counts": topic_counts,
-        "actor_row": actor_row,
+        "actor_row": actor_row, "editions": editions, "series_row": series_row,
     })
 
 
@@ -262,6 +267,32 @@ def sources(request: Request):
     return tpl.TemplateResponse(request, "sources.html", {"sources": rows, "groups": ordered, "regions": regions,
                                                          "pages": pages, "series_by": series.by_source(),
                                                          "jobs": dict(_jobs)})
+
+
+@app.get("/series")
+def series_catalogue(request: Request, country: str = "", q: str = "", page: str = "1", per_page: str = ""):
+    cat = series.catalogue()
+    if country:
+        cat = [c for c in cat if c["source"] and c["source"]["country"] == country]
+    if q.strip():
+        cat = [c for c in cat if q.strip().casefold() in (c["series"]["name"] + " " + c["series"]["source"]).casefold()]
+    cat.sort(key=lambda c: (region_of(c["source"]["country"]) if c["source"] else (99, ""), c["series"]["source"], c["series"]["name"]))
+    size = paging.per_page_of(per_page, 50)
+    pg = paging.paginate(len(cat), page, size, "/series", {"country": country, "q": q, "per_page": size if size != 50 else ""},
+                         default=50)
+    countries_ = sorted({c["source"]["country"] for c in series.catalogue() if c["source"]}, key=lambda k: COUNTRY_NAMES.get(k, k))
+    return tpl.TemplateResponse(request, "series.html", {
+        "items": cat[pg["offset"]:pg["offset"] + size], "pg": pg, "f": {"country": country, "q": q},
+        "countries": countries_, "jobs": dict(_jobs)})
+
+
+@app.get("/series/{series_id}")
+def series_page(request: Request, series_id: str, lang: str = ""):
+    d = series.detail(series_id, lang)
+    if d is None:
+        raise HTTPException(404, "unknown series")
+    return tpl.TemplateResponse(request, "series_detail.html", {**d, "TOPICS": topics.taxonomy()["topics"],
+                                                               "kinds": actors.KINDS, "jobs": dict(_jobs)})
 
 
 @app.get("/sources/coverage")

@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.19.0] – 2026-10-02
+
+### Added
+- *Series* in the menu: a catalogue of all confirmed report series (completeness, latest edition, compact grid of
+  the last years; filter by country, search) and a page per series:
+  - the editions in the library per year and language;
+  - how the series changed over the years: topics × years (main topic / present) and actors × years (mentions,
+    first edition naming the actor), each cell opening the edition; the publishing agency itself is left out;
+  - edition by edition: files in every language with page counts, main topics, actors named most, topics that became
+    or stopped being main topics, actors named for the first time in the series.
+- Documents carry a badge of their series and edition year; the documents list filters by series (`series=`).
+- The Coverage page explains that it is for maintaining series and links every series to its page.
+
 ## [0.18.0] – 2026-10-02
 
 ### Added
@@ -336,7 +349,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.18.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.19.0...HEAD
+[0.19.0]: https://github.com/iiogurt/Rozvedka/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/iiogurt/Rozvedka/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/iiogurt/Rozvedka/compare/v0.16.1...v0.17.0
 [0.16.1]: https://github.com/iiogurt/Rozvedka/compare/v0.16.0...v0.16.1

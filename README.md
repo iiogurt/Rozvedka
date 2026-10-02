@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.18.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.19.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -59,15 +59,22 @@ One card per agency: flag, logo, official name in the original language and in E
 description of what its reports cover, coalition tags with the year each country joined, the report pages it is
 crawled from (with language and current/archive), and a link to its headquarters on the map.
 
-### 📅 Report series and coverage
+### 📅 Report series
 
-<img src="docs/images/coverage.png" alt="Coverage: report series per source with editions per year and language" width="900">
+<img src="docs/images/series.png" alt="A report series: editions per year and language, topic and actor profiles over the years" width="900">
 
-Recurring publications – the BIS annual report in Czech and English, KAPO's annual review, the Verfassungsschutzbericht –
-as **series**: for every year and language whether the edition is in the library (✓), listed but blocked (↓), missing
-(✗), expected but perhaps not yet published (…) or confirmed as not published (–). The library proposes series from
-recurring titles; confirm, rename, merge or reject them on *Sources → Coverage* (stored in
-[`sources/series.yaml`](sources/series.yaml)). Each source card shows its series as a compact grid.
+Recurring publications – the BIS annual report in Czech and English, KAPO's annual review, the Verfassungsschutzbericht – read
+**edition by edition** (*Series* in the menu):
+
+- the **catalogue** of all series with how complete each is, its latest edition and a compact grid of the last years;
+- a **page per series**: which editions the library has per year and language (✓ in the library, ↓ listed but blocked,
+  ✗ missing, … expected, – not published); **how the series changed** – its main topics and the actors it names, year by
+  year (topics × years and actors × years, every cell opens the edition); and **edition by edition** what each one is
+  mainly about, whom it names most, what became or stopped being a main topic, and which actors appear for the first time;
+- documents carry a badge of their series (*Annual Report · 2023*), and the documents list filters by series.
+
+The library proposes series from recurring titles; confirm, rename, merge or reject them on *Sources → Coverage*
+(stored in [`sources/series.yaml`](sources/series.yaml)), which also lists every series' gaps for maintenance.
 
 ### 📥 To collect – hand import with provenance
 

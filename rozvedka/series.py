@@ -254,3 +254,147 @@ def attach_url(source: str, name: str, url: str) -> None:
             if url not in urls:
                 urls.append(url)
     save(data)
+
+
+# ── reading a series ──
+def sid(s: dict) -> str:
+    """Stable short id of a confirmed series (for its page URL)."""
+    return hashlib.sha1(f"{s['source']}|{s['name']}".encode()).hexdigest()[:8]
+
+
+def get(series_id: str) -> dict | None:
+    return next((s for s in load()["series"] if sid(s) == series_id), None)
+
+
+def doc_index() -> dict[int, dict]:
+    """document id → the confirmed series it is an edition of (for badges and the documents filter)."""
+    out = {}
+    with db.session() as con:
+        for s in load()["series"]:
+            c = coverage(con, s)
+            for r in c["rows"]:
+                for cell in r["cells"]:
+                    for d in cell["docs"]:
+                        out[d] = {"id": sid(s), "name": s["name"], "year": cell["year"], "lang": r["lang"]}
+    return out
+
+
+MAIN = 3          # an edition's main topics: the 3 with the highest keyword score (as on the mind map)
+
+
+def detail(series_id: str, lang: str = "") -> dict | None:
+    """Editions (newest first) with main topics and actors, what changed from the previous edition, and the
+    topic and actor profiles of the series over the years (one language, by default the one with most editions)."""
+    s = get(series_id)
+    if s is None:
+        return None
+    tax = topics.taxonomy()["topics"]
+    with db.session() as con:
+        c = coverage(con, s)
+        by_year: dict[int, dict[str, list]] = {}
+        for r in c["rows"]:
+            for cell in r["cells"]:
+                if cell["docs"]:
+                    by_year.setdefault(cell["year"], {})[r["lang"]] = cell["docs"]
+        ids = sorted({d for langs in by_year.values() for docs in langs.values() for d in docs})
+        docs, dtopics, dactors = {}, {}, {}
+        if ids:
+            marks = ",".join("?" * len(ids))
+            docs = {r["id"]: dict(r) for r in con.execute(
+                f"SELECT id, title, url, lang, year, status, local_path, pages_count FROM documents WHERE id IN ({marks})", ids)}
+            for r in con.execute(f"SELECT doc_id, topic, score FROM doc_topics WHERE doc_id IN ({marks}) ORDER BY score DESC", ids):
+                if not tax.get(r["topic"], {}).get("meta"):
+                    dtopics.setdefault(r["doc_id"], []).append((r["topic"], r["score"]))
+            # the publishing agency naming itself says nothing about its subject – left out
+            src = con.execute("SELECT agency, name_en, name_local FROM sources WHERE key=?", (s["source"],)).fetchone()
+            own = {(x or "").casefold() for x in (src["agency"], src["name_en"], src["name_local"])} if src else set()
+            for r in con.execute(f"""SELECT da.doc_id, da.actor_key, da.hits, a.label, a.kind FROM doc_actors da
+                                     JOIN actors a ON a.key=da.actor_key WHERE da.doc_id IN ({marks}) AND a.kind != 'country'
+                                     ORDER BY da.hits DESC""", ids):
+                if r["label"].casefold() not in own:
+                    dactors.setdefault(r["doc_id"], []).append(dict(r))
+    langs_count = Counter(lg for langs in by_year.values() for lg in langs)
+    lang = lang if lang in s["languages"] else (langs_count.most_common(1)[0][0] if langs_count else s["languages"][0])
+
+    def profile_doc(year):
+        """The edition of a year used for the profile: one with text in the chosen language, else any."""
+        for lg in [lang] + [x for x in s["languages"] if x != lang]:
+            for d in by_year.get(year, {}).get(lg, []):
+                if d in dtopics or d in dactors:
+                    return d
+        return None
+
+    years = sorted(by_year, reverse=True)
+    editions, prev_topics, prev_seen = [], None, set()
+    first_seen: dict[str, int] = {}
+    for y in sorted(by_year):                        # oldest first, to know what is new
+        pd = profile_doc(y)
+        main = [t for t, _ in dtopics.get(pd, [])[:MAIN]] if pd else []
+        acts = dactors.get(pd, []) if pd else []
+        new_actors = [a for a in acts if a["actor_key"] not in prev_seen][:6] if prev_seen else []
+        for a in acts:
+            first_seen.setdefault(a["actor_key"], y)
+            prev_seen.add(a["actor_key"])
+        editions.append({
+            "year": y, "files": {lg: [docs[d] for d in ds if d in docs] for lg, ds in by_year[y].items()},
+            "profile_doc": docs.get(pd), "main": [(t, tax[t]["name"]) for t in main],
+            "actors": acts[:6], "new_actors": new_actors,
+            "topics_in": [(t, tax[t]["name"]) for t in main if prev_topics is not None and t not in prev_topics],
+            "topics_out": [(t, tax[t]["name"]) for t in (prev_topics or []) if t not in main] if main else []})
+        if main:
+            prev_topics = main
+    editions.reverse()
+    # profiles: topics × years and actors × years (one edition per year)
+    pyears = sorted(y for y in by_year if profile_doc(y))
+    topic_weight: Counter = Counter()
+    for y in pyears:
+        for rank, (t, _) in enumerate(dtopics.get(profile_doc(y), [])):
+            topic_weight[t] += 3 if rank < MAIN else 1
+    top_topics = [t for t, _ in topic_weight.most_common(18)]
+    topic_rows = []
+    for t in top_topics:
+        cells = []
+        for y in pyears:
+            ranked = [x for x, _ in dtopics.get(profile_doc(y), [])]
+            cells.append({"year": y, "doc": profile_doc(y),
+                          "level": 2 if t in ranked[:MAIN] else 1 if t in ranked else 0})
+        topic_rows.append({"key": t, "name": tax[t]["name"], "cells": cells})
+    actor_weight: Counter = Counter()
+    labels = {}
+    for y in pyears:
+        for a in dactors.get(profile_doc(y), []):
+            actor_weight[a["actor_key"]] += 1
+            labels[a["actor_key"]] = (a["label"], a["kind"])
+    # actors named in at least two editions (a single mention says little about the series); all if that leaves few
+    recurring = [k for k, n in actor_weight.most_common() if n >= 2]
+    top_actors = (recurring if len(recurring) >= 5 else [k for k, _ in actor_weight.most_common()])[:20]
+    actor_rows = []
+    for k in top_actors:
+        cells = []
+        for y in pyears:
+            hit = next((a["hits"] for a in dactors.get(profile_doc(y), []) if a["actor_key"] == k), 0)
+            cells.append({"year": y, "doc": profile_doc(y), "hits": hit, "first": first_seen.get(k) == y and hit > 0})
+        actor_rows.append({"key": k, "label": labels[k][0], "kind": labels[k][1], "cells": cells,
+                           "editions": actor_weight[k]})
+    return {"series": s, "id": series_id, "coverage": c, "editions": editions, "lang": lang,
+            "profile_years": pyears, "topic_rows": topic_rows, "actor_rows": actor_rows,
+            "max_hits": max((cell["hits"] for r in actor_rows for cell in r["cells"]), default=1)}
+
+
+def catalogue() -> list[dict]:
+    """All confirmed series with completeness and their latest edition."""
+    out = []
+    with db.session() as con:
+        for s in load()["series"]:
+            c = coverage(con, s)
+            n = c["counts"]
+            due = n.get("have", 0) + n.get("missing", 0) + n.get("listed", 0)
+            latest = None
+            for r in c["rows"]:
+                for cell in r["cells"]:
+                    if cell["state"] in ("have", "listed") and (latest is None or cell["year"] > latest[0]):
+                        latest = (cell["year"], r["lang"], cell["docs"][0])
+            out.append({"series": s, "id": sid(s), "coverage": c, "source": c.get("source"),
+                        "complete_share": round(n.get("have", 0) / due, 3) if due else None, "latest": latest,
+                        "editions": len({cell["year"] for r in c["rows"] for cell in r["cells"] if cell["docs"]})})
+    return out

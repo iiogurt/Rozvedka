@@ -28,7 +28,7 @@
   <select name="status"><option value="">Any status</option>
     {% for s in ['downloaded','new','browser-only','failed'] %}<option value="{{ s }}" {{ 'selected' if f.status == s }}>{{ s }}</option>{% endfor %}
   </select>
-  {% for k in ('year_from', 'year_to', 'indexed', 'actor', 'main', 'cluster', 'per_page') %}{% if f[k] %}<input type="hidden" name="{{ k }}" value="{{ f[k] }}">{% endif %}{% endfor %}
+  {% for k in ('year_from', 'year_to', 'indexed', 'actor', 'main', 'cluster', 'series', 'per_page') %}{% if f[k] %}<input type="hidden" name="{{ k }}" value="{{ f[k] }}">{% endif %}{% endfor %}
   <label class="chk"><input type="checkbox" name="show_hidden" value="1" {{ 'checked' if f.show_hidden }}> hidden too</label>
   <button>Filter</button>
   <a class="reset" href="/">Reset</a>
@@ -38,11 +38,13 @@
   <span class="muted small">Topics (all must match):</span>
   {% for t in f.topic %}<a class="topic-chip on" href="/?{{ qs(topic=f.topic|reject('equalto', t)|list, page=1) }}" title="Remove">{{ TOPICS[t].name }} ✕</a>{% endfor %}
 </div>{% endif %}
-{% if f.year_from or f.year_to or f.indexed or f.actor or f.main or f.cluster %}<div class="chosen-topics">
+{% if f.year_from or f.year_to or f.indexed or f.actor or f.main or f.cluster or f.series %}<div class="chosen-topics">
   <span class="muted small">Also limited to:</span>
   {% if f.actor %}<a class="topic-chip on" href="/?{{ qs(actor='', page=1) }}" title="Remove">mentions {{ actor_row.label if actor_row else f.actor }} ✕</a>
     <a class="small" href="/actors/{{ f.actor }}">actor page</a>{% endif %}
   {% if f.year_from or f.year_to %}<a class="topic-chip on" href="/?{{ qs(year_from='', year_to='', page=1) }}" title="Remove">years {{ f.year_from or '…' }}–{{ f.year_to or '…' }} ✕</a>{% endif %}
+  {% if f.series %}<a class="topic-chip on" href="/?{{ qs(series='', page=1) }}" title="Remove">editions of {{ series_row.source ~ ' – ' ~ series_row.name if series_row else f.series }} ✕</a>
+    <a class="small" href="/series/{{ f.series }}">series page</a>{% endif %}
   {% if f.cluster %}<a class="topic-chip on" href="/?{{ qs(cluster='', page=1) }}" title="Remove">two actors of a Network cluster named in one passage ✕</a>{% endif %}
   {% if f.main %}<a class="topic-chip on" href="/?{{ qs(main='', page=1) }}" title="Remove">topics among each report's 3 main topics ✕</a>{% endif %}
   {% if f.indexed %}<a class="topic-chip on" href="/?{{ qs(indexed='', page=1) }}" title="Remove – the Trends charts count only documents with topic-classified text">classified text only ✕</a>{% endif %}
@@ -74,6 +76,7 @@
       <td class="title">
         {% if d.local_path %}<a href="/doc/{{ d.id }}" target="_blank">{{ d.title }}</a>{% else %}{{ d.title }}{% endif %}
         <div class="meta"><a href="{{ d.url }}" target="_blank" rel="noopener">original ↗</a>
+          {% if editions.get(d.id) %}{% set e = editions[d.id] %}<a class="badge-series" href="/series/{{ e.id }}" title="Edition {{ e.year }} ({{ e.lang }}) of the report series “{{ e.name }}” – all editions">{{ e.name }} · {{ e.year }}</a>{% endif %}
           {% if d.hand_added %}<span class="badge-hand {{ '' if d.hand_official else 'badge-warn' }}" title="Added by hand on {{ d.hand_added[:10] }} from {{ d.url }}{{ '' if d.hand_official else ' – this URL is not on the agency’s official domains' }}">added by hand{{ '' if d.hand_official else ' · unofficial URL' }}</span>{% endif %}
           {% if d.pages_count %} · {{ d.pages_count }} pages{% endif %}
           {% if d.size %} · {{ (d.size / 1048576) | round(1) }} MB{% endif %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% from "_series.html" import grid, legend %}
+{% block title %}Series · Rozvedka{% endblock %}
+{% block main %}
+<form class="filters" method="get" action="/series">
+  <input type="search" name="q" value="{{ f.q }}" placeholder="Find a series or agency…" aria-label="Find series">
+  <select name="country" onchange="this.form.submit()" aria-label="Country"><option value="">All countries</option>
+    {% for c in countries %}<option value="{{ c }}" {{ 'selected' if f.country == c }}>{{ COUNTRY_NAMES.get(c, c) }}</option>{% endfor %}</select>
+  <button>Filter</button> <a class="reset" href="/series">Reset</a>
+  <a class="small" href="/sources/coverage#proposals">confirm more series</a>
+</form>
+<p class="muted small">A <b>series</b> is a publication an agency issues again and again – an annual report, a yearly threat
+  assessment, a half-yearly cyber report. Open a series to read it edition by edition: what each edition is mainly about,
+  which actors it names, and what changed from the year before. The grid shows which editions the library has.</p>
+{{ legend() }}
+{{ pager(pg, "series") }}
+<div class="series-grid">
+{% for c in items %}{% set s = c.series %}
+  <article class="series-tile">
+    <h2><a href="/series/{{ c.id }}"><img class="flag-sm" src="{{ flag_url(c.source.country) }}" alt=""> {{ c.source.agency }} – {{ s.name }}</a></h2>
+    <p class="small muted">{{ c.editions }} editions · {{ s.languages|join(', ') }} · {{ s.since }}–{{ c.latest[0] if c.latest else '' }}
+      {% if c.complete_share is not none %} · <span title="editions in the library ÷ editions that should exist">{{ (c.complete_share * 100)|round|int }}% complete</span>{% endif %}
+      {% if c.latest %} · latest: <a href="/doc/{{ c.latest[2] }}">{{ c.latest[0] }} ({{ c.latest[1] }})</a>{% endif %}</p>
+    {{ grid(c.coverage, compact=True) }}
+  </article>
+{% endfor %}
+</div>
+{% if not items %}<p class="muted">No series{{ ' matches' if f.q or f.country }}. Series are confirmed on <a href="/sources/coverage#proposals">Sources → Coverage</a>.</p>{% endif %}
+{{ pager(pg, "series") }}
+{% endblock %}

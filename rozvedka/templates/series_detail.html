@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% from "_series.html" import grid, legend %}
+{% set s = series %}
+{% block title %}{{ s.name }} · {{ coverage.source.agency }} · Series · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/series">← Series</a> · <a href="/sources#s-{{ coverage.source.id }}">{{ coverage.source.agency }} on Sources</a>
+  · <a href="/?series={{ id }}">all editions as documents</a> · <a href="/collect?source={{ s.source|urlencode }}">to collect</a></p>
+<h1 class="page-h"><img class="flag-sm" src="{{ flag_url(coverage.source.country) }}" alt=""> {{ coverage.source.agency }} – {{ s.name }}</h1>
+<p class="muted small">{{ s.per_year }}× a year · {{ s.languages|join(', ') }} · since {{ s.since }} · {{ editions|length }} editions in the library.
+  Series definition: <code>sources/series.yaml</code>.</p>
+
+<section class="viz-card">
+  <h2 class="viz-title">Editions in the library</h2>
+  {{ legend() }}
+  {{ grid(coverage) }}
+</section>
+
+{% if topic_rows or actor_rows %}
+<section class="viz-card">
+  <div class="viz-head"><h2 class="viz-title">How the series changed over the years</h2>
+    {% if s.languages|length > 1 %}<span class="viz-actions small">profile from the
+      {% for l in s.languages %}<a href="?lang={{ l }}" class="{{ 'on-b' if l == lang }}">{{ l }}</a>{{ ' / ' if not loop.last }}{% endfor %} editions</span>{% endif %}</div>
+  <p class="muted small viz-sub">One edition per year ({{ lang }} where available). <b>Topics</b>: ■ among the edition's 3 main topics
+    (highest keyword score), ▪ present, empty = not found. <b>Actors</b> named in at least two editions: the number of mentions; ● = first edition naming the actor.
+    Every cell opens that edition. The agency itself is left out.</p>
+  <div class="prof-scroll">
+  <table class="prof">
+    <tr><th></th>{% for y in profile_years %}<th>{{ "’" ~ (y|string)[-2:] }}</th>{% endfor %}</tr>
+    <tr class="prof-sec"><th colspan="{{ profile_years|length + 1 }}">Topics</th></tr>
+    {% for r in topic_rows %}<tr><th class="prof-name"><a href="/?topic={{ r.key }}&series={{ id }}">{{ r.name }}</a></th>
+      {% for c in r.cells %}<td class="pt-{{ c.level }}">{% if c.level %}<a href="/doc/{{ c.doc }}" title="{{ c.year }}: {{ 'main topic' if c.level == 2 else 'present' }}">{{ '■' if c.level == 2 else '▪' }}</a>{% endif %}</td>{% endfor %}</tr>{% endfor %}
+    <tr class="prof-sec"><th colspan="{{ profile_years|length + 1 }}">Actors</th></tr>
+    {% for r in actor_rows %}<tr><th class="prof-name"><i class="kdot kind-{{ r.kind }}"></i><a href="/actors/{{ r.key }}">{{ r.label }}</a> <span class="muted small">{{ r.editions }}</span></th>
+      {% for c in r.cells %}<td class="{{ 'pa-on' if c.hits }}" style="{{ '--a:' ~ ((c.hits / max_hits) ** 0.5)|round(2) if c.hits }}">{% if c.hits %}<a href="/doc/{{ c.doc }}" title="{{ c.year }}: {{ c.hits }} mentions{{ ' – first edition naming it' if c.first }}">{{ '●' if c.first else c.hits }}</a>{% endif %}</td>{% endfor %}</tr>{% endfor %}
+  </table>
+  </div>
+</section>
+{% endif %}
+
+<section class="viz-card">
+  <h2 class="viz-title">Edition by edition</h2>
+  <ol class="editions">
+  {% for e in editions %}
+    <li>
+      <div class="ed-head"><b class="ed-year">{{ e.year }}</b>
+        {% for lg, files in e.files.items() %}{% for d in files %}<span class="ed-file"><span class="ctag">{{ lg }}</span>
+          {% if d.local_path %}<a href="/doc/{{ d.id }}">{{ d.title }}</a>{% if d.pages_count %} <span class="muted small">{{ d.pages_count }} p.</span>{% endif %}
+          {% else %}<span class="muted">{{ d.title }}</span> <a class="small" href="/collect?tab=blocked&source={{ s.source|urlencode }}">blocked – collect</a>{% endif %}
+          <a class="small muted" href="{{ d.url }}" rel="noopener">original ↗</a></span>{% endfor %}{% endfor %}</div>
+      {% if e.main %}<div class="ed-line small"><span class="muted">Main topics:</span> {% for k, n in e.main %}<a class="topic-chip" href="/?topic={{ k }}&series={{ id }}">{{ n }}</a>{% endfor %}
+        {% if e.topics_in %}<span class="ed-delta up">new among the main topics: {{ e.topics_in|map(attribute=1)|join(', ') }}</span>{% endif %}
+        {% if e.topics_out %}<span class="ed-delta">no longer main: {{ e.topics_out|map(attribute=1)|join(', ') }}</span>{% endif %}</div>{% endif %}
+      {% if e.actors %}<div class="ed-line small"><span class="muted">Named most:</span> {% for a in e.actors %}<a class="mchip" href="/actors/{{ a.actor_key }}"><i class="kdot kind-{{ a.kind }}"></i>{{ a.label }} <span class="muted">{{ a.hits }}</span></a>{% endfor %}</div>{% endif %}
+      {% if e.new_actors %}<div class="ed-line small"><span class="muted">First time in this series:</span> {% for a in e.new_actors %}<a class="mchip linked" href="/actors/{{ a.actor_key }}">{{ a.label }}</a>{% endfor %}</div>{% endif %}
+      {% if not e.profile_doc %}<div class="ed-line small muted">No text in the library for this edition yet (not downloaded or a scan).</div>{% endif %}
+    </li>
+  {% endfor %}
+  </ol>
+</section>
+{% endblock %}
