@@ -9,6 +9,7 @@ comes from, and names are dropped – visibly, with the reason – when they are
 
   - names on the ignore list or excluded for the actor in sources/actors.yaml
   - one-word names that are lowercase, shorter than 3 characters, or 3 characters without being an abbreviation
+  - one-word names whose symbol is part of the name ("III %", "Heimat!"): without it the word means something else
   - names shared by several actors (unless one of them was added by hand)
   - one-word names that the reports use more often in lowercase than capitalised (ordinary words: "base")
   - one-word names that are generic words ("Centro", "Intelligence"), and one-word names of people other than
@@ -16,7 +17,8 @@ comes from, and names are dropped – visibly, with the reason – when they are
   - weak names – letters-only abbreviations up to 5 characters ("FSB") and names made only of generic words
     and numbers ("Federal Security Service", "National Security Council", "Group 24") – count in a report only
     when the report also uses another name of the same actor ("Federal Security Service (FSB)")
-  - reports of sources excluded for an actor by hand (sources/actors.yaml exclude_sources)
+  - reports of sources excluded for an actor by hand (sources/actors.yaml exclude_sources), and single reports
+    whose passage was reviewed as meaning something else (sources/actor_reviews.yaml, Actors → Review)
   - reports dated before the actor was founded (Wikidata P571) are not counted; actor pages list them apart
   - where names overlap, only the longest counts ("Al-Qaeda in the Arabian Peninsula" is not also "Al-Qaeda")
   - qualifiers in brackets are removed from names ("Hells Angels (disbanded)" → "Hells Angels")
@@ -39,7 +41,7 @@ from . import db, paging, topics, trends
 from .actor_sources import CONFIG, GAZETTEER
 
 log = logging.getLogger("rozvedka.actors")
-MATCHER_VERSION = "11"
+MATCHER_VERSION = "12"
 MAX_OFFSETS = 300        # positions kept per name and document
 WINDOW = 600             # characters: two actors this close count as mentioned together (one passage)
 SNIPPET = 260            # characters of context on each side of a match
@@ -156,6 +158,9 @@ def load_gazetteer() -> dict:
     return json.loads(GAZETTEER.read_text(encoding="utf-8"))
 
 
+_SYMBOL = re.compile(r"[%!$&+#@]")      # part of a name ("III %", "Heimat!", "LAPSUS$"); matching sees only the words
+
+
 def prepare_names(gaz: dict, cfg: dict) -> list[dict]:
     """One row per distinct name of each actor, with status 'used' or the reason it is not matched."""
     ignore = {name_tokens(n) for n in cfg.get("ignore_aliases", [])}
@@ -192,6 +197,9 @@ def prepare_names(gaz: dict, cfg: dict) -> list[dict]:
                 reason = "too short"
         elif not toks:
             reason = "no letters (or only a qualifier in brackets)"
+        elif len(toks) == 1 and _SYMBOL.search(r["name"]):
+            reason = (f"its “{_SYMBOL.search(r['name']).group(0)}” is part of the name, but matching sees words only – "
+                      f"“{toks[0]}” alone means something else (“III %” would match the numeral III)")
         elif all(t.islower() or t.isdigit() for t in toks):
             reason = "lowercase words"
         elif len("".join(toks)) < 3 or (len(toks) > 1 and all(len(t) <= 2 for t in toks)):
@@ -417,6 +425,10 @@ def derive(con, cfg: dict | None = None) -> dict:
     # per actor: sources whose reports use the name for something else (sources/actors.yaml exclude_sources)
     source_of = dict(con.execute("SELECT d.id, s.key FROM documents d JOIN sources s ON s.id=d.source_id").fetchall())
     skip_sources = {k: set(v) for k, v in (cfg.get("exclude_sources") or {}).items()}
+    # per actor: reports marked "wrong" in the portal's review (sources/actor_reviews.yaml)
+    from . import review
+    url_of = dict(con.execute("SELECT id, url FROM documents").fetchall())
+    reviewed_wrong = review.wrong_pairs()
     name_rows = {r["id"]: dict(r) for r in con.execute("SELECT * FROM actor_names")}
     totals = {r["name_id"]: (r["d"], r["n"]) for r in con.execute(
         "SELECT name_id, COUNT(*) d, SUM(n) n FROM actor_hits GROUP BY name_id")}
@@ -448,6 +460,8 @@ def derive(con, cfg: dict | None = None) -> dict:
         for actor, items in by_actor.items():
             if source_of.get(doc_id) in skip_sources.get(actor, ()):
                 continue        # excluded by hand for this source
+            if (actor, url_of.get(doc_id)) in reviewed_wrong:
+                continue        # this report's matches were reviewed: they mean something else
             if all(nid in weak for nid, _ in items) and len(items) < 2:
                 continue        # one weak name only: not corroborated by another name of the actor in this report
             spans = sorted(s for _, sp in items for s in sp)[:MAX_OFFSETS]

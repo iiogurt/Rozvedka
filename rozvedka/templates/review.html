@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}Review actor matches · Rozvedka{% endblock %}
+{% macro verdict_form(n, s, back) %}
+<form method="post" action="/actors/review" class="inline review-form">
+  <input type="hidden" name="actor" value="{{ n.actor_key }}"><input type="hidden" name="doc_id" value="{{ s.doc_id }}">
+  <input type="hidden" name="name" value="{{ n.name }}"><input type="hidden" name="says" value="{{ s.before[-80:] }}{{ s.match }}{{ s.after[:80] }}">
+  <input type="hidden" name="back" value="{{ back }}">
+  <button name="verdict" value="right" class="rv-right" title="The passage means {{ n.label }}">✓ right</button>
+  <button name="verdict" value="wrong" class="rv-wrong" title="The passage means something else: remove this report from {{ n.label }}">✗ wrong</button>
+</form>
+{% endmacro %}
+{% block main %}
+<p class="small"><a href="/actors">← Actors</a> · <a href="/actors/names">names and why some are not used</a></p>
+<h1 class="page-h">Review actor matches</h1>
+<p class="muted">Actors are found by name, so a match can mean something else – a surname, a place, a company. Here are
+  random passages of the names that put the most reports on their actor; mark each one. A <b>wrong</b> verdict removes
+  that report from the actor at once; every verdict is kept with its passage in <code>sources/actor_reviews.yaml</code>
+  and gives the name a measured precision. A name leaves the queue after {{ q.enough }} verdicts.</p>
+
+<div class="nw-sum">{% if q.right + q.wrong %}<b>{{ q.right + q.wrong }}</b> passages reviewed: <b>{{ q.right }}</b> right,
+  <b>{{ q.wrong }}</b> wrong – measured precision <b>{{ (100 * q.right / (q.right + q.wrong))|round|int }} %</b> on the reviewed sample
+  (the names reviewed first are the most frequent).{% else %}Nothing reviewed yet.{% endif %}
+  <span class="muted small">{{ q.todo }} of {{ q.all }} names still in the queue.</span></div>
+
+<div class="kind-chips">
+  <a class="topic-chip {{ 'on' if not f.kind }}" href="/actors/review">All but countries</a>
+  {% for k, name in kinds.items() %}<a class="topic-chip {{ 'on' if f.kind == k }}" href="/actors/review?kind={{ k }}">{{ name }}</a>{% endfor %}
+</div>
+
+{{ pager(q.pg, "names to review") }}
+{% for n in q.names %}
+<section class="viz-card rv-name">
+  <div class="viz-head"><h2 class="viz-title">“{{ n.name }}” <span class="muted">→</span> <a href="/actors/{{ n.actor_key }}">{{ n.label }}</a>
+    <span class="muted small">{{ n.kind_name }}</span></h2>
+    <div class="viz-actions small muted">counts in {{ n.docs }} report{{ 's' if n.docs != 1 }} · reviewed {{ n.right }} ✓ {{ n.wrong }} ✗</div></div>
+  <ol class="passages">{% for s in n.samples %}<li>
+    <div class="p-head"><img class="flag-sm" src="{{ flag_url(s.country) }}" alt=""> <b>{{ s.agency }}</b> {{ s.year or '—' }} · <span class="p-title">{{ s.title }}</span></div>
+    <blockquote class="p-text">{{ s.before }}<mark>{{ s.match }}</mark>{{ s.after }}</blockquote>
+    <div class="p-foot small"><a href="{{ s.open }}" target="_blank">{% if s.page %}p. {{ s.page }}{% else %}open report{% endif %}</a> ·
+      <a href="{{ s.url }}" rel="noopener" target="_blank">original</a>
+      {{ verdict_form(n, s, request.url.path ~ ('?' ~ request.url.query if request.url.query else '')) }}</div></li>
+  {% else %}<li class="muted">No unreviewed passages left for this name.</li>{% endfor %}</ol>
+</section>
+{% else %}<p class="empty">The queue is empty.</p>{% endfor %}
+{{ pager(q.pg, "names to review") }}
+
+{% if q.done %}
+<section class="viz-card">
+  <h2 class="viz-title">Reviewed names</h2>
+  <p class="viz-sub muted small">Most often wrong first. A name that is wrong in most passages is better excluded for its actor in
+    <code>sources/actors.yaml</code> (exclude_aliases) or made weak (weak_aliases), so the rule applies to every report.</p>
+  <div class="vt-scroll"><table class="vt">
+    <thead><tr><th>Name</th><th>Actor</th><th>reports</th><th>✓</th><th>✗</th><th>precision</th></tr></thead>
+    {% for n in q.done %}<tr><td>“{{ n.name }}”</td><td><a href="/actors/{{ n.actor_key }}">{{ n.label }}</a></td><td>{{ n.docs }}</td>
+      <td>{{ n.right }}</td><td>{{ n.wrong }}</td><td><b>{{ (100 * n.right / n.checked)|round|int }} %</b> <span class="muted">of {{ n.checked }}</span></td></tr>{% endfor %}
+  </table></div>
+</section>
+{% endif %}
+{% endblock %}

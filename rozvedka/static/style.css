@@ -715,3 +715,11 @@ table.wl-matrix { border-collapse: collapse; font-size: 13px; width: 100%; }
 .wl-timeline li { padding: 5px 0; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
 .wl-day { font-weight: 600; font-variant-numeric: tabular-nums; min-width: 7em; }
 .wl-timeline code { font-size: 11.5px; }
+
+/* Review of actor matches */
+.review-form { margin-left: 8px; }
+.review-form button { font-size: 12px; padding: 1px 8px; }
+.rv-right:hover { border-color: var(--ok); color: var(--ok); }
+.rv-wrong:hover { border-color: var(--err); color: var(--err); }
+.kind-chips { margin: 8px 0 10px; }
+.rv-name { margin-top: 12px; }

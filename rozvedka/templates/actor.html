@@ -146,12 +146,29 @@
         {% if p.ocr %}<span class="badge-ocr" title="{{ p.ocr }} – recognition can misread letters and words; check the PDF">OCR text</span> ·{% endif %}
         <span class="muted">{{ p.hits }} mention{{ 's' if p.hits != 1 }} in this report, as
           {% for n, c in p.names.items() %}“{{ n }}” {{ c }}×{{ ', ' if not loop.last }}{% endfor %}</span>
+        <form method="post" action="/actors/review" class="inline review-form">
+          <input type="hidden" name="actor" value="{{ a.key }}"><input type="hidden" name="doc_id" value="{{ p.doc_id }}">
+          <input type="hidden" name="name" value="{{ (p.names.keys()|list)[0] if p.names else '' }}">
+          <input type="hidden" name="says" value="{{ p.before[-80:] }}{{ p.match }}{{ p.after[:80] }}">
+          <input type="hidden" name="back" value="/actors/{{ a.key }}#passages">
+          <button name="verdict" value="wrong" class="rv-wrong" title="This passage means something else: remove this report from {{ a.label }} (kept with the passage as evidence in sources/actor_reviews.yaml)">✗ not {{ a.label }}</button>
+        </form>
       </div>
     </li>
   {% endfor %}
   </ol>
   {{ pager(pg, "reports") }}
 </section>
+
+{% if reviewed_out %}
+<section class="viz-card">
+  <h2 class="viz-title">Not counted: reports reviewed as meaning something else</h2>
+  <p class="muted small viz-sub">Passages checked in the portal (<a href="/actors/review">Actors → Review</a>), kept with the passage
+    as evidence in <code>sources/actor_reviews.yaml</code>; these {{ reviewed_out|length }} reports are left out of every count.</p>
+  <ul class="actor-list">{% for r in reviewed_out %}<li><a href="{{ r.url }}" rel="noopener">{{ r.url.rsplit('/', 1)[-1][:70] }}</a>
+    <span class="muted small">as “{{ r.name }}” · checked {{ r.checked }}</span><div class="small">“{{ r.says }}”</div></li>{% endfor %}</ul>
+</section>
+{% endif %}
 
 {% if before %}
 <section class="viz-card">
