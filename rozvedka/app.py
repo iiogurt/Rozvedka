@@ -19,7 +19,7 @@ from markupsafe import escape
 from . import (__version__, actors, build_version, collect, countries, crawler, db, downloader, graphs, home, logos,
                paging, registry, series, topics, trends, updates)
 from . import compare as compare_mod
-from . import doclist, review, watch
+from . import dataset, doclist, review, watch
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -223,6 +223,23 @@ def compare_page(request: Request, q: str = "", actor: str = "", topic: str = ""
         "examples": [("Wagner Group", "actor"), ("Ransomware & extortion", "topic"), ("Fancy Bear", "actor"),
                      ("Hybrid threats & grey-zone activity", "topic")],
         "jobs": dict(_jobs)})
+
+
+@app.get("/data")
+def data_page(request: Request):
+    """Data exchange: this installation, how fresh its data is, and the datasets exported or imported."""
+    with db.session() as con:
+        fresh = dataset.freshness(con)
+        runs = [dict(r) for r in con.execute(
+            "SELECT kind, started_at, summary FROM runs WHERE kind IN ('export','import') ORDER BY id DESC LIMIT 50")]
+    for r in runs:
+        try:
+            r["summary"] = json.loads(r["summary"])
+        except (TypeError, ValueError):
+            r["summary"] = {}
+    size = sum(f.stat().st_size for f in FILES.rglob("*") if f.is_file()) if FILES.exists() else 0
+    return tpl.TemplateResponse(request, "data.html", {"me": dataset.installation(), "fresh": fresh, "runs": runs,
+                                                      "files_bytes": size, "jobs": dict(_jobs)})
 
 
 @app.get("/feed.atom")

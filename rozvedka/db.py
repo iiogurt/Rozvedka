@@ -91,7 +91,8 @@ def session():
 
 # columns added after the first release; ALTER TABLE brings older databases up to date
 MIGRATIONS = {
-    "documents": {"year_source": "TEXT"},     # where the year came from when not from the title/URL (rozvedka/dating.py)
+    "documents": {"year_source": "TEXT",      # where the year came from when not from the title/URL (rozvedka/dating.py)
+                  "dataset": "TEXT"},         # the dataset a report was imported from (rozvedka/dataset.py)
     "sources": {"name_local": "TEXT", "name_en": "TEXT", "homepage": "TEXT", "description": "TEXT",
                 "logo_url": "TEXT", "logo_path": "TEXT", "hq_address": "TEXT", "lat": "REAL", "lon": "REAL",
                 "hq_precision": "TEXT", "domains": "TEXT"},

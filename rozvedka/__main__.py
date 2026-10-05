@@ -30,6 +30,17 @@ def main():
     oc.add_argument("--limit", type=int); oc.add_argument("--workers", type=int, default=3)
     dd = sub.add_parser("date-documents", help="give undated reports a year from their first pages (with the evidence)")
     dd.add_argument("--check", action="store_true", help="only measure accuracy on reports whose year is known")
+    ex = sub.add_parser("export", help="write the whole library as a dataset (parts + manifest) for backup or exchange")
+    ex.add_argument("dir", help="folder to write into (e.g. a USB disk)")
+    ex.add_argument("--no-files", action="store_true", help="catalogue only: database, lists and gazetteer, no report files")
+    ex.add_argument("--since", help="only report files added on or after this day (YYYY-MM-DD); the catalogue is complete")
+    ex.add_argument("--part-size", default="2G", help="largest part, e.g. 2G, 500M (default 2G)")
+    ex.add_argument("--name", default="", help="a label for the file name, e.g. your name or the occasion")
+    im = sub.add_parser("import", help="compare a dataset with this library and restore or merge it")
+    im.add_argument("path", help="the dataset's .manifest.json, one of its parts, or its folder")
+    im.add_argument("--check", action="store_true", help="only verify the dataset and compare it with this library")
+    im.add_argument("--prefer", choices=["local", "dataset"], default="local", help="whose hand edits win in a conflict")
+    im.add_argument("--no-index", action="store_true", help="skip matching topics, dates and actors afterwards")
     fa = sub.add_parser("fetch-actors", help="download the actor gazetteer (Wikidata, Wikipedia, MITRE ATT&CK)")
     fa.add_argument("--refresh", action="store_true", help="read the Wikipedia infoboxes again instead of the cache")
     ia = sub.add_parser("index-actors", help="find the gazetteer's actors in the report texts")
@@ -72,6 +83,18 @@ def main():
     elif a.cmd == "fetch-actors":
         from . import actor_sources
         print(actor_sources.fetch(refresh=a.refresh))
+    elif a.cmd == "export":
+        from . import dataset
+        size = a.part_size.strip().upper()
+        mult = {"K": 1e3, "M": 1e6, "G": 1e9}.get(size[-1:], 1)
+        m = dataset.export(a.dir, files=not a.no_files, since=a.since, name=a.name,
+                           part_size=int(float(size.rstrip("KMG")) * mult))
+        print(f"dataset {m['dataset_id']}: {len(m['parts'])} part(s), {m['bytes'] / 1e9:.2f} GB, "
+              f"{m['scope']['files_included']} report files\nmanifest: {m['manifest_path']}")
+    elif a.cmd == "import":
+        from . import dataset
+        r = dataset.import_dataset(a.path, check=a.check, prefer=a.prefer, index=not a.no_index)
+        print(dataset.describe(r))
     elif a.cmd == "index-actors":
         from . import actors
         print(actors.index(a.workers, rematch=a.rematch))
