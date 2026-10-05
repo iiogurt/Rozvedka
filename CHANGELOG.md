@@ -27,6 +27,14 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.22.1] – 2026-10-05
+
+### Fixed
+- Home page: the ASCII radar and word mark could fall apart in Chrome on Windows or macOS, where the system
+  monospace font (Consolas, Menlo) lacks some of the glyphs and others are drawn at a different width. The banner,
+  search console and readout now use a bundled 21 KB subset of DejaVu Sans Mono (`static/vendor/fonts`, Bitstream
+  Vera licence), so they look the same in every browser.
+
 ## [0.22.0] – 2026-10-05
 
 ### Added
@@ -399,7 +407,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.22.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.22.1...HEAD
+[0.22.1]: https://github.com/iiogurt/Rozvedka/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/iiogurt/Rozvedka/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/iiogurt/Rozvedka/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/iiogurt/Rozvedka/compare/v0.19.0...v0.20.0
