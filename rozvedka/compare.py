@@ -75,8 +75,11 @@ def fts_spans(con, doc_id: int, terms: list[str]) -> list[tuple[int, int]]:
     highlight() marks every match in the stored text, so the positions are those of the original text."""
     alts = [t for t in terms if not topics._CJK.search(topics.normalize(t))]
     query = " OR ".join('"' + t.rstrip("*").replace('"', "") + '"' + ("*" if t.endswith("*") else "") for t in alts)
-    if not query:
-        return []
+    return highlight_spans(con, doc_id, query) if query else []
+
+
+def highlight_spans(con, doc_id: int, query: str) -> list[tuple[int, int]]:
+    """Positions of a full-text query's matches in a report's stored text (highlight() with its markers removed)."""
     try:
         row = con.execute("SELECT highlight(doc_text, 1, char(2), char(3)) FROM doc_text WHERE doc_text MATCH ? AND rowid=?",
                           (query, doc_id)).fetchone()

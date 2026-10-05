@@ -1,0 +1,4 @@
+# Watchlist – searches followed update by update on the portal's Watchlist page (/watch).
+# Each item is a search-console query: words, "phrases", and filters such as country:DE actor:"Wagner Group"
+# topic:ransomware year:2020..2025 (see the home page's "How search works"). Written by the portal; editable by hand.
+[]

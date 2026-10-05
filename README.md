@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.24.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.25.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -73,6 +73,23 @@ demand).
 Every number opens the list it counts.
 
 <img src="docs/images/new.png" alt="What's new: updates by day, actors named for the first time, topics that jumped, new reports by agency" width="900">
+
+### ☆ Watchlist
+
+`/watch` follows searches **update by update** – one list for the whole portal (no accounts, no per-browser state),
+kept in [`sources/watchlist.yaml`](sources/watchlist.yaml) (written by the portal, editable by hand). An item is any
+search-console query: `actor:"Wagner Group"`, `topic:ransomware country:DE`, `"critical infrastructure"`. Add one with
+the box on the page, **☆ Watch this search** on the Documents list or **☆ Watch** on an actor page.
+
+- **Reports per update** – a table of the watched searches × the latest updates (with the earlier ones summed), each
+  cell the number of the item's reports that entered the library that day.
+- **By update** – newest update first, which watched searches it brought reports for.
+- Per item: its newest reports, each with its passage on the search (densest mentions or terms) and page, and an
+  **Atom feed** of the item (`/feed.atom?watch=…`).
+
+Every number opens the Documents list of exactly those reports.
+
+<img src="docs/images/watch.png" alt="Watchlist: watched searches by update, the updates in order, the newest reports with passages" width="900">
 
 ### ⚖️ Compare agencies
 
@@ -426,6 +443,7 @@ flowchart LR
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |
+| `rozvedka/watch.py`, `doclist.py` | the watchlist (queries counted update by update); the Documents list's filters as SQL, shared by every count |
 | `rozvedka/compare.py` | Compare agencies: per-agency counts and densest passages on one actor or topic |
 | `rozvedka/updates.py` | What's new by update and the Atom feed, each count with its link |
 | `rozvedka/home.py` | the home page: search-console operators and suggestions, dashboard counts with their links |
@@ -436,7 +454,7 @@ flowchart LR
 ```bash
 .venv/bin/pip install -r requirements-dev.txt
 .venv/bin/python -m pytest -q
-.venv/bin/python tools/check_links.py      # before a release: home, What's new and Compare counts = their lists; no broken links
+.venv/bin/python tools/check_links.py      # before a release: home, What's new, Compare and Watchlist counts = their lists; no broken links
 ```
 
 - **Working rules:** [`CLAUDE.md`](CLAUDE.md) holds the project conventions – scope and source rules, the

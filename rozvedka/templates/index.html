@@ -53,6 +53,8 @@
 </div>{% endif %}
 <div class="summary">
   <span><b>{{ total }}</b> documents match</span>
+  {% if watch_query %}<form method="post" action="/watch/add" class="inline" title="Follow this search update by update on the Watchlist: {{ watch_query }}">
+    <input type="hidden" name="query" value="{{ watch_query }}"><button class="watch-btn">☆ Watch this search</button></form>{% endif %}
   {% set cur = f.sort or 'year' %}<span class="muted small">sorted by
     {% for key, label in ((('relevance', 'relevance'),) if f.topic or f.q else ()) + (('year', 'year'), ('added', 'date added')) %}
       {% if cur == key %}<b>{{ label }}</b>{% else %}<a href="/documents?{{ qs(sort=key, page=1) }}">{{ label }}</a>{% endif %}{{ ' · ' if not loop.last }}
