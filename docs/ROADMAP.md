@@ -99,7 +99,9 @@ Each item: why · what · done when · version step.
 
 ### E. Engineering and operations (continuous)
 
-19. **Backups** – nightly `sqlite3 .backup` + rsync of `data/` to an external disk or NAS; restore test. · patch
+19. ✅ (0.27.0, as the owner specified: manual, no nightly job) **Backups and exchange** – datasets (`export` /
+    `import`): the whole library in parts for any transfer service, verified, compared newer/older, restored or merged;
+    tested by a full export and a restore into a separate installation. · minor
 20. **CI** – GitHub Actions running the test suite on every PR (private repo minutes suffice). · patch
 21. **Performance** – cache actor and network results per index version; the actor page for large actors and
     `/network` take 1–3 s on the Pi. · patch
@@ -110,7 +112,7 @@ Each item: why · what · done when · version step.
 
 ## 4. Suggested next three steps
 
-1. **E19** – the data backed up (updates stay on demand – owner's decision).
+1. ✅ **E19** – datasets for backup and exchange (0.27.0).
 2. ✅ **A2 + A3** – hand-import and report series (0.17.0, 0.18.0). Next: collect the blocked flagship reports by hand.
 3. ✅ **B5 + B6** – dates and OCR (0.20.0, 0.21.0, 0.22.3): 90 reports left undated (from 465), 135 scanned reports recognised.
 

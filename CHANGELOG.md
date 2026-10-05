@@ -27,6 +27,22 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.27.0] – 2026-10-05
+
+### Added
+- **Datasets for backup and exchange** – `python -m rozvedka export DIR` writes the whole library (database copy,
+  report files, logos, actor gazetteer, the portal's lists) as parts of at most 2 GB plus a manifest with the
+  exporter, date, version, freshness per source and a SHA-256 per part; `--no-files` (catalogue only), `--since DATE`
+  (only newer report files), `--part-size`, `--name`. `python -m rozvedka import PATH` verifies the parts, compares
+  the dataset with the library (newer / older / mixed / complementing, per source, and what it would add or change; `--check` stops
+  there), then restores an empty library or merges into an existing one by source key and report address – adding
+  reports, files, text and OCR, filling years, keeping the later crawl dates, listing conflicting hand edits (local
+  wins unless `--prefer dataset`), merging watchlist, reviews and series, and marking reports without a file for
+  download. A copy of the database is kept in `data/backups/` before every import; the report in `data/imports/`.
+- **Data exchange** page (`/data`, under Sources): this installation's identity and freshness, the commands, and
+  the history of exports and imports.
+- Each installation has an identity (`data/installation.json`); imported reports record the dataset they came from.
+
 ## [0.26.0] – 2026-10-05
 
 ### Added
@@ -482,7 +498,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.26.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.27.0...HEAD
+[0.27.0]: https://github.com/iiogurt/Rozvedka/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/iiogurt/Rozvedka/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/iiogurt/Rozvedka/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/iiogurt/Rozvedka/compare/v0.23.0...v0.24.0

@@ -3,7 +3,7 @@
 {% from "_series.html" import grid, legend %}
 {% block title %}Coverage · Sources · Rozvedka{% endblock %}
 {% block main %}
-<nav class="subnav" aria-label="Source views"><a href="/sources">Agencies</a><a href="/sources/coverage" class="on">Coverage</a><a href="/collect">To collect</a></nav>
+<nav class="subnav" aria-label="Source views"><a href="/sources">Agencies</a><a href="/sources/coverage" class="on">Coverage</a><a href="/collect">To collect</a><a href="/data">Data exchange</a></nav>
 <p class="net-summary"><b>{{ totals.series }}</b> confirmed report series{% if source %} of {{ source }} <a class="small" href="/sources/coverage">all sources</a>{% endif %}
   · <b>{{ totals.complete }}</b> complete · <b>{{ totals.missing }}</b> editions missing · <b>{{ totals.listed }}</b> listed but not downloaded
   <span class="muted">· {{ pg.total }} proposals to review</span></p>

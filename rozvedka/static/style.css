@@ -723,3 +723,8 @@ table.wl-matrix { border-collapse: collapse; font-size: 13px; width: 100%; }
 .rv-wrong:hover { border-color: var(--err); color: var(--err); }
 .kind-chips { margin: 8px 0 10px; }
 .rv-name { margin-top: 12px; }
+
+/* Data exchange */
+.dx-cards { flex-wrap: wrap; margin: 12px 0 14px; }
+.dx-cards > * { flex: 1 1 200px; display: flex; flex-direction: column; padding: 8px 12px; background: var(--chip); border-radius: 8px; }
+.dx-cmd { font: 12.5px/1.6 ui-monospace, monospace; background: var(--chip); padding: 10px 12px; border-radius: 8px; overflow-x: auto; }
