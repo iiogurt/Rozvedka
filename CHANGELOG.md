@@ -27,6 +27,27 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.22.0] – 2026-10-05
+
+### Added
+- Home page (`/`): an ASCII radar and word mark, a search console and dashboards. The search understands filters –
+  `country:`, `coalition:`, `agency:`, `type:`, `topic:`, `actor:` (any name or alias), `year:` (one year or
+  `2020..2025`) and `lang:` – next to words and `"phrases"`, and opens the Documents list with them set. Unknown or
+  ambiguous filters are explained with the choices as links. Suggestions as you type (actors, topics, agencies,
+  countries, with report counts); <kbd>Tab</kbd> completes a filter; recent searches stay in your browser.
+- Dashboards on the home page: newest editions, reports added in the last 7 / 30 / 90 days, reports per
+  publication year (with the undated ones), rising topics, the actors most named in last year's reports, the
+  library by agency type and download state, editions to collect and the date of the last crawl. Every number
+  links to the list it counts.
+- Documents list: sort by date added; filters for reports without a year (`undated=1`) and for reports added since
+  a day (`added_from=`).
+- `tools/check_links.py`: before a release, compares every home-page count with its list and follows the internal
+  links of the main pages.
+
+### Changed
+- The Documents list moved from `/` to `/documents` (menu: Documents; the Rozvedka name opens the home page).
+  Old links and bookmarks such as `/?country=CZ` are redirected, so nothing breaks.
+
 ## [0.21.0] – 2026-10-02
 
 ### Added
@@ -378,7 +399,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.21.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.22.0...HEAD
+[0.22.0]: https://github.com/iiogurt/Rozvedka/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/iiogurt/Rozvedka/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/iiogurt/Rozvedka/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/iiogurt/Rozvedka/compare/v0.18.0...v0.19.0

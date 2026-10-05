@@ -16,7 +16,7 @@
 <section class="viz-card">
   <h2 class="viz-title">In the reports</h2>
   <p class="viz-sub muted small"><b>{{ docs }}</b> reports by <b>{{ agencies|length }}</b> agencies mention {{ a.label }}
-    · <a href="/?actor={{ a.key }}">list them</a></p>
+    · <a href="/documents?actor={{ a.key }}">list them</a></p>
   {% if timeline %}
   <div id="timeline" class="chart chart-actor" role="img" aria-label="Share of reports per year that mention {{ a.label }}"></div>
   <p class="muted small hint">Share of each year's reports that mention the actor (same base as the Trends pages). Click a bar for the list.</p>
@@ -31,7 +31,7 @@
   <h3 class="viz-mini">Reporting agencies</h3>
   <ul class="actor-list">
     {% for g in agencies[:20] %}<li><img class="flag-sm" src="{{ flag_url(g.country) }}" alt="">
-      <a href="/?actor={{ a.key }}&source={{ g.source_id }}">{{ g.agency }}</a>
+      <a href="/documents?actor={{ a.key }}&source={{ g.source_id }}">{{ g.agency }}</a>
       <span class="muted small">{{ g.docs }} report{{ 's' if g.docs != 1 }}{% if g.y0 %} · {{ g.y0 }}{% if g.y1 != g.y0 %}–{{ g.y1 }}{% endif %}{% endif %}</span></li>{% endfor %}
   </ul>
   {% if agencies|length > 20 %}<p class="muted small">and {{ agencies|length - 20 }} more</p>{% endif %}
@@ -127,7 +127,7 @@
 
 <section class="viz-card" id="passages">
   <h2 class="viz-title">Passages</h2>
-  <p class="muted small viz-sub">The first mention in each report, newest reports first (<a href="/?actor={{ a.key }}">as a document list</a>).
+  <p class="muted small viz-sub">The first mention in each report, newest reports first (<a href="/documents?actor={{ a.key }}">as a document list</a>).
     "p." opens the downloaded report at that page; "original" is the agency's own copy.</p>
   {{ pager(pg, "reports") }}
   <ol class="passages">

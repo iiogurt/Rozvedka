@@ -11,9 +11,9 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
 <header class="top">
-  <a class="brand" href="/">Rozvedka</a>
+  <a class="brand{{ ' on' if request.url.path == '/' }}" href="/" title="Home – search and what is new">Rozvedka</a>
   <nav>
-    <a href="/" class="{{ 'on' if request.url.path == '/' }}">Documents</a>
+    <a href="/documents" class="{{ 'on' if request.url.path.startswith('/documents') }}">Documents</a>
     <a href="/series" class="{{ 'on' if request.url.path.startswith('/series') }}">Series</a>
     <a href="/sources" class="{{ 'on' if request.url.path.startswith('/sources') or request.url.path.startswith('/collect') }}">Sources</a>
     <a href="/topics" class="{{ 'on' if request.url.path.startswith('/topics') }}">Topics</a>

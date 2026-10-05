@@ -35,7 +35,7 @@
       <td><a class="a-name" href="/actors/{{ r.key }}">{{ r.label }}</a>
         {% if r.description %}<div class="muted small">{{ r.description }}</div>{% endif %}</td>
       <td class="small">{{ kinds.get(r.kind, r.kind) }}</td>
-      <td class="a-docs"><a href="/?actor={{ r.key }}">{{ r.docs }}</a>
+      <td class="a-docs"><a href="/documents?actor={{ r.key }}">{{ r.docs }}</a>
         <span class="bar" aria-hidden="true"><i style="width: {{ (r.docs / maxdocs * 100)|round(1) }}%"></i></span></td>
       <td class="num">{{ r.agencies }}</td>
       <td class="num">{{ r.countries }}</td>

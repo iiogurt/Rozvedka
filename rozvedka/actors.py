@@ -598,7 +598,7 @@ def actor_detail(key: str, passages: int = 40, page: int | str = 1) -> dict | No
             marks = ",".join("?" * len(doc_ids))
             tax = topics.taxonomy()["topics"]
             topic_rows = [{"key": r["topic"], "name": tax.get(r["topic"], {}).get("name", r["topic"]), "docs": r["n"],
-                           "link": f"/?actor={key}&topic={r['topic']}"}
+                           "link": f"/documents?actor={key}&topic={r['topic']}"}
                           for r in con.execute(f"""SELECT topic, COUNT(*) n FROM doc_topics WHERE doc_id IN ({marks})
                                                    GROUP BY topic ORDER BY n DESC LIMIT 15""", doc_ids)
                           if not tax.get(r["topic"], {}).get("meta")]

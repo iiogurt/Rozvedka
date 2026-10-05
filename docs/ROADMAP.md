@@ -73,7 +73,9 @@ Each item: why · what · done when · version step.
 
 ### C. Reading workflow – "what is new, what changed"
 
-10. **What's new** – per crawl: new reports with their main topics and actors, first-time mentions of actors,
+10. ◐ (0.22.0: the home page shows newest editions, reports added in the last 7/30/90 days, rising topics and the
+    most named actors, with a search console; still open: per-crawl first-time mentions and the Atom feed)
+    **What's new** – per crawl: new reports with their main topics and actors, first-time mentions of actors,
     topics whose share jumped; Atom feed from the portal (no external service). · minor
 11. **Watchlist** – follow actors, topics or search terms; the start page shows new passages for them since the
     last visit; saved searches. · minor
@@ -114,3 +116,4 @@ Each item: why · what · done when · version step.
 3. ✅ **B5 + B6** – dates and OCR (0.20.0, 0.21.0): 295 reports dated, 135 scanned reports recognised.
 
 After that, C10–C12 turn the portal from an archive into a weekly reading tool.
+The home page (0.22.0) is the start of C10 and the natural place for C11's watchlist.

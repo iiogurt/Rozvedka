@@ -33,7 +33,7 @@
   {% if notice.error %}Not added: {{ notice.error }}
   {% elif notice.status == 'downloaded' %}Added as <a href="/doc/{{ notice.doc }}">report #{{ notice.doc }}</a> – text, topics and actors are being indexed.
     {% if not notice.official %}<br><b>Note:</b> the URL is not on the agency's official domains – check that it is the agency's own copy.{% endif %}
-  {% elif notice.status == 'duplicate' %}This exact file is already in the library (see <a href="/?q=&source=">documents</a>); report #{{ notice.doc }} points to it.
+  {% elif notice.status == 'duplicate' %}This exact file is already in the library (see <a href="/documents?q=&source=">documents</a>); report #{{ notice.doc }} points to it.
   {% else %}Report #{{ notice.doc }}: {{ notice.status }}{% endif %}
 </div>{% endif %}
 
