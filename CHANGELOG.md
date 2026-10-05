@@ -27,6 +27,22 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.22.3] – 2026-10-05
+
+### Changed
+- More reports have a year: undated reports went from 168 to 90 (roadmap B5's target was under 100). New evidence,
+  each stored with the report and shown when you hover the year:
+  - Japanese era years in titles (平成29年版 → 2017; 21 disaster-management white papers);
+  - a year in a file name passed in the address (`…?file=…Spring-2026.pdf`, `?filename=Political Guidelines 2024-2029.pdf`)
+    and date stamps in file names (`20260611_SGDSN_….pdf`);
+  - the year shared by at least three other dated reports in the same folder of the site (100 % exact in the blind
+    check), unless the report's own first page names another year;
+  - publication dates with month names in all the library's languages (Estonian, Latvian, Lithuanian, Hungarian,
+    Finnish, Croatian, Romanian, Portuguese, Greek, Bulgarian, Irish, Maltese …), year-first dates
+    ("2024. gada 18. jūlijā") and imprint lines ("Utgitt av DSB 2025", "Traficomin julkaisuja 11/2025");
+  - the only year on a title page (82 % exact).
+- `date-documents --check` reports accuracy per rule.
+
 ## [0.22.2] – 2026-10-05
 
 ### Fixed
@@ -414,7 +430,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.22.2...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.22.3...HEAD
+[0.22.3]: https://github.com/iiogurt/Rozvedka/compare/v0.22.2...v0.22.3
 [0.22.2]: https://github.com/iiogurt/Rozvedka/compare/v0.22.1...v0.22.2
 [0.22.1]: https://github.com/iiogurt/Rozvedka/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/iiogurt/Rozvedka/compare/v0.21.0...v0.22.0

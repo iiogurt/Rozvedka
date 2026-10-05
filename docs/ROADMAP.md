@@ -59,7 +59,7 @@ Each item: why · what · done when · version step.
 
 ### B. Data quality
 
-5. ✅ (0.20.0: 463 → 181 undated) **Dates for undated reports** – from PDF metadata, the first page ("Annual Report 2023", "Jahresbericht 2022",
+5. ✅ (0.20.0: 463 → 181 undated; 0.22.3: 168 → 90, target met) **Dates for undated reports** – from PDF metadata, the first page ("Annual Report 2023", "Jahresbericht 2022",
    publication dates) and the series model; show where each date came from, keep manual corrections.
    *Done when* undated reports drop from 465 to < 100, with a sampled accuracy check. · minor
 6. ✅ (0.21.0: 135 reports recognised) **OCR for scanned reports** – `ocrmypdf`/Tesseract (local, no model downloads beyond language packs) for the
@@ -113,7 +113,7 @@ Each item: why · what · done when · version step.
 
 1. **E19** – the data backed up (updates stay on demand – owner's decision).
 2. ✅ **A2 + A3** – hand-import and report series (0.17.0, 0.18.0). Next: collect the blocked flagship reports by hand.
-3. ✅ **B5 + B6** – dates and OCR (0.20.0, 0.21.0): 295 reports dated, 135 scanned reports recognised.
+3. ✅ **B5 + B6** – dates and OCR (0.20.0, 0.21.0, 0.22.3): 90 reports left undated (from 465), 135 scanned reports recognised.
 
 After that, C10–C12 turn the portal from an archive into a weekly reading tool.
 The home page (0.22.0) is the start of C10 and the natural place for C11's watchlist.

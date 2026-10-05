@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.22.2-1f4e79)
+![version](https://img.shields.io/badge/version-0.22.3-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -307,11 +307,21 @@ Pages that turn out to be empty JavaScript shells are rendered with Chromium aut
 <summary><b>Where the year of a report comes from</b></summary>
 
 - From the title or the address of the file when they contain one (most reports).
-- Otherwise from the report's first pages (`date-documents`): a **report heading** – "Annual Report 2023",
-  "Jahresbericht 2022", "za rok 2021", "2023年版" (the covered year; a range gives its end year; the cover page counts
-  first) – else a **publication date** ("12 February 2022", "© 2024"), shown as *≈ 2024* on the Documents page. The
-  evidence is stored with the report (hover the year). A blind check on 500 reports with known years: headings 82 %
-  exact / 89 % within one year, publication dates 68 % / 83 %. PDF creation dates were tested and are not used.
+- Otherwise (`date-documents`), in this order, each with its evidence stored with the report (hover the year):
+  1. a Japanese era year in the title (平成29年版 = 2017), a year in a file name passed in the address
+     (`…?file=…Spring-2026.pdf`), or a date stamp in the file name (`20260611_report.pdf`, a publication date);
+  2. a **report heading** on the first pages – "Annual Report 2023", "Jahresbericht 2022", "za rok 2021",
+     "2023年版" (the covered year; a range gives its end year; the cover page counts first);
+  3. **the same folder**: at least three other dated reports in the same folder of the site, all from one year –
+     unless the report's first page names another year;
+  4. a **publication date** – "12 February 2022", "2024. gada 18. jūlijā", "Utgitt av DSB 2025", "© 2024", with
+     month names in the library's languages – shown as *≈ 2024* on the Documents page;
+  5. the **only year on a title page** (a first page of under 800 characters).
+
+  A blind check on the ~2,400 reports whose year comes from their title (`date-documents --check`): headings 81 %
+  exact / 89 % within one year, same folder 100 % / 100 %, publication dates 66 % / 83 %, lone cover year 82 % / 86 %.
+  File-name date stamps disagree with those reference years more often, but where checked by hand the stamp was
+  right and the reference year wrong (e.g. UK ISC press releases). PDF creation dates were tested and are not used.
 - Years set by hand are marked as such and never changed; no year is ever overwritten.
 
 </details>
