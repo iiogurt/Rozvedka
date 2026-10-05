@@ -27,6 +27,23 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.28.0] – 2026-10-05
+
+### Added
+- **Export and import in the portal** (*Sources → Data exchange*): export in three steps (what – everything,
+  catalogue only, or catalogue + report files since a day, each with its size; where – a folder picker over USB disks
+  and the home folder with free space and *new folder*; options – largest file and label) with a space check;
+  import by picking the folder with a dataset (listed with date, origin, size, files present), **Check and compare**,
+  then **Import** with the choice whose hand edits win. A progress panel shows the steps, a progress bar with size,
+  speed and time left, the live log (also saved in `data/logs/`) and the result; **Cancel** removes a partial export
+  and stops an import until it starts changing the library. One job at a time; not while a crawl or download runs.
+- The folder picker only lists `/media`, `/mnt`, `/run/media`, the home folder and `ROZVEDKA_EXCHANGE_DIRS` – the
+  portal has no login, so it never shows the rest of the file system (symbolic links cannot lead out).
+
+### Changed
+- After an import from the portal, topics, dates and actors are matched in separate processes (their worker
+  processes must not be forked from the portal's threads).
+
 ## [0.27.0] – 2026-10-05
 
 ### Added
@@ -498,7 +515,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.27.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.28.0...HEAD
+[0.28.0]: https://github.com/iiogurt/Rozvedka/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/iiogurt/Rozvedka/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/iiogurt/Rozvedka/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/iiogurt/Rozvedka/compare/v0.24.0...v0.25.0

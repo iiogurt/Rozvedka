@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.27.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.28.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -256,29 +256,35 @@ among their three main topics), with a details panel and links to every count.
 
 ### 💾 Data exchange – backup and sharing without crawling
 
-The whole library can be written as a **dataset** and imported elsewhere, so a second installation (or a friend)
-does not have to crawl the agencies, and either side can crawl on from there. See *Sources → Data exchange*
-(`/data`) for this installation's state and the history of exports and imports.
+*Sources → Data exchange* (`/data`) backs up the whole library or hands it to someone else, who then does not have
+to crawl the agencies – and either side can crawl on from there.
 
-- `python -m rozvedka export DIR` writes one tar stream cut into parts of at most 2 GB (`--part-size`), fit for any
-  file-transfer service, plus a manifest: who made it, when, with which version, how fresh the data is per source,
-  and the SHA-256 of every part. Inside: a consistent copy of the database, the report files, logos, the actor
-  gazetteer and the lists the portal keeps (series, watchlist, reviews). `--no-files` gives a catalogue only;
-  `--since DATE` only the report files added since then (the catalogue is always complete).
-- `python -m rozvedka import DIR --check` verifies every part and compares the dataset with the library –
-  **newer, older, mixed or complementing** (same crawl state, but reports this library lacks), overall and per source – and what an import would add or change, without changing
-  anything.
-- `python -m rozvedka import DIR`: an **empty installation** is restored from the dataset; an **existing library**
-  is merged – sources, pages and reports matched by key and address (ids differ between installations), missing
-  reports, files, text and OCR added, empty years filled, the later crawl dates kept, the same file under another
-  address recorded as a duplicate. Conflicting hand edits (hidden, title, language, a year set by hand) are listed
-  and keep the library's value unless `--prefer dataset`. Reports whose file the dataset does not carry are marked
-  for download. An older dataset adds nothing; importing twice changes nothing. The database is copied to
-  `data/backups/` first, the full report saved in `data/imports/`, and each imported report records its dataset.
-- On this Raspberry Pi the full library (3,442 reports, 14.9 GB in 8 parts) exports in about 18 minutes and restores
-  into a new installation in about 27; checking the parts alone (`--check`) takes about 6.
+<img src="docs/images/data-export.png" alt="Data exchange: an export running with its steps, progress bar, speed, time left and log" width="900">
 
-<img src="docs/images/data.png" alt="Data exchange page: this installation, export and import commands, history" width="900">
+- **Export** in three steps: *what* – everything, the catalogue only (the receiver downloads the report files from
+  the agencies), or the catalogue plus the report files added since a day – each with its size; *where* – a folder
+  picker over USB disks (`/media`, `/mnt`) and the home folder, with free space and *new folder*; *options* – the
+  largest file (4 GB … 100 MB, 2 GB fits most transfer services) and a label. A meter shows whether it fits.
+- The result is a **dataset**: one tar stream cut into files of at most that size plus a manifest – who made it,
+  when, with which version, how fresh the data is per source, the SHA-256 of every file. Inside: a consistent copy of
+  the database, the report files, logos, the actor gazetteer and the lists the portal keeps.
+- **Import**: pick the folder with the dataset's files; datasets found there are listed with their date, origin,
+  size and whether all files are present. **Check and compare** verifies every file and compares the dataset with
+  the library – newer, older, mixed or complementing (same crawl state, but reports this library lacks), per source
+  and per report – without changing anything; then **Import**, choosing whose hand edits win in a conflict.
+  An **empty installation** is restored from the dataset; an **existing library** is merged – sources, pages and
+  reports matched by key and address (ids differ between installations), missing reports, files, text and OCR
+  added, empty years filled, the later crawl dates kept, conflicting hand edits listed. Reports whose file the
+  dataset does not carry are marked for download; an older dataset adds nothing; importing twice changes nothing.
+- **Progress** for every step (copying and compressing the database, writing, checking, merging, writing files,
+  matching topics and actors), with a progress bar, size, speed and time left, the live **log** (kept in
+  `data/logs/`), and **Cancel** – an export removes its partial files; an import can be stopped until it starts
+  changing the library. Before any change the database is copied to `data/backups/` (the last three are kept).
+- The same on the command line: `python -m rozvedka export DIR` / `import DIR [--check]` (see Commands).
+- On this Raspberry Pi the full library (3,442 reports, 14.9 GB in 8 files) exports in about 18 minutes and restores
+  into a new installation in about 27; checking alone takes about 6. The catalogue only takes about 2 minutes (280 MB).
+
+<img src="docs/images/data-import.png" alt="Data exchange: the result of Check and compare, with the choice whose edits win and the Import button" width="900">
 
 ### 🌗 Dark and light theme
 
@@ -478,6 +484,7 @@ flowchart LR
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |
+| `rozvedka/datajobs.py`, `folders.py` | the Data exchange page's jobs (progress, log, cancel) and its folder picker (only below its roots) |
 | `rozvedka/dataset.py` | datasets: export in parts with a manifest, verify, compare (newer / older), restore or merge |
 | `rozvedka/review.py` | precision review of actor matches: the queue, verdicts with evidence, measured precision |
 | `rozvedka/watch.py`, `doclist.py` | the watchlist (queries counted update by update); the Documents list's filters as SQL, shared by every count |
