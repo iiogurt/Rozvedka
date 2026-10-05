@@ -31,7 +31,7 @@
          data-coalitions="{{ coalition_tags(country)|map(attribute='key')|join(' ') }}{{ ' ' ~ country if country in ('EU', 'NATO') }}">
   <h2><img class="flag" src="{{ flag_url(country) }}" alt="" width="32" height="24">
     {{ COUNTRY_NAMES.get(country, country) }} <span class="muted">· {{ items|length }}</span>
-    <span class="coalitions">{% for t in coalition_tags(country) %}<a class="ctag ctag-{{ t.key }}" href="/?coalition={{ t.key }}"
+    <span class="coalitions">{% for t in coalition_tags(country) %}<a class="ctag ctag-{{ t.key }}" href="/documents?coalition={{ t.key }}"
       title="{{ t.name }} since {{ t.since }}">{{ t.short }}<span class="since"> {{ t.since }}</span></a>{% endfor %}</span></h2>
   <div class="cards">
   {% for s in items %}
@@ -56,7 +56,7 @@
     {% if s.notes %}<div class="note">{{ s.notes }}</div>{% endif %}
     <div class="card-links">
       {% if s.homepage %}<a href="{{ s.homepage }}" target="_blank" rel="noopener">⌂ {{ s.homepage.split('//')[1].rstrip('/') }}</a>{% endif %}
-      <a href="/?source={{ s.id }}"><b>{{ s.n_docs }}</b> documents · {{ s.n_ok or 0 }} downloaded</a>
+      <a href="/documents?source={{ s.id }}"><b>{{ s.n_docs }}</b> documents · {{ s.n_ok or 0 }} downloaded</a>
       {% if s.lat is not none %}<a href="/map#s-{{ s.id }}" title="{{ s.hq_address }}">◉ on map</a>{% endif %}
     </div>
     {% for c in series_by.get(s.key, []) %}<div class="src-series"><h4><a href="/series/{{ sid(c.series) }}">{{ c.series.name }}</a>{% if c.complete %} <span class="sg-have small">complete</span>{% endif %}

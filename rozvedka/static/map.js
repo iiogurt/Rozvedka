@@ -93,7 +93,7 @@
       ${a.coalitions.length ? `<div class="pop-coal">${coalitionChips(a)}</div>` : ""}
       <p class="pop-desc">${esc(a.description)}</p>
       <div class="pop-addr"><b>HQ:</b> ${esc(a.hq_address)}<br><span class="muted">${esc(PRECISION[a.hq_precision] || "")}</span></div>
-      <div class="pop-links"><a href="/?source=${a.id}"><b>${a.n_docs}</b> documents${years(a)}</a>
+      <div class="pop-links"><a href="/documents?source=${a.id}"><b>${a.n_docs}</b> documents${years(a)}</a>
         <a href="/sources#s-${a.id}">profile</a>${home}</div></div>`;
   }
 
@@ -160,7 +160,7 @@
         }, { sticky: true, className: "hq-tip country-tip" });
         layer.on("click", () => {
           const t = document.getElementById("topic").value;
-          window.location.href = `/?country=${encodeURIComponent(f.properties.iso)}${t ? `&topic=${encodeURIComponent(t)}` : ""}`;
+          window.location.href = `/documents?country=${encodeURIComponent(f.properties.iso)}${t ? `&topic=${encodeURIComponent(t)}` : ""}`;
         });
         layer.on("mouseover", () => layer.setStyle({ weight: 2.5, color: "#9fd0ff" }));
         layer.on("mouseout", () => { shading.resetStyle(layer); fadeShading(); });

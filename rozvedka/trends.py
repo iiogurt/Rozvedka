@@ -42,7 +42,7 @@ def scope(country: str = "", coalition: str = "", type: str = "") -> tuple[str, 
 def docs_url(params: dict, **extra) -> str:
     """Documents-page link listing exactly the counted documents (indexed=1 limits it to classified ones)."""
     merged = {**params, "indexed": 1, **extra}
-    return "/?" + urlencode({k: v for k, v in merged.items() if v not in ("", None, [])}, doseq=True)
+    return "/documents?" + urlencode({k: v for k, v in merged.items() if v not in ("", None, [])}, doseq=True)
 
 
 def _years(con, where: str, args: list) -> list[int]:

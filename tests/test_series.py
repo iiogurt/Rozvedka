@@ -129,6 +129,6 @@ def test_series_reading_views(library):
         assert client.get("/series").status_code == 200
         r = client.get(f"/series/{sid}")
         assert r.status_code == 200 and "Edition by edition" in r.text
-        docs = client.get(f"/?series={sid}")
+        docs = client.get(f"/documents?series={sid}")
         assert docs.status_code == 200 and "editions of CZ/BIS – Annual Report" in docs.text
         assert client.get("/series/nope").status_code == 404

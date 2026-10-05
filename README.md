@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.21.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.22.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -14,7 +14,7 @@ collected, searchable, indexed by topic and actor, and traceable back to the pag
 [Features](#features) · [Quick start](#quick-start) · [Commands](#commands) · [Configuration](#configuration) ·
 [How it works](#how-it-works) · [Development](#development) · [Sources & licences](#data-sources-and-licences)
 
-<img src="docs/images/trends.png" alt="Trends page: share of reports per topic and year, with event markers" width="900">
+<img src="docs/images/home.png" alt="Home page: ASCII radar and word mark, the search console, and dashboards of the newest reports" width="900">
 
 </div>
 
@@ -40,14 +40,33 @@ local library, so you can follow how state security, social resilience and disas
 
 ## Features
 
+### 🛰️ Home – search console and dashboards
+
+The start page (`/`): an ASCII radar and word mark, one search box for the whole library, and what is new.
+
+- **Search console** – type words, `"a phrase"`, or filters: `country:DE`, `coalition:NATO`, `agency:BIS`,
+  `type:cyber`, `topic:ransomware`, `actor:"Fancy Bear"`, `year:2020..2025`, `lang:de`. The search opens the
+  Documents list with those filters set. A misspelt or ambiguous filter is explained, with the choices as links
+  (`agency:BIS` → BIS in Czechia or Slovakia).
+- **Suggestions as you type** – actors (by any of their names, e.g. `APT28` → Fancy Bear), topics, agencies and
+  countries, each with the number of reports it lists. <kbd>↑</kbd>/<kbd>↓</kbd> choose, <kbd>Enter</kbd> opens,
+  <kbd>Tab</kbd> puts the suggestion into the query as a filter, <kbd>/</kbd> jumps to the box. Recent searches
+  are remembered in your browser only.
+- **Dashboards** – newest editions; reports added in the last 7 / 30 / 90 days; reports per publication year
+  (every report in one row, undated ones included); rising topics; the actors most named in last year's reports;
+  the library by agency type and download state, with the editions still to collect; and when the data was last
+  crawled. Every number opens the list it counts.
+
+<img src="docs/images/home-search.png" alt="Search suggestions: actors, topics with report counts" width="900">
+
 ### 📚 Documents
 
-The library itself: every report with its agency, country, language, year and topics.
+The library itself (`/documents`): every report with its agency, country, language, year and topics.
 
 - Filter by country, coalition (EU, NATO, Five Eyes, G7, Schengen, AUKUS, JEF, NATO IP4), agency type, language,
   year or year range, download status, topic (several at once) and actor.
 - **Full-text search inside the reports** – `"quoted phrases"`, `OR` for translations
-  (`drone OR Drohne OR dron`), results with highlighted snippets, sorted by relevance or year.
+  (`drone OR Drohne OR dron`), results with highlighted snippets, sorted by relevance, year or date added.
 - Open a downloaded PDF, or the agency's original; correct a title, language or year; hide irrelevant files; add a
   document by URL for sites that block automatic downloads.
 - Page through the results with numbered pages, first/last, "go to page", and 25 / 50 / 100 / 200 / 500 per page –
@@ -372,6 +391,7 @@ flowchart LR
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |
+| `rozvedka/home.py` | the home page: search-console operators and suggestions, dashboard counts with their links |
 | `rozvedka/app.py`, `templates/`, `static/` | the server-rendered portal |
 
 ## Development
@@ -379,6 +399,7 @@ flowchart LR
 ```bash
 .venv/bin/pip install -r requirements-dev.txt
 .venv/bin/python -m pytest -q
+.venv/bin/python tools/check_links.py      # before a release: every home-page count = its list; no broken links
 ```
 
 - **Working rules:** [`CLAUDE.md`](CLAUDE.md) holds the project conventions – scope and source rules, the

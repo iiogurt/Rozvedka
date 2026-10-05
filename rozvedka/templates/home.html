@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Rozvedka – open-source intelligence library{% endblock %}
+{% block head %}<script src="/static/home.js" defer></script>{% endblock %}
+{% block body_class %}home{% endblock %}
+{% macro doc_row(r, when) %}
+  <li><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="{{ r.country }}" width="20" height="15">
+    <a class="h-src" href="/documents?source={{ r.source_id }}">{{ r.agency }}</a>
+    <span class="h-when">{{ when }}</span>
+    <span class="h-title">{% if r.local_path or r.status == 'downloaded' %}<a href="/doc/{{ r.id }}" target="_blank">{{ r.title }}</a>{% else %}<a href="{{ r.url }}" target="_blank" rel="noopener">{{ r.title }} ↗</a>{% endif %}</span>
+    <span class="lang">{{ r.lang or '?' }}</span></li>
+{% endmacro %}
+{% block main %}
+<section class="h-banner" aria-labelledby="h-name">
+  <pre class="h-radar" id="radar" aria-hidden="true"></pre>
+  <div class="h-id">
+<pre class="h-word" aria-hidden="true">██████╗  ██████╗ ███████╗██╗   ██╗███████╗██████╗ ██╗  ██╗ █████╗
+██╔══██╗██╔═══██╗╚══███╔╝██║   ██║██╔════╝██╔══██╗██║ ██╔╝██╔══██╗
+██████╔╝██║   ██║  ███╔╝ ██║   ██║█████╗  ██║  ██║█████╔╝ ███████║
+██╔══██╗██║   ██║ ███╔╝  ╚██╗ ██╔╝██╔══╝  ██║  ██║██╔═██╗ ██╔══██║
+██║  ██║╚██████╔╝███████╗ ╚████╔╝ ███████╗██████╔╝██║  ██╗██║  ██║
+╚═╝  ╚═╝ ╚═════╝ ╚══════╝  ╚═══╝  ╚══════╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝</pre>
+    <h1 id="h-name" class="h-name">Rozvedka <span>· разведка · reconnaissance</span></h1>
+    <div class="h-term">
+      <div><span class="h-prompt">&gt;</span> OPEN-SOURCE INTELLIGENCE · official reports of intelligence, security, cyber and civil-protection agencies</div>
+      <div><span class="h-prompt">&gt;</span>
+        <a href="{{ d.totals.reports.url }}"><b>{{ d.totals.reports.n|num }}</b> reports</a> ·
+        <a href="{{ d.totals.agencies.url }}"><b>{{ d.totals.agencies.n|num }}</b> agencies</a> ·
+        <a href="{{ d.totals.countries.url }}"><b>{{ d.totals.countries.n|num }}</b> countries</a> ·
+        <b>{{ d.totals.languages.n }}</b> languages ·
+        <a href="{{ d.totals.searchable.url }}" title="Reports whose text is extracted and indexed (full-text search, topics, actors)"><b>{{ d.totals.searchable.n|num }}</b> searchable</a>
+        ({{ (d.totals.searchable.words / 1e6)|round(1) }} M words)</div>
+      <div><span class="h-prompt">&gt;</span> last crawl
+        {% if d.fresh.last_crawl %}<b>{{ d.fresh.last_crawl[:10] }}</b> ({{ d.fresh.crawl_days }} day{{ 's' if d.fresh.crawl_days != 1 }} ago){% else %}never{% endif %}
+        · updates run by hand (<code>python -m rozvedka update</code>)<span class="h-cursor" aria-hidden="true">▌</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="h-search" aria-label="Search">
+  <form method="get" action="/search" class="h-console" role="search" autocomplete="off">
+    <label for="hq" class="h-ps1">rozvedka<span>:~$</span> search</label>
+    <div class="h-field">
+      <input id="hq" name="q" type="search" value="{{ q }}" spellcheck="false"
+             placeholder='words, "a phrase", or filters such as country:DE actor:"Fancy Bear" year:2023..2025'
+             aria-autocomplete="list" aria-controls="h-suggest" aria-expanded="false" aria-describedby="h-keys">
+      <ul id="h-suggest" class="h-suggest" role="listbox" hidden></ul>
+    </div>
+    <button>Search</button>
+  </form>
+  {% if problems %}<div class="h-problems" role="alert">
+    {% for p in problems %}<div><code>{{ p.token }}</code> – {{ p.message }}{% if p.options %}:
+      {% for label, rq in p.options %}<a class="topic-chip" href="/search?q={{ q.replace(p.token, rq)|urlencode }}">{{ label }}</a>{% endfor %}{% endif %}</div>{% endfor %}
+    <div class="muted small">Or <a href="/documents?q={{ q|urlencode }}">search for the whole text as words</a>.</div>
+  </div>{% endif %}
+  <div class="h-ops"><span class="muted small" id="h-keys">Filters (click to add; <kbd>Tab</kbd> completes a suggestion, <kbd>/</kbd> jumps here):</span>
+    {% for op, help in operators.items() %}<button type="button" class="h-op" data-op="{{ op }}:" title="{{ help }}">{{ op }}:</button>{% endfor %}
+  </div>
+  {% if examples %}<div class="h-try"><span class="muted small">Try</span>
+    {% for e in examples %}<a href="/search?q={{ e.q|urlencode }}" title="{{ e.note }}"><code>{{ e.q }}</code></a>{% endfor %}
+  </div>{% endif %}
+  <details class="h-syntax"><summary>How search works</summary>
+    <ul>
+      <li>Words are searched in titles, agency names and the full text of the reports; every word must occur, and word
+        beginnings match (<code>drone</code> finds <i>drones</i>). Use <code>"quotes"</code> for a phrase and
+        <code>OR</code> between alternatives (<code>Drohne OR drone</code>). Results are sorted by relevance (BM25).</li>
+      {% for op, help in operators.items() %}<li><code>{{ op }}:</code> {{ help }}</li>{% endfor %}
+      <li>Several filters narrow the list together (<code>topic:</code> can repeat: a report must have all topics).
+        The search opens the Documents list with these filters set, so each one can be removed there.</li>
+      <li>Suggestions show how many reports each link lists. Topic and actor matching is by keywords and names – see the
+        <a href="/topics">Topics</a> and <a href="/actors/names">actor names</a> pages for the rules.</li>
+    </ul>
+  </details>
+</section>
+
+<section class="h-grid">
+  <article class="viz-card h-card">
+    <h2 class="viz-title">Newest editions</h2>
+    <p class="viz-sub muted small">By publication year, then by when they entered the library.
+      <a href="{{ d.newest_url }}"><b>{{ d.newest_n|num }}</b> reports from {{ d.newest_year }}</a></p>
+    <ol class="h-docs">{% for r in d.newest %}{{ doc_row(r, r.year) }}{% endfor %}</ol>
+  </article>
+
+  <article class="viz-card h-card">
+    <h2 class="viz-title">Recently added</h2>
+    <p class="viz-sub muted small">Found by the crawler or added by hand{% if d.last_added %}; the last on {{ d.last_added }}{% endif %}{% if d.first_added %} (the library was started on {{ d.first_added }}){% endif %}.</p>
+    <div class="h-counters">{% for a in d.added %}<a href="{{ a.url }}"><b>{{ a.n|num }}</b><span>last {{ a.days }} days</span></a>{% endfor %}</div>
+    <ol class="h-docs">{% for r in d.recent %}{{ doc_row(r, r.discovered_at[5:10]) }}{% endfor %}</ol>
+    <p class="small"><a href="{{ d.recent_url }}">All reports, newest additions first →</a></p>
+  </article>
+
+  <article class="viz-card h-card">
+    <h2 class="viz-title">Reports by publication year</h2>
+    <p class="viz-sub muted small">The last 15 years; every listed report is in one row below.</p>
+    <table class="h-bars">
+      {% for y in d.years %}<tr><th>{{ y.year }}{% if y.partial %}<span class="muted" title="The year is not over"> so far</span>{% endif %}</th>
+        <td class="bar"><i style="width: {{ (100 * y.n / d.years_max)|round(1) }}%"></i></td>
+        <td class="n"><a href="{{ y.url }}">{{ y.n|num }}</a></td></tr>{% endfor %}
+      <tr class="h-rest"><th>before {{ d.older.before }}</th><td></td><td class="n"><a href="{{ d.older.url }}">{{ d.older.n|num }}</a></td></tr>
+      <tr class="h-rest"><th>no year</th><td class="muted small">year not found in title, URL or first pages</td><td class="n"><a href="{{ d.undated.url }}">{{ d.undated.n|num }}</a></td></tr>
+      {% if d.later %}<tr class="h-rest"><th>after {{ d.years[0].year }}</th><td class="muted small">dated in the future – check them</td><td class="n"><a href="/documents?year_from={{ d.years[0].year + 1 }}">{{ d.later }}</a></td></tr>{% endif %}
+    </table>
+  </article>
+
+  <article class="viz-card h-card">
+    <h2 class="viz-title">Rising topics</h2>
+    <p class="viz-sub muted small">{{ d.rising.how }} Numbers are reports; <a href="/trends">Trends</a> has the full series.</p>
+    {% if d.rising.rising %}<table class="h-rise">
+      <thead><tr><th>Topic</th><th>{{ d.rising.earlier[0] }}–{{ d.rising.earlier[1] % 100 }}</th><th>{{ d.rising.recent[0] }}–{{ d.rising.recent[1] % 100 }}</th><th>change</th></tr></thead>
+      {% for r in d.rising.rising %}<tr><th><a href="/documents?topic={{ r.key }}">{{ r.name }}</a></th>
+        <td><a href="{{ r.link_earlier }}" title="{{ r.n_earlier }} of {{ d.rising.docs_earlier }} reports">{{ (100 * r.earlier)|round|int }}%</a> <span class="muted small">{{ r.n_earlier }}</span></td>
+        <td><a href="{{ r.link_recent }}" title="{{ r.n_recent }} of {{ d.rising.docs_recent }} reports">{{ (100 * r.recent)|round|int }}%</a> <span class="muted small">{{ r.n_recent }}</span></td>
+        <td class="{{ 'up' if r.change_pp > 0 else 'down' }}">{{ '+' if r.change_pp > 0 }}{{ r.change_pp }} pp</td></tr>{% endfor %}
+    </table>{% else %}<p class="muted">Not enough classified reports in the two periods yet.</p>{% endif %}
+  </article>
+
+  <article class="viz-card h-card">
+    <h2 class="viz-title">Most named in {{ d.actor_year }}</h2>
+    <p class="viz-sub muted small">Reports published in {{ d.actor_year }} (<a href="/documents?year={{ d.actor_year }}">{{ d.actor_year_docs|num }}</a>)
+      that name the actor at least once; countries are left out. Being named is not a finding – open the passages.</p>
+    <table class="h-bars">
+      {% for a in d.top_actors %}<tr><th><a href="{{ a.page }}">{{ a.label }}</a> <span class="muted small">{{ a.kind }}</span></th>
+        <td class="bar"><i style="width: {{ (100 * a.n / d.actor_max)|round(1) }}%"></i></td>
+        <td class="n"><a href="{{ a.url }}">{{ a.n }}</a></td></tr>{% else %}<tr><td class="muted">No actor index yet (<code>python -m rozvedka index-actors</code>).</td></tr>{% endfor %}
+    </table>
+  </article>
+
+  <article class="viz-card h-card">
+    <h2 class="viz-title">Library</h2>
+    <p class="viz-sub muted small">Listed reports by agency type and download state.</p>
+    <table class="h-bars">
+      {% for t in d.by_type %}<tr><th>{{ t.name }}</th><td class="bar"><i style="width: {{ (100 * t.n / d.type_max)|round(1) }}%"></i></td>
+        <td class="n"><a href="{{ t.url }}">{{ t.n|num }}</a></td></tr>{% endfor %}
+    </table>
+    <ul class="h-health">
+      {% for h in d.health %}<li><span class="st st-{{ h.key }}">{{ h.label }}</span> <a href="{{ h.url }}">{{ h.n|num }}</a></li>{% endfor %}
+      <li><span class="st">editions to collect</span> <a href="/collect">{{ d.collect.missing }}</a>
+        {% if d.collect.inbox %}<span class="muted small">· {{ d.collect.inbox }} in the inbox</span>{% endif %}</li>
+    </ul>
+  </article>
+</section>
+{% endblock %}

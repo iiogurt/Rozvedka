@@ -15,7 +15,7 @@ from fastapi.templating import Jinja2Templates
 
 from markupsafe import escape
 
-from . import (__version__, actors, build_version, collect, countries, crawler, db, downloader, graphs, logos,
+from . import (__version__, actors, build_version, collect, countries, crawler, db, downloader, graphs, home, logos,
                paging, registry, series, topics, trends)
 from .config import FILES
 
@@ -73,6 +73,8 @@ tpl.env.globals.update(sid=series.sid, COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=T
                        coalition_tags=coalition_tags, COALITIONS=countries.coalitions(), VERSION=__version__,
                        BUILD=build_version())
 
+tpl.env.filters["num"] = lambda n: f"{n or 0:,}"
+
 _jobs: dict[str, str] = {}      # background job name -> status text
 _jobs_lock = threading.Lock()
 
@@ -102,11 +104,45 @@ def startup():
 
 
 @app.get("/")
-def index(request: Request, country: str = "", type: str = "", lang: str = "", year: str = "",
+def home_page(request: Request):
+    if request.url.query:   # links and bookmarks from before 0.22.0, when the Documents list was the home page
+        return RedirectResponse(f"/documents?{request.url.query}", status_code=307)
+    return _home(request)
+
+
+def _home(request: Request, q: str = "", problems: list | None = None):
+    return tpl.TemplateResponse(request, "home.html", {
+        "d": home.dashboard(), "q": q, "problems": problems or [], "operators": home.OPERATORS,
+        "examples": home.examples(), "jobs": dict(_jobs)})
+
+
+@app.get("/search")
+def search(request: Request, q: str = ""):
+    """The home page's search console: operators (country:, actor:, topic: …) become Documents filters."""
+    if not q.strip():
+        return RedirectResponse("/documents", status_code=303)
+    parsed = home.parse(q)
+    if parsed["problems"]:
+        return _home(request, q, parsed["problems"])
+    return RedirectResponse(home.docs_url(**parsed["params"]), status_code=303)
+
+
+@app.get("/api/suggest")
+def api_suggest(q: str = ""):
+    out = home.suggest(q)
+    for g in out["groups"]:
+        for it in g["items"]:
+            if it.get("country"):
+                it["flag"] = flag_url(it["country"])
+    return out
+
+
+@app.get("/documents")
+def documents(request: Request, country: str = "", type: str = "", lang: str = "", year: str = "",
           status: str = "", q: str = "", source: int = 0, page: str = "1", per_page: str = "", show_hidden: int = 0,
           coalition: str = "", topic: list[str] = Query(default=[]), sort: str = "",
           year_from: str = "", year_to: str = "", indexed: int = 0, actor: str = "", main: int = 0,
-          cluster: str = "", series_id: str = Query("", alias="series")):
+          cluster: str = "", series_id: str = Query("", alias="series"), added_from: str = "", undated: int = 0):
     tax = topics.taxonomy()["topics"]
     chosen = [t for t in topic if t in tax]
     where, args = ["s.active=1"], []
@@ -124,6 +160,10 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
         where.append("d.year>=?"); args.append(int(year_from))
     if year_to.strip().isdigit():
         where.append("d.year<=?"); args.append(int(year_to))
+    if undated:
+        where.append("d.year IS NULL")
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", added_from):   # added to the library on or after this day
+        where.append("date(d.discovered_at)>=?"); args.append(added_from)
     if indexed:   # links from the Trends charts count only documents whose text is topic-classified
         where.append(trends.CLASSIFIED)
     actor_row = None
@@ -168,19 +208,22 @@ def index(request: Request, country: str = "", type: str = "", lang: str = "", y
     elif sort == "relevance" and fts:
         order = "(SELECT bm25(doc_text) FROM doc_text WHERE doc_text MATCH ? AND rowid=d.id) ASC NULLS LAST, d.year DESC NULLS LAST"
         order_args = [fts]
+    elif sort == "added":
+        order, order_args = "d.discovered_at DESC, d.id DESC", []
     else:
         order, order_args = "d.year DESC NULLS LAST, s.country, s.agency, d.lang", []
     size = paging.per_page_of(per_page)
     params = dict(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source or "",
                   coalition=coalition, topic=chosen, sort=sort if sort != "year" or chosen or q else "",
                   show_hidden=show_hidden or "", year_from=year_from, year_to=year_to, indexed=indexed or "",
-                  actor=actor, main=main or "", cluster=cluster, series=series_id,
+                  actor=actor, main=main or "", cluster=cluster, series=series_id, added_from=added_from,
+                  undated=undated or "",
                   per_page=size if size != paging.PER_PAGE_CHOICES[2] else "")
     with db.session() as con:
         topics.init()
         total = con.execute(f"SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id WHERE {sql_where}",
                             args).fetchone()[0]
-        pg = paging.paginate(total, page, size, "/", params)
+        pg = paging.paginate(total, page, size, "/documents", params)
         docs = [dict(r) for r in con.execute(
             f"""SELECT d.*, s.country, s.agency, s.type, s.name_en, s.logo_path,
                        u.added_at AS hand_added, u.official AS hand_official, ix.ocr AS ocr
@@ -771,7 +814,7 @@ def add_doc(request: Request, source_id: int = Form(...), url: str = Form(...), 
         doc_id = con.execute("SELECT id FROM documents WHERE url=?", (url,)).fetchone()["id"]
     if fetch_now:
         downloader.download_one(doc_id)
-    return RedirectResponse(f"/?source={source_id}", status_code=303)
+    return RedirectResponse(f"/documents?source={source_id}", status_code=303)
 
 
 @app.post("/jobs/crawl")
