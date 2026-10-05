@@ -7,6 +7,7 @@
   <script src="{{ asset('theme.js') }}"></script>
   <link rel="stylesheet" href="{{ asset('style.css') }}">
   <script src="{{ asset('logos.js') }}"></script>
+  <link rel="alternate" type="application/atom+xml" title="Rozvedka – new reports" href="/feed.atom">
   {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
@@ -14,6 +15,7 @@
   <a class="brand{{ ' on' if request.url.path == '/' }}" href="/" title="Home – search and what is new">Rozvedka</a>
   <nav>
     <a href="/documents" class="{{ 'on' if request.url.path.startswith('/documents') }}">Documents</a>
+    <a href="/new" class="{{ 'on' if request.url.path == '/new' }}">What's new</a>
     <a href="/series" class="{{ 'on' if request.url.path.startswith('/series') }}">Series</a>
     <a href="/sources" class="{{ 'on' if request.url.path.startswith('/sources') or request.url.path.startswith('/collect') }}">Sources</a>
     <a href="/topics" class="{{ 'on' if request.url.path.startswith('/topics') }}">Topics</a>

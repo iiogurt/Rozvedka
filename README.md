@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.22.3-1f4e79)
+![version](https://img.shields.io/badge/version-0.23.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -58,6 +58,21 @@ The start page (`/`): an ASCII radar and word mark, one search box for the whole
   crawled. Every number opens the list it counts.
 
 <img src="docs/images/home-search.png" alt="Search suggestions: actors, topics with report counts" width="900">
+
+### 🆕 What's new – update by update
+
+`/new` shows what each update brought; an update is a day on which reports entered the library (updates run on
+demand).
+
+- **New reports** by agency, each with its main topics and the actors it names most.
+- **Named for the first time** – actors named in the update's reports and in no report found earlier.
+- **Topics that jumped** – each topic's share of the update's reports against its share of the reports found before.
+- An **Atom feed** (`/feed.atom`) of the newest reports with their topics, actors and official URL, for any feed
+  reader on your network.
+
+Every number opens the list it counts.
+
+<img src="docs/images/new.png" alt="What's new: updates by day, actors named for the first time, topics that jumped, new reports by agency" width="900">
 
 ### 📚 Documents
 
@@ -401,6 +416,7 @@ flowchart LR
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |
+| `rozvedka/updates.py` | What's new by update and the Atom feed, each count with its link |
 | `rozvedka/home.py` | the home page: search-console operators and suggestions, dashboard counts with their links |
 | `rozvedka/app.py`, `templates/`, `static/` | the server-rendered portal |
 
@@ -409,7 +425,7 @@ flowchart LR
 ```bash
 .venv/bin/pip install -r requirements-dev.txt
 .venv/bin/python -m pytest -q
-.venv/bin/python tools/check_links.py      # before a release: every home-page count = its list; no broken links
+.venv/bin/python tools/check_links.py      # before a release: every home / What's new count = its list; no broken links
 ```
 
 - **Working rules:** [`CLAUDE.md`](CLAUDE.md) holds the project conventions – scope and source rules, the

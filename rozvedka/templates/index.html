@@ -28,7 +28,7 @@
   <select name="status"><option value="">Any status</option>
     {% for s in ['downloaded','new','browser-only','failed'] %}<option value="{{ s }}" {{ 'selected' if f.status == s }}>{{ s }}</option>{% endfor %}
   </select>
-  {% for k in ('year_from', 'year_to', 'indexed', 'actor', 'main', 'cluster', 'series', 'added_from', 'undated', 'per_page') %}{% if f[k] %}<input type="hidden" name="{{ k }}" value="{{ f[k] }}">{% endif %}{% endfor %}
+  {% for k in ('year_from', 'year_to', 'indexed', 'actor', 'main', 'cluster', 'series', 'added_from', 'added_to', 'undated', 'per_page') %}{% if f[k] %}<input type="hidden" name="{{ k }}" value="{{ f[k] }}">{% endif %}{% endfor %}
   <label class="chk"><input type="checkbox" name="show_hidden" value="1" {{ 'checked' if f.show_hidden }}> hidden too</label>
   <button>Filter</button>
   <a class="reset" href="/documents">Reset</a>
@@ -38,13 +38,13 @@
   <span class="muted small">Topics (all must match):</span>
   {% for t in f.topic %}<a class="topic-chip on" href="/documents?{{ qs(topic=f.topic|reject('equalto', t)|list, page=1) }}" title="Remove">{{ TOPICS[t].name }} ✕</a>{% endfor %}
 </div>{% endif %}
-{% if f.year_from or f.year_to or f.indexed or f.actor or f.main or f.cluster or f.series or f.added_from or f.undated %}<div class="chosen-topics">
+{% if f.year_from or f.year_to or f.indexed or f.actor or f.main or f.cluster or f.series or f.added_from or f.added_to or f.undated %}<div class="chosen-topics">
   <span class="muted small">Also limited to:</span>
   {% if f.actor %}<a class="topic-chip on" href="/documents?{{ qs(actor='', page=1) }}" title="Remove">mentions {{ actor_row.label if actor_row else f.actor }} ✕</a>
     <a class="small" href="/actors/{{ f.actor }}">actor page</a>{% endif %}
   {% if f.year_from or f.year_to %}<a class="topic-chip on" href="/documents?{{ qs(year_from='', year_to='', page=1) }}" title="Remove">years {{ f.year_from or '…' }}–{{ f.year_to or '…' }} ✕</a>{% endif %}
   {% if f.undated %}<a class="topic-chip on" href="/documents?{{ qs(undated='', page=1) }}" title="Remove">no publication year ✕</a>{% endif %}
-  {% if f.added_from %}<a class="topic-chip on" href="/documents?{{ qs(added_from='', page=1) }}" title="Remove">added to the library since {{ f.added_from }} ✕</a>{% endif %}
+  {% if f.added_from or f.added_to %}<a class="topic-chip on" href="/documents?{{ qs(added_from='', added_to='', page=1) }}" title="Remove">added to the library {% if f.added_from == f.added_to %}on {{ f.added_from }}{% elif f.added_from and f.added_to %}{{ f.added_from }} – {{ f.added_to }}{% elif f.added_from %}since {{ f.added_from }}{% else %}up to {{ f.added_to }}{% endif %} ✕</a>{% endif %}
   {% if f.series %}<a class="topic-chip on" href="/documents?{{ qs(series='', page=1) }}" title="Remove">editions of {{ series_row.source ~ ' – ' ~ series_row.name if series_row else f.series }} ✕</a>
     <a class="small" href="/series/{{ f.series }}">series page</a>{% endif %}
   {% if f.cluster %}<a class="topic-chip on" href="/documents?{{ qs(cluster='', page=1) }}" title="Remove">two actors of a Network cluster named in one passage ✕</a>{% endif %}
