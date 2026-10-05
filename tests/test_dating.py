@@ -16,12 +16,58 @@ from rozvedka import dating, db
     ("Brussels, 12 February 2022\nThreat landscape note", 2022, "date"),
     ("The report was published in December 2013.", 2013, "date"),                  # a date, not a heading
     ("© 2019 Europol", 2019, "date"),
+    ("Strasbourg 18. juuli 2024", 2024, "date"),                                   # Estonian month
+    ("Strasbūrā 2024. gada 18. jūlijā", 2024, "date"),                             # Latvian: year first
+    ("Strasbūras 2024 m. liepos 18 d.", 2024, "date"),                             # Lithuanian: year first
+    ("НАРЪЧНИК НА RAN ЮНИ 2017 г.", 2017, "date"),                                 # Bulgarian month
+    ("Utgitt av Direktoratet for samfunnssikkerhet og beredskap (DSB) 2025", 2025, "date"),
+    ("Traficomin julkaisuja 11/2025", 2025, "date"),
+    ("平成29年版 防災白書", 2017, "heading"),                                          # Japanese era years
+    ("令和３年版防災白書", 2021, "heading"),
 ])
 def test_from_text(text, year, kind):
     y, source = dating.from_text(text, [0])
     assert y == year
     assert ("publication date" in source) == (kind == "date")
     assert source.startswith("text: “")
+
+
+def test_law_numbers_are_not_dates():
+    assert dating.from_text("Act No. 153/1994 Coll. on the Protection of Classified Information " * 3, [0], cover=False) is None
+
+
+def test_lone_year_on_a_title_page_only():
+    cover = "Krisescenarioer 2016 – analyser av alvorlige hendelser"
+    y, source = dating.from_text(cover + "\n" + "tekst " * 400, [0, len(cover) + 1])
+    assert y == 2016 and "only year on the cover" in source
+    prose = "Since Europol first looked at these networks in 2024, much has changed. " * 12   # a page of prose
+    assert dating.from_text(prose + "\nmore", [0, len(prose)]) is None
+
+
+@pytest.mark.parametrize("title,url,year,evidence", [
+    ("平成28年版防災白書（ html 、 PDF ）", "https://www.bousai.go.jp/kaigirep/hakusho/pdf/H28_honbun.pdf", 2016, "Japanese era"),
+    ("Read online", "https://stratcomcoe.org/pdfjs/?file=/publications/download/Defence-StratCom-Spring-2026.pdf?zoom=page-fit",
+     2026, "file name"),
+    ("More about our priorities", "https://commission.europa.eu/document/download/x_bg?filename=Political%20Guidelines%202024-2029_BG.pdf",
+     2024, "file name"),
+    ("Télécharger", "https://www.sgdsn.gouv.fr/files/20260611_SGDSN_VIGINUM_Rapport.pdf", 2026, "date stamp"),
+    ("Checkliste", "https://www.dsn.gv.at/files/456_checkliste_dsn_a4_v20241008_bf.pdf", 2024, "date stamp"),
+])
+def test_from_address(title, url, year, evidence):
+    y, source = dating.from_address(title, url)
+    assert y == year and evidence in source
+
+
+def test_from_address_ignores_ids_and_impossible_dates():
+    assert dating.from_address("Report", "https://x.org/files/20251399_report.pdf") is None      # month 13
+    assert dating.from_address("Report", "https://x.org/document/42?id=2019") is None             # not a file name
+
+
+def test_folder_of_viewer_links():
+    assert dating.folder_of("https://stratcomcoe.org/pdfjs/?file=/publications/download/A.pdf?zoom=1") == \
+        "stratcomcoe.org/publications/download/"
+    assert dating.folder_of("https://www.ipcc.ch/report/ar6/wg1/downloads/report/IPCC_AR6_WGI_TS.pdf") == \
+        "www.ipcc.ch/report/ar6/wg1/downloads/report/"
 
 
 def test_cover_page_wins_and_future_years_are_ignored():
@@ -45,6 +91,22 @@ def library(tmp_path, monkeypatch):
             con.execute("INSERT INTO doc_text(rowid,title,body) VALUES(?,?,?)", (i, "", text))
             con.execute("INSERT INTO doc_index(doc_id,chars,pages) VALUES(?,?,?)", (i, len(text), "[0]"))
     return tmp_path
+
+
+def test_folder_rule(library):
+    with db.session() as con:
+        for i, (url, year, src) in enumerate([("https://a.org/r/2021/x1.pdf", 2021, None), ("https://a.org/r/2021/x2.pdf", 2021, None),
+                                               ("https://a.org/r/2021/x3.pdf", 2021, "text: “x”"),
+                                               ("https://a.org/r/2021/x4.pdf", 2023, "folder: …"),       # from this rule: ignored
+                                               ("https://a.org/r/2021/new.pdf", None, None), ("https://a.org/r/2021/own.pdf", None, None),
+                                               ("https://b.org/s/y1.pdf", 2020, None), ("https://b.org/s/y2.pdf", 2021, None),
+                                               ("https://b.org/s/y3.pdf", 2021, None), ("https://b.org/s/new.pdf", None, None)], 10):
+            con.execute("INSERT INTO documents(id,source_id,url,title,year,year_source,status) VALUES(?,1,?,'x',?,?,'downloaded')",
+                        (i, url, year, src))
+        y, source = dating.from_folder(con, 14, "https://a.org/r/2021/new.pdf")
+        assert y == 2021 and source == "folder: all 3 dated reports in a.org/r/2021/ are from 2021"
+        assert dating.from_folder(con, 15, "https://a.org/r/2021/own.pdf", "Strategy 2025–2030") is None   # own year differs
+        assert dating.from_folder(con, 19, "https://b.org/s/new.pdf") is None                                # siblings disagree
 
 
 def test_date_documents_only_fills_gaps(library):
