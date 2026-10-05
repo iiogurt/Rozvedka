@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ views[view] }} · Trends · Rozvedka{% endblock %}
-{% block head %}<script src="/static/vendor/echarts/echarts.min.js"></script>{% endblock %}
+{% block head %}<script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>{% endblock %}
 {% block main %}
 <nav class="subnav" aria-label="Trend views">
   {% for key, name in views.items() %}
@@ -100,5 +100,5 @@
 </section>
 
 <script>window.TREND_VIEW = {{ view|tojson }}; window.TOPIC_NAMES = {{ topic_names|tojson }};</script>
-<script src="/static/trends.js"></script>
+<script src="{{ asset('trends.js') }}"></script>
 {% endblock %}

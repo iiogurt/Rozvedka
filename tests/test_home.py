@@ -121,3 +121,12 @@ def test_pages_and_redirects(library):
 def app():
     from rozvedka.app import app as fastapi_app
     return fastapi_app
+
+
+def test_static_files_are_stamped_and_revalidated(library):
+    client = TestClient(app())
+    page = client.get("/").text
+    css = re.search(r'href="(/static/style\.css\?v=[0-9a-f]{8})"', page).group(1)
+    assert re.search(r'src="/static/home\.js\?v=[0-9a-f]{8}"', page)
+    assert "immutable" in client.get(css).headers["cache-control"]
+    assert client.get("/static/style.css").headers["cache-control"] == "no-cache"

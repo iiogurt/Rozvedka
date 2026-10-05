@@ -35,3 +35,6 @@ Thumbs.db
 # ── Logs & scratch ──
 *.log
 /tmp/
+
+# ── Owner's local notes and screenshots of issues (not part of the project) ──
+/issues/

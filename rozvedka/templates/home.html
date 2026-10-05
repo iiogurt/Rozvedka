@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Rozvedka – open-source intelligence library{% endblock %}
-{% block head %}<script src="/static/home.js" defer></script>{% endblock %}
+{% block head %}<script src="{{ asset('home.js') }}" defer></script>{% endblock %}
 {% block body_class %}home{% endblock %}
 {% macro doc_row(r, when) %}
   <li><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="{{ r.country }}" width="20" height="15">

@@ -1,6 +1,7 @@
 """Web portal: browse, filter, download and add security reports."""
 import csv
 import datetime as dt
+import hashlib
 import io
 import json
 import re
@@ -74,6 +75,34 @@ tpl.env.globals.update(sid=series.sid, COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=T
                        BUILD=build_version())
 
 tpl.env.filters["num"] = lambda n: f"{n or 0:,}"
+
+
+def asset(path: str) -> str:
+    """URL of a static file with a content stamp (`/static/style.css?v=1a2b3c4d`): a changed file gets a new URL,
+    so browsers never keep an old stylesheet or script after an update."""
+    f = HERE / "static" / path
+    try:
+        stat = f.stat()
+    except OSError:
+        return f"/static/{path}"
+    key = (path, stat.st_mtime_ns, stat.st_size)
+    if key not in _stamps:
+        _stamps[key] = hashlib.sha1(f.read_bytes()).hexdigest()[:8]
+    return f"/static/{path}?v={_stamps[key]}"
+
+
+_stamps: dict[tuple, str] = {}
+tpl.env.globals["asset"] = asset
+
+
+@app.middleware("http")
+async def static_cache(request: Request, call_next):
+    """Stamped static files never change (cache for a year); anything else under /static is revalidated each time."""
+    response = await call_next(request)
+    if request.url.path.startswith("/static/"):
+        response.headers["Cache-Control"] = ("public, max-age=31536000, immutable" if "v" in request.query_params
+                                             else "no-cache")
+    return response
 
 _jobs: dict[str, str] = {}      # background job name -> status text
 _jobs_lock = threading.Lock()
