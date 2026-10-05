@@ -690,3 +690,15 @@ table.h-bars, table.h-rise { width: 100%; border-collapse: collapse; font-size: 
               border: 1px dashed var(--line); color: var(--ink); }
 .actor-chip:hover { border-color: var(--accent); text-decoration: none; }
 @media (max-width: 800px) { .nw-grid { grid-template-columns: 1fr; } .nw-days { position: static; max-height: 240px; } }
+
+/* Compare agencies: one card per agency with its passages */
+.cmp-form input[type=search] { max-width: 420px; }
+.cmp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 14px; align-items: start; }
+.cmp-card { margin: 0; }
+.cmp-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 6px; margin-bottom: 6px; }
+.cmp-head .flag-sm { align-self: center; }
+.cmp-agency { font-weight: 700; font-size: 15px; }
+.cmp-n { margin-left: auto; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cmp-p { padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.cmp-p:last-of-type { border-bottom: 0; }
+.cmp-p .p-text { margin: 4px 0; font-size: 13px; }

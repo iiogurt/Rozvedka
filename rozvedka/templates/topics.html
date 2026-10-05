@@ -15,7 +15,7 @@
     <ul>
     {% for tkey in cat.topics %}{% set st = stats.get(tkey) %}
       <li>
-        <a class="tname" href="/documents?topic={{ tkey }}">{{ tax.topics[tkey].name }}</a>
+        <a class="tname" href="/documents?topic={{ tkey }}">{{ tax.topics[tkey].name }}</a> <a class="small muted" href="/compare?topic={{ tkey }}" title="Compare what agencies say about this topic">compare</a>
         <span class="bar" aria-hidden="true"><i style="width: {{ ((st.docs if st else 0) / maxdocs * 100)|round(1) }}%"></i></span>
         <span class="tnum"><b>{{ st.docs if st else 0 }}</b> docs</span>
         <span class="muted small tmeta">{% if st %}{{ st.sources }} agencies · {{ st.countries }} countries{% if st.y0 %} · {{ st.y0 }}–{{ st.y1 }}{% endif %}{% endif %}</span>

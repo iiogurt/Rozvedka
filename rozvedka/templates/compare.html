@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}Compare agencies{% if c and c.subject %} · {{ c.subject.label }}{% endif %} · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Compare agencies{% if c and c.subject %} on <a href="{{ c.subject.page }}">{{ c.subject.label }}</a>{% endif %}</h1>
+<p class="muted">What each agency's reports say about one actor or one topic – side by side, each passage with the page of
+  the report it is on.</p>
+
+<form class="filters cmp-form" method="get" action="/compare">
+  <input type="search" name="q" value="{{ f.q }}" placeholder="An actor (Wagner Group, APT28 …) or a topic" aria-label="Actor or topic"
+         list="cmp-topics" required>
+  <datalist id="cmp-topics">{% for key, t in TOPICS.items() if not t.meta %}<option value="{{ t.name }}">{% endfor %}</datalist>
+  <label class="muted small">years <input type="number" name="year_from" value="{{ c.year_from if c and c.year_from else f.year_from }}" min="1990" max="2100" style="width:6em" aria-label="From year">
+    – <input type="number" name="year_to" value="{{ c.year_to if c and c.year_to else f.year_to }}" min="1990" max="2100" style="width:6em" aria-label="To year"></label>
+  <select name="country" aria-label="Country"><option value="">All countries</option>
+    {% for k in countries %}<option value="{{ k }}" {{ 'selected' if f.country == k }}>{{ COUNTRY_NAMES.get(k, k) }}</option>{% endfor %}</select>
+  <select name="coalition" aria-label="Coalition"><option value="">All coalitions</option>
+    {% for key, co in COALITIONS.items() %}<option value="{{ key }}" {{ 'selected' if f.coalition == key }}>{{ co.short }}</option>{% endfor %}</select>
+  <select name="type" aria-label="Agency type"><option value="">All agency types</option>
+    {% for key, name in TYPE_NAMES.items() %}<option value="{{ key }}" {{ 'selected' if f.type == key }}>{{ name }}</option>{% endfor %}</select>
+  <button>Compare</button>
+</form>
+{% if problem %}<p class="h-problems">{{ problem }}</p>{% endif %}
+
+{% if not c %}
+  <p class="muted">For example:
+    {% for label, kind in examples %}<a class="topic-chip" href="/compare?q={{ (kind ~ ':' ~ label)|urlencode }}">{{ label }}</a>{% endfor %}
+    – or use <i>Compare agencies</i> on an actor page.</p>
+{% elif not c.error %}
+  <p class="nw-sum"><a href="{{ c.url }}"><b>{{ c.total|num }}</b> report{{ 's' if c.total != 1 }}</a> from
+    <b>{{ c.n_agencies }}</b> agenc{{ 'ies' if c.n_agencies != 1 else 'y' }} in <b>{{ c.countries }}</b> countr{{ 'ies' if c.countries != 1 else 'y' }},
+    {{ c.year_from }}–{{ c.year_to }}.</p>
+  <p class="muted small">{{ c.how }} Agencies are ranked by their number of such reports; “of N” is all their reports in
+    the period. Topic and actor matching is by keywords and names – read the passage before drawing a conclusion.</p>
+  {{ pager(pg, "agencies") }}
+  <div class="cmp-grid">
+  {% for a in c.agencies %}
+    <article class="viz-card cmp-card">
+      <header class="cmp-head">
+        <img class="flag-sm" src="{{ flag_url(a.country) }}" alt="{{ a.country }}" width="20" height="15">
+        <a class="cmp-agency" href="/documents?source={{ a.source_id }}" title="{{ a.name_en or '' }}">{{ a.agency }}</a>
+        <span class="muted small">{{ TYPE_NAMES.get(a.type, a.type) }}</span>
+        <span class="cmp-n"><a href="{{ a.url }}"><b>{{ a.n }}</b></a> <span class="muted small">of <a href="{{ a.of_url }}">{{ a.of }}</a></span></span>
+      </header>
+      {% for p in a.passages %}
+      <div class="cmp-p">
+        <div class="p-head small"><b>{{ p.year or '—' }}</b> <span class="p-title">{{ p.title }}</span> <span class="lang">{{ p.lang or '?' }}</span></div>
+        {% if p.segments %}<blockquote class="p-text">{% for s in p.segments %}{% if s.mark %}<mark>{{ s.text }}</mark>{% else %}{{ s.text }}{% endif %} {% endfor %}</blockquote>{% endif %}
+        <div class="p-foot small">
+          <a href="{{ p.open }}" target="_blank">{% if p.page %}p. {{ p.page }}{% else %}open report{% endif %}</a> ·
+          <a href="{{ p.url }}" rel="noopener" target="_blank">original</a> ·
+          {% if p.ocr %}<span class="badge-ocr" title="{{ p.ocr }} – recognition can misread letters and words; check the PDF">OCR text</span> ·{% endif %}
+          <span class="muted">{{ p.mentions }} {{ 'mention' if c.subject.kind == 'actor' else 'term' }}{{ 's' if p.mentions != 1 }} in the report{% if p.in_passage %}, {{ p.in_passage }} in this passage{% endif %}</span>
+        </div>
+      </div>
+      {% endfor %}
+      {% if a.n > a.passages|length %}<p class="small"><a href="{{ a.url }}">All {{ a.n }} reports →</a></p>{% endif %}
+    </article>
+  {% else %}
+    <p class="muted">No agency's reports {{ c.subject.how }} in {{ c.year_from }}–{{ c.year_to }}{% if f.country or f.coalition or f.type %} with these filters{% endif %}.</p>
+  {% endfor %}
+  </div>
+  {{ pager(pg, "agencies") }}
+{% endif %}
+{% endblock %}
