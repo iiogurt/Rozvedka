@@ -10,7 +10,7 @@ from pathlib import Path
 from urllib.parse import urlencode
 
 from fastapi import FastAPI, File, Form, HTTPException, Query, Request, UploadFile
-from fastapi.responses import FileResponse, RedirectResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -19,7 +19,7 @@ from markupsafe import escape
 from . import (__version__, actors, build_version, collect, countries, crawler, db, downloader, graphs, home, logos,
                paging, registry, series, topics, trends, updates)
 from . import compare as compare_mod
-from . import dataset, doclist, review, watch
+from . import datajobs, dataset, doclist, folders, review, watch
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -238,8 +238,109 @@ def data_page(request: Request):
         except (TypeError, ValueError):
             r["summary"] = {}
     size = sum(f.stat().st_size for f in FILES.rglob("*") if f.is_file()) if FILES.exists() else 0
+    logs = sorted(datajobs.logs_dir().glob("*.log"), reverse=True)[:15] if datajobs.logs_dir().exists() else []
+    last_dir = next((str(Path(r["summary"]["manifest"]).parent) for r in runs
+                     if r["kind"] == "export" and r["summary"].get("manifest")
+                     and folders.allowed(Path(r["summary"]["manifest"]).parent)
+                     and Path(r["summary"]["manifest"]).parent.is_dir()), "")
     return tpl.TemplateResponse(request, "data.html", {"me": dataset.installation(), "fresh": fresh, "runs": runs,
-                                                      "files_bytes": size, "jobs": dict(_jobs)})
+                                                      "files_bytes": size, "logs": [p.name for p in logs], "last_dir": last_dir,
+                                                      "roots": [str(r) for r in folders.roots()], "jobs": dict(_jobs)})
+
+
+def _api_error(e: Exception, status: int = 400):
+    return JSONResponse({"error": str(e)}, status_code=status)
+
+
+@app.get("/api/data/folders")
+def api_data_folders(path: str = ""):
+    try:
+        return folders.listing(path)
+    except (PermissionError, FileNotFoundError, OSError) as e:
+        return _api_error(e)
+
+
+@app.post("/api/data/folders")
+def api_data_mkdir(parent: str = Form(...), name: str = Form(...)):
+    try:
+        return {"path": str(folders.make(parent, name))}
+    except (PermissionError, FileNotFoundError, ValueError, OSError) as e:
+        return _api_error(e)
+
+
+@app.get("/api/data/estimate")
+def api_data_estimate(what: str = "all", since: str = ""):
+    """About how many bytes an export will need (report files + compressed database)."""
+    with db.session() as con:
+        if what == "catalogue":
+            files_bytes, n = 0, 0
+        else:
+            row = con.execute("""SELECT COALESCE(SUM(size),0), COUNT(*) FROM documents WHERE status='downloaded'
+                                 AND local_path IS NOT NULL AND (? = '' OR MAX(COALESCE(discovered_at,''), COALESCE(downloaded_at,'')) >= ?)""",
+                              (since if what == "since" else "", since if what == "since" else "")).fetchone()
+            files_bytes, n = row[0], row[1]
+    db_bytes = int(db.DB_PATH.stat().st_size * 0.35) if db.DB_PATH.exists() else 0
+    return {"files": n, "files_bytes": files_bytes, "database_bytes": db_bytes, "total": files_bytes + db_bytes + (30 << 20)}
+
+
+def _busy():
+    if any(st.startswith("running") for st in _jobs.values()):
+        return "a crawl or download is running – wait for it to finish"
+    return None
+
+
+@app.post("/api/data/export")
+def api_data_export(dest: str = Form(...), what: str = Form("all"), since: str = Form(""), part_size: str = Form("2000"),
+                    name: str = Form("")):
+    try:
+        size_mb = int(part_size)
+        if not 50 <= size_mb <= 100_000:
+            raise ValueError("part size must be between 50 MB and 100 GB")
+        if what == "since" and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", since):
+            raise ValueError("choose the day from which report files are included")
+        r = datajobs.export(dest, files=what != "catalogue", since=since if what == "since" else None,
+                            part_size=size_mb * 1_000_000, name=name.strip())
+    except (PermissionError, FileNotFoundError, ValueError) as e:
+        return _api_error(e)
+    return r if "error" not in r else JSONResponse(r, status_code=409)
+
+
+@app.post("/api/data/check")
+def api_data_check(manifest: str = Form(...)):
+    try:
+        r = datajobs.check(manifest)
+    except (PermissionError, FileNotFoundError) as e:
+        return _api_error(e)
+    return r if "error" not in r else JSONResponse(r, status_code=409)
+
+
+@app.post("/api/data/import")
+def api_data_import(manifest: str = Form(...), prefer: str = Form("local")):
+    if _busy():
+        return JSONResponse({"error": _busy()}, status_code=409)
+    try:
+        r = datajobs.import_(manifest, prefer)
+    except (PermissionError, FileNotFoundError) as e:
+        return _api_error(e)
+    return r if "error" not in r else JSONResponse(r, status_code=409)
+
+
+@app.post("/api/data/cancel")
+def api_data_cancel():
+    return {"cancelled": datajobs.cancel()}
+
+
+@app.get("/api/data/job")
+def api_data_job():
+    return {"job": datajobs.state()}
+
+
+@app.get("/data/logs/{name}")
+def data_log(name: str):
+    p = datajobs.log_path(name)
+    if p is None:
+        raise HTTPException(404, "no such log")
+    return PlainTextResponse(p.read_text(encoding="utf-8", errors="replace"))
 
 
 @app.get("/feed.atom")

@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Data exchange · Rozvedka{% endblock %}
+{% block head %}<script src="{{ asset('data.js') }}" defer></script>{% endblock %}
 {% block main %}
 <nav class="subnav" aria-label="Source views"><a href="/sources">Agencies</a><a href="/sources/coverage">Coverage</a><a href="/collect">To collect</a><a href="/data" class="on">Data exchange</a></nav>
 <h1 class="page-h">Data exchange</h1>
-<p class="muted">The whole library – database, report files, logos, actor gazetteer and the lists the portal keeps – can be
-  written as a <b>dataset</b>: a few files of at most 2 GB each plus a small manifest, to keep as a backup or to send with
-  any file-transfer service. Someone else imports it instead of crawling the agencies, and either side can crawl on from
-  there. Import first checks every file and compares the dataset with the library: newer, older, mixed, or the same crawl state with reports this library lacks.</p>
+<p class="muted">Back up the whole library, or hand it to someone who then does not have to crawl the agencies. A
+  <b>dataset</b> is a few files of at most the chosen size plus a small manifest – copy them to a disk or send them with any
+  file-transfer service. Importing checks every file first and shows whether the dataset is newer or older than this library.</p>
 
 <div class="h-counters dx-cards">
   <div><b>{{ me.id }}</b><span>this installation (since {{ me.created[:10] }})</span></div>
@@ -15,41 +15,78 @@
   <a href="/new"><b>{{ (fresh.last_discovered or 'never')[:10] }}</b><span>last report found</span></a>
 </div>
 
-<section class="viz-card">
-  <h2 class="viz-title">Export</h2>
-  <pre class="dx-cmd">python -m rozvedka export /media/usb/rozvedka --name my-label        # everything (about {{ ((files_bytes + 2e8) / 1e9)|round(1) }} GB)
-python -m rozvedka export DIR --no-files                            # catalogue only: database, lists, gazetteer
-python -m rozvedka export DIR --since 2026-10-01                    # catalogue + only the report files added since
-python -m rozvedka export DIR --part-size 500M                      # smaller parts for a stricter transfer service</pre>
-  <p class="muted small">Send all <code>*.tar.NNN</code> parts and the <code>*.manifest.json</code>. Joined, the parts are an ordinary tar
-    (<code>cat *.tar.* | tar t</code>).</p>
+<section class="viz-card dx-job" id="job" hidden aria-live="polite">
+  <div class="viz-head"><h2 class="viz-title" id="job-title">Working…</h2>
+    <div class="viz-actions"><a id="job-log-link" href="#" target="_blank">full log</a></div></div>
+  <ol class="dx-steps" id="job-steps"></ol>
+  <div class="dx-bar"><progress id="job-bar" max="1"></progress><span id="job-pct"></span></div>
+  <p class="dx-nums small muted" id="job-nums"></p>
+  <div class="dx-result" id="job-result" hidden></div>
+  <div class="dx-actions" id="job-import" hidden>
+    <fieldset class="dx-prefer"><legend class="small">When a hand edit differs (hidden, title, language, a year set by hand)</legend>
+      <label><input type="radio" name="prefer" value="local" checked> keep this library's</label>
+      <label><input type="radio" name="prefer" value="dataset"> take the dataset's</label></fieldset>
+    <button type="button" class="dx-primary" id="job-import-go">Import this dataset</button>
+  </div>
+  <div class="dx-actions">
+    <button type="button" id="job-cancel">Cancel</button>
+    <button type="button" id="job-close" hidden>Close</button>
+  </div>
+  <details class="dx-log" open><summary class="small muted">Log</summary><pre id="job-log"></pre></details>
 </section>
 
-<section class="viz-card">
-  <h2 class="viz-title">Import</h2>
-  <pre class="dx-cmd">python -m rozvedka import DIR --check                     # verify the parts and compare – changes nothing
-python -m rozvedka import DIR                             # restore (empty library) or merge (existing library)
-python -m rozvedka import DIR --prefer dataset            # in conflicting hand edits, take the dataset's</pre>
-  <ul class="small">
-    <li><b>New installation</b> – the dataset becomes the library; <code>update</code> then crawls on from it (known addresses
-      and files are skipped).</li>
-    <li><b>Existing library</b> – matched by source key and report address: missing reports, files, text and OCR are added,
-      empty years filled, the later crawl dates kept; conflicting hand edits (hidden, title, language, a year set by hand)
-      are listed and keep this library's value unless <code>--prefer dataset</code>. Reports whose file the dataset does not
-      carry are marked for download.</li>
-    <li>An older dataset adds nothing it does not have; importing the same dataset twice changes nothing.</li>
-    <li>Before any change the database is copied to <code>data/backups/</code> (the last three are kept); the full report is
-      saved in <code>data/imports/</code>.</li>
-  </ul>
+<div class="seg dx-tabs" role="tablist">
+  <label><input type="radio" name="tab" value="export" checked> ⬆ Export</label>
+  <label><input type="radio" name="tab" value="import"> ⬇ Import</label>
+</div>
+
+<section class="viz-card" id="tab-export">
+  <h2 class="viz-title">1 · What to export</h2>
+  <div class="dx-choices" id="what">
+    <label class="dx-choice"><input type="radio" name="what" value="all" checked><b>Everything</b>
+      <span class="muted small">database, all report files, logos, actor data and the portal's lists</span><span class="dx-size" data-for="all"></span></label>
+    <label class="dx-choice"><input type="radio" name="what" value="catalogue"><b>Catalogue only</b>
+      <span class="muted small">everything except the report files – the receiver downloads them from the agencies</span><span class="dx-size" data-for="catalogue"></span></label>
+    <label class="dx-choice"><input type="radio" name="what" value="since"><b>Catalogue + new report files</b>
+      <span class="muted small">for someone who already has an older dataset: files added since
+        <input type="date" id="since" aria-label="Report files added since"></span><span class="dx-size" data-for="since"></span></label>
+  </div>
+
+  <h2 class="viz-title">2 · Where to</h2>
+  <div class="dx-picker" id="picker-export" data-start="{{ last_dir or '' }}"></div>
+
+  <h2 class="viz-title">3 · Options</h2>
+  <div class="dx-opts">
+    <label>Largest file <select id="part-size">
+      <option value="4000">4 GB</option><option value="2000" selected>2 GB – fits most transfer services</option>
+      <option value="1000">1 GB</option><option value="500">500 MB</option><option value="100">100 MB</option></select></label>
+    <label>Label <input id="label" maxlength="30" placeholder="optional, e.g. a name or occasion"></label>
+  </div>
+  <p class="dx-space small" id="space"></p>
+  <button type="button" class="dx-primary" id="export-go" disabled>Export</button>
+</section>
+
+<section class="viz-card" id="tab-import" hidden>
+  <h2 class="viz-title">Choose the folder with the dataset</h2>
+  <p class="muted small">Put all its files – <code>….tar.001</code>, <code>….tar.002</code> … and <code>….manifest.json</code> – in one folder
+    (e.g. on a USB disk). Datasets found in the folder are listed below it.</p>
+  <div class="dx-picker" id="picker-import" data-start="{{ last_dir or '' }}"></div>
+  <div id="datasets"></div>
 </section>
 
 <section class="viz-card">
   <h2 class="viz-title">History</h2>
   {% if runs %}<div class="vt-scroll"><table class="vt">
-    <thead><tr><th>when</th><th>what</th><th>dataset</th><th>details</th></tr></thead>
+    <thead><tr><th>when (UTC)</th><th>what</th><th>dataset</th><th>details</th></tr></thead>
     {% for r in runs %}{% set s = r.summary %}<tr><td>{{ r.started_at[:16].replace('T', ' ') }}</td><td>{{ r.kind }}</td><td><code>{{ s.dataset_id }}</code></td>
-      <td>{% if r.kind == 'export' %}{{ s.parts }} part{{ 's' if s.parts != 1 }}, {{ ((s.bytes or 0) / 1e9)|round(2) }} GB, {{ s.files }} files{% if s.since %} since {{ s.since }}{% endif %}{% if not s.with_files %} (catalogue only){% endif %}
+      <td>{% if r.kind == 'export' %}{{ s.parts }} file{{ 's' if s.parts != 1 }}, {{ ((s.bytes or 0) / 1e9)|round(2) }} GB, {{ s.files }} report files{% if s.since %} since {{ s.since }}{% endif %}{% if not s.with_files %} (catalogue only){% endif %} – <span class="muted">{{ s.manifest }}</span>
         {% else %}{{ s.mode }} – dataset {{ s.verdict }}, from {{ (s['from'] or {}).id }} made {{ (s.created or '')[:10] }}: {{ s.documents_added }} added, {{ s.documents_updated }} updated{% if s.conflicts %}, {{ s.conflicts|length }} conflicts{% endif %}{% endif %}</td></tr>{% endfor %}
   </table></div>{% else %}<p class="muted">No dataset exported or imported yet.</p>{% endif %}
+  {% if logs %}<p class="small"><span class="muted">Logs:</span> {% for l in logs %}<a href="/data/logs/{{ l }}" target="_blank">{{ l }}</a>{{ ' · ' if not loop.last }}{% endfor %}</p>{% endif %}
+  <details class="small"><summary class="muted">The same on the command line</summary>
+    <pre class="dx-cmd">python -m rozvedka export /media/usb/rozvedka [--no-files | --since 2026-10-01] [--part-size 2G] [--name LABEL]
+python -m rozvedka import FOLDER --check        # verify and compare – changes nothing
+python -m rozvedka import FOLDER [--prefer dataset]</pre>
+    <p class="muted">The portal may use these folders: {{ roots|join(', ') }} (more with <code>ROZVEDKA_EXCHANGE_DIRS</code>).</p></details>
 </section>
 {% endblock %}

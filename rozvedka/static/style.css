@@ -728,3 +728,48 @@ table.wl-matrix { border-collapse: collapse; font-size: 13px; width: 100%; }
 .dx-cards { flex-wrap: wrap; margin: 12px 0 14px; }
 .dx-cards > * { flex: 1 1 200px; display: flex; flex-direction: column; padding: 8px 12px; background: var(--chip); border-radius: 8px; }
 .dx-cmd { font: 12.5px/1.6 ui-monospace, monospace; background: var(--chip); padding: 10px 12px; border-radius: 8px; overflow-x: auto; }
+.dx-tabs { margin: 0 0 10px; display: inline-flex; }
+.dx-tabs label { font-size: 15px; padding: 6px 16px; }
+#tab-export .viz-title, #tab-import .viz-title { margin-top: 14px; }
+#tab-export .viz-title:first-child, #tab-import .viz-title:first-child { margin-top: 0; }
+.dx-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 8px; margin: 8px 0; }
+.dx-choice { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px 10px 34px; border: 1px solid var(--line); border-radius: 8px; position: relative; cursor: pointer; }
+.dx-choice input[type=radio] { position: absolute; left: 10px; top: 12px; }
+.dx-choice:has(input:checked) { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.dx-size { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 13px; }
+.dx-picker { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
+.dx-roots { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.dx-root { font-size: 12.5px; }
+.dx-root.on { border-color: var(--accent); }
+.dx-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; }
+.dx-crumb { border: 0; background: none; padding: 2px 4px; color: var(--accent); }
+.dx-here { margin: 4px 0 6px; }
+.dx-dirs { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 4px; max-height: 260px; overflow-y: auto; }
+.dx-dirs button { width: 100%; text-align: left; background: var(--panel); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dx-dirs button:hover { background: var(--chip); }
+.dx-mkdir { display: flex; gap: 6px; margin-top: 8px; }
+.dx-opts { display: flex; flex-wrap: wrap; gap: 16px; margin: 8px 0; }
+.dx-space meter { width: 160px; vertical-align: middle; margin-right: 6px; }
+.dx-primary { background: var(--accent); color: var(--panel); border-color: var(--accent); padding: 7px 16px; font-weight: 600; }
+.dx-primary:disabled { opacity: .45; cursor: not-allowed; }
+.dx-primary[data-busy] { opacity: .45; pointer-events: none; }
+.dx-ds { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 8px 0; display: grid; gap: 4px; justify-items: start; }
+.ok { color: var(--ok); }
+.dx-job { border-width: 2px; position: sticky; top: 64px; z-index: 4; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+.dx-job.st-running { border-color: var(--accent); }
+.dx-job.st-done { border-color: var(--ok); position: static; }
+.dx-job.st-failed, .dx-job.st-cancelled { border-color: var(--err); position: static; }
+.dx-steps { list-style: none; padding: 0; margin: 8px 0; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; }
+.dx-steps li.done { color: var(--muted); }
+.dx-steps li.done::before { content: "✓ "; color: var(--ok); }
+.dx-steps li.now { font-weight: 600; }
+.dx-steps li.now::before { content: "▶ "; color: var(--accent); }
+.dx-bar { display: flex; align-items: center; gap: 10px; }
+.dx-bar progress { flex: 1; height: 14px; accent-color: var(--accent); }
+.dx-bar span { font-variant-numeric: tabular-nums; min-width: 3.5em; text-align: right; font-weight: 600; }
+.dx-nums { margin: 4px 0 8px; font-variant-numeric: tabular-nums; }
+.dx-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin: 8px 0; }
+.dx-prefer { border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px 8px; display: flex; gap: 14px; }
+.dx-log pre { max-height: 220px; overflow-y: auto; font: 11.5px/1.45 ui-monospace, monospace; background: var(--chip); padding: 8px 10px; border-radius: 6px; margin: 4px 0 0; white-space: pre-wrap; }
+.dx-text { font: 12.5px/1.5 ui-monospace, monospace; white-space: pre-wrap; background: var(--chip); padding: 10px 12px; border-radius: 8px; }
+.mono { font-family: ui-monospace, monospace; }

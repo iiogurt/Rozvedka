@@ -37,7 +37,19 @@ FORMAT_VERSION = 1
 PART_SIZE = 2_000_000_000
 CHUNK = 1 << 20
 PORTAL_LISTS = ("series.yaml", "watchlist.yaml", "actor_reviews.yaml")     # written by the portal: merged on import
-LISTED = "status NOT IN ('missing')"
+
+
+class Cancelled(Exception):
+    """Raised at a progress point when the job was cancelled (only while nothing in the library has changed)."""
+
+
+_hook = None          # set by datajobs: called as _hook(phase, done, total, final) at every progress point
+
+
+def _tick(phase: str, done: int = 0, total: int = 0, final: bool = False) -> None:
+    """Report progress (and give a running job the chance to stop); `final` marks the point of no return."""
+    if _hook:
+        _hook(phase, done, total, final)
 
 
 def _now() -> str:
@@ -90,8 +102,9 @@ def freshness(con) -> dict:
 class _PartWriter:
     """File-like: writes a stream into <base>.tar.001, .002 … of at most `size` bytes, hashing each part."""
 
-    def __init__(self, base: Path, size: int):
+    def __init__(self, base: Path, size: int, expected: int = 0):
         self.base, self.size, self.parts, self._f, self._n, self._h = base, size, [], None, 0, None
+        self.written, self.expected = 0, expected
 
     def _open(self):
         self._close()
@@ -113,7 +126,15 @@ class _PartWriter:
             take = min(len(b), self.size - self._n)
             self._f.write(b[:take]); self._h.update(b[:take]); self._n += take
             b = b[take:]
+        self.written += total
+        _tick("Writing the dataset", self.written, self.expected)
         return total
+
+    def remove(self):
+        """Delete the parts written so far (a cancelled or failed export)."""
+        self._close()
+        for p in self.parts:
+            self.base.with_name(p["name"]).unlink(missing_ok=True)
 
     def close(self):
         self._close()
@@ -122,8 +143,9 @@ class _PartWriter:
 class _PartReader:
     """File-like: reads the parts one after the other as one stream."""
 
-    def __init__(self, paths: list[Path]):
+    def __init__(self, paths: list[Path], phase: str = "Reading the dataset", total: int = 0):
         self.paths, self.i, self.f = list(paths), 0, None
+        self.phase, self.total, self.done = phase, total, 0
 
     def read(self, n: int = -1) -> bytes:
         out = bytearray()
@@ -139,6 +161,8 @@ class _PartReader:
                 self.f = None
                 continue
             out += chunk
+        self.done += len(out)
+        _tick(self.phase, self.done, self.total)
         return bytes(out)
 
     def close(self):
@@ -153,11 +177,14 @@ def _add_bytes(tar, name: str, data: bytes):
     tar.addfile(info, io.BytesIO(data))
 
 
-def _sha256(path: Path) -> str:
-    h = hashlib.sha256()
+def _sha256(path: Path, phase: str = "", offset: int = 0, total: int = 0) -> str:
+    h, done = hashlib.sha256(), 0
     with open(path, "rb") as f:
         while chunk := f.read(CHUNK):
             h.update(chunk)
+            done += len(chunk)
+            if phase:
+                _tick(phase, offset + done, total)
     return h.hexdigest()
 
 
@@ -175,9 +202,12 @@ def export(out_dir: str | Path, files: bool = True, since: str | None = None, pa
     with tempfile.TemporaryDirectory(dir=out, prefix=".rozvedka-export-") as tmp:
         snap = Path(tmp) / "rozvedka.db"
         src = db.connect()
+        log.info("export to %s (files: %s, since: %s, parts of %s bytes)", out, files, since, part_size)
         try:
             dst = __import__("sqlite3").connect(snap)
-            src.backup(dst)                       # a consistent copy while the portal may be running
+            ps = src.execute("PRAGMA page_size").fetchone()[0]
+            src.backup(dst, pages=4096,           # a consistent copy while the portal may be running
+                       progress=lambda status, remaining, total: _tick("Copying the database", (total - remaining) * ps, total * ps))
             dst.close()
             fresh = freshness(src)
             docs = [dict(r) for r in src.execute(
@@ -187,8 +217,13 @@ def export(out_dir: str | Path, files: bool = True, since: str | None = None, pa
         finally:
             src.close()
         gz = Path(tmp) / "rozvedka.db.gz"
+        size, done = snap.stat().st_size, 0
         with open(snap, "rb") as f, gzip.open(gz, "wb", compresslevel=6) as g:
-            shutil.copyfileobj(f, g, CHUNK)
+            while chunk := f.read(CHUNK):
+                g.write(chunk)
+                done += len(chunk)
+                _tick("Compressing the database", done, size)
+        log.info("database copied and compressed: %d → %d bytes", size, gz.stat().st_size)
         db_sha = _sha256(snap)
         chosen = [d for d in docs if files and (not since or max(d["discovered_at"] or "", d["downloaded_at"] or "") >= since)]
         chosen = [d for d in chosen if (config.FILES / d["local_path"]).exists()]
@@ -207,28 +242,40 @@ def export(out_dir: str | Path, files: bool = True, since: str | None = None, pa
             "files": [d["local_path"] for d in chosen],
             "gazetteer": _gazetteer_meta(_gazetteer_dir()),
         }
-        writer = _PartWriter(base, part_size)
-        with tarfile.open(fileobj=writer, mode="w|", format=tarfile.PAX_FORMAT) as tar:
-            _add_bytes(tar, "manifest.json", json.dumps({**manifest, "parts": "see the manifest file"}, indent=1).encode())
-            tar.add(gz, arcname="db/rozvedka.db.gz")
-            for n in sorted(p.name for p in _sources_dir().glob("*.yaml")):
-                tar.add(_sources_dir() / n, arcname=f"sources/{n}")
-            for p in sorted(_gazetteer_dir().glob("*.json")) if _gazetteer_dir().exists() else []:
-                tar.add(p, arcname=f"gazetteer/{p.name}")
-            for r in logo_rows:
-                p = _logos_dir() / r["logo_path"]
-                if p.exists():
-                    tar.add(p, arcname=f"logos/{r['key'].replace('/', '__')}{p.suffix}")
-            for d in chosen:
-                tar.add(config.FILES / d["local_path"], arcname=f"files/{d['local_path']}")
+        writer = _PartWriter(base, part_size, expected=need - (30 << 20))
+        log.info("writing %d report files (%.2f GB) into parts of %.2f GB", len(chosen),
+                 manifest["scope"]["files_bytes"] / 1e9, part_size / 1e9)
+        try:
+            _write_stream(writer, manifest, gz, logo_rows, chosen)
+        except BaseException:
+            writer.remove()                       # no half-written dataset is left behind
+            raise
         writer.close()
         manifest["parts"] = writer.parts
         manifest["bytes"] = sum(p["size"] for p in writer.parts)
     mpath = base.with_name(base.name + ".manifest.json")
     mpath.write_text(json.dumps(manifest, indent=1, ensure_ascii=False), encoding="utf-8")
+    log.info("dataset %s written: %d parts, %d bytes – %s", manifest["dataset_id"], len(writer.parts), manifest["bytes"], mpath)
     _record_run("export", {"dataset_id": manifest["dataset_id"], "manifest": str(mpath), "parts": len(writer.parts),
                            "bytes": manifest["bytes"], "files": len(chosen), "since": since, "with_files": files})
     return {**manifest, "manifest_path": str(mpath)}
+
+
+def _write_stream(writer, manifest: dict, gz: Path, logo_rows: list, chosen: list) -> None:
+    """The tar stream: manifest, database, lists, gazetteer, logos, then the report files."""
+    with tarfile.open(fileobj=writer, mode="w|", format=tarfile.PAX_FORMAT) as tar:
+        _add_bytes(tar, "manifest.json", json.dumps({**manifest, "parts": "see the manifest file"}, indent=1).encode())
+        tar.add(gz, arcname="db/rozvedka.db.gz")
+        for n in sorted(p.name for p in _sources_dir().glob("*.yaml")):
+            tar.add(_sources_dir() / n, arcname=f"sources/{n}")
+        for p in sorted(_gazetteer_dir().glob("*.json")) if _gazetteer_dir().exists() else []:
+            tar.add(p, arcname=f"gazetteer/{p.name}")
+        for r in logo_rows:
+            p = _logos_dir() / r["logo_path"]
+            if p.exists():
+                tar.add(p, arcname=f"logos/{r['key'].replace('/', '__')}{p.suffix}")
+        for d in chosen:
+            tar.add(config.FILES / d["local_path"], arcname=f"files/{d['local_path']}")
 
 
 def _gazetteer_meta(folder: Path) -> dict | None:
@@ -272,21 +319,27 @@ def verify(manifest_path: Path) -> dict:
         raise ValueError(f"{manifest_path.name} is not a Rozvedka dataset")
     if m.get("format_version", 0) > FORMAT_VERSION:
         raise ValueError(f"dataset format {m['format_version']} is newer than this app understands ({FORMAT_VERSION}) – update the app")
-    problems = []
+    problems, total, done = [], sum(p["size"] for p in m["parts"]), 0
+    log.info("verifying %d parts (%d bytes) of dataset %s", len(m["parts"]), total, m.get("dataset_id"))
     for part in m["parts"]:
         p = manifest_path.with_name(part["name"])
         if not p.exists():
             problems.append(f"missing: {part['name']}")
         elif p.stat().st_size != part["size"]:
             problems.append(f"incomplete: {part['name']} ({p.stat().st_size} of {part['size']} bytes)")
-        elif _sha256(p) != part["sha256"]:
+        elif _sha256(p, "Checking the parts", done, total) != part["sha256"]:
             problems.append(f"damaged: {part['name']} (checksum differs)")
+        done += part["size"]
+        _tick("Checking the parts", done, total)
+    for pr in problems:
+        log.warning("part problem: %s", pr)
     return {"manifest": m, "problems": problems}
 
 
 def _open_db(manifest_path: Path, m: dict, work: Path) -> tuple[Path, "tarfile.TarFile", "_PartReader"]:
     """Read the stream up to the database; return the database and the open stream (for the files after it)."""
-    reader = _PartReader([manifest_path.with_name(p["name"]) for p in m["parts"]])
+    reader = _PartReader([manifest_path.with_name(p["name"]) for p in m["parts"]], "Reading the dataset's database",
+                         m["parts"][0]["size"])
     tar = tarfile.open(fileobj=reader, mode="r|")
     dbfile = None
     for member in tar:
@@ -403,14 +456,18 @@ def import_dataset(path: str | Path, check: bool = False, prefer: str = "local",
         try:
             con = db.connect()
             con.execute("ATTACH DATABASE ? AS ds", (str(dbfile),))
+            _tick("Comparing with this library")
             report = {"dataset": _about(m), "app_version": __version__, "compare": compare(con, m), "check": check}
+            log.info("comparison: %s", {k: v for k, v in report["compare"].items() if k in ("verdict", "documents", "sources")})
             if _version(m["app_version"])[:2] > _version(__version__)[:2]:
                 report["warning"] = (f"made with Rozvedka {m['app_version']}, this is {__version__}: update the app "
                                      f"to import everything the dataset holds")
             if check:
                 con.close()
                 return report
+            _tick("Saving a safety copy of the database", 0, 0, final=True)     # from here on the library changes
             backup = _safety_copy(con)
+            log.info("safety copy: %s", backup)
             report["safety_copy"] = str(backup)
             if report["compare"]["empty_here"]:
                 con.execute("DETACH DATABASE ds")
@@ -423,7 +480,10 @@ def import_dataset(path: str | Path, check: bool = False, prefer: str = "local",
                 con.execute("DETACH DATABASE ds")
             con.commit()
             con.close()
+            reader.phase, reader.total = "Writing report files", m.get("bytes") or sum(p["size"] for p in m["parts"])
+            log.info("%s: %s", report["mode"], {k: v for k, v in plan["applied"].items() if k != "conflicts"})
             report["files"] = _extract(tar, plan, m)
+            log.info("files: %s", {k: v for k, v in report["files"].items() if k != "missing"})
         finally:
             tar.close()
             reader.close()
@@ -511,7 +571,10 @@ def _merge(con, m: dict, prefer: str) -> dict:
     has_text = {r[0] for r in con.execute("SELECT doc_id FROM doc_index WHERE chars > 0")}
     wanted = {}
     included = set(m.get("files") or [])
-    for d in [dict(r) for r in con.execute("SELECT * FROM ds.documents ORDER BY id")]:
+    ds_docs = [dict(r) for r in con.execute("SELECT * FROM ds.documents ORDER BY id")]
+    for n, d in enumerate(ds_docs, 1):
+        if n % 50 == 0 or n == len(ds_docs):
+            _tick("Merging reports", n, len(ds_docs))
         h = con.execute("SELECT * FROM documents WHERE url=?", (d["url"],)).fetchone()
         file_ok = d["status"] == "downloaded" and d["local_path"] in included
         if h is None:
@@ -754,13 +817,18 @@ def _after_import(m: dict, report: dict, plan: dict) -> None:
 def _reindex() -> dict:
     """Topics, dates and actors for the reports that came in (only those whose index rows were reset)."""
     from . import actor_sources, actors, dating, topics
-    out = {"topics": topics.index(), "dates": dating.date_documents()}
+    _tick("Matching topics in the new reports")
+    out = {"topics": topics.index()}
+    _tick("Dating the new reports")
+    out["dates"] = dating.date_documents()
     if actor_sources.GAZETTEER.exists():
+        _tick("Matching actors in the new reports")
         out["actors"] = actors.index()
+    log.info("indexed: %s", out)
     return out
 
 
-def describe(r: dict) -> str:
+def describe(r: dict, cli: bool = True) -> str:
     """The import report in plain words (what `python -m rozvedka import` prints)."""
     if "error" in r:
         return "\n".join([f"✗ {r['error']}:"] + [f"  - {p}" for p in r.get("problems", [])])
@@ -791,7 +859,8 @@ def describe(r: dict) -> str:
     if c["sources_only_in_dataset"]:
         lines.append("  sources this app does not know (update the app to show them): " + ", ".join(c["sources_only_in_dataset"][:10]))
     if r.get("check"):
-        lines.append("Check only – nothing changed. Run without --check to import.")
+        lines.append("Check only – nothing changed. " + ("Run without --check to import." if cli else
+                                                          "Choose below whose hand edits win, then import."))
         return "\n".join(lines)
     a = r["applied"]
     lines += [f"Imported ({r['mode']}): {a['documents_added']} reports added, {a['documents_updated']} updated"
