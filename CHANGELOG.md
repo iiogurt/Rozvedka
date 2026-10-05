@@ -27,6 +27,13 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.22.2] – 2026-10-05
+
+### Fixed
+- After an update, Chrome could keep showing pages with the old stylesheet (the new home page appeared unstyled).
+  Stylesheets and scripts are now linked with a content stamp (`style.css?v=1a2b3c4d`), so a changed file always
+  has a new address, and unstamped static files are revalidated on every visit (`Cache-Control: no-cache`).
+
 ## [0.22.1] – 2026-10-05
 
 ### Fixed
@@ -407,7 +414,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.22.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.22.2...HEAD
+[0.22.2]: https://github.com/iiogurt/Rozvedka/compare/v0.22.1...v0.22.2
 [0.22.1]: https://github.com/iiogurt/Rozvedka/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/iiogurt/Rozvedka/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/iiogurt/Rozvedka/compare/v0.20.0...v0.21.0

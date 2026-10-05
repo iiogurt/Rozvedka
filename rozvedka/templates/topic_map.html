@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Topic mind map · Rozvedka{% endblock %}
-{% block head %}<script src="/static/vendor/echarts/echarts.min.js"></script>{% endblock %}
+{% block head %}<script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>{% endblock %}
 {% block main %}
 <nav class="subnav" aria-label="Topic views"><a href="/topics">List</a><a href="/topics/map" class="on">Mind map</a></nav>
 <form class="filters trend-filters" id="scope" onsubmit="return false">

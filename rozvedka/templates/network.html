@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Network · Rozvedka{% endblock %}
-{% block head %}<script src="/static/vendor/echarts/echarts.min.js"></script>{% endblock %}
+{% block head %}<script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>{% endblock %}
 {% block main %}
 <form class="filters trend-filters" id="scope" onsubmit="return false">
   <label class="chk">from <select name="year_from"><option value="">all</option>{% for y in years|reverse %}<option>{{ y }}</option>{% endfor %}</select></label>
@@ -52,5 +52,5 @@
   <h2 id="prov-title" class="viz-title">Where this comes from</h2>
   <div id="prov"></div>
 </section>
-<script src="/static/network.js"></script>
+<script src="{{ asset('network.js') }}"></script>
 {% endblock %}

@@ -2,7 +2,7 @@
 {% from "_pager.html" import pager %}
 {% set a = actor %}
 {% block title %}{{ a.label }} · Actors · Rozvedka{% endblock %}
-{% block head %}<script src="/static/vendor/echarts/echarts.min.js"></script>{% endblock %}
+{% block head %}<script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>{% endblock %}
 {% block main %}
 <p class="small"><a href="/actors">← Actors</a></p>
 <header class="actor-head">

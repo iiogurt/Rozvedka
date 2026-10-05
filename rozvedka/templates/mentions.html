@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Who reports on whom · Map · Rozvedka{% endblock %}
 {% block body_class %}theme-dark map-page{% endblock %}
-{% block head %}<link rel="stylesheet" href="/static/vendor/leaflet/leaflet.css">{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ asset('vendor/leaflet/leaflet.css') }}">{% endblock %}
 {% block main %}
 <div class="mapwrap">
   <aside class="mappanel" aria-label="Map controls">
@@ -33,6 +33,6 @@
   </aside>
   <div id="map" class="map" role="region" aria-label="World map shaded by share of reports"></div>
 </div>
-<script src="/static/vendor/leaflet/leaflet.js"></script>
-<script src="/static/mentions.js"></script>
+<script src="{{ asset('vendor/leaflet/leaflet.js') }}"></script>
+<script src="{{ asset('mentions.js') }}"></script>
 {% endblock %}
