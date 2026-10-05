@@ -73,12 +73,11 @@ Each item: why · what · done when · version step.
 
 ### C. Reading workflow – "what is new, what changed"
 
-10. ◐ (0.22.0: the home page shows newest editions, reports added in the last 7/30/90 days, rising topics and the
-    most named actors, with a search console; still open: per-crawl first-time mentions and the Atom feed)
-    **What's new** – per crawl: new reports with their main topics and actors, first-time mentions of actors,
+10. ✅ (0.22.0 home page dashboards; 0.23.0 the What's new page by update with first-time actors, jumping topics
+    and the Atom feed) **What's new** – per crawl: new reports with their main topics and actors, first-time mentions of actors,
     topics whose share jumped; Atom feed from the portal (no external service). · minor
-11. **Watchlist** – follow actors, topics or search terms; the start page shows new passages for them since the
-    last visit; saved searches. · minor
+11. **Watchlist** – follow actors, topics or search terms (one shared list – the owner wants no user-based
+    features, 2026-10-05); for each, its reports and passages update by update, chronologically. · minor
 12. **Compare agencies on one question** – pick a topic or actor and a year: one column per agency with its
     passages side by side (what BfV, AIVD, KAPO and NCTV say about the same thing). · minor
 13. **Research notes and citations** – bookmark passages with a note; export a notebook as Markdown/PDF with

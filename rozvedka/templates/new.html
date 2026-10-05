@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}What's new{% if u.day %} · {{ u.day }}{% endif %} · Rozvedka{% endblock %}
+{% block main %}
+<div class="viz-head"><h1 class="page-h">What's new</h1>
+  <div class="viz-actions"><a href="/feed.atom" title="Atom feed of the newest reports – add it to a feed reader on your network">Atom feed</a></div></div>
+<p class="muted">Update by update: an update is a day on which reports entered the library (crawls and downloads run on
+  demand, with <code>python -m rozvedka update</code> or <i>Update now</i> on the Sources page). Every number opens the list it counts.</p>
+
+{% if not u.day %}<p class="empty">The library is empty – run an update first.</p>{% else %}
+<div class="nw-grid">
+  <nav class="nw-days viz-card" aria-label="Updates">
+    <h2 class="viz-title">Updates</h2>
+    <p class="viz-sub muted small">Newest first; reports found that day.</p>
+    <ol>{% for d in u.days %}<li class="{{ 'on' if d.day == u.day }}">
+      <a href="/new?day={{ d.day }}" {{ 'aria-current="page"' if d.day == u.day }}>{{ d.day }}</a>
+      <a class="n" href="{{ d.url }}" title="List these reports">{{ d.n|num }}</a></li>{% endfor %}</ol>
+  </nav>
+
+  <div class="nw-main">
+    <p class="nw-sum"><b><a href="{{ u.url }}">{{ u.n|num }}</a></b> report{{ 's' if u.n != 1 }} found on <b>{{ u.day }}</b>
+      from <b>{{ u.agencies|length }}</b> agenc{{ 'ies' if u.agencies|length != 1 else 'y' }}{% if u.prev %};
+      the library had <a href="{{ u.before_url }}">{{ u.n_before|num }}</a> before (last update {{ u.prev }}){% else %} – the first update: the library was built then{% endif %}.</p>
+
+    <div class="nw-cards">
+      <article class="viz-card">
+        <h2 class="viz-title">Named for the first time</h2>
+        <p class="viz-sub muted small">Actors named in this update's reports and in no report found earlier (countries left out).
+          {% if not u.prev %}On the first update every actor is new.{% endif %}</p>
+        {% if u.first %}<table class="h-bars nw-first">
+          {% for a in u.first[:15] %}<tr><th><a href="/actors/{{ a.key }}">{{ a.label }}</a> <span class="muted small">{{ a.kind_name }}</span></th>
+            <td class="n"><a href="{{ a.url }}" title="Reports in this update naming {{ a.label }}">{{ a.n }}</a>
+              {% if a.before_url %}<a class="muted small" href="{{ a.before_url }}" title="Reports found before: none">0 before</a>{% endif %}</td></tr>{% endfor %}
+        </table>
+        {% if u.first|length > 15 %}<details class="nw-more"><summary>All {{ u.first|length }} actors</summary><table class="h-bars nw-first">
+          {% for a in u.first[15:] %}<tr><th><a href="/actors/{{ a.key }}">{{ a.label }}</a> <span class="muted small">{{ a.kind_name }}</span></th>
+            <td class="n"><a href="{{ a.url }}">{{ a.n }}</a></td></tr>{% endfor %}</table></details>{% endif %}
+        {% else %}<p class="muted">No actor is named for the first time.</p>{% endif %}
+      </article>
+
+      <article class="viz-card">
+        <h2 class="viz-title">Topics that jumped</h2>
+        <p class="viz-sub muted small">Share of this update's reports tagged with the topic, against its share of the reports found
+          before; topics with at least {{ u.jump_min }} reports in the update.</p>
+        {% if u.jumps %}<table class="h-rise">
+          <thead><tr><th>Topic</th><th>before</th><th>this update</th><th>change</th></tr></thead>
+          {% for j in u.jumps %}<tr><th><a href="/documents?topic={{ j.key }}">{{ j.name }}</a></th>
+            <td><a href="{{ j.url_before }}">{{ (100 * j.share_before)|round|int }}%</a> <span class="muted small">{{ j.n_before }}</span></td>
+            <td><a href="{{ j.url }}">{{ (100 * j.share)|round|int }}%</a> <span class="muted small">{{ j.n }}</span></td>
+            <td class="up">+{{ j.pp }} pp</td></tr>{% endfor %}
+        </table>{% elif not u.prev %}<p class="muted">The first update has nothing to compare with.</p>
+        {% else %}<p class="muted">No topic gained share in this update.</p>{% endif %}
+      </article>
+    </div>
+
+    <section class="viz-card" id="reports">
+      <h2 class="viz-title">New reports</h2>
+      <p class="viz-sub muted small">By agency; each with its main topics (highest keyword scores) and the actors it names most.</p>
+      {{ pager(pg, "reports") }}
+      {% set ns = namespace(src=None) %}
+      {% for d in page_docs %}
+        {% if d.source_id != ns.src %}{% set ns.src = d.source_id %}{% set g = by_source[d.source_id] %}
+          {% if not loop.first %}</ol>{% endif %}
+          <h3 class="nw-agency"><img class="flag-sm" src="{{ flag_url(g.country) }}" alt="{{ g.country }}" width="20" height="15">
+            <a href="/documents?source={{ g.source_id }}">{{ g.agency }}</a> <a class="muted small" href="{{ g.url }}">{{ g.docs|length }} new</a></h3>
+          <ol class="nw-docs">
+        {% endif %}
+        <li><span class="h-when">{{ d.year or '—' }}</span>
+          <span>{% if d.local_path %}<a href="/doc/{{ d.id }}" target="_blank">{{ d.title }}</a>{% else %}<a href="{{ d.url }}" target="_blank" rel="noopener">{{ d.title }} ↗</a>{% endif %}
+            <span class="lang">{{ d.lang or '?' }}</span>
+            {% if d.topics or d.actors %}<div class="doc-topics">
+              {% for t in d.topics %}<a class="topic-chip" href="/documents?topic={{ t }}">{{ TOPICS[t].name if t in TOPICS else t }}</a>{% endfor %}
+              {% for a in d.actors %}<a class="actor-chip" href="/actors/{{ a.key }}">{{ a.label }}</a>{% endfor %}</div>{% endif %}</span></li>
+        {% if loop.last %}</ol>{% endif %}
+      {% endfor %}
+      {{ pager(pg, "reports") }}
+    </section>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

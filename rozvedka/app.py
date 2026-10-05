@@ -17,7 +17,7 @@ from fastapi.templating import Jinja2Templates
 from markupsafe import escape
 
 from . import (__version__, actors, build_version, collect, countries, crawler, db, downloader, graphs, home, logos,
-               paging, registry, series, topics, trends)
+               paging, registry, series, topics, trends, updates)
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -166,12 +166,30 @@ def api_suggest(q: str = ""):
     return out
 
 
+@app.get("/new")
+def whats_new(request: Request, day: str = ""):
+    """What's new, update by update (an update = a day on which reports entered the library)."""
+    u = updates.update(day or None)
+    size = paging.per_page_of(request.query_params.get("per_page"), 100)
+    pg = paging.paginate(u.get("n", 0), request.query_params.get("page", "1"), size, "/new", {"day": day},
+                         anchor="#reports")
+    return tpl.TemplateResponse(request, "new.html", {
+        "u": u, "TOPICS": topics.taxonomy()["topics"], "pg": pg, "jobs": dict(_jobs),
+        "page_docs": u.get("docs", [])[pg["offset"]:pg["offset"] + size],
+        "by_source": {g["source_id"]: g for g in u.get("agencies", [])}})
+
+
+@app.get("/feed.atom")
+def atom_feed(request: Request):
+    return Response(updates.feed(str(request.base_url).rstrip("/")), media_type="application/atom+xml")
+
+
 @app.get("/documents")
 def documents(request: Request, country: str = "", type: str = "", lang: str = "", year: str = "",
           status: str = "", q: str = "", source: int = 0, page: str = "1", per_page: str = "", show_hidden: int = 0,
           coalition: str = "", topic: list[str] = Query(default=[]), sort: str = "",
           year_from: str = "", year_to: str = "", indexed: int = 0, actor: str = "", main: int = 0,
-          cluster: str = "", series_id: str = Query("", alias="series"), added_from: str = "", undated: int = 0):
+          cluster: str = "", series_id: str = Query("", alias="series"), added_from: str = "", added_to: str = "", undated: int = 0):
     tax = topics.taxonomy()["topics"]
     chosen = [t for t in topic if t in tax]
     where, args = ["s.active=1"], []
@@ -193,6 +211,8 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
         where.append("d.year IS NULL")
     if re.fullmatch(r"\d{4}-\d{2}-\d{2}", added_from):   # added to the library on or after this day
         where.append("date(d.discovered_at)>=?"); args.append(added_from)
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", added_to):     # … and on or before this day
+        where.append("date(d.discovered_at)<=?"); args.append(added_to)
     if indexed:   # links from the Trends charts count only documents whose text is topic-classified
         where.append(trends.CLASSIFIED)
     actor_row = None
@@ -245,7 +265,7 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
     params = dict(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source or "",
                   coalition=coalition, topic=chosen, sort=sort if sort != "year" or chosen or q else "",
                   show_hidden=show_hidden or "", year_from=year_from, year_to=year_to, indexed=indexed or "",
-                  actor=actor, main=main or "", cluster=cluster, series=series_id, added_from=added_from,
+                  actor=actor, main=main or "", cluster=cluster, series=series_id, added_from=added_from, added_to=added_to,
                   undated=undated or "",
                   per_page=size if size != paging.PER_PAGE_CHOICES[2] else "")
     with db.session() as con:

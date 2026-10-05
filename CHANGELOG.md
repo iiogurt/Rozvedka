@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.23.0] – 2026-10-05
+
+### Added
+- **What's new** (`/new`, in the menu): update by update – an update is a day on which reports entered the library.
+  For each: the new reports by agency with their main topics and the actors they name most; the actors **named for the
+  first time** (in no report found earlier); and the **topics that jumped** (share of the update's reports against
+  the reports found before). Every number opens its list.
+- **Atom feed** (`/feed.atom`, also announced in every page's header for feed readers): the 50 newest reports with
+  agency, year, language, main topics, named actors and the official URL. Entry ids do not depend on the address
+  the portal is opened with.
+- Documents list: `added_to=` filter (with `added_from=`, the reports of one update).
+
 ## [0.22.3] – 2026-10-05
 
 ### Changed
@@ -430,7 +442,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.22.3...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.23.0...HEAD
+[0.23.0]: https://github.com/iiogurt/Rozvedka/compare/v0.22.3...v0.23.0
 [0.22.3]: https://github.com/iiogurt/Rozvedka/compare/v0.22.2...v0.22.3
 [0.22.2]: https://github.com/iiogurt/Rozvedka/compare/v0.22.1...v0.22.2
 [0.22.1]: https://github.com/iiogurt/Rozvedka/compare/v0.22.0...v0.22.1

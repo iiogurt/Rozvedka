@@ -85,7 +85,7 @@
     <p class="viz-sub muted small">Found by the crawler or added by hand{% if d.last_added %}; the last on {{ d.last_added }}{% endif %}{% if d.first_added %} (the library was started on {{ d.first_added }}){% endif %}.</p>
     <div class="h-counters">{% for a in d.added %}<a href="{{ a.url }}"><b>{{ a.n|num }}</b><span>last {{ a.days }} days</span></a>{% endfor %}</div>
     <ol class="h-docs">{% for r in d.recent %}{{ doc_row(r, r.discovered_at[5:10]) }}{% endfor %}</ol>
-    <p class="small"><a href="{{ d.recent_url }}">All reports, newest additions first →</a></p>
+    <p class="small"><a href="/new">What's new, update by update →</a> · <a href="{{ d.recent_url }}">all reports, newest additions first</a></p>
   </article>
 
   <article class="viz-card h-card">
