@@ -567,12 +567,19 @@ ol.editions li { border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .yr-est { border-bottom: 1px dotted var(--muted); cursor: help; }
 .badge-ocr { font-size: 10.5px; padding: 0 5px; border-radius: 3px; border: 1px dashed var(--muted); color: var(--muted); margin-left: 6px; cursor: help; }
 
-/* Home page: banner with ASCII radar and word mark, search console, dashboards */
+/* Home page: banner with ASCII radar and word mark, search console, dashboards.
+   The ASCII art needs every glyph at the same width, so it uses a bundled subset of DejaVu Sans Mono
+   (static/vendor/fonts, Bitstream Vera licence) instead of whatever monospace font the viewer has. */
+@font-face { font-family: "RzMono"; src: url("/static/vendor/fonts/DejaVuSansMono-subset.woff2") format("woff2");
+             font-weight: 400; font-display: block; }
+@font-face { font-family: "RzMono"; src: url("/static/vendor/fonts/DejaVuSansMono-Bold-subset.woff2") format("woff2");
+             font-weight: 700; font-display: block; }
+body.home { --mono: "RzMono", "DejaVu Sans Mono", Menlo, Consolas, monospace; }
 .h-banner { display: flex; align-items: center; gap: clamp(16px, 3vw, 40px); margin: 6px 0 18px; padding: 16px 20px;
             background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
 body.home { --sig: #3fb68b; --sig-hot: #8ff0c4; }          /* "signal" green of the banner and the prompt */
 :root[data-theme="light"] body.home { --sig: #1d7a55; --sig-hot: #0b5a3a; }
-.h-banner pre { margin: 0; font: 12px/1.15 ui-monospace, "DejaVu Sans Mono", Menlo, Consolas, monospace; }
+.h-banner pre { margin: 0; font: 12px/1.15 var(--mono); font-variant-ligatures: none; font-kerning: none; letter-spacing: 0; }
 .h-radar { color: var(--muted); flex: none; }
 .h-radar .r { color: var(--sig); }
 .h-radar .g { color: var(--line); }
@@ -584,7 +591,7 @@ body.home { --sig: #3fb68b; --sig-hot: #8ff0c4; }          /* "signal" green of 
 .h-word { color: var(--sig); font-size: clamp(5px, 1.05vw, 13px) !important; line-height: 1 !important; }
 .h-name { font-size: 14px; margin: 8px 0 6px; font-weight: 600; letter-spacing: .04em; }
 .h-name span { color: var(--muted); font-weight: 400; }
-.h-term { font: 12.5px/1.6 ui-monospace, "DejaVu Sans Mono", Menlo, Consolas, monospace; color: var(--muted); }
+.h-term { font: 12.5px/1.6 var(--mono); color: var(--muted); }
 .h-term b { color: var(--ink); }
 .h-term a b { color: var(--accent); }
 .h-prompt { color: var(--sig); margin-right: 4px; }
@@ -595,7 +602,7 @@ body.home { --sig: #3fb68b; --sig-hot: #8ff0c4; }          /* "signal" green of 
 
 .h-search { margin: 0 0 18px; }
 .h-console { display: flex; align-items: center; gap: 0; background: var(--panel); border: 1px solid var(--line);
-             border-radius: 10px; padding: 6px 6px 6px 14px; font: 15px ui-monospace, "DejaVu Sans Mono", Menlo, monospace; }
+             border-radius: 10px; padding: 6px 6px 6px 14px; font: 15px var(--mono); }
 .h-console:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
 .h-ps1 { color: var(--sig); white-space: nowrap; margin-right: 10px; }
 .h-ps1 span { color: var(--muted); }
@@ -613,7 +620,7 @@ body.home { --sig: #3fb68b; --sig-hot: #8ff0c4; }          /* "signal" green of 
 .h-suggest .hs-n { color: var(--muted); font-variant-numeric: tabular-nums; }
 .h-suggest .hs-clear { font-size: 11px; padding: 0 6px; margin-left: 8px; }
 .h-ops, .h-try { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; }
-.h-op { font: 12px ui-monospace, monospace; padding: 2px 8px; border-radius: 999px; }
+.h-op { font: 12px var(--mono); padding: 2px 8px; border-radius: 999px; }
 .h-try a code { font-size: 12px; background: var(--chip); padding: 2px 8px; border-radius: 6px; }
 .h-try a:hover { text-decoration: none; }
 .h-try a:hover code { outline: 1px solid var(--accent); }
