@@ -1,0 +1,5 @@
+# Actor match reviews – passages checked in the portal (Actors → Review). Each entry: the actor (Wikidata item or
+# MITRE ATT&CK id), the name that matched, the report (official URL), the passage as evidence and the verdict.
+# "wrong" removes that report from the actor (applied by the index on every rebuild); "right" only counts towards the
+# name's measured precision. Written by the portal; editable by hand.
+[]

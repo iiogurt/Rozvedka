@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.25.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.26.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -207,6 +207,13 @@ periodic job.
   RT, Huawei, Gazprom …); add more as seeds in `sources/actors.yaml`.
 - Name matching is rule-based and transparent: every name used (or not used, with the reason) is listed, and
   `/actors/names` shows the most frequent matches for review.
+- **Precision review** (`/actors/review`): random passages of the names that put the most reports on their actor,
+  each marked ✓ right or ✗ wrong; any passage on an actor page can also be marked *✗ not …*. A wrong verdict
+  removes that report from the actor at once and on every rebuild; every verdict is kept with its passage as
+  evidence in [`sources/actor_reviews.yaml`](sources/actor_reviews.yaml), gives each name a measured precision, and
+  the actor page lists the reports left out this way.
+
+<img src="docs/images/review.png" alt="Review actor matches: names by impact with sample passages to mark right or wrong" width="900">
 
 ### 🕸️ Network
 
@@ -443,6 +450,7 @@ flowchart LR
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |
+| `rozvedka/review.py` | precision review of actor matches: the queue, verdicts with evidence, measured precision |
 | `rozvedka/watch.py`, `doclist.py` | the watchlist (queries counted update by update); the Documents list's filters as SQL, shared by every count |
 | `rozvedka/compare.py` | Compare agencies: per-agency counts and densest passages on one actor or topic |
 | `rozvedka/updates.py` | What's new by update and the Atom feed, each count with its link |

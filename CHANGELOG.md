@@ -27,6 +27,22 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.26.0] – 2026-10-05
+
+### Added
+- **Precision review of actor matches** (`/actors/review`, linked from Actors): random, stable sample passages of the
+  names that put the most reports on their actor (after all matching rules), to mark ✓ right or ✗ wrong; every
+  passage on an actor page has a *✗ not …* button too. Verdicts are kept with the passage as evidence in
+  `sources/actor_reviews.yaml`; a wrong one removes that report from the actor at once and on every rebuild, and
+  the actor page lists the reports left out this way. The page shows the measured precision overall and per name.
+
+### Fixed
+- One-word names whose symbol is part of the name are no longer matched as the bare word: "Heimat!" put the party
+  Die Heimat on 45 reports through the ordinary German word *Heimat*; "III %" (Three Percenters) matched the
+  numeral III, "LAPSUS$" the word Lapsus. A rule tested and rejected on the way: a capitalised word next to a
+  one-word organisation name (1,848 of 14,113 mentions) is no sign of a person's name – in a sample nearly all were
+  right (German nouns, lists of groups) – so such cases go to the review instead.
+
 ## [0.25.0] – 2026-10-05
 
 ### Added
@@ -466,7 +482,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.25.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.26.0...HEAD
+[0.26.0]: https://github.com/iiogurt/Rozvedka/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/iiogurt/Rozvedka/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/iiogurt/Rozvedka/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/iiogurt/Rozvedka/compare/v0.22.3...v0.23.0

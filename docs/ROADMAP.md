@@ -68,7 +68,7 @@ Each item: why · what · done when · version step.
    so counts are per report, not per file, and passages can switch language. · minor
 8. **Document types** – annual report, threat assessment, risk register, strategy, brochure, statistics – from
    titles and series; filter and trend by type (an annual threat assessment weighs differently from a leaflet). · minor
-9. **Precision review in the portal** – mark a wrong match on a passage ("not this actor"), stored as a hand
+9. ✅ (0.26.0) **Precision review in the portal** – mark a wrong match on a passage ("not this actor"), stored as a hand
    exclusion with the passage as evidence; review queue sorted by impact. · minor
 
 ### C. Reading workflow – "what is new, what changed"

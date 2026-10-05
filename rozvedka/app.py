@@ -19,7 +19,7 @@ from markupsafe import escape
 from . import (__version__, actors, build_version, collect, countries, crawler, db, downloader, graphs, home, logos,
                paging, registry, series, topics, trends, updates)
 from . import compare as compare_mod
-from . import doclist, watch
+from . import doclist, review, watch
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -680,6 +680,24 @@ def actors_page(request: Request, kind: str = "", q: str = "", min_docs: int = 2
         "maxdocs": maxdocs, "meta": actors.stamp(), "jobs": dict(_jobs)})
 
 
+@app.get("/actors/review")
+def actors_review(request: Request, page: str = "1", per_page: str = "", kind: str = "", notice: str = ""):
+    """Precision review: random passages of the names with the most impact, to mark right or wrong."""
+    q = review.queue(page, paging.per_page_of(per_page, 5) if per_page else 5, kind)
+    return tpl.TemplateResponse(request, "review.html", {"q": q, "f": {"kind": kind}, "kinds": actors.KINDS,
+                                                        "notice": notice, "jobs": dict(_jobs)})
+
+
+@app.post("/actors/review")
+def actors_review_verdict(actor: str = Form(...), doc_id: int = Form(...), verdict: str = Form(...), name: str = Form(""),
+                          says: str = Form(""), back: str = Form("/actors/review")):
+    r = review.record(actor, doc_id, verdict, name, says)
+    if "error" in r:
+        raise HTTPException(400, r["error"])
+    back = back if back.startswith("/") and not back.startswith("//") else "/actors/review"
+    return RedirectResponse(back, status_code=303)
+
+
 @app.get("/actors/names")
 def actor_names_page(request: Request, status: str = "used", page: str = "1", per_page: str = ""):
     status = "ignored" if status == "ignored" else "used"
@@ -762,6 +780,7 @@ def actor_page(request: Request, key: str, page: str = "1", per_page: str = ""):
     pg = paging.paginate(d["docs"], page, size, f"/actors/{key}", {"per_page": size if size != 25 else ""},
                          anchor="#passages", default=25)
     return tpl.TemplateResponse(request, "actor.html", {**d, "pg": pg, "kinds": actors.KINDS, "meta": actors.stamp(),
+                                                       "reviewed_out": review.of_actor(key),
                                                        "TOPICS": topics.taxonomy()["topics"], "jobs": dict(_jobs)})
 
 
