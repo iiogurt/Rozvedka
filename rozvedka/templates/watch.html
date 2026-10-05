@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Watchlist · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Watchlist</h1>
+<p class="muted">Searches followed update by update – one list for the whole portal, kept in <code>{{ file }}</code>. An
+  update is a day on which reports entered the library; every number opens the Documents list of exactly those reports.</p>
+{% if notice %}<p class="h-problems" role="status">{{ notice }}</p>{% endif %}
+
+<form class="filters" method="post" action="/watch/add">
+  <input type="search" name="query" required placeholder='actor:"Wagner Group" · topic:ransomware country:DE · "critical infrastructure"'
+         aria-label="Search to watch" style="max-width:520px">
+  <button>☆ Watch</button>
+  <span class="muted small">Same syntax as the home page search ({% for op in operators %}<code>{{ op }}:</code>{{ ' ' }}{% endfor %}); or use
+    <i>☆ Watch this search</i> on the Documents list and <i>☆ Watch</i> on an actor page.</span>
+</form>
+
+{% if not o.entries %}<p class="empty">Nothing watched yet.</p>{% else %}
+<section class="viz-card">
+  <h2 class="viz-title">Reports per update</h2>
+  <p class="viz-sub muted small">Each column is an update (newest first); a cell is the number of the item's reports that
+    entered the library that day.{% if o.entries[0].older %} “Earlier” adds up the older updates.{% endif %}</p>
+  <div class="vt-scroll"><table class="wl-matrix">
+    <thead><tr><th>Watched search</th><th class="n">all</th>
+      {% for d in o.columns %}<th class="n"><a href="/new?day={{ d }}">{{ d[5:] }}</a></th>{% endfor %}
+      {% if o.entries[0].older is defined and o.entries[0].older %}<th class="n">earlier</th>{% endif %}<th></th></tr></thead>
+    <tbody>{% for it in o.entries %}<tr>
+      <th><a href="#w{{ loop.index }}"><code>{{ it.query }}</code></a>
+        {% if it.problems %}<div class="err small">{% for p in it.problems %}{{ p.token }}: {{ p.message }}{% endfor %}</div>{% endif %}</th>
+      {% if it.cells %}
+        <td class="n"><a href="{{ it.url }}"><b>{{ it.total|num }}</b></a></td>
+        {% for c in it.cells %}<td class="n {{ 'wl-hit' if c.n }}">{% if c.n %}<a href="{{ c.url }}">{{ c.n }}</a>{% else %}<a class="muted" href="{{ c.url }}">0</a>{% endif %}</td>{% endfor %}
+        {% if it.older %}<td class="n"><a href="{{ it.older.url }}">{{ it.older.n }}</a></td>{% endif %}
+      {% else %}<td colspan="{{ o.columns|length + 2 }}"></td>{% endif %}
+      <td><form method="post" action="/watch/remove" class="inline"><input type="hidden" name="query" value="{{ it.query }}">
+        <button class="wl-remove" title="Stop watching">✕</button></form></td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+
+<section class="viz-card">
+  <h2 class="viz-title">By update</h2>
+  <p class="viz-sub muted small">Newest update first: which watched searches it brought reports for.</p>
+  <ol class="wl-timeline">{% for t in o.timeline %}<li><a class="wl-day" href="/new?day={{ t.day }}">{{ t.day }}</a>
+    {% for h in t.hits %}<a class="topic-chip" href="{{ h.url }}"><code>{{ h.query }}</code> {{ h.n }}</a>{% else %}<span class="muted small">nothing for the watched searches</span>{% endfor %}</li>{% endfor %}</ol>
+</section>
+
+{% for it in o.entries if it.cells %}
+<section class="viz-card" id="w{{ loop.index }}">
+  <div class="viz-head"><h2 class="viz-title"><code>{{ it.query }}</code></h2>
+    <div class="viz-actions"><a href="{{ it.url }}">all {{ it.total|num }} reports</a> <a href="{{ it.feed }}">Atom feed</a></div></div>
+  <p class="viz-sub muted small">Watched since {{ it.added }}{% if it.last_day %}; last new reports on <a href="/new?day={{ it.last_day }}">{{ it.last_day }}</a>{% endif %}.
+    The newest reports, each with its passage on the search (densest mentions or terms).</p>
+  <ol class="passages">{% for p in it.latest %}<li>
+    <div class="p-head"><img class="flag-sm" src="{{ flag_url(p.country) }}" alt=""> <b>{{ p.agency }}</b> {{ p.year or '—' }} ·
+      <span class="p-title">{{ p.title }}</span> <span class="lang">{{ p.lang or '?' }}</span> <span class="muted small">found {{ p.found }}</span></div>
+    {% if p.segments %}<blockquote class="p-text">{% for s in p.segments %}{% if s.mark %}<mark>{{ s.text }}</mark>{% else %}{{ s.text }}{% endif %} {% endfor %}</blockquote>{% endif %}
+    <div class="p-foot small"><a href="{{ p.open }}" target="_blank">{% if p.page %}p. {{ p.page }}{% else %}open report{% endif %}</a> ·
+      <a href="{{ p.url }}" rel="noopener" target="_blank">original</a>
+      {% if p.ocr %} · <span class="badge-ocr" title="{{ p.ocr }}">OCR text</span>{% endif %}</div></li>
+  {% else %}<li class="muted">No reports yet.</li>{% endfor %}</ol>
+</section>
+{% endfor %}
+{% endif %}
+{% endblock %}

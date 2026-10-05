@@ -124,16 +124,25 @@ def figures(u: dict) -> list[tuple[str, int, str]]:
     return out
 
 
-def feed(base: str, limit: int = 50) -> str:
-    """Atom feed of the newest reports (by when they entered the library), with their main topics and actors."""
+def feed(base: str, limit: int = 50, watch: str = "") -> str:
+    """Atom feed of the newest reports (by when they entered the library), with their main topics and actors;
+    with `watch`, only the reports of that watchlist query."""
+    from urllib.parse import urlencode
     from xml.sax.saxutils import escape as x
+
+    from . import doclist, home
+    where, args = LISTED, []
+    if watch:
+        parsed = home.parse(watch)
+        f = doclist.build(**{k: v for k, v in parsed["params"].items() if v not in ("", None, [])})
+        where, args = " AND ".join(f["where"]), f["args"]
     with db.session() as con:
         topics.init()
         actors.init()
         docs = [dict(r) for r in con.execute(
             f"""SELECT d.id, d.title, d.year, d.lang, d.url, d.local_path, d.discovered_at, s.country, s.agency, s.name_en
-                FROM documents d JOIN sources s ON s.id=d.source_id WHERE {LISTED}
-                ORDER BY d.discovered_at DESC, d.id DESC LIMIT ?""", (limit,))]
+                FROM documents d JOIN sources s ON s.id=d.source_id WHERE {where}
+                ORDER BY d.discovered_at DESC, d.id DESC LIMIT ?""", (*args, limit))]
         ids = [d["id"] for d in docs]
         main, named = _main_topics(con, ids), _actors_of(con, ids)
     tax = topics.taxonomy()["topics"]
@@ -159,11 +168,11 @@ def feed(base: str, limit: int = 50) -> str:
     updated = stamp(docs[0]["discovered_at"]) if docs else stamp(None)
     return f"""<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <id>tag:rozvedka,2026:feed</id>
-  <title>Rozvedka – new reports</title>
+  <id>tag:rozvedka,2026:feed{x(('/watch/' + watch) if watch else '')}</id>
+  <title>Rozvedka – {x(('watchlist: ' + watch) if watch else 'new reports')}</title>
   <subtitle>Reports found by the latest updates, newest first ({limit} at most)</subtitle>
-  <link rel="self" href="{x(base)}/feed.atom"/>
-  <link href="{x(base)}/new"/>
+  <link rel="self" href="{x(base)}/feed.atom{x(('?' + urlencode({'watch': watch})) if watch else '')}"/>
+  <link href="{x(base)}{'/watch' if watch else '/new'}"/>
   <updated>{updated}</updated>
 {chr(10).join(entries)}
 </feed>

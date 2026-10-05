@@ -19,6 +19,7 @@ from markupsafe import escape
 from . import (__version__, actors, build_version, collect, countries, crawler, db, downloader, graphs, home, logos,
                paging, registry, series, topics, trends, updates)
 from . import compare as compare_mod
+from . import doclist, watch
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -225,8 +226,33 @@ def compare_page(request: Request, q: str = "", actor: str = "", topic: str = ""
 
 
 @app.get("/feed.atom")
-def atom_feed(request: Request):
-    return Response(updates.feed(str(request.base_url).rstrip("/")), media_type="application/atom+xml")
+def atom_feed(request: Request, watch: str = ""):
+    return Response(updates.feed(str(request.base_url).rstrip("/"), watch=watch), media_type="application/atom+xml")
+
+
+@app.get("/watch")
+def watch_page(request: Request, notice: str = ""):
+    """The watchlist: followed searches, update by update (one shared list)."""
+    o = watch.overview()
+    for it in o["entries"]:
+        if "cells" in it:
+            it["latest"] = watch.latest(it["query"])
+    return tpl.TemplateResponse(request, "watch.html", {"o": o, "notice": notice, "file": "sources/watchlist.yaml",
+                                                       "operators": home.OPERATORS, "jobs": dict(_jobs)})
+
+
+@app.post("/watch/add")
+def watch_add(query: str = Form(...)):
+    r = watch.add(query)
+    notice = ("Now watching: " + r["added"]) if "added" in r else ("Already on the list: " + r["exists"]) if "exists" in r \
+        else ("Not added – " + r["error"])
+    return RedirectResponse("/watch?" + urlencode({"notice": notice}), status_code=303)
+
+
+@app.post("/watch/remove")
+def watch_remove(query: str = Form(...)):
+    watch.remove(query)
+    return RedirectResponse("/watch?" + urlencode({"notice": "Removed: " + query}), status_code=303)
 
 
 @app.get("/documents")
@@ -236,63 +262,13 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
           year_from: str = "", year_to: str = "", indexed: int = 0, actor: str = "", main: int = 0,
           cluster: str = "", series_id: str = Query("", alias="series"), added_from: str = "", added_to: str = "", undated: int = 0):
     tax = topics.taxonomy()["topics"]
-    chosen = [t for t in topic if t in tax]
-    where, args = ["s.active=1"], []
-    if coalition in countries.coalitions():
-        codes = sorted(coalition_scope(coalition))
-        where.append(f"s.country IN ({','.join('?' * len(codes))})"); args += codes
-    if not show_hidden:
-        where.append("d.hidden=0 AND d.status NOT IN ('missing','duplicate','skipped')")
-    for col, val in (("s.country", country), ("s.type", type), ("d.lang", lang), ("d.status", status)):
-        if val:
-            where.append(f"{col}=?"); args.append(val)
-    if year:
-        where.append("d.year=?"); args.append(int(year))
-    if year_from.strip().isdigit():
-        where.append("d.year>=?"); args.append(int(year_from))
-    if year_to.strip().isdigit():
-        where.append("d.year<=?"); args.append(int(year_to))
-    if undated:
-        where.append("d.year IS NULL")
-    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", added_from):   # added to the library on or after this day
-        where.append("date(d.discovered_at)>=?"); args.append(added_from)
-    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", added_to):     # … and on or before this day
-        where.append("date(d.discovered_at)<=?"); args.append(added_to)
-    if indexed:   # links from the Trends charts count only documents whose text is topic-classified
-        where.append(trends.CLASSIFIED)
-    actor_row = None
-    if actor:
-        where.append(actors.doc_clause()); args.append(actor)
-    editions = series.doc_index()
-    series_row = series.get(series_id) if series_id else None
-    if series_id:   # editions of one report series
-        ids = [d for d, e in editions.items() if e["id"] == series_id] or [0]
-        where.append(f"d.id IN ({','.join('?' * len(ids))})"); args += ids
-    cluster_keys = [k for k in cluster.split(",") if k][:200]
-    if cluster_keys:   # link from a Network cluster: reports naming two of these actors in one passage
-        sql, cargs = actors.cluster_clause(cluster_keys)
-        where.append(sql); args += cargs
-        with db.session() as con:
-            actors.init()
-            actor_row = con.execute("SELECT key, label FROM actors WHERE key=?", (actor,)).fetchone()
-    if source:
-        where.append("s.id=?"); args.append(source)
-    fts = trends.or_query(q) if q.strip() else ""
-    if q.strip() and indexed:
-        # link from a Trends chart: exactly the full-text match the chart counted
-        where.append("d.id IN (SELECT rowid FROM doc_text WHERE doc_text MATCH ?)"); args.append(fts or '""')
-    elif q.strip():
-        # metadata match OR full-text match inside the report ("a OR b" is handled by the full-text match)
-        where.append("""(d.title LIKE ? OR s.agency LIKE ? OR s.name_local LIKE ? OR s.name_en LIKE ?
-                         OR d.id IN (SELECT rowid FROM doc_text WHERE doc_text MATCH ?))""")
-        args += [f"%{q}%"] * 4 + [fts or '""']
-    base_where, base_args = " AND ".join(where), list(args)      # everything except the topic filter
-    for t in chosen:                                              # several topics: a document must have all
-        if main:   # link from the topic mind map: the topic must be one of the report's main topics
-            sql, margs = topics.main_topic_clause()
-            where.append(sql); args += [*margs, t]
-        else:
-            where.append("d.id IN (SELECT doc_id FROM doc_topics WHERE topic=?)"); args.append(t)
+    flt = doclist.build(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source,
+                        show_hidden=show_hidden, coalition=coalition, topic=topic, year_from=year_from, year_to=year_to,
+                        indexed=indexed, actor=actor, main=main, cluster=cluster, series_id=series_id,
+                        added_from=added_from, added_to=added_to, undated=undated)
+    where, args, chosen, fts = flt["where"], flt["args"], flt["chosen"], flt["fts"]
+    base_where, base_args = flt["base_where"], flt["base_args"]
+    editions, series_row, actor_row = flt["editions"], flt["series_row"], flt["actor_row"]
     sql_where = " AND ".join(where)
     sort = sort or ("relevance" if chosen or q.strip() else "year")
     if sort == "relevance" and chosen:
@@ -361,6 +337,7 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
         "facets": facets, "f": params, "counts": counts, "jobs": dict(_jobs), "qs": qs,
         "TOPICS": tax, "CATEGORIES": topics.taxonomy()["categories"], "topic_counts": topic_counts,
         "actor_row": actor_row, "editions": editions, "series_row": series_row,
+        "watch_query": watch.to_query({**params, "topic": chosen}) if total else None,
     })
 
 

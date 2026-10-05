@@ -27,6 +27,20 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.25.0] – 2026-10-05
+
+### Added
+- **Watchlist** (`/watch`, in the menu): searches followed update by update – one shared list in
+  `sources/watchlist.yaml`, no per-user state. Any search-console query can be watched (`actor:"Wagner Group"`,
+  `topic:ransomware country:DE`, `"critical infrastructure"`); add it on the page, with **☆ Watch this search** on the
+  Documents list or **☆ Watch** on an actor page. The page shows a table of watched searches × updates, the updates in
+  order with the searches each brought reports for, and per item its newest reports with their passage and page.
+- Atom feed per watched search: `/feed.atom?watch=<query>`.
+
+### Changed
+- The Documents list's filters are built in one place (`rozvedka/doclist.py`), so the watchlist's counts are the
+  Documents list's by construction.
+
 ## [0.24.0] – 2026-10-05
 
 ### Added
@@ -452,7 +466,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.24.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.25.0...HEAD
+[0.25.0]: https://github.com/iiogurt/Rozvedka/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/iiogurt/Rozvedka/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/iiogurt/Rozvedka/compare/v0.22.3...v0.23.0
 [0.22.3]: https://github.com/iiogurt/Rozvedka/compare/v0.22.2...v0.22.3

@@ -76,7 +76,7 @@ Each item: why · what · done when · version step.
 10. ✅ (0.22.0 home page dashboards; 0.23.0 the What's new page by update with first-time actors, jumping topics
     and the Atom feed) **What's new** – per crawl: new reports with their main topics and actors, first-time mentions of actors,
     topics whose share jumped; Atom feed from the portal (no external service). · minor
-11. **Watchlist** – follow actors, topics or search terms (one shared list – the owner wants no user-based
+11. ✅ (0.25.0) **Watchlist** – follow actors, topics or search terms (one shared list – the owner wants no user-based
     features, 2026-10-05); for each, its reports and passages update by update, chronologically. · minor
 12. ✅ (0.24.0) **Compare agencies on one question** – pick a topic or actor and a year: one column per agency with its
     passages side by side (what BfV, AIVD, KAPO and NCTV say about the same thing). · minor
@@ -114,5 +114,6 @@ Each item: why · what · done when · version step.
 2. ✅ **A2 + A3** – hand-import and report series (0.17.0, 0.18.0). Next: collect the blocked flagship reports by hand.
 3. ✅ **B5 + B6** – dates and OCR (0.20.0, 0.21.0, 0.22.3): 90 reports left undated (from 465), 135 scanned reports recognised.
 
-After that, C10–C12 turn the portal from an archive into a weekly reading tool.
+After that, C10–C12 turn the portal from an archive into a weekly reading tool – ✅ done in 0.23.0–0.25.0
+(What's new, Compare agencies, Watchlist).
 The home page (0.22.0) is the start of C10 and the natural place for C11's watchlist.

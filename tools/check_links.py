@@ -12,17 +12,17 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fastapi.testclient import TestClient  # noqa: E402
 
-from rozvedka import compare, home, updates  # noqa: E402
+from rozvedka import compare, home, updates, watch  # noqa: E402
 from rozvedka.app import app  # noqa: E402
 
-PAGES = ["/", "/new", "/compare", "/documents", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/map", "/collect"]
+PAGES = ["/", "/new", "/watch", "/compare", "/documents", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/map", "/collect"]
 
 
 def main() -> int:
     client = TestClient(app)          # no startup: the registry is not re-synced
     bad = 0
     d = home.dashboard()
-    figs = home.figures(d) + updates.figures(updates.update())
+    figs = home.figures(d) + updates.figures(updates.update()) + watch.figures(watch.overview())
     if d["top_actors"]:                                      # two sample comparisons: the most named actor, a rising topic
         figs += compare.figures(compare.compare(actor=d["top_actors"][0]["key"]))
     if d["rising"]["rising"]:
@@ -34,7 +34,7 @@ def main() -> int:
         if listed != n:
             bad += 1
             print(f"MISMATCH {label}: shows {n}, list has {listed} – {url}")
-    print(f"home, What's new, Compare: {len(figs)} counts checked, {bad} mismatches")
+    print(f"home, What's new, Compare, Watchlist: {len(figs)} counts checked, {bad} mismatches")
     seen, broken = set(), 0
     for page in PAGES:
         for href in re.findall(r'href="(/[^"#]*)"', client.get(page).text):
