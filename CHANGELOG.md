@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.24.0] – 2026-10-05
+
+### Added
+- **Compare agencies** (`/compare`, in the menu): what agencies say about one actor or one topic, side by side. One
+  card per agency, ranked by its number of reports in the chosen years that name the actor or carry the topic (with
+  all its reports in the period for scale); in each card its two reports that deal with it most, each with the
+  densest passage – the 600 characters with the most mentions of the actor or terms of the topic, skipping reference
+  lists and endnotes, and not counting an agency's own name in its own reports – and the PDF page it is on. Filters:
+  years (default the last three), country, coalition, agency type. Links from actor pages and the Topics page.
+
 ## [0.23.0] – 2026-10-05
 
 ### Added
@@ -442,7 +452,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.23.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.24.0...HEAD
+[0.24.0]: https://github.com/iiogurt/Rozvedka/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/iiogurt/Rozvedka/compare/v0.22.3...v0.23.0
 [0.22.3]: https://github.com/iiogurt/Rozvedka/compare/v0.22.2...v0.22.3
 [0.22.2]: https://github.com/iiogurt/Rozvedka/compare/v0.22.1...v0.22.2

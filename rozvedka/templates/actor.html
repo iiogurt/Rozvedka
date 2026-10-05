@@ -16,7 +16,7 @@
 <section class="viz-card">
   <h2 class="viz-title">In the reports</h2>
   <p class="viz-sub muted small"><b>{{ docs }}</b> reports by <b>{{ agencies|length }}</b> agencies mention {{ a.label }}
-    · <a href="/documents?actor={{ a.key }}">list them</a></p>
+    · <a href="/documents?actor={{ a.key }}">list them</a> · <a href="/compare?actor={{ a.key }}">compare what agencies say</a></p>
   {% if timeline %}
   <div id="timeline" class="chart chart-actor" role="img" aria-label="Share of reports per year that mention {{ a.label }}"></div>
   <p class="muted small hint">Share of each year's reports that mention the actor (same base as the Trends pages). Click a bar for the list.</p>

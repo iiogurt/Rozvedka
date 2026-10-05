@@ -21,6 +21,7 @@
     <a href="/topics" class="{{ 'on' if request.url.path.startswith('/topics') }}">Topics</a>
     <a href="/trends" class="{{ 'on' if request.url.path.startswith('/trends') }}">Trends</a>
     <a href="/actors" class="{{ 'on' if request.url.path.startswith('/actors') }}">Actors</a>
+    <a href="/compare" class="{{ 'on' if request.url.path == '/compare' }}">Compare</a>
     <a href="/network" class="{{ 'on' if request.url.path == '/network' }}">Network</a>
     <a href="/map" class="{{ 'on' if request.url.path.startswith('/map') }}">Map</a>
   </nav>
