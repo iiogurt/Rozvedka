@@ -73,7 +73,8 @@ LOW_RELEVANCE_RE = re.compile((
     r"sluzebni|služební|výběrov[eé] řízen|ausschreibung|relationarea .* cu publicul|"
     r"protocolo de servicio|política de tratamiento de datos|politica de relacionamiento|política de relacionamiento|"
     r"carta de trato digno|lenguaje claro|participación ciudadana|manuales de comunicación|"
-    r"reporte complementario|informe de emergencia n|boletín informativo sísmico|boletin informativo sismico"
+    r"reporte complementario|informe de emergencia n|boletín informativo sísmico|boletin informativo sismico|"
+    r"obrazac|eur-lex"   # Croatian "form"; links to EU law texts
 ).replace(" ", r"[\s_-]+"), re.I)   # filenames use _ or - where titles use spaces
 
 
