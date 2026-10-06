@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.30.0] – 2026-10-06
+
+### Added
+- **Report page** (`/report/<id>`): one page per report with where it comes from (official address, the page it was
+  found on, how and when it was listed and downloaded, size, pages, SHA-256, OCR, how its year was found), its series
+  edition with the previous / next edition and the other languages, what changed against the previous edition, its
+  topics with the terms that matched, and the actors it names with a passage and page number each. Report titles on
+  Documents, Home, What's new, Watchlist, Compare, Series and actor pages open it; a separate *PDF* link opens the file.
+
+### Fixed
+- Series pages no longer count an actor in editions dated before the actor was founded (the rule the actor pages
+  already used), so "first time in this series" agrees with the actor pages.
+
 ## [0.29.1] – 2026-10-06
 
 ### Added
@@ -570,7 +583,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.29.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.30.0...HEAD
+[0.30.0]: https://github.com/iiogurt/Rozvedka/compare/v0.29.1...v0.30.0
 [0.29.1]: https://github.com/iiogurt/Rozvedka/compare/v0.29.0...v0.29.1
 [0.29.0]: https://github.com/iiogurt/Rozvedka/compare/v0.28.1...v0.29.0
 [0.28.1]: https://github.com/iiogurt/Rozvedka/compare/v0.28.0...v0.28.1

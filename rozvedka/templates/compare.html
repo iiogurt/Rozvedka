@@ -44,7 +44,7 @@
       </header>
       {% for p in a.passages %}
       <div class="cmp-p">
-        <div class="p-head small"><b>{{ p.year or '—' }}</b> <span class="p-title">{{ p.title }}</span> <span class="lang">{{ p.lang or '?' }}</span></div>
+        <div class="p-head small"><b>{{ p.year or '—' }}</b> <a class="p-title" href="/report/{{ p.id }}">{{ p.title }}</a> <span class="lang">{{ p.lang or '?' }}</span></div>
         {% if p.segments %}<blockquote class="p-text">{% for s in p.segments %}{% if s.mark %}<mark>{{ s.text }}</mark>{% else %}{{ s.text }}{% endif %} {% endfor %}</blockquote>{% endif %}
         <div class="p-foot small">
           <a href="{{ p.open }}" target="_blank">{% if p.page %}p. {{ p.page }}{% else %}open report{% endif %}</a> ·

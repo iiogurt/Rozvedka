@@ -21,7 +21,7 @@
     <h2><a href="/series/{{ c.id }}"><img class="flag-sm" src="{{ flag_url(c.source.country) }}" alt=""> {{ c.source.agency }} – {{ s.name }}</a></h2>
     <p class="small muted">{{ c.editions }} editions · {{ s.languages|join(', ') }} · {{ s.since }}–{{ c.latest[0] if c.latest else '' }}
       {% if c.complete_share is not none %} · <span title="editions in the library ÷ editions that should exist">{{ (c.complete_share * 100)|round|int }}% complete</span>{% endif %}
-      {% if c.latest %} · latest: <a href="/doc/{{ c.latest[2] }}">{{ c.latest[0] }} ({{ c.latest[1] }})</a>{% endif %}</p>
+      {% if c.latest %} · latest: <a href="/report/{{ c.latest[2] }}">{{ c.latest[0] }} ({{ c.latest[1] }})</a>{% endif %}</p>
     {{ grid(c.coverage, compact=True) }}
   </article>
 {% endfor %}

@@ -19,7 +19,7 @@ from markupsafe import escape
 from . import (__version__, actors, build_version, collect, countries, crawler, db, downloader, graphs, home, logos,
                paging, registry, series, topics, trends, updates)
 from . import compare as compare_mod
-from . import dataset, doclist, folders, review, updater, watch
+from . import dataset, doclist, folders, report, review, updater, watch
 from . import jobs as jobrunner
 from .config import FILES
 
@@ -1018,6 +1018,15 @@ def logo(source_id: int):
     return FileResponse(path, media_type=LOGO_TYPES.get(path.suffix.lstrip("."), "application/octet-stream"),
                         headers={"Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; img-src data:",
                                  "X-Content-Type-Options": "nosniff", "Cache-Control": "max-age=86400"})
+
+
+@app.get("/report/{doc_id}")
+def report_page(request: Request, doc_id: int):
+    """One report: provenance, series and editions, topics with their terms, actors with passages."""
+    d = report.detail(doc_id)
+    if d is None:
+        raise HTTPException(404, "unknown report")
+    return tpl.TemplateResponse(request, "report.html", d)
 
 
 @app.get("/doc/{doc_id}")

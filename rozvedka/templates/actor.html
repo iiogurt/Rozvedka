@@ -177,7 +177,7 @@
     These {{ before|length }} reports are dated earlier, so the name most likely means something else there; they are left
     out of every count on this page.</p>
   <ul class="actor-list">{% for d in before %}<li><img class="flag-sm" src="{{ flag_url(d.country) }}" alt="">
-    <a href="/doc/{{ d.doc_id }}">{{ d.title }}</a> <span class="muted small">{{ d.agency }} {{ d.year }} · as
+    <a href="/report/{{ d.doc_id }}">{{ d.title }}</a> <span class="muted small">{{ d.agency }} {{ d.year }} · as
     {% for n, c in d.names.items() %}“{{ n }}”{{ ', ' if not loop.last }}{% endfor %}</span></li>{% endfor %}</ul>
 </section>
 {% endif %}

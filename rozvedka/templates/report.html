@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% set d = doc %}
+{% block title %}{{ d.title }} · {{ d.agency }} · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/documents?source={{ d.source_id }}">← {{ d.agency }} – all reports</a>
+  {% if series %} · <a href="/series/{{ edition.id }}">series “{{ series.name }}”</a>{% endif %}</p>
+<h1 class="page-h"><img class="flag-sm" src="{{ flag_url(d.country) }}" alt="{{ d.country }}" width="20" height="15"> {{ d.title }}</h1>
+<p class="rp-actions">
+  {% if d.local_path %}<a class="rp-btn rp-primary" href="/doc/{{ d.id }}" target="_blank">Open the PDF</a>{% endif %}
+  <a class="rp-btn" href="{{ d.url }}" target="_blank" rel="noopener">Official address ↗</a>
+  {% if d.hidden %}<span class="badge-warn">hidden from lists and counts</span>{% endif %}</p>
+
+<div class="rp-grid">
+<section class="viz-card">
+  <h2 class="viz-title">Where it comes from</h2>
+  <table class="kv small">
+    <tr><th>Agency</th><td><a href="/sources#s-{{ d.source_id }}">{{ d.agency }}</a>{% if d.name_en %} – {{ d.name_en }}{% endif %}
+      <span class="muted">({{ d.country }}, {{ d.type }})</span></td></tr>
+    <tr><th>Year</th><td>{{ d.year or '—' }}{% if d.year_source %} <span class="muted">– {{ 'set by hand' if d.year_source == 'set by hand' else 'estimated from ' ~ d.year_source }}</span>
+      {% elif d.year %} <span class="muted">– from the title or address</span>{% endif %}</td></tr>
+    <tr><th>Language</th><td>{{ d.lang or '?' }}</td></tr>
+    <tr><th>Official address</th><td class="mono brk"><a href="{{ d.url }}" target="_blank" rel="noopener">{{ d.url }}</a></td></tr>
+    {% if d.page_url %}<tr><th>Found on</th><td class="mono brk"><a href="{{ d.page_url }}" target="_blank" rel="noopener">{{ d.page_url }}</a>
+      <span class="muted">({{ d.page_lang or '?' }}{{ ', ' ~ d.page_kind if d.page_kind }})</span></td></tr>{% endif %}
+    <tr><th>How</th><td>{% if upload %}added by hand on {{ upload.added_at[:10] }}{{ ' from ' ~ upload.original_name if upload.original_name }}{% if not upload.official %} <span class="badge-warn">address not on the agency’s official domains</span>{% endif %}
+      {% else %}{{ {'crawl': 'found by the crawler', 'pattern': 'found by an address pattern', 'manual': 'listed in the registry'}.get(d.origin, d.origin) }}{% endif %}</td></tr>
+    <tr><th>Listed</th><td>{{ (d.discovered_at or '')[:16] }}</td></tr>
+    <tr><th>Downloaded</th><td>{{ (d.downloaded_at or '—')[:16] }} <span class="st st-{{ d.status }}">{{ d.status }}</span>{% if d.error %} <span class="err">{{ d.error }}</span>{% endif %}</td></tr>
+    {% if d.size %}<tr><th>File</th><td>{{ (d.size / 1048576)|round(1) }} MB{% if d.pages_count %} · {{ d.pages_count }} pages{% endif %}{% if d.mime %} · {{ d.mime }}{% endif %}</td></tr>{% endif %}
+    {% if d.sha256 %}<tr><th>SHA-256</th><td class="mono brk">{{ d.sha256 }}</td></tr>{% endif %}
+    {% if index %}<tr><th>Text</th><td>{{ index.chars|num }} characters{% if ocr %} · <span class="badge-ocr">{{ ocr }}</span>{% endif %}</td></tr>{% endif %}
+  </table>
+</section>
+
+<section class="viz-card">
+  <h2 class="viz-title">Series and editions</h2>
+  {% if series %}
+  <p class="small">Edition <b>{{ edition.year }}</b> ({{ edition.lang }}) of <a href="/series/{{ edition.id }}">“{{ series.name }}”</a>
+    <span class="muted">– {{ series.per_year }}× a year since {{ series.since }}, defined in <code>sources/series.yaml</code></span></p>
+  <p class="small rp-nav">
+    {% if prev %}{% set f = (prev.files.get(edition.lang) or prev.files.values()|first)|first %}<a href="/report/{{ f.id }}">← {{ prev.year }}</a>{% else %}<span class="muted">no earlier edition</span>{% endif %}
+    ·
+    {% if next %}{% set f = (next.files.get(edition.lang) or next.files.values()|first)|first %}<a href="/report/{{ f.id }}">{{ next.year }} →</a>{% else %}<span class="muted">no later edition in the library</span>{% endif %}</p>
+  {% if other_langs %}<p class="small rp-chips"><span class="muted">Same edition in other files:</span>
+    {% for lg, f in other_langs %}<a class="mchip" href="/report/{{ f.id }}"><span class="ctag">{{ lg }}</span>&nbsp;{{ f.title }}</a> {% endfor %}</p>{% endif %}
+  {% if this and prev %}
+  <h3 class="small rp-h3">Against the {{ prev.year }} edition</h3>
+  <ul class="small rp-delta">
+    <li>{% if this.topics_in %}<span class="ed-delta up">new among the main topics: {{ this.topics_in|map(attribute=1)|join(', ') }}</span>{% else %}<span class="muted">main topics unchanged{% if not this.main %} (no text){% endif %}</span>{% endif %}</li>
+    {% if this.topics_out %}<li><span class="ed-delta">no longer main: {{ this.topics_out|map(attribute=1)|join(', ') }}</span></li>{% endif %}
+    <li>{% if this.new_actors %}<span class="muted">first time in this series:</span> {% for a in this.new_actors %}<a class="mchip linked" href="/actors/{{ a.actor_key }}">{{ a.label }}</a>{% endfor %}{% else %}<span class="muted">no actor named for the first time in the series</span>{% endif %}</li>
+  </ul>
+  <p class="muted small">Compared edition by edition on the <a href="/series/{{ edition.id }}">series page</a>, using one file per year{% if this.profile_doc and this.profile_doc.id != d.id %} (for {{ edition.year }}: <a href="/report/{{ this.profile_doc.id }}">{{ this.profile_doc.lang }} file</a>){% endif %}.</p>
+  {% endif %}
+  {% else %}
+  <p class="muted small">Not part of a confirmed report series. Series are confirmed on <a href="/sources/coverage?source={{ d.skey|urlencode }}">Sources → coverage</a>;
+    other reports of the agency: <a href="/documents?source={{ d.source_id }}">{{ d.agency }}</a>.</p>
+  {% endif %}
+</section>
+</div>
+
+<section class="viz-card">
+  <h2 class="viz-title">Topics</h2>
+  {% if topics %}
+  <p class="muted small viz-sub">Found by keywords from <code>sources/topics.yaml</code>. Score = keyword hits weighted by distinct terms and title;
+    the first {{ main|length }} non-general topics are the report's main topics. Each topic opens all reports with it.</p>
+  <table class="rp-topics small">
+    <thead><tr><th>Topic</th><th>Category</th><th class="n">Score</th><th class="n">Hits</th><th>Terms that matched</th></tr></thead>
+    {% for t in topics %}<tr class="{{ 'rp-main' if t in main }}"><th><a href="/documents?topic={{ t.topic }}">{{ t.name }}</a>{% if t in main %} <span class="ctag">main</span>{% endif %}{% if t.meta %} <span class="muted">general</span>{% endif %}</th>
+      <td class="muted">{{ t.category }}</td><td class="n">{{ t.score|round(1) }}</td><td class="n">{{ t.hits }}</td>
+      <td>{% for term in t.terms[:12] %}<span class="term">{{ term }}</span>{% endfor %}{% if t.terms|length > 12 %} <span class="muted">+{{ t.terms|length - 12 }}</span>{% endif %}</td></tr>{% endfor %}
+  </table>
+  {% else %}<p class="muted small">No topic found{% if not index %} – the report has no text in the library yet{% endif %}.</p>{% endif %}
+</section>
+
+<section class="viz-card">
+  <h2 class="viz-title">Actors named <span class="muted small">{{ actors|length }}</span></h2>
+  {% if actors %}
+  <p class="muted small viz-sub">Names matched by the rules on the <a href="/actors">Actors</a> page; the agency itself and actors founded after the report's year are left out.
+    The first passage is shown for the {{ actors_shown }} most named; an actor's page lists every report and passage naming it.</p>
+  <ol class="rp-actors">
+  {% for a in actors %}<li><div><i class="kdot kind-{{ a.kind }}"></i><a href="/actors/{{ a.key }}"><b>{{ a.label }}</b></a>
+      <span class="muted small">{{ a.kind_name }} · {{ a.hits }} mention{{ 's' if a.hits != 1 }} · as {{ a.names.keys()|list|join(', ') }}</span></div>
+    {% if a.match %}<blockquote class="snippet small">{{ a.before }}<mark>{{ a.match }}</mark>{{ a.after }}
+      {% if d.local_path %}<a class="muted" href="/doc/{{ d.id }}{{ '#page=' ~ a.page if a.page }}" target="_blank">{{ 'p. ' ~ a.page if a.page else 'open' }}</a>{% endif %}</blockquote>{% endif %}</li>{% endfor %}
+  </ol>
+  {% else %}<p class="muted small">No actor named{% if not index %} – the report has no text in the library yet{% endif %}.</p>{% endif %}
+  {% if countries %}<p class="small rp-chips"><span class="muted">Countries named:</span>
+    {% for c in countries %}<a class="mchip" href="/actors/{{ c.key }}">{{ c.label }}&nbsp;<span class="muted">{{ c.hits }}</span></a> {% endfor %}</p>{% endif %}
+</section>
+{% endblock %}

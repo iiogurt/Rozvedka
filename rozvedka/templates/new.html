@@ -66,7 +66,7 @@
           <ol class="nw-docs">
         {% endif %}
         <li><span class="h-when">{{ d.year or '—' }}</span>
-          <span>{% if d.local_path %}<a href="/doc/{{ d.id }}" target="_blank">{{ d.title }}</a>{% else %}<a href="{{ d.url }}" target="_blank" rel="noopener">{{ d.title }} ↗</a>{% endif %}
+          <span><a href="/report/{{ d.id }}">{{ d.title }}</a>{% if d.local_path %} <a class="small muted" href="/doc/{{ d.id }}" target="_blank">PDF</a>{% endif %}
             <span class="lang">{{ d.lang or '?' }}</span>
             {% if d.topics or d.actors %}<div class="doc-topics">
               {% for t in d.topics %}<a class="topic-chip" href="/documents?topic={{ t }}">{{ TOPICS[t].name if t in TOPICS else t }}</a>{% endfor %}
