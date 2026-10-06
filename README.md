@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.29.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.29.1-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -27,8 +27,8 @@ local library, so you can follow how state security, social resilience and disas
 
 | | |
 |---|---|
-| **Coverage** | 120 agencies and institutions in 46 countries and bodies: 26 EU member states, EU bodies and NATO, the UK, Norway, Switzerland, Ukraine, the USA, Canada, six Latin American countries, Australia, New Zealand, Japan, South Korea and Taiwan |
-| **Library** | about 3,100 reports in 25 languages, with archives back to 2000, downloaded as PDF |
+| **Coverage** | 134 agencies and institutions in 50 countries and bodies: 26 EU member states, EU bodies and NATO, every NATO member except Montenegro (Iceland, Albania, North Macedonia, Türkiye, the UK, Norway, the USA, Canada), Switzerland, Ukraine, six Latin American countries, Australia, New Zealand, Japan, South Korea and Taiwan |
+| **Library** | about 3,450 reports in 30 languages, with archives back to 2000, downloaded as PDF |
 | **Index** | full text of every report, 64 topics from a 3,800-term multilingual keyword list, about 1,550 named actors and 189 countries |
 | **Runs on** | a Raspberry Pi (or any Linux box) – Python, SQLite and the browser; no cloud service, no account |
 

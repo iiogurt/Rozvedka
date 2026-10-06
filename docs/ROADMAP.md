@@ -49,19 +49,19 @@ Each item: why · what · done when · version step.
 
 ### A. Complete the library within its scope (highest priority)
 
-1. **Fix the six silent automatic sources** (NCSC-NL, VIGINUM, NCSA, SRE, NCSC-IE, OEP) – check pages, link patterns,
+1. ✅ (0.29.1) **Fix the six silent automatic sources** (NCSC-NL, VIGINUM, NCSA, SRE, NCSC-IE, OEP) – check pages, link patterns,
    JavaScript rendering; mark as manual where nothing can be fetched. *Done when* each has reports or a documented reason. · patch (sources)
-2. **The six missing member states** – research the official publishers per slot (civil and military intelligence,
+2. ✅ (0.29.1: Iceland, Albania, North Macedonia, Türkiye added; Montenegro and Malta publish no regular reports) **The six missing member states** – research the official publishers per slot (civil and military intelligence,
    cyber agency / national CERT, civil protection and national risk assessment, police / counter-terrorism) and add
    those that publish regularly. Starting points to verify (names from memory, not yet checked): Albania – state
    intelligence service, national cyber security authority; Iceland – national police commissioner's risk
    assessments, CERT-IS; Montenegro – national security agency, CIRT.ME; North Macedonia – national security agency,
    MKD-CIRT; Turkey – USOM (national CERT), AFAD (disasters); Malta – Civil Protection Department, CSIRTMalta. Only
    official domains; manual where blocked; record the slots where nothing is published. · patch (sources)
-3. **National risk assessments and civil protection gaps** – EU states must report a national risk assessment
+3. ◐ (0.29.1: NL, BE, PT, HU, HR, SI, IE added; AT, BG, CY, EE, GR, LT, LV, RO, SK still open) **National risk assessments and civil protection gaps** – EU states must report a national risk assessment
    summary to the Union Civil Protection Mechanism every three years; most publish one (e.g. NL Rijksbrede
    Risicoanalyse, LT, LV, SK, AT). Fill the 17 countries without a civil-protection source. · patch (sources)
-4. **Cyber gaps** – national CERT / cyber-agency annual reports where they exist; candidates to verify: CERT.at, CERT.LV,
+4. ◐ (0.29.1: AT, LV, SE, HR added; LU, BG and the non-EU countries still open) **Cyber gaps** – national CERT / cyber-agency annual reports where they exist; candidates to verify: CERT.at, CERT.LV,
    CERT-SE / NCSC-SE, CERT.hr, CIRCL (LU), NISC / JPCERT (JP), KISA (KR), TWCERT (TW), CISA (US), CERT.br. · patch (sources)
 5. **Hand-collect the blocked flagships** (Säpo, PET, ASIO, CSIS, VSD/AOTD …) through *To collect*. *Done when* their
    latest three editions are in the library. · owner + data

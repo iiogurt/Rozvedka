@@ -27,6 +27,31 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.29.1] – 2026-10-06
+
+### Added
+- **Sources for the NATO members outside the EU**: Iceland (National Security Council – security assessments and
+  reports on the national security strategy), Albania (AKSK, national cyber-security authority – annual reports),
+  North Macedonia (ANB – national threat assessment in Macedonian, Albanian and English), Türkiye (police
+  counter-narcotics – the yearly Türkiye Drug Report since 2006; collected by hand, as robots.txt disallows its files).
+  Montenegro, Albania's SHISH and Malta publish no regular reports (recorded in the registry).
+- **National risk assessments** (civil protection): Netherlands (Rijksbrede Risicoanalyse Nationale Veiligheid),
+  Belgium (Belgian National Risk Assessment 2023–2026), Portugal (ANEPC), Hungary (BM OKF), Croatia (civil protection
+  directorate), Slovenia (URSZR – national and sector assessments); Ireland's national risk assessments 2017, 2020, 2023.
+- **National CERTs' annual reports**: Austria (CERT.at), Latvia (CERT.LV), Sweden (NCSC), Croatia (CERT.hr); Ireland's
+  national cyber risk assessments 2022 and 2025.
+- Countries Iceland, Albania, Montenegro, North Macedonia and Türkiye with their NATO accession years (nato.int) and flags.
+
+### Fixed
+- Six sources that found nothing: VIGINUM (publications list), SRE Luxembourg (activity reports 2021–2024, rendered
+  in a browser), NCSC Ireland and the Office of Emergency Planning (on gov.ie); NCSC-NL and NCSA Greece are now
+  collected by hand, with the reason. The Cybersecuritybeeld Nederland 2023–2025 is found under NCTV.
+- Crawler: archive pages with one page per yearly report are followed even when the page also links a few navigation
+  PDFs (the link text must name a report and a year); a page that redirects to another domain of the agency keeps
+  its documents; Icelandic, Turkish and Macedonian report words; document links of Episerver media libraries.
+- Not taken as reports: a CERT's RFC 2350 self-description, eIDAS trust lists, forms, EUR-Lex links and vulnerability
+  bulletins naming CVE numbers (hidden where already stored).
+
 ## [0.29.0] – 2026-10-06
 
 ### Added
@@ -545,7 +570,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.29.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.29.1...HEAD
+[0.29.1]: https://github.com/iiogurt/Rozvedka/compare/v0.29.0...v0.29.1
 [0.29.0]: https://github.com/iiogurt/Rozvedka/compare/v0.28.1...v0.29.0
 [0.28.1]: https://github.com/iiogurt/Rozvedka/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/iiogurt/Rozvedka/compare/v0.27.0...v0.28.0
