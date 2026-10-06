@@ -551,6 +551,8 @@ flowchart LR
   prioritised next steps.
 - **Workflow:** `main` always holds working code. Work on a branch (`feat/…`, `fix/…`, `sources/…`, `docs/…`) and
   merge through a pull request. Registry edits go in their own commits (`sources: add Latvian SAB reports page`).
+- **CI:** GitHub Actions (`.github/workflows/tests.yml`) runs the test suite on every pull request and push to
+  `main`; a pull request is merged only when it is green.
 - **Never commit** `data/`, `.env` or credentials – `.gitignore` covers them.
 - **Versioning:** [Semantic Versioning](https://semver.org) by significance – *patch* for fixes, sources, keywords
   and visual changes; *minor* for new capabilities; *major* for incompatible changes (table in

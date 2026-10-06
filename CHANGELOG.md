@@ -27,6 +27,9 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+### Added
+- The tests run on GitHub Actions for every pull request and every push to `main`.
+
 ## [0.31.0] – 2026-10-06
 
 ### Added
