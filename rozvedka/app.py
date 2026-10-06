@@ -20,7 +20,7 @@ from . import (__version__, actors, build_version, collect, countries, crawler, 
                paging, registry, series, topics, trends, updates)
 from . import compare as compare_mod
 from . import dating
-from . import dataset, doclist, folders, report, review, updater, watch
+from . import dataset, doclist, doctypes, folders, report, review, updater, watch
 from . import jobs as jobrunner
 from .config import FILES
 
@@ -436,12 +436,18 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
           status: str = "", q: str = "", source: int = 0, page: str = "1", per_page: str = "", show_hidden: int = 0,
           coalition: str = "", topic: list[str] = Query(default=[]), sort: str = "",
           year_from: str = "", year_to: str = "", indexed: int = 0, actor: str = "", main: int = 0,
-          cluster: str = "", series_id: str = Query("", alias="series"), added_from: str = "", added_to: str = "", undated: int = 0):
+          cluster: str = "", series_id: str = Query("", alias="series"), added_from: str = "", added_to: str = "", undated: int = 0,
+          doc_type: str = "", all_types: int = 0):
     tax = topics.taxonomy()["topics"]
-    flt = doclist.build(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source,
-                        show_hidden=show_hidden, coalition=coalition, topic=topic, year_from=year_from, year_to=year_to,
-                        indexed=indexed, actor=actor, main=main, cluster=cluster, series_id=series_id,
-                        added_from=added_from, added_to=added_to, undated=undated)
+    if doc_type == "all":                                   # the type list's "every type" choice
+        doc_type, all_types = "", 1
+    doc_type = doc_type if doc_type in doctypes.TYPES else ""
+    fargs = dict(country=country, type=type, lang=lang, year=year, status=status, q=q, source=source,
+                 show_hidden=show_hidden, coalition=coalition, topic=topic, year_from=year_from, year_to=year_to,
+                 indexed=indexed, actor=actor, main=main, cluster=cluster, series_id=series_id,
+                 added_from=added_from, added_to=added_to, undated=undated)
+    flt = doclist.build(**fargs, doc_type=doc_type, all_types=all_types)
+    every_type = doclist.build(**fargs, all_types=1)       # the same filters over every type: counts per type
     where, args, chosen, fts = flt["where"], flt["args"], flt["chosen"], flt["fts"]
     base_where, base_args = flt["base_where"], flt["base_args"]
     editions, series_row, actor_row = flt["editions"], flt["series_row"], flt["actor_row"]
@@ -463,13 +469,16 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
                   coalition=coalition, topic=chosen, sort=sort if sort != "year" or chosen or q else "",
                   show_hidden=show_hidden or "", year_from=year_from, year_to=year_to, indexed=indexed or "",
                   actor=actor, main=main or "", cluster=cluster, series=series_id, added_from=added_from, added_to=added_to,
-                  undated=undated or "",
+                  undated=undated or "", doc_type=doc_type, all_types=all_types or "",
                   per_page=size if size != paging.PER_PAGE_CHOICES[2] else "")
     with db.session() as con:
         topics.init()
         total = con.execute(f"SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id WHERE {sql_where}",
                             args).fetchone()[0]
         pg = paging.paginate(total, page, size, "/documents", params)
+        type_counts = dict(con.execute(
+            f"""SELECT COALESCE(d.doc_type, ''), COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
+                WHERE {' AND '.join(every_type['where'])} GROUP BY 1""", every_type["args"]).fetchall())
         docs = [dict(r) for r in con.execute(
             f"""SELECT d.*, s.country, s.agency, s.type, s.name_en, s.logo_path,
                        u.added_at AS hand_added, u.official AS hand_official, ix.ocr AS ocr
@@ -508,7 +517,8 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
         merged = {**params, **kw}
         return urlencode({k: v for k, v in merged.items() if v not in ("", 0, None, [])}, doseq=True)
 
-    return tpl.TemplateResponse(request, "index.html", {"year_conflicts": len(dating.conflicts()), 
+    return tpl.TemplateResponse(request, "index.html", {"year_conflicts": len(dating.conflicts()),
+        "type_counts": type_counts, "DOC_TYPES": doctypes.TYPES, "NOT_REPORTS": doctypes.NOT_REPORTS,
         "docs": docs, "total": total, "pg": pg,
         "facets": facets, "f": params, "counts": counts, "qs": qs,
         "TOPICS": tax, "CATEGORIES": topics.taxonomy()["categories"], "topic_counts": topic_counts,
@@ -1087,6 +1097,12 @@ def hide_doc(request: Request, doc_id: int, hidden: int = Form(1)):
     with db.session() as con:
         con.execute("UPDATE documents SET hidden=? WHERE id=?", (hidden, doc_id))
     return _back(request)
+
+
+@app.post("/doc/{doc_id}/type")
+def type_doc(request: Request, doc_id: int, doc_type: str = Form(...)):
+    doctypes.set_by_hand(doc_id, doc_type)
+    return _back(request, f"/report/{doc_id}")
 
 
 @app.post("/doc/{doc_id}/edit")

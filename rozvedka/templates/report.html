@@ -20,6 +20,10 @@
       {% elif d.year %} <span class="muted">– from the title or address</span>{% endif %}
       {% if year_conflict %}<div class="badge-warn small">{{ conflict_kinds[year_conflict.kind] }} says <b>{{ year_conflict.found }}</b>: {{ year_conflict.evidence }}
         – <a href="/years?source={{ d.source_id }}">review</a></div>{% endif %}</td></tr>
+    <tr><th>Type</th><td>{% if d.doc_type %}{{ doc_types[d.doc_type][0] }} <span class="muted">– {{ d.doc_type_why }}{{ '; not counted as a report' if not doc_types[d.doc_type][1] }}</span>{% else %}<span class="muted">not typed yet</span>{% endif %}
+      <form class="inline rp-type" method="post" action="/doc/{{ d.id }}/type"><select name="doc_type" aria-label="Correct the type">
+        {% for k, (label, _) in doc_types.items() %}<option value="{{ k }}" {{ 'selected' if d.doc_type == k }}>{{ label }}</option>{% endfor %}</select>
+        <button title="Set the type by hand – written to sources/doc_types.yaml">Set</button></form></td></tr>
     <tr><th>Language</th><td>{{ d.lang or '?' }}</td></tr>
     <tr><th>Official address</th><td class="mono brk"><a href="{{ d.url }}" target="_blank" rel="noopener">{{ d.url }}</a></td></tr>
     {% if d.page_url %}<tr><th>Found on</th><td class="mono brk"><a href="{{ d.page_url }}" target="_blank" rel="noopener">{{ d.page_url }}</a>

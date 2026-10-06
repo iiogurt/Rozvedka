@@ -74,7 +74,7 @@ Each item: why · what · done when · version step.
    publish the measured precision on the Actors page; turn names that are mostly wrong into exclusions. · owner + patch
 2. **Editions and translations** (old B7) – group the same report across languages and file variants, so counts and
    trends are per report, not per file; passages can switch language. · minor
-3. **Document types** (old B8) – annual report, threat assessment, risk assessment, strategy, guide/leaflet, form,
+3. ✅ (0.32.0) **Document types** (old B8) – annual report, threat assessment, risk assessment, strategy, guide/leaflet, form,
    statistics – from titles, series and size; filter and weight by type (a 200-page assessment is not a 2-page form). ·
    minor
 4. **Reports without a topic** (383) – sample them: add missing terms to `topics.yaml` (general rule first), mark

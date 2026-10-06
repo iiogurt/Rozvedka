@@ -13,7 +13,7 @@ from urllib.parse import urlencode
 
 import yaml
 
-from . import countries, db, topics
+from . import countries, db, doctypes, topics
 from .config import ROOT
 
 EVENTS = ROOT / "sources" / "events.yaml"
@@ -21,7 +21,8 @@ MIN_YEAR = 2000
 LOW_SAMPLE = 30      # years with fewer documents in scope are marked as unreliable
 MATRIX_MIN_DOCS = 5  # rows (agencies/countries) with fewer documents in the period are left out of the matrix
 
-LISTED = "d.hidden=0 AND s.active=1 AND d.status NOT IN ('missing','duplicate','skipped')"
+# what every count and chart counts: listed reports – not hidden, not statements, finance tables or forms (doctypes)
+LISTED = f"d.hidden=0 AND s.active=1 AND d.status NOT IN ('missing','duplicate','skipped') AND {doctypes.COUNTED}"
 CLASSIFIED = "d.id IN (SELECT doc_id FROM doc_index WHERE taxonomy_hash IS NOT NULL AND error IS NULL)"
 
 
@@ -61,7 +62,12 @@ def _excluded(con, where: str, args: list) -> dict:
                                SUM(d.year < ?) before
                         FROM documents d JOIN sources s ON s.id=d.source_id WHERE {where}""",
                     (MIN_YEAR, *args)).fetchone()
+    # statements, finance tables and forms: the same filter without the document-type condition, minus the counted ones
+    every = where.replace(f" AND {doctypes.COUNTED}", "", 1)
+    not_reports = con.execute(f"""SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
+                                  WHERE {every} AND NOT {doctypes.COUNTED}""", args).fetchone()[0]
     return {"listed": r["listed"], "undated": r["undated"] or 0, "unclassified": r["unclassified"] or 0,
+            "not_reports": not_reports,
             "estimated": r["estimated"] or 0,
             "before_min_year": r["before"] or 0}
 
