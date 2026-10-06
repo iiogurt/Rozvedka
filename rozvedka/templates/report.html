@@ -17,7 +17,9 @@
     <tr><th>Agency</th><td><a href="/sources#s-{{ d.source_id }}">{{ d.agency }}</a>{% if d.name_en %} – {{ d.name_en }}{% endif %}
       <span class="muted">({{ d.country }}, {{ d.type }})</span></td></tr>
     <tr><th>Year</th><td>{{ d.year or '—' }}{% if d.year_source %} <span class="muted">– {{ 'set by hand' if d.year_source == 'set by hand' else 'estimated from ' ~ d.year_source }}</span>
-      {% elif d.year %} <span class="muted">– from the title or address</span>{% endif %}</td></tr>
+      {% elif d.year %} <span class="muted">– from the title or address</span>{% endif %}
+      {% if year_conflict %}<div class="badge-warn small">{{ conflict_kinds[year_conflict.kind] }} says <b>{{ year_conflict.found }}</b>: {{ year_conflict.evidence }}
+        – <a href="/years?source={{ d.source_id }}">review</a></div>{% endif %}</td></tr>
     <tr><th>Language</th><td>{{ d.lang or '?' }}</td></tr>
     <tr><th>Official address</th><td class="mono brk"><a href="{{ d.url }}" target="_blank" rel="noopener">{{ d.url }}</a></td></tr>
     {% if d.page_url %}<tr><th>Found on</th><td class="mono brk"><a href="{{ d.page_url }}" target="_blank" rel="noopener">{{ d.page_url }}</a>

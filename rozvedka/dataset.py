@@ -36,7 +36,7 @@ FORMAT = "rozvedka-dataset"
 FORMAT_VERSION = 1
 PART_SIZE = 2_000_000_000
 CHUNK = 1 << 20
-PORTAL_LISTS = ("series.yaml", "watchlist.yaml", "actor_reviews.yaml")     # written by the portal: merged on import
+PORTAL_LISTS = ("series.yaml", "watchlist.yaml", "actor_reviews.yaml", "year_reviews.yaml")     # written by the portal: merged on import
 
 
 Cancelled = progress.Cancelled
@@ -741,7 +741,8 @@ def _take_gazetteer(folder: Path, m: dict) -> str:
 
 
 def _merge_lists(mpath: Path, m: dict) -> dict:
-    """Merge the portal-written lists: watchlist and reviews by key (a later review wins), series by source and name."""
+    """Merge the portal-written lists: watchlist and reviews by key (a later review wins), series by source and name;
+    imported year verdicts are applied by the dating step that follows an import."""
     folder = config.DATA / "imports" / f"{m['dataset_id']}-lists"
     out = {}
     if not folder.exists():
@@ -776,6 +777,18 @@ def _merge_lists(mpath: Path, m: dict) -> dict:
                 if added:
                     review.save(list(ours.values()), ours_p)
                 out[name] = f"{added} verdicts added or updated"
+            elif name == "year_reviews.yaml":
+                from . import dating
+                ours = {r["url"]: r for r in dating.load_reviews(ours_p)}
+                added = 0
+                for r in theirs or []:
+                    if isinstance(r, dict) and r.get("url") and (
+                            r["url"] not in ours or (r.get("checked") or "") > (ours[r["url"]].get("checked") or "")):
+                        ours[r["url"]] = r
+                        added += 1
+                if added:
+                    dating.save_reviews(list(ours.values()), ours_p)
+                out[name] = f"{added} year verdicts added or updated"
             elif name == "series.yaml":
                 from . import series
                 ours = series.load(ours_p)

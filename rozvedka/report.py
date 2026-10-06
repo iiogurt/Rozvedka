@@ -2,7 +2,7 @@
 matched), the actors it names with a passage each, and what changed against the previous edition of its series."""
 import json
 
-from . import actors, collect, db, series, topics
+from . import actors, collect, dating, db, series, topics
 
 ACTORS_SHOWN = 30
 
@@ -72,4 +72,4 @@ def detail(doc_id: int) -> dict | None:
             "ocr": actors._ocr_note(ix["ocr"]) if ix and ix.get("ocr") else None,
             "topics": trows, "main": main, "actors": named, "actors_shown": ACTORS_SHOWN, "countries": countries_named,
             "edition": ed, "series": sdetail["series"] if sdetail else None, "this": this, "prev": prev, "next": nxt,
-            "other_langs": other_langs}
+            "other_langs": other_langs, "year_conflict": dating.conflict_of(doc_id), "conflict_kinds": dating.CONFLICT_KINDS}

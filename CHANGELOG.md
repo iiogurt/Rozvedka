@@ -27,6 +27,17 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.31.0] – 2026-10-06
+
+### Added
+- **Year conflicts** (`/years`): reports whose stored year is contradicted by strong evidence (a Japanese era year in
+  the title, a date stamp in the file name that is neither the stored year nor the next, a report heading on the cover
+  naming another year), with the evidence, filters by kind and agency, and *Use the year found* / *Keep* per report
+  or for the ticked ones. 122 conflicts found in the library, e.g. UK ISC press releases stored as 2021 that are dated
+  2009–2020 and Peruvian civil-defence yearbook chapters from 2002–2006 stored as 2019. Verdicts are written to
+  `sources/year_reviews.yaml`, re-applied whenever reports are dated (so they hold after a dataset import) and merged
+  on import. The Documents summary links the number of open conflicts; a report page shows its conflict.
+
 ## [0.30.0] – 2026-10-06
 
 ### Added
@@ -583,7 +594,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.30.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.31.0...HEAD
+[0.31.0]: https://github.com/iiogurt/Rozvedka/compare/v0.30.0...v0.31.0
 [0.30.0]: https://github.com/iiogurt/Rozvedka/compare/v0.29.1...v0.30.0
 [0.29.1]: https://github.com/iiogurt/Rozvedka/compare/v0.29.0...v0.29.1
 [0.29.0]: https://github.com/iiogurt/Rozvedka/compare/v0.28.1...v0.29.0

@@ -826,3 +826,14 @@ table.wl-matrix { border-collapse: collapse; font-size: 13px; width: 100%; }
 .rp-actors blockquote { margin: 3px 0 0; }
 @media (max-width: 700px) { .rp-grid { grid-template-columns: 1fr; } }
 .rp-chips .mchip, .rp-delta .mchip { margin: 0 4px 4px 0; }
+
+/* year conflicts (/years) */
+.yc-kinds { border-collapse: collapse; margin: 6px 0 10px; }
+.yc-kinds th { text-align: left; font-weight: normal; padding: 2px 16px 2px 0; }
+.yc-kinds td.n { text-align: right; font-variant-numeric: tabular-nums; font-weight: bold; }
+.yc-kinds tr.on th { font-weight: bold; }
+table.yc td.n, table.yc th.n { text-align: right; font-variant-numeric: tabular-nums; }
+table.yc td.actions { white-space: nowrap; width: 1%; }
+table.yc td.actions button { display: block; width: 100%; margin: 0 0 3px; }
+table.yc td.ev { max-width: 420px; }
+.yc-bulk { margin: 8px 0; }

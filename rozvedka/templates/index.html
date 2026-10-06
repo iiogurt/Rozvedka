@@ -59,7 +59,7 @@
     {% for key, label in ((('relevance', 'relevance'),) if f.topic or f.q else ()) + (('year', 'year'), ('added', 'date added')) %}
       {% if cur == key %}<b>{{ label }}</b>{% else %}<a href="/documents?{{ qs(sort=key, page=1) }}">{{ label }}</a>{% endif %}{{ ' · ' if not loop.last }}
     {% endfor %}</span>
-  <span class="muted">library: {{ counts.get('downloaded', 0) }} downloaded · {{ counts.get('new', 0) }} waiting · {{ counts.get('failed', 0) }} failed</span>
+  <span class="muted">library: {{ counts.get('downloaded', 0) }} downloaded · {{ counts.get('new', 0) }} waiting · {{ counts.get('failed', 0) }} failed{% if year_conflicts %} · <a href="/years" title="Reports whose stored year strong evidence contradicts – review them">{{ year_conflicts }} year conflict{{ 's' if year_conflicts != 1 }}</a>{% endif %}</span>
   <form method="post" action="/jobs/download" class="inline">
     <input type="hidden" name="country" value="{{ f.country }}">
     <button title="Download all waiting documents{{ ' for ' ~ f.country if f.country }} – followed on the Update page">Download waiting{{ ' (' ~ f.country ~ ')' if f.country }}</button>

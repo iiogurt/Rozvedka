@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.30.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.31.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -113,6 +113,12 @@ The library itself (`/documents`): every report with its agency, country, langua
   or year; hide irrelevant files; add a document by URL for sites that block automatic downloads.
 - Page through the results with numbered pages, first/last, "go to page", and 25 / 50 / 100 / 200 / 500 per page –
   the same pager on every list in the portal (actors, names, passages).
+- **Year conflicts** (`/years`, linked from the Documents summary): reports whose stored year is contradicted by strong
+  evidence – a Japanese era year in the title, a date stamp in the file name, a report heading on the cover naming
+  another year – with the evidence and one click to use the year found or keep the stored one. Nothing changes
+  without a verdict; verdicts are kept in `sources/year_reviews.yaml` and travel with datasets.
+
+  <img src="docs/images/years.png" alt="Year conflicts: stored and found year with the evidence, and buttons to use or keep" width="900">
 
 ### 📄 Report page
 

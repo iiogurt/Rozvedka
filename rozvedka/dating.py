@@ -15,9 +15,12 @@ import logging
 import re
 import unicodedata
 from collections import Counter
+from pathlib import Path
+
+import yaml
 
 from . import db, topics
-from .config import FILES
+from .config import FILES, ROOT
 
 log = logging.getLogger("rozvedka.dating")
 
@@ -236,6 +239,7 @@ def date_documents(limit: int | None = None) -> dict:
             con.execute("UPDATE documents SET year=?, year_source=? WHERE id=? AND year IS NULL", (year, source, doc_id))
             stats["from " + LABELS[kind_of(source)]] += 1
     log.info("dated %s", dict(stats))
+    stats["year conflicts"] = find_conflicts()
     return {"undated_before": len(ids), **stats}
 
 
@@ -267,3 +271,128 @@ def check(sample: int = 100_000) -> dict:
                 res[f"{kind} exact"] += diff == 0
                 res[f"{kind} ±1"] += abs(diff) <= 1
     return dict(res)
+
+
+# ── year conflicts: a stored year that strong evidence contradicts, listed for review – never changed silently ──
+CONFLICT_SCHEMA = """
+CREATE TABLE IF NOT EXISTS year_conflicts (       -- found by find_conflicts(); rebuilt whenever reports are dated
+    doc_id INTEGER PRIMARY KEY, stored INTEGER, found INTEGER, kind TEXT, evidence TEXT, checked_at TEXT);
+"""
+CONFLICT_KINDS = {"era": "Japanese era year in the title", "stamp": "date stamp in the file name",
+                  "heading": "report heading on the cover"}
+YEAR_REVIEWS = ROOT / "sources" / "year_reviews.yaml"
+REVIEWS_HEADER = """# Year reviews – conflicts between a report's stored year and strong evidence, decided in the portal
+# (Documents → Year conflicts). Each entry: the report (official URL), the stored year, the year found and its evidence,
+# and the verdict: "use" sets the report's year to the year found (re-applied on every rebuild, so it holds after an
+# import), "keep" keeps the stored year and stops listing that conflict. Written by the portal; editable by hand.
+"""
+
+
+def init_conflicts(con) -> None:
+    con.executescript(CONFLICT_SCHEMA)
+
+
+def load_reviews(path: Path | None = None) -> list[dict]:
+    path = path or YEAR_REVIEWS
+    if not path.exists():
+        return []
+    return [r for r in (yaml.safe_load(path.read_text(encoding="utf-8")) or []) if isinstance(r, dict)]
+
+
+def save_reviews(rows: list[dict], path: Path | None = None) -> None:
+    path = path or YEAR_REVIEWS
+    path.write_text(REVIEWS_HEADER + yaml.safe_dump(rows, allow_unicode=True, sort_keys=False, width=120), encoding="utf-8")
+
+
+def against(title: str, url: str, year: int, body: str | None, pages: list[int] | None) -> tuple[int, str, str] | None:
+    """(year found, kind, evidence) when strong evidence contradicts the stored year, else None. Strong means:
+    a Japanese era year in the title; a date stamp in the file name that is neither the stored year nor the year
+    after it (reports are published the year after the one they cover); a report heading on the cover page naming
+    another year, unless the title itself carries the stored year."""
+    got = from_address(title, url)
+    if got and "Japanese era" in got[1] and got[0] != year:
+        return got[0], "era", got[1]
+    if got and "date stamp" in got[1] and got[0] not in (year, year + 1):
+        return got[0], "stamp", got[1]
+    if body and str(year) not in (title or ""):
+        h = from_text(body, pages, kinds=("heading",))
+        if h and h[0] != year and "(p. 1)" in h[1]:
+            return h[0], "heading", h[1]
+    return None
+
+
+def find_conflicts() -> int:
+    """Re-apply the "use" verdicts of year_reviews.yaml, then rebuild the list of conflicts over every listed report
+    with a year not set by hand. Conflicts with a "keep" verdict for the same stored and found year are left out."""
+    now = dt.datetime.now().isoformat(" ", "seconds")
+    reviews = load_reviews()
+    kept = {(r["url"], r.get("stored"), r.get("found")) for r in reviews if r.get("verdict") == "keep"}
+    with db.session() as con:
+        init_conflicts(con)
+        for r in reviews:
+            if r.get("verdict") == "use" and r.get("found"):
+                con.execute("""UPDATE documents SET year=?, year_source='set by hand' WHERE url=? AND year IS ?
+                               AND (year_source IS NULL OR year_source != 'set by hand')""", (r["found"], r["url"], r.get("stored")))
+        found = []
+        for r in con.execute("""SELECT d.id, d.title, d.url, d.year, t.body, i.pages FROM documents d
+                                LEFT JOIN doc_text t ON t.rowid=d.id LEFT JOIN doc_index i ON i.doc_id=d.id
+                                WHERE d.year IS NOT NULL AND d.hidden=0 AND d.status NOT IN ('missing','duplicate','skipped')
+                                AND (d.year_source IS NULL OR d.year_source != 'set by hand')"""):
+            got = against(r["title"], r["url"], r["year"], r["body"], json.loads(r["pages"]) if r["pages"] else None)
+            if got and (r["url"], r["year"], got[0]) not in kept:
+                found.append((r["id"], r["year"], *got, now))
+        con.execute("DELETE FROM year_conflicts")
+        con.executemany("INSERT INTO year_conflicts VALUES(?,?,?,?,?,?)", found)
+    log.info("year conflicts: %d", len(found))
+    return len(found)
+
+
+# a conflict is open while the report still has the stored year and the year was not set by hand since
+OPEN = "c.stored = d.year AND (d.year_source IS NULL OR d.year_source != 'set by hand') AND d.hidden=0"
+
+
+def conflicts(kind: str = "", source: int | None = None) -> list[dict]:
+    with db.session() as con:
+        init_conflicts(con)
+        sql = f"""SELECT c.*, d.title, d.url, d.lang, d.local_path, d.year_source, d.source_id, s.agency, s.country
+                  FROM year_conflicts c JOIN documents d ON d.id=c.doc_id JOIN sources s ON s.id=d.source_id
+                  WHERE {OPEN}"""
+        args: list = []
+        if kind:
+            sql += " AND c.kind=?"; args.append(kind)
+        if source:
+            sql += " AND d.source_id=?"; args.append(source)
+        sql += " ORDER BY s.country, s.agency, c.stored, d.title"
+        return [dict(r) for r in con.execute(sql, args)]
+
+
+def conflict_of(doc_id: int) -> dict | None:
+    with db.session() as con:
+        init_conflicts(con)
+        r = con.execute(f"SELECT c.* FROM year_conflicts c JOIN documents d ON d.id=c.doc_id WHERE c.doc_id=? AND {OPEN}",
+                        (doc_id,)).fetchone()
+        return dict(r) if r else None
+
+
+def resolve(doc_ids: list[int], use_found: bool) -> int:
+    """Use the year found (the report's year is then 'set by hand', as after an edit) or keep the stored year;
+    the verdict is written to year_reviews.yaml with its evidence."""
+    now = dt.datetime.now().isoformat(" ", "seconds")
+    reviews = {r["url"]: r for r in load_reviews()}
+    n = 0
+    with db.session() as con:
+        init_conflicts(con)
+        for doc_id in doc_ids:
+            c = con.execute(f"""SELECT c.*, d.url FROM year_conflicts c JOIN documents d ON d.id=c.doc_id
+                                WHERE c.doc_id=? AND {OPEN}""", (doc_id,)).fetchone()
+            if not c:
+                continue
+            reviews[c["url"]] = {"url": c["url"], "stored": c["stored"], "found": c["found"], "evidence": c["evidence"],
+                                 "verdict": "use" if use_found else "keep", "checked": now}
+            if use_found:
+                con.execute("UPDATE documents SET year=?, year_source='set by hand' WHERE id=?", (c["found"], doc_id))
+            con.execute("DELETE FROM year_conflicts WHERE doc_id=?", (doc_id,))
+            n += 1
+    if n:
+        save_reviews(list(reviews.values()))
+    return n
