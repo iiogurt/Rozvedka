@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.32.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.32.1-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -29,7 +29,7 @@ local library, so you can follow how state security, social resilience and disas
 |---|---|
 | **Coverage** | 134 agencies and institutions in 50 countries and bodies: 26 EU member states, EU bodies and NATO, every NATO member except Montenegro (Iceland, Albania, North Macedonia, Türkiye, the UK, Norway, the USA, Canada), Switzerland, Ukraine, six Latin American countries, Australia, New Zealand, Japan, South Korea and Taiwan |
 | **Library** | about 3,450 reports in 30 languages, with archives back to 2000, downloaded as PDF |
-| **Index** | full text of every report, 64 topics from a 3,800-term multilingual keyword list, about 1,550 named actors and 189 countries |
+| **Index** | full text of every report, 66 topics from a 4,400-term multilingual keyword list, about 1,550 named actors and 189 countries |
 | **Runs on** | a Raspberry Pi (or any Linux box) – Python, SQLite and the browser; no cloud service, no account |
 
 > [!IMPORTANT]
@@ -115,9 +115,9 @@ The library itself (`/documents`): every report with its agency, country, langua
   the same pager on every list in the portal (actors, names, passages).
 - **Document types** – every file is typed by transparent rules on its title and file name (in the library's
   languages), its report series and its page count: annual or periodic report, threat / risk assessment, strategy,
-  bulletin, guide, other report – or **not a report**: statement / press release, budget table, form. The type and
+  bulletin, guide, other report – or **not a report**: statement / press release, law or regulation, budget table, form. The type and
   the rule behind it are on each row and on the report page, where it can be corrected by hand
-  (`sources/doc_types.yaml`). Statements, budget tables and forms stay in the library but are left out of every
+  (`sources/doc_types.yaml`). Statements, laws, budget tables and forms stay in the library but are left out of every
   count, chart and dashboard, as hidden files are; the Documents list says how many it leaves out and shows them with
   the type filter. Sampled precision: 48 of 50 types right.
 
@@ -185,7 +185,7 @@ no periodic job.
 
 <img src="docs/images/topics.png" alt="Topics page: categories and topics with document counts" width="900">
 
-- 64 topics in 9 categories – extremism, state threats, geopolitics, cyber, crime, migration, hazards,
+- 66 topics in 9 categories – extremism, state threats, geopolitics, cyber, crime, migration, hazards,
   resilience, governance – e.g. *right-wing extremism*, *Russia – intelligence, influence & hybrid activity*,
   *drones & emerging military technology*, *floods & extreme weather*, *civil defence*.
 - Each topic is defined by keywords in 28 languages in [`sources/topics.yaml`](sources/topics.yaml); a report gets

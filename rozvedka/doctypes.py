@@ -1,10 +1,10 @@
 """Document types: what kind of publication a file is – annual report, assessment, strategy, bulletin, guide,
-another report, or not a report at all (statement, finance table, form). Found by transparent rules on the title
-and file name (words in the languages of the library), series membership and page count; each file keeps the rule
-that typed it. Hand corrections in sources/doc_types.yaml win over the rules.
+another report, or not a report at all (statement, law or regulation, finance table, form). Found by transparent
+rules on the title and file name (words in the languages of the library), series membership and page count; each
+file keeps the rule that typed it. Hand corrections in sources/doc_types.yaml win over the rules.
 
-Statements, finance tables and forms stay in the library and on Documents, but the counts, charts and dashboards
-leave them out by default (trends.LISTED), as they leave out hidden files."""
+Statements, laws and regulations, finance tables and forms stay in the library and on Documents, but the counts,
+charts and dashboards leave them out by default (trends.LISTED), as they leave out hidden files."""
 import datetime as dt
 import logging
 import re
@@ -25,6 +25,7 @@ TYPES = {   # key → (label, counted as a report)
     "guide": ("Guide / factsheet", True),
     "report": ("Other report", True),
     "statement": ("Statement / press release", False),
+    "legal": ("Law / regulation", False),
     "finance": ("Budget / accounts table", False),
     "form": ("Form", False),
 }
@@ -35,9 +36,13 @@ COUNTED = f"(d.doc_type IS NULL OR d.doc_type NOT IN ({','.join(repr(k) for k in
 # Rules in order; the first that matches the folded title + file name wins. Words are matched at a word start.
 RULES = [
     ("form", r"\b(form(ular|ulaire|ulario|ulář|ularz)?|obrazac|lomake|blankett|application form|antrag)\b"),
+    ("legal", r"^\d{1,3}/\d{2}[,.]? \||\b(zakon|zakona|zakonu|uredba|uredbe|pravilnik\w*|naredb\w*|odluk[aeu] o|nn ?\d{1,3} \d{2,4}|"
+              r"narodne novine|uradni list|gesetz|umsetzungsgesetz|verordnung|richtlinie \(eu\)|directive \(eu\)|"
+              r"regulation \(eu\)|act on the|decreto|real decreto|ley organica|zakon o|zakonik|ustawa|rozporzadzeni\w*|"
+              r"zakon c|vyhlask\w*|narizeni vlady|nariadeni\w* vlady|loi n|loi relative|arrete|wetsvoorstel|besluit)\b"),
     ("finance", r"\b(budget|rozpocet|rozpoct\w*|zaverecn\w* uc\w*|vykaz\w*|ukazovatel\w*|tabulka|tab \d|financial statement|"
                 r"accounts|jahresrechnung|haushalt\w*|bilancio|presupuesto|begroting|talousarvio|zaverecny_ucet|"
-                r"audited annual report)\b"),
+                r"audited annual report|poseur.\d+|poci.\d+|pt.20\d\d.fsi|ficha de projeto)\b"),
     ("statement", r"\b(press (release|notice|statement|conference)|statement|remarks|speech|"
                   r"tiskov\w* zprav\w*|pressemitteilung|communique|persbericht|comunicado|komunikat|"
                   r"verklaring|motie|stemming|kamerbrief|toespraak|discours|written ministerial statement|wms)\b"),

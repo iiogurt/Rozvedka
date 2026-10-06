@@ -25,6 +25,9 @@ from rozvedka import collect, db, doclist, doctypes, series, topics, trends
     ("MELANI 2019/2", "https://ncsc.admin.ch/m.pdf", 50, 2, "annual"),
     ("Annual", "https://x.org/a.pdf", 2, None, "report"),            # "annual" alone on 2 pages: not the report itself
     ("Something", "https://x.org/s.pdf", 60, None, "report"),
+    ("108/17", "https://civilna-zastita.gov.hr/Zakon%20o%20sustavu_NN108_2017.pdf", 6, None, "legal"),   # gazette number
+    ("Act on the Processing of Passenger Name Record (PNR) Data", "https://bka.de/pnr.pdf", 20, None, "legal"),
+    ("Report on the implementation of the strategy 2019/20", "https://x.org/r.pdf", 30, None, "strategy"),
 ])
 def test_rules(title, url, pages, per_year, expected):
     t, why = doctypes.classify(title, url, pages, per_year)
@@ -58,7 +61,7 @@ def test_counts_leave_out_non_reports(library):
     from rozvedka.app import app
     client = TestClient(app)
     t = client.get("/documents").text
-    assert re.search(r"<b>2</b> documents match", t) and "+ 2 statements, finance tables and forms not counted" in t
+    assert re.search(r"<b>2</b> documents match", t) and "+ 2 statements, laws, finance tables and forms not counted" in t
     assert re.search(r"<b>4</b> documents match", client.get("/documents?doc_type=all").text)
     t = client.get("/documents?doc_type=statement").text
     assert re.search(r"<b>1</b> documents match", t) and "watch-btn" not in t      # no query form for a type filter

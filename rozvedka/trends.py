@@ -62,7 +62,7 @@ def _excluded(con, where: str, args: list) -> dict:
                                SUM(d.year < ?) before
                         FROM documents d JOIN sources s ON s.id=d.source_id WHERE {where}""",
                     (MIN_YEAR, *args)).fetchone()
-    # statements, finance tables and forms: the same filter without the document-type condition, minus the counted ones
+    # statements, laws, finance tables and forms: the same filter without the document-type condition, minus the counted ones
     every = where.replace(f" AND {doctypes.COUNTED}", "", 1)
     not_reports = con.execute(f"""SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
                                   WHERE {every} AND NOT {doctypes.COUNTED}""", args).fetchone()[0]

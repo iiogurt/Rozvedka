@@ -77,7 +77,7 @@ Each item: why · what · done when · version step.
 3. ✅ (0.32.0) **Document types** (old B8) – annual report, threat assessment, risk assessment, strategy, guide/leaflet, form,
    statistics – from titles, series and size; filter and weight by type (a 200-page assessment is not a 2-page form). ·
    minor
-4. **Reports without a topic** (383) – sample them: add missing terms to `topics.yaml` (general rule first), mark
+4. ✅ (0.32.1: 4.8 %) **Reports without a topic** (383) – sample them: add missing terms to `topics.yaml` (general rule first), mark
    non-reports with their document type (B3). *Done when* below 5 % of real reports. · patch
 5. ✅ (0.31.0) **Year conflicts** – list reports whose stored year contradicts strong evidence (file-name date stamp, folder,
    cover year) for review in the portal; never overwrite silently. · minor

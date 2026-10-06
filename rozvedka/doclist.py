@@ -22,7 +22,7 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
         where.append("d.hidden=0 AND d.status NOT IN ('missing','duplicate','skipped')")
     if doc_type in doctypes.TYPES:          # one document type, also one that is not counted as a report
         where.append("d.doc_type=?"); args.append(doc_type)
-    elif not all_types:                     # by default, as every count: statements, finance tables and forms left out
+    elif not all_types:                     # by default, as every count: statements, laws, finance tables and forms left out
         where.append(doctypes.COUNTED)
     for col, val in (("s.country", country), ("s.type", type), ("d.lang", lang), ("d.status", status)):
         if val:
