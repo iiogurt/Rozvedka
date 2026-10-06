@@ -28,10 +28,10 @@
     <tr><th></th>{% for y in profile_years %}<th>{{ "’" ~ (y|string)[-2:] }}</th>{% endfor %}</tr>
     <tr class="prof-sec"><th colspan="{{ profile_years|length + 1 }}">Topics</th></tr>
     {% for r in topic_rows %}<tr><th class="prof-name"><a href="/documents?topic={{ r.key }}&series={{ id }}">{{ r.name }}</a></th>
-      {% for c in r.cells %}<td class="pt-{{ c.level }}">{% if c.level %}<a href="/doc/{{ c.doc }}" title="{{ c.year }}: {{ 'main topic' if c.level == 2 else 'present' }}">{{ '■' if c.level == 2 else '▪' }}</a>{% endif %}</td>{% endfor %}</tr>{% endfor %}
+      {% for c in r.cells %}<td class="pt-{{ c.level }}">{% if c.level %}<a href="/report/{{ c.doc }}" title="{{ c.year }}: {{ 'main topic' if c.level == 2 else 'present' }}">{{ '■' if c.level == 2 else '▪' }}</a>{% endif %}</td>{% endfor %}</tr>{% endfor %}
     <tr class="prof-sec"><th colspan="{{ profile_years|length + 1 }}">Actors</th></tr>
     {% for r in actor_rows %}<tr><th class="prof-name"><i class="kdot kind-{{ r.kind }}"></i><a href="/actors/{{ r.key }}">{{ r.label }}</a> <span class="muted small">{{ r.editions }}</span></th>
-      {% for c in r.cells %}<td class="{{ 'pa-on' if c.hits }}" style="{{ '--a:' ~ ((c.hits / max_hits) ** 0.5)|round(2) if c.hits }}">{% if c.hits %}<a href="/doc/{{ c.doc }}" title="{{ c.year }}: {{ c.hits }} mentions{{ ' – first edition naming it' if c.first }}">{{ '●' if c.first else c.hits }}</a>{% endif %}</td>{% endfor %}</tr>{% endfor %}
+      {% for c in r.cells %}<td class="{{ 'pa-on' if c.hits }}" style="{{ '--a:' ~ ((c.hits / max_hits) ** 0.5)|round(2) if c.hits }}">{% if c.hits %}<a href="/report/{{ c.doc }}" title="{{ c.year }}: {{ c.hits }} mentions{{ ' – first edition naming it' if c.first }}">{{ '●' if c.first else c.hits }}</a>{% endif %}</td>{% endfor %}</tr>{% endfor %}
   </table>
   </div>
 </section>
@@ -44,8 +44,8 @@
     <li>
       <div class="ed-head"><b class="ed-year">{{ e.year }}</b>
         {% for lg, files in e.files.items() %}{% for d in files %}<span class="ed-file"><span class="ctag">{{ lg }}</span>
-          {% if d.local_path %}<a href="/doc/{{ d.id }}">{{ d.title }}</a>{% if d.pages_count %} <span class="muted small">{{ d.pages_count }} p.</span>{% endif %}
-          {% else %}<span class="muted">{{ d.title }}</span> <a class="small" href="/collect?tab=blocked&source={{ s.source|urlencode }}">blocked – collect</a>{% endif %}
+          <a href="/report/{{ d.id }}">{{ d.title }}</a>{% if d.local_path %}{% if d.pages_count %} <span class="muted small">{{ d.pages_count }} p.</span>{% endif %} <a class="small muted" href="/doc/{{ d.id }}">PDF</a>
+          {% else %} <a class="small" href="/collect?tab=blocked&source={{ s.source|urlencode }}">blocked – collect</a>{% endif %}
           <a class="small muted" href="{{ d.url }}" rel="noopener">original ↗</a></span>{% endfor %}{% endfor %}</div>
       {% if e.main %}<div class="ed-line small"><span class="muted">Main topics:</span> {% for k, n in e.main %}<a class="topic-chip" href="/documents?topic={{ k }}&series={{ id }}">{{ n }}</a>{% endfor %}
         {% if e.topics_in %}<span class="ed-delta up">new among the main topics: {{ e.topics_in|map(attribute=1)|join(', ') }}</span>{% endif %}

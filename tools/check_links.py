@@ -36,7 +36,9 @@ def main() -> int:
             print(f"MISMATCH {label}: shows {n}, list has {listed} – {url}")
     print(f"home, What's new, Compare, Watchlist: {len(figs)} counts checked, {bad} mismatches")
     seen, broken = set(), 0
-    for page in PAGES:
+    # one report page as well: the first report on the home page
+    sample = re.search(r'href="(/report/\d+)"', client.get("/").text)
+    for page in PAGES + ([sample.group(1)] if sample else []):
         for href in re.findall(r'href="(/[^"#]*)"', client.get(page).text):
             href = href.replace("&amp;", "&")
             if href in seen or href.startswith(("/static/", "/doc/", "/logo/")):

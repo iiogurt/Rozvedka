@@ -84,7 +84,7 @@ Each item: why · what · done when · version step.
 
 ### C. Reading workflow
 
-1. **Report page** – one page per report: metadata and provenance, series and editions, main topics, actors with
+1. ✅ (0.30.0) **Report page** – one page per report: metadata and provenance, series and editions, main topics, actors with
    passages, what changed against the previous edition, open/original links. Today a report is only a row and a PDF. · minor
 2. **Research notes and citations** (old C13, adapted to *no user-based features*: one shared notebook) – mark
    passages into named notebooks, export as Markdown / PDF with formatted citations (agency, title, year, page,

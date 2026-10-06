@@ -6,7 +6,7 @@
   <li><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="{{ r.country }}" width="20" height="15">
     <a class="h-src" href="/documents?source={{ r.source_id }}">{{ r.agency }}</a>
     <span class="h-when">{{ when }}</span>
-    <span class="h-title">{% if r.local_path or r.status == 'downloaded' %}<a href="/doc/{{ r.id }}" target="_blank">{{ r.title }}</a>{% else %}<a href="{{ r.url }}" target="_blank" rel="noopener">{{ r.title }} ↗</a>{% endif %}</span>
+    <span class="h-title"><a href="/report/{{ r.id }}">{{ r.title }}</a></span>
     <span class="lang">{{ r.lang or '?' }}</span></li>
 {% endmacro %}
 {% block main %}

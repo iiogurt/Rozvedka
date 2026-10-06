@@ -79,8 +79,8 @@
         {% if d.logo_path %}<img class="logo-sm" src="/logo/{{ d.source_id }}" alt="" loading="lazy">{% endif %}
         {{ d.agency }}</a></td>
       <td class="title">
-        {% if d.local_path %}<a href="/doc/{{ d.id }}" target="_blank">{{ d.title }}</a>{% else %}{{ d.title }}{% endif %}
-        <div class="meta"><a href="{{ d.url }}" target="_blank" rel="noopener">original ↗</a>
+        <a href="/report/{{ d.id }}">{{ d.title }}</a>
+        <div class="meta">{% if d.local_path %}<a href="/doc/{{ d.id }}" target="_blank">PDF</a> · {% endif %}<a href="{{ d.url }}" target="_blank" rel="noopener">original ↗</a>
           {% if editions.get(d.id) %}{% set e = editions[d.id] %}<a class="badge-series" href="/series/{{ e.id }}" title="Edition {{ e.year }} ({{ e.lang }}) of the report series “{{ e.name }}” – all editions">{{ e.name }} · {{ e.year }}</a>{% endif %}
           {% if d.ocr and d.ocr.chars %}<span class="badge-ocr" title="The PDF has no text layer; its text was recognised by OCR ({{ d.ocr.engine }}, {{ d.ocr.langs }}, {{ d.ocr.date }}) – search and topics use it; recognition can misread words">OCR</span>{% endif %}
           {% if d.hand_added %}<span class="badge-hand {{ '' if d.hand_official else 'badge-warn' }}" title="Added by hand on {{ d.hand_added[:10] }} from {{ d.url }}{{ '' if d.hand_official else ' – this URL is not on the agency’s official domains' }}">added by hand{{ '' if d.hand_official else ' · unofficial URL' }}</span>{% endif %}

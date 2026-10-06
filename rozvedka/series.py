@@ -14,7 +14,7 @@ from pathlib import Path
 
 import yaml
 
-from . import db, topics
+from . import actors, db, topics
 from .config import ROOT
 
 SERIES_FILE = ROOT / "sources" / "series.yaml"
@@ -308,8 +308,10 @@ def detail(series_id: str, lang: str = "") -> dict | None:
             # the publishing agency naming itself says nothing about its subject – left out
             src = con.execute("SELECT agency, name_en, name_local FROM sources WHERE key=?", (s["source"],)).fetchone()
             own = {(x or "").casefold() for x in (src["agency"], src["name_en"], src["name_local"])} if src else set()
+            # same rule as the actor pages: a report dated before the actor was founded means something else
             for r in con.execute(f"""SELECT da.doc_id, da.actor_key, da.hits, a.label, a.kind FROM doc_actors da
-                                     JOIN actors a ON a.key=da.actor_key WHERE da.doc_id IN ({marks}) AND a.kind != 'country'
+                                     JOIN actors a ON a.key=da.actor_key JOIN documents d ON d.id=da.doc_id
+                                     WHERE da.doc_id IN ({marks}) AND a.kind != 'country' AND {actors.NOT_BEFORE_FOUNDED}
                                      ORDER BY da.hits DESC""", ids):
                 if r["label"].casefold() not in own:
                     dactors.setdefault(r["doc_id"], []).append(dict(r))

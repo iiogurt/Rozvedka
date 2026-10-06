@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.29.1-1f4e79)
+![version](https://img.shields.io/badge/version-0.30.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -109,10 +109,25 @@ The library itself (`/documents`): every report with its agency, country, langua
   year or year range, download status, topic (several at once) and actor.
 - **Full-text search inside the reports** – `"quoted phrases"`, `OR` for translations
   (`drone OR Drohne OR dron`), results with highlighted snippets, sorted by relevance, year or date added.
-- Open a downloaded PDF, or the agency's original; correct a title, language or year; hide irrelevant files; add a
-  document by URL for sites that block automatic downloads.
+- Open a report's own page (its title), the downloaded PDF, or the agency's original; correct a title, language
+  or year; hide irrelevant files; add a document by URL for sites that block automatic downloads.
 - Page through the results with numbered pages, first/last, "go to page", and 25 / 50 / 100 / 200 / 500 per page –
   the same pager on every list in the portal (actors, names, passages).
+
+### 📄 Report page
+
+<img src="docs/images/report.png" alt="Report page: provenance, series edition with what changed, topics with the terms that matched" width="900">
+
+Every report title in the portal opens its own page (`/report/<id>`); the PDF stays one click away:
+
+- **where it comes from** – agency, the official address, the page it was found on, how it got into the library
+  (crawler, address pattern, by hand), when it was listed and downloaded, size, pages, SHA-256, and whether its text
+  came from OCR; how its year was found;
+- **series and editions** – which edition of which series it is, the previous and next edition, the same edition in
+  other languages, and what changed against the previous edition (topics new or no longer among the main ones,
+  actors named for the first time in the series);
+- **topics** with their score and **the terms that matched**, so every topic tag can be checked;
+- **actors named**, each with its first passage and page number, and the countries named.
 
 ### 🏛️ Sources
 
