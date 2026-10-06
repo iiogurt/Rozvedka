@@ -1,121 +1,147 @@
 # Rozvedka – assessment and roadmap
 
-Written 2026-10-02 at version 0.16.0. Update this file when an item is done or priorities change; it is the
-starting point for every new working session (see `CLAUDE.md` for the working rules).
+Written 2026-10-06 at version 0.29.0 (the previous assessment was made at 0.16.0). Update this file when an item is done
+or priorities change; it is the working plan referred to from [`CLAUDE.md`](../CLAUDE.md). Numbers below were measured
+on the library that day.
 
 ## 1. Where the project stands
 
-### Built (0.1 → 0.16, 20 merged PRs, 21 tagged releases, 477 tests)
+### Built (0.1 → 0.29, 39 merged PRs, 564 tests)
 
 | Area | What exists |
 |---|---|
-| **Sources** | Registry of 120 agencies in 46 countries/bodies (`sources/registry.yaml`): profiles, original + English names, every language version and archive page, HQ coordinates, coalition memberships; polite crawler (robots.txt, 2 s/host, curl and headless-Chromium fallbacks) |
-| **Library** | 3,133 listed reports, 2,937 downloaded PDFs (14 GB), 26 languages; de-duplication by SHA-256; title repair from PDF metadata |
-| **Index** | FTS5 full text with page offsets; 64 topics from a 3,800-term multilingual taxonomy; actor index of 5,123 entries (1,500 groups/services, 3,369 people, 189 countries) built from Wikidata, Wikipedia and MITRE ATT&CK, with 7,226 sourced connections |
-| **Views** | Documents (search, filters, pager), Sources, Topics + mind map, Trends (topics over time, term trends, who reports on what), Actors (pages with sourced facts, passages with page links, connections, names review), Network (association clusters + matrix), Map (HQs; who reports on whom) |
-| **Principles in code** | Every number links to the documents it counts (verified by script before each release); every external fact carries source, revision and retrieval date; matching rules are visible per name; dark/light theme; shared pager |
-| **Process** | Branch → PR → merge → significance-based version → tag → GitHub release; `CLAUDE.md`, README in GitHub layout, Keep-a-Changelog |
+| Library | 120 sources in 46 countries and bodies (94 fetched automatically, 26 collected by hand), 3,015 listed reports in 26 languages, 1987–2026; 2,932 downloaded (14.6 GB) |
+| Collecting | registry → crawl → download (robots.txt, 2 s per host, curl / Chromium fallbacks); report series with missing editions; *To collect* for blocked sites with provenance; **Update page** with scope, progress, cancel and per-source status (0.29) |
+| Text | full text of every PDF, OCR for scanned ones (135 recognised), years from text/address/folder (90 undated left) |
+| Index | 64 topics (3,800 multilingual terms), 5,123 actors from Wikidata / Wikipedia / MITRE ATT&CK with connections, rule-based and transparent name matching, precision review in the portal (0.26) |
+| Reading | home page with search console and dashboards, What's new by update + Atom feed, Watchlist, Compare agencies, Trends, Actors and pairs, Network, Maps, Topic mind map |
+| Operations | datasets for backup and exchange with a GUI (export / check / import, progress, cancel); one job runner for long jobs; release check of every count against its list (`tools/check_links.py`) |
 
-### Gaps, measured (2026-10-02)
+### Gaps, measured (2026-10-06)
 
-| Gap | Evidence | Why it matters |
+| Gap | Size | Notes |
 |---|---|---|
-| **Stale library** | Last crawl 2026-09-30; the weekly systemd timer is not installed (needs `loginctl enable-linger`) | New reports are not collected unless someone runs `update` |
-| **Sources with no documents** | 32 of 120 sources have 0 reports – 26 are `manual` (bot-protected): Säpo, PET, LT VSD/AOTD (national threat assessment), ASIO, ASD ACSC, CSIS, NIS (KR), BMI, CCB, CCN-CERT, NBÚ, MV ČR, HZS ČR, DNSC, CNCS, FEMA, DIA, Ukrainian agencies, CENAPRED, SENAPRED, CSIRT Chile, JRC; 6 `auto` sources return nothing (VIGINUM, NCSA GR, NCSC-IE, OEP IE, SRE LU, NCSC-NL) | Several of the most important annual threat assessments are missing |
-| **Downloads blocked** | 74 reports are `browser-only` (DIS Italy 38, E-tjenesten 20, StratCom CoE 12, …) | Listed but not readable, not indexed |
-| **Undated reports** | 465 visible reports (15 %) have no year | They drop out of every trend, map and network count |
-| **No text layer** | 257 reports have < 2,000 characters of text (scanned PDFs) | Invisible to search, topics and actors |
-| **Unclassified** | 502 reports carry no topic | Either off-scope, too short, or a taxonomy gap |
-| **Matching precision** | ≈ 85–90 % on random samples; fixed by rules + hand exclusions | Errors are visible but still need review |
-| **No backup** | `data/` (500 MB database + 14 GB PDFs, gazetteer caches) exists only on the Pi's SD card | One card failure loses months of crawling and curation |
-| **No CI** | Tests run only locally | Regressions caught late |
+| **NATO and EU members without any source** | **6**: Albania, Iceland, Montenegro, North Macedonia, Turkey (NATO), Malta (EU) | in the declared scope (EU27 + NATO) but missing |
+| Automatic sources that return nothing | 6: NCSC-NL, VIGINUM, NCSA (GR), SRE (LU), NCSC-IE, OEP (IE) | pages, patterns or JavaScript (old item A4) |
+| Agency types not covered per country | civil protection / national risk assessment missing in 17 countries (AT, BE, BG, CY, EE, GR, HR, HU, LT, LV, NL, PT, RO, SI, SK, KR, TW …); cyber in 13 (AT, BG, HR, LU, LV, SE, US, JP, KR, TW, MX, PE, AR, BR …); military intelligence in most (few publish) | each needs a check whether the agency publishes at all |
+| Blocked flagship reports | 26 manual sources, e.g. Säpo, PET, ASIO, CSIS, VSD/AOTD | collected by hand on *To collect* (needs the owner) |
+| Open in a browser only | 74 (DIS Italy 38, E-tjenesten 20, StratCom CoE 12, Canada 4) | not downloadable automatically |
+| Downloaded reports without any topic | 383 of 2,932 (13 %) | taxonomy gaps or non-report files (forms, leaflets) |
+| Reports with too little text | 83 | mostly image-only pages OCR could not read |
+| Undated reports | 90 | mostly undated leaflets and forms |
+| Matching precision | not measured yet – 0 reviews | the review page exists (0.26); the 85–90 % figure is still an estimate |
+| Wrong years from titles | known cases (UK ISC press releases dated 2021) | date stamps in file names disagree with stored years |
+| Per-file counting | translations and editions count as separate reports | item B2 |
+| Portal start after a reboot | **not automatic** – runs from a shell | `deploy/rozvedka-web.service` needs `loginctl enable-linger` (sudo, owner's approval); `deploy/` still ships a weekly update timer the owner declined |
+| Code size | `app.py` 1,102 lines, 9,700 lines in total | routes not yet split by area |
+| CI | none | tests run only on the Pi |
 
 ## 2. Strategy
 
-The analysis layer is now richer than the data under it. The next stage should **make the library complete
-and current first**, then **turn the analysis into a reading workflow** (what is new, what changed, what do
-the agencies say about X), and only then add more enrichment. Every item keeps the non-negotiables from
-`CLAUDE.md`: traceability, information-dense views, honest matching, no local LLM.
-
-Order of work: **A → B → C**, with D and E in between when they unblock something.
+The library is broad; its weak spots are **completeness inside the declared scope** (6 member states, missing agency
+types, silent and blocked sources) and **measured quality** (precision never measured, per-file counting). New reading
+features matter less than closing those, so the order is: **A (complete the scope) → B (quality you can measure) →
+E1 (the portal survives a reboot) → C/D as useful**, with each item one PR.
 
 ## 3. Roadmap
 
 Each item: why · what · done when · version step.
 
-### A. Complete and current library (highest priority)
+### A. Complete the library within its scope (highest priority)
 
-1. ~~Weekly update running~~ – **decided against by the owner (2026-10-02): no periodic job.** Updates run on demand
-   (`python -m rozvedka update` or an *Update now* button); views show how old the data is instead.
-2. ✅ (0.18.0) **Hand-import workflow for blocked sources** – a *To collect* page listing, per manual or browser-only source,
-   the report pages to open and the editions expected but missing; upload of a PDF in the portal (or a
-   `data/inbox/<source>/` folder picked up by `update`), with the official URL it came from recorded as its
-   source. *Done when* Säpo, PET, VSD, ASIO and CSIS reports are in the library with their official URLs. · minor
-3. ✅ (0.17.0) **Report series and missing editions** – model recurring publications (e.g. "BIS Annual Report", one per year,
-   cs + en) per source; show gaps ("2019 English edition missing") on the source card and in *To collect*.
-   *Done when* each annual-report source shows a complete or explicitly gapped series. · minor
-4. **Fix the six silent `auto` sources** (VIGINUM, NCSA, NCSC-IE, OEP, SRE, NCSC-NL) – check pages, patterns,
-   JavaScript rendering. · patch (sources)
+1. **Fix the six silent automatic sources** (NCSC-NL, VIGINUM, NCSA, SRE, NCSC-IE, OEP) – check pages, link patterns,
+   JavaScript rendering; mark as manual where nothing can be fetched. *Done when* each has reports or a documented reason. · patch (sources)
+2. **The six missing member states** – research the official publishers per slot (civil and military intelligence,
+   cyber agency / national CERT, civil protection and national risk assessment, police / counter-terrorism) and add
+   those that publish regularly. Starting points to verify (names from memory, not yet checked): Albania – state
+   intelligence service, national cyber security authority; Iceland – national police commissioner's risk
+   assessments, CERT-IS; Montenegro – national security agency, CIRT.ME; North Macedonia – national security agency,
+   MKD-CIRT; Turkey – USOM (national CERT), AFAD (disasters); Malta – Civil Protection Department, CSIRTMalta. Only
+   official domains; manual where blocked; record the slots where nothing is published. · patch (sources)
+3. **National risk assessments and civil protection gaps** – EU states must report a national risk assessment
+   summary to the Union Civil Protection Mechanism every three years; most publish one (e.g. NL Rijksbrede
+   Risicoanalyse, LT, LV, SK, AT). Fill the 17 countries without a civil-protection source. · patch (sources)
+4. **Cyber gaps** – national CERT / cyber-agency annual reports where they exist; candidates to verify: CERT.at, CERT.LV,
+   CERT-SE / NCSC-SE, CERT.hr, CIRCL (LU), NISC / JPCERT (JP), KISA (KR), TWCERT (TW), CISA (US), CERT.br. · patch (sources)
+5. **Hand-collect the blocked flagships** (Säpo, PET, ASIO, CSIS, VSD/AOTD …) through *To collect*. *Done when* their
+   latest three editions are in the library. · owner + data
+6. **Browser-only reports** (74) – try per-site download links (DIS Italy's attachment API, E-tjenesten, StratCom CoE
+   pdfjs viewer → the underlying PDF); otherwise keep them as links. · patch
 
-### B. Data quality
+### B. Quality you can measure
 
-5. ✅ (0.20.0: 463 → 181 undated; 0.22.3: 168 → 90, target met) **Dates for undated reports** – from PDF metadata, the first page ("Annual Report 2023", "Jahresbericht 2022",
-   publication dates) and the series model; show where each date came from, keep manual corrections.
-   *Done when* undated reports drop from 465 to < 100, with a sampled accuracy check. · minor
-6. ✅ (0.21.0: 135 reports recognised) **OCR for scanned reports** – `ocrmypdf`/Tesseract (local, no model downloads beyond language packs) for the
-   257 text-less PDFs; mark OCR text as such in the passages. · minor
-7. **Editions and translations** – group the same report in several languages (title/year/size/page count),
-   so counts are per report, not per file, and passages can switch language. · minor
-8. **Document types** – annual report, threat assessment, risk register, strategy, brochure, statistics – from
-   titles and series; filter and trend by type (an annual threat assessment weighs differently from a leaflet). · minor
-9. ✅ (0.26.0) **Precision review in the portal** – mark a wrong match on a passage ("not this actor"), stored as a hand
-   exclusion with the passage as evidence; review queue sorted by impact. · minor
+1. **Measure matching precision** – review the top names on *Actors → Review* (5 passages × the 40 most frequent names);
+   publish the measured precision on the Actors page; turn names that are mostly wrong into exclusions. · owner + patch
+2. **Editions and translations** (old B7) – group the same report across languages and file variants, so counts and
+   trends are per report, not per file; passages can switch language. · minor
+3. **Document types** (old B8) – annual report, threat assessment, risk assessment, strategy, guide/leaflet, form,
+   statistics – from titles, series and size; filter and weight by type (a 200-page assessment is not a 2-page form). ·
+   minor
+4. **Reports without a topic** (383) – sample them: add missing terms to `topics.yaml` (general rule first), mark
+   non-reports with their document type (B3). *Done when* below 5 % of real reports. · patch
+5. **Year conflicts** – list reports whose stored year contradicts strong evidence (file-name date stamp, folder,
+   cover year) for review in the portal; never overwrite silently. · minor
 
-### C. Reading workflow – "what is new, what changed"
+### C. Reading workflow
 
-10. ✅ (0.22.0 home page dashboards; 0.23.0 the What's new page by update with first-time actors, jumping topics
-    and the Atom feed) **What's new** – per crawl: new reports with their main topics and actors, first-time mentions of actors,
-    topics whose share jumped; Atom feed from the portal (no external service). · minor
-11. ✅ (0.25.0) **Watchlist** – follow actors, topics or search terms (one shared list – the owner wants no user-based
-    features, 2026-10-05); for each, its reports and passages update by update, chronologically. · minor
-12. ✅ (0.24.0) **Compare agencies on one question** – pick a topic or actor and a year: one column per agency with its
-    passages side by side (what BfV, AIVD, KAPO and NCTV say about the same thing). · minor
-13. **Research notes and citations** – bookmark passages with a note; export a notebook as Markdown/PDF with
-    formatted citations (agency, title, year, page, official URL). · minor
-14. **Actor timeline** – first and last mention per agency, mentions per year by reporting country, connected
-    actors over time. · minor (extends actor pages)
+1. **Report page** – one page per report: metadata and provenance, series and editions, main topics, actors with
+   passages, what changed against the previous edition, open/original links. Today a report is only a row and a PDF. · minor
+2. **Research notes and citations** (old C13, adapted to *no user-based features*: one shared notebook) – mark
+   passages into named notebooks, export as Markdown / PDF with formatted citations (agency, title, year, page,
+   official URL). · minor
+3. **Actor timeline** (old C14) – first and last mention per agency, mentions per year by reporting country, how the
+   connected actors changed. · minor
+4. **Cross-language search** – a word typed in one language also finds its translations where the topic taxonomy knows
+   them (`Drohne` → `drone`, `dron`, …), shown as an explained expansion. · minor
+5. **Edition diff for a series** – what a new annual report says that the previous one did not (new actors, topics up
+   or down, new passages naming watched actors). · minor
 
-### D. Enrichment (sourced, public)
+### D. Enrichment from other reliable, official information
 
-15. **Sanctions and designations** – EU consolidated sanctions list, UK sanctions list, UN consolidated list,
-    US OFAC SDN (official XML/CSV): designations with legal reference and date on actor pages; designated
-    persons and entities matched like connected people. · minor
-16. **Positions held** (Wikidata P39 with dates): "Director of the FSB 2008–", head of party, minister – so a
-    passage naming a person shows the office they held in that year. · minor
-17. **Organisation charts** – parent/subsidiary/unit trees for services and groups (GRU units 26165, 74455 …),
-    built from the connections already stored. · patch/minor
-18. **More seeds where reports point** – actors frequently named but not in the index (review list of capitalised
-    names near known actors); extend parties, companies, influence campaigns on evidence from the reports. · patch
+1. **Sanctions and designations** (old D15) – EU consolidated list, UK, UN Security Council consolidated list, US
+   OFAC SDN (official XML/CSV): designations with legal reference and date on actor pages. · minor
+2. **UN Security Council monitoring reports** – the Analytical Support and Sanctions Monitoring Team reports on ISIL
+   and Al-Qaida (twice a year) and the panels of experts (DPRK, Libya, Yemen …): official, regular, high value for
+   terrorism and sanctions evasion. · patch (sources: `OTHER`)
+3. **Other international bodies with regular reports** – UNODC (World Drug Report), UNDRR (Global Assessment Report),
+   FATF (typologies, mutual evaluations), OSCE, Interpol (global crime trend summaries), WHO (health emergencies),
+   IAEA (nuclear security), EUDA/EMCDDA (European Drug Report), Eurojust, CERT-EU (threat landscape). · patch (sources)
+4. **Oversight bodies** – parliamentary and independent oversight reports on the services (NL CTIVD, BE Comité R,
+   DE PKGr, NO EOS-utvalget, DK TET, UK IPCO): official, and they report what the services do not. · patch (sources)
+5. **National security strategies and white papers** – the governments' own strategy documents, linked to their
+   agencies; a natural "document type" (B3). · patch (sources)
+6. **Official attributions** – government statements attributing cyber attacks or sabotage to a state or group (EU
+   Council, Five Eyes joint advisories), as dated events on actor pages. · minor
+7. **Positions held** (old D16), **organisation charts** (old D17), **more seeds where reports point** (old D18). · minor / patch
 
-### E. Engineering and operations (continuous)
+### E. Engineering and operations
 
-19. ✅ (0.27.0, as the owner specified: manual, no nightly job) **Backups and exchange** – datasets (`export` /
-    `import`): the whole library in parts for any transfer service, verified, compared newer/older, restored or merged;
-    tested by a full export and a restore into a separate installation. · minor
-20. **CI** – GitHub Actions running the test suite on every PR (private repo minutes suffice). · patch
-21. **Performance** – cache actor and network results per index version; the actor page for large actors and
-    `/network` take 1–3 s on the Pi. · patch
-22. **Code structure** – split `app.py` routes into modules (documents, actors, trends, maps); a small
-    migration helper instead of ad-hoc `ALTER TABLE`s. · patch
-23. **Optional remote access** – stays LAN-only by default; if wanted, access through a VPN (WireGuard/Tailscale)
-    rather than exposing the portal. · docs
+1. **The portal starts after a reboot** – install `deploy/rozvedka-web.service` as a user service with
+   `loginctl enable-linger prisonmaster` (needs sudo – owner's approval); **remove the weekly update timer from
+   `deploy/`** (the owner declined periodic jobs). · patch
+2. **CI** – GitHub Actions running the tests on every PR. · patch
+3. **Split `app.py`** into route modules (documents, actors, trends, maps, data, update) and a small migration helper. · patch
+4. **Performance** – cache actor and network results per index version (1–3 s pages); the home page takes ~0.7 s. · patch
+5. **Optional remote access** – stays LAN-only; if wanted, through a VPN (WireGuard / Tailscale), never exposed. · docs
 
-## 4. Suggested next three steps
+### Done since 0.16.0
 
-1. ✅ **E19** – datasets for backup and exchange (0.27.0).
-2. ✅ **A2 + A3** – hand-import and report series (0.17.0, 0.18.0). Next: collect the blocked flagship reports by hand.
-3. ✅ **B5 + B6** – dates and OCR (0.20.0, 0.21.0, 0.22.3): 90 reports left undated (from 465), 135 scanned reports recognised.
+A2 hand import (0.18), A3 report series (0.17), B5 dates (0.20, 0.22.3: 465 → 90 undated), B6 OCR (0.21), B9
+precision review (0.26), C10 What's new + Atom (0.22–0.23), C11 Watchlist (0.25), C12 Compare agencies (0.24), E19
+backups and exchange (0.27–0.28), home page and search console (0.22), Update page (0.29).
 
-After that, C10–C12 turn the portal from an archive into a weekly reading tool – ✅ done in 0.23.0–0.25.0
-(What's new, Compare agencies, Watchlist).
-The home page (0.22.0) is the start of C10 and the natural place for C11's watchlist.
+## 4. Suggested next steps
+
+1. **E1** – the portal survives a reboot (needs the owner's yes for `sudo loginctl enable-linger`).
+2. **A1 + A2** – the six silent sources and the six missing member states (sources work, no new code).
+3. **A3 + A4** – civil-protection (national risk assessments) and cyber gaps.
+4. **B1** – an hour of precision review, so the quality of every actor count is measured, not estimated.
+5. Then **B2 / B3** (count per report, by document type) and **C1** (a page per report).
+
+## 5. Scope questions for the owner
+
+- **Wider scope?** Candidates that fit "official and reliable": EU candidate and partner states (Moldova, Georgia,
+  Serbia, Bosnia and Herzegovina, Kosovo), Israel, India, South Africa, Uruguay, Costa Rica, Singapore. Each adds
+  languages and work; worth it only where agencies publish regular reports.
+- **International organisations** (D2–D3) are outside "agencies" but inside "reliable official information" – include?
+- **Oversight bodies** (D4) – include as their own agency type?
