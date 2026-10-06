@@ -149,3 +149,25 @@ def test_title_size_suffix_removed_and_filename_title_is_poor():
                                   "Política de tratamiento de datos personales"])
 def test_low_relevance_latam_admin(text):
     assert LOW_RELEVANCE_RE.search(text)
+
+
+def test_yearly_report_pages_are_followed_despite_navigation_pdfs(monkeypatch):
+    """An archive page with a few navigation PDFs and one page per yearly report: the report pages are followed."""
+    from types import SimpleNamespace
+    from rozvedka import crawler
+    listing = """<a href="/files/eidas-list.pdf">eIDAS</a><a href="/files/scheme.pdf">e-ID scheme</a>
+                 <a href="/files/RFC-2350.pdf">RFC 2350</a><a href="/files/privacy-statement-x.pdf">Statement</a>
+                 <a href="/raport-vjetor-2021/">Raport vjetor 2021</a><a href="/raport-vjetor-2022/">Raport vjetor 2022</a>
+                 <a href="/raport-vjetor-2023/">Raport vjetor 2023</a><a href="/raport-vjetor-2024/">Raport vjetor 2024</a>"""
+    pages = {"https://x.al/raporte/": listing}
+    for y in (2021, 2022, 2023, 2024):
+        pages[f"https://x.al/raport-vjetor-{y}/"] = f'<a href="/files/raport-{y}.pdf">Shkarko</a>'
+    monkeypatch.setattr(crawler, "get_page", lambda url, src: SimpleNamespace(status=200, content_type="text/html",
+                                                                             text=pages.get(url, ""), url=url))
+    stored = {}
+    monkeypatch.setattr(crawler, "_store", lambda con, sid, pid, docs, *a: stored.update({d["url"]: d for d in docs}) or len(stored))
+    src = {"id": 1, "access": "auto", "homepage": "https://x.al/", "agency": "X", "domains": None}
+    status, n = crawler.crawl_page(None, src, {"url": "https://x.al/raporte/", "id": 1, "lang": "sq", "note": None}, {"sq"})
+    assert status.startswith("ok") and "4 sub-pages" in status
+    assert {u for u in stored if "raport-20" in u} == {f"https://x.al/files/raport-{y}.pdf" for y in (2021, 2022, 2023, 2024)}
+    assert not any("RFC-2350" in u or "eidas" in u for u in stored)

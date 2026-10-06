@@ -23,7 +23,8 @@ DOC_RE = re.compile(
     re.I)
 JUNK_RE = re.compile(
     r"cookie|privacy|gdpr|ochrana-osobnich|osobnych-udajov|datenschutz|impressum|"
-    r"formular|formulář|tlacivo|application-form|zadost|vacanc|kari[eé]r|career|stellenangebot|tender|zakázk",
+    r"formular|formulář|tlacivo|application-form|zadost|vacanc|kari[eé]r|career|stellenangebot|tender|zakázk|"
+    r"rfc.?2350|eidas",            # a CERT's RFC 2350 self-description, trust-service lists: not reports
     re.I)
 # accessibility-statement pages – matched on URL only, since report links often say "barrierefrei"
 JUNK_URL_RE = re.compile(r"accessib|pristupnost|barrierefreiheit|toegankelijkheid|/jobs?/", re.I)
@@ -231,10 +232,13 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
         except Exception as e:  # noqa: BLE001
             log.debug("render fallback failed for %s: %s", page["url"], e)
     followed = 0
-    if len(docs) < 3:
-        # archive pages often link to one sub-page per report; follow those one level deep
+    # archive pages often link to one sub-page per report ("Annual report 2021" → its page with the PDF); follow those
+    # one level deep when the page has few documents of its own, or more year-specific report pages than documents
+    # (the few PDFs then are usually site navigation)
+    yearly = [(u, t) for u, t in subs if YEAR_RE.search(unquote(u) + " " + t)]
+    if len(docs) < 3 or len(yearly) > len(docs):
         page_url = page["url"].rstrip("/")
-        for url, sub_title in subs:
+        for url, sub_title in (subs if len(docs) < 3 else yearly):
             if followed >= FOLLOW_LIMIT or url.rstrip("/") == page_url:
                 continue
             followed += 1
