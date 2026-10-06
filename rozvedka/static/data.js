@@ -1,17 +1,9 @@
 /* Data exchange page: folder picker, export and import with progress, log and result.
-   Everything runs on the server (the Raspberry Pi); this page only starts jobs and polls /api/data/job. */
+   Everything runs on the server (the Raspberry Pi); this page only starts jobs; static/jobs.js shows their progress. */
 (function () {
   "use strict";
   const $ = (s, el = document) => el.querySelector(s);
-  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
-  const gb = (b) => (b == null ? "?" : b >= 1e9 ? (b / 1e9).toFixed(2) + " GB" : b >= 1e6 ? (b / 1e6).toFixed(0) + " MB" : (b / 1e3).toFixed(0) + " kB");
-  const dur = (s) => (s == null ? "" : s >= 3600 ? `${Math.floor(s / 3600)} h ${Math.round((s % 3600) / 60)} min` : s >= 60 ? `${Math.floor(s / 60)} min ${s % 60} s` : `${s} s`);
-  async function api(url, form) {
-    const r = await fetch(url, form ? {method: "POST", body: new URLSearchParams(form)} : {});
-    const data = await r.json().catch(() => ({error: `HTTP ${r.status}`}));
-    if (!r.ok || data.error) throw new Error(data.error || `HTTP ${r.status}`);
-    return data;
-  }
+  const {api, esc, gb, dur} = rzJobs.util;
 
   // ---------------------------------------------------------------- folder picker
   function Picker(el, onChange) {
@@ -87,84 +79,28 @@
         · ${s.documents ?? "?"} reports, last crawl ${esc((s.last_crawl || "never").slice(0, 10))}
         · ${s.with_files === false ? "catalogue only" : `${s.files} report files${s.since ? " since " + esc(s.since) : ""}`} · ${gb(s.bytes)}</div>
       <div class="small">${s.complete ? `<span class="ok">✓ ${s.parts > 1 ? `all ${s.parts} files` : "the file"} present</span>` : `<span class="err">✗ ${s.parts_present} of ${s.parts} files present – copy the missing ones into this folder</span>`}</div>
-      <button type="button" class="dx-primary" data-check="${esc(s.manifest)}" ${s.complete ? "" : "disabled"}>Check and compare</button>
+      <button type="button" class="dx-primary" data-starts-job data-check="${esc(s.manifest)}" ${s.complete ? "" : "disabled"}>Check and compare</button>
     </article>`).join("");
     box.querySelectorAll("[data-check]").forEach((b) => b.addEventListener("click", () => startJob("/api/data/check", {manifest: b.dataset.check})));
   }
 
-  // ---------------------------------------------------------------- jobs
-  let timer = null, lastManifest = null, refreshedFor = null, seenRunning = false;
-  const TITLES = {export: "Export", check: "Check and compare", import: "Import"};
-  async function startJob(url, form) {
-    try {
-      await api(url, form);
-      if (form.manifest) lastManifest = form.manifest;
-      poll();
-    } catch (e) { alert(e.message); }
-  }
-  async function poll() {
-    clearTimeout(timer);
-    let j;
-    try { j = (await api("/api/data/job")).job; } catch (e) { timer = setTimeout(poll, 3000); return; }
-    render(j);
-    if (j && j.status === "running") timer = setTimeout(poll, 1000);
-  }
-  function render(j) {
-    const box = $("#job");
-    if (!j || box.dataset.closed === j.id) { box.hidden = true; return; }
-    box.hidden = false;
-    const running = j.status === "running";
-    document.querySelectorAll(".dx-primary").forEach((b) => { if (b.id !== "job-import-go") b.toggleAttribute("data-busy", running); });
-    $("#job-title").textContent = `${TITLES[j.kind] || j.kind}${running ? "…" : j.status === "done" ? " – done" : j.status === "cancelled" ? " – cancelled" : " – failed"}`;
-    box.className = `viz-card dx-job st-${j.status}`;
-    $("#job-log-link").href = `/data/logs/${j.log_file}`;
-    $("#job-steps").innerHTML = j.phases.map((p, i) => `<li class="${i < j.phases.length - 1 || !running ? "done" : "now"}">${esc(p)}</li>`).join("");
-    const p = j.progress, bar = $("#job-bar");
-    if (running && p.total) { bar.max = p.total; bar.value = p.done; $("#job-pct").textContent = Math.floor(100 * p.done / p.total) + " %"; }
-    else if (running) { bar.removeAttribute("value"); $("#job-pct").textContent = ""; }
-    else { bar.max = 1; bar.value = 1; $("#job-pct").textContent = ""; }
-    const bytes = p.total > 1e6;
-    $("#job-nums").textContent = [
-      running ? p.phase : "",
-      running && p.total ? (bytes ? `${gb(p.done)} of ${gb(p.total)}` : `${p.done} of ${p.total}`) : "",
-      running && j.rate && bytes ? `${gb(j.rate)}/s` : "",
-      running && j.eta != null ? `about ${dur(j.eta)} left` : "",
-      `${running ? "running" : "took"} ${dur(j.elapsed)}`].filter(Boolean).join(" · ");
-    const cancel = $("#job-cancel");
-    cancel.hidden = !running;
-    cancel.disabled = !j.cancellable;
-    cancel.title = j.cancellable ? "Stop – nothing in the library has been changed yet" : "The library is being changed: the import cannot be stopped now";
-    $("#job-close").hidden = running;
-    const log = $("#job-log");
-    const atEnd = log.scrollTop + log.clientHeight >= log.scrollHeight - 5;
-    log.textContent = j.log.join("\n");
-    if (atEnd) log.scrollTop = log.scrollHeight;
-    const res = $("#job-result");
-    res.hidden = running;
-    if (!running) {
-      if (j.status === "done" && j.kind === "export" && j.result) {
-        const r = j.result;
-        res.innerHTML = `<p class="ok">✓ Dataset <code>${esc(r.dataset_id)}</code> written: ${r.parts.length} file${r.parts.length > 1 ? "s" : ""}, ${gb(r.bytes)}, ${r.scope.files_included} report files.</p>
-          <p class="small">Copy or send these files together:</p><ul class="small mono">${r.parts.map((x) => `<li>${esc(x.name)} <span class="muted">${gb(x.size)}</span></li>`).join("")}<li>${esc(r.manifest_path.split("/").pop())}</li></ul>
-          <p class="small muted">in ${esc(r.manifest_path.split("/").slice(0, -1).join("/"))}</p>`;
-      } else if (j.result && j.result.text) {
-        res.innerHTML = `<pre class="dx-text">${esc(j.result.text)}</pre>` + (j.result.report_path ? `<p class="small muted">Full report: ${esc(j.result.report_path)}</p>` : "");
-      } else {
-        res.innerHTML = `<p class="err">${esc(j.error || j.status)}</p>` + (j.result && j.result.problems ? `<ul>${j.result.problems.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "");
-      }
-    }
-    $("#job-import").hidden = !(j.kind === "check" && j.status === "done" && !j.error);
-    if (!$("#job-import").hidden) {
+  // ---------------------------------------------------------------- jobs (the panel is static/jobs.js)
+  let lastManifest = null;
+  const startJob = (url, form) => rzJobs.start(url, form).then((ok) => { if (ok && form.manifest) lastManifest = form.manifest; });
+  rzJobs.onRender((j, info) => {
+    const imp = $("#job-import");
+    imp.hidden = !(j && j.kind === "check" && j.status === "done" && !j.error);
+    if (!imp.hidden) {
       lastManifest = j.params.path;
       const c = j.result && j.result.compare;
       $("#job-import-go").textContent = c && c.empty_here ? "Import as this library's starting point" : c && c.verdict === "older" ? "Import anyway (adds nothing new)" : "Import this dataset";
     }
-    if (!running && j.status === "done" && j.kind !== "check" && refreshedFor !== j.id && seenRunning) {
+    if (j && info && info.justFinished && j.status === "done" && j.kind !== "check" && refreshedFor !== j.id) {
       refreshedFor = j.id;                     // a new dataset or new files: show them in the pickers
       pickers.forEach((pk) => pk.refresh());
     }
-    if (running) seenRunning = true;
-  }
+  });
+  let refreshedFor = null;
 
   const pickers = [];
   document.addEventListener("DOMContentLoaded", () => {
@@ -182,13 +118,10 @@
     $("#export-go").addEventListener("click", () => startJob("/api/data/export", {
       dest: exportDir.path, what: $("input[name=what]:checked").value, since: $("#since").value,
       part_size: $("#part-size").value, name: $("#label").value}));
-    $("#job-cancel").addEventListener("click", () => api("/api/data/cancel", {}).then(poll));
-    $("#job-close").addEventListener("click", () => { api("/api/data/job").then((r) => { if (r.job) $("#job").dataset.closed = r.job.id; $("#job").hidden = true; }); });
     $("#job-import-go").addEventListener("click", () => {
       if (!confirm("Import the dataset into this library now? A safety copy of the database is made first.")) return;
       startJob("/api/data/import", {manifest: lastManifest, prefer: $("input[name=prefer]:checked").value});
     });
     updateEstimate();
-    poll();
   });
 })();

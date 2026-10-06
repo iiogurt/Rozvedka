@@ -21,7 +21,7 @@
   <p class="small">Data last crawled <b>{{ fresh.last_crawl[:10] if fresh.last_crawl else 'never' }}</b>{% if fresh.crawl_days is not none %}
     ({{ fresh.crawl_days }} day{{ 's' if fresh.crawl_days != 1 }} ago){% endif %} · last download {{ fresh.last_download[:10] if fresh.last_download else '–' }}.
     Updates run only when started.</p>
-  <form method="post" action="/jobs/update" class="inline"><button title="Crawl every source, download new reports and index them (takes a while)">Update now</button></form>
+  <a class="dx-primary upd-link" href="/update">⟳ Update…</a>
   <form method="get" action="/collect" class="inline">
     <input type="hidden" name="tab" value="{{ tab }}">
     <select name="source" onchange="this.form.submit()" aria-label="Only one source"><option value="">All sources</option>

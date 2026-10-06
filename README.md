@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.28.1-1f4e79)
+![version](https://img.shields.io/badge/version-0.29.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -147,8 +147,8 @@ only to a browser – open the original, save it, upload it to the same report),
 sites with their report pages and the date you last checked) and the **inbox** (PDFs copied to `data/inbox/`, imported with a
 short form). Every report added by hand keeps its official URL, the date it was added and whether that URL is on the
 agency's official domains (marked *added by hand* in the documents list, with a warning when it is not); it is indexed for
-search, topics and actors right away. The page shows how old the data is, with an **Update now** button – there is no
-periodic job.
+search, topics and actors right away. New reports from the agencies' sites are found on the **Update** page – there is
+no periodic job.
 
 ### 🏷️ Topics and full-text index
 
@@ -291,11 +291,29 @@ to crawl the agencies – and either side can crawl on from there.
 Dark by default; the sun/moon button in the header switches to light and back. The choice is remembered in the
 browser, and charts redraw in the matching colours. The maps stay dark in both themes.
 
-### 🔄 Automatic updates
+### ⟳ Update – check the agencies for new reports
 
-A weekly job crawls every report page, downloads new reports, improves poor titles from the PDF metadata, and
-indexes the new texts for search, topics and actors. Crawling is polite: robots.txt is respected and each host
-gets at most one request every 2 seconds.
+Rozvedka looks for new reports only when you start it – there is no schedule. The **⟳ Update** button in the header
+of every page shows how old the data is (every source checked since …; amber after a week) and, while an update
+runs, its progress; it opens the **Update** page (`/update`):
+
+<img src="docs/images/update.png" alt="Update page: what to do, which sources, the plan with its duration, and every source's last check" width="900">
+
+- **What to do** – a *full update* (check the report pages, download the new reports, improve titles, extract text,
+  OCR, dates, topics and actors), *check only* (list new reports without downloading them), or *download the
+  waiting reports* (optionally retrying failed ones).
+- **Which sources** – all, those not checked for N days, one country, or the ones ticked in the table; the page says
+  how many report pages that is and about how long it takes (measured on earlier runs).
+- **Progress** – the steps, a bar with the source being checked or the downloads done, time left, the live log (kept in
+  `data/logs/`) and the result: new reports per source, with links to *What's new* and the reports added that day.
+  **Cancel** stops between pages or downloads; what was found and downloaded so far is kept.
+- **Sources** – every source with its report pages' last check, the outcome (fine, error, blocked by robots.txt,
+  skipped, collected by hand – each page's status on a click), its reports, the new ones the last check found and those
+  waiting for download; filter by outcome, country or name; *Check now* on one source.
+- **History** of the checks and downloads, with how long each took.
+
+Crawling is polite: robots.txt is respected and each host gets at most one request every 2 seconds. Long jobs run one
+at a time (an update, an export or an import); the indexers run as separate processes.
 
 ## Quick start
 
@@ -336,7 +354,7 @@ sudo loginctl enable-linger "$USER"
 
 | Command | What it does |
 |---|---|
-| `update [--country CZ]` | crawl → download → improve titles → index topics → index actors (also *To collect → Update now*; runs only when started) |
+| `update [--country CZ]` | crawl → download → improve titles → index topics → OCR → dates → actors (the *Update* page does the same with progress; runs only when started) |
 | `sync-registry` | load `sources/registry.yaml` into the database |
 | `crawl [--country CZ] [--agency BIS]` | find new documents on the report pages (no download) |
 | `download [--country CZ] [--limit N] [--retry-failed]` | download discovered documents |
@@ -484,7 +502,8 @@ flowchart LR
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |
-| `rozvedka/datajobs.py`, `folders.py` | the Data exchange page's jobs (progress, log, cancel) and its folder picker (only below its roots) |
+| `rozvedka/updater.py` | the Update page: plan (pages, duration), the update steps, every source's last check, history |
+| `rozvedka/jobs.py`, `progress.py`, `folders.py` | long jobs from the portal (update, export, import): progress, log, cancel, one at a time; the Data exchange folder picker |
 | `rozvedka/dataset.py` | datasets: export in parts with a manifest, verify, compare (newer / older), restore or merge |
 | `rozvedka/review.py` | precision review of actor matches: the queue, verdicts with evidence, measured precision |
 | `rozvedka/watch.py`, `doclist.py` | the watchlist (queries counted update by update); the Documents list's filters as SQL, shared by every count |

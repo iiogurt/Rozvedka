@@ -29,7 +29,7 @@ from pathlib import Path
 
 import yaml
 
-from . import __version__, config, db
+from . import __version__, config, db, progress
 
 log = logging.getLogger("rozvedka.dataset")
 FORMAT = "rozvedka-dataset"
@@ -39,17 +39,12 @@ CHUNK = 1 << 20
 PORTAL_LISTS = ("series.yaml", "watchlist.yaml", "actor_reviews.yaml")     # written by the portal: merged on import
 
 
-class Cancelled(Exception):
-    """Raised at a progress point when the job was cancelled (only while nothing in the library has changed)."""
-
-
-_hook = None          # set by datajobs: called as _hook(phase, done, total, final) at every progress point
+Cancelled = progress.Cancelled
 
 
 def _tick(phase: str, done: int = 0, total: int = 0, final: bool = False) -> None:
     """Report progress (and give a running job the chance to stop); `final` marks the point of no return."""
-    if _hook:
-        _hook(phase, done, total, final)
+    progress.tick(phase, done, total, final)
 
 
 def _now() -> str:

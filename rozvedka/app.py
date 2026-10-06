@@ -5,7 +5,7 @@ import hashlib
 import io
 import json
 import re
-import threading
+import time
 from pathlib import Path
 from urllib.parse import urlencode
 
@@ -19,7 +19,8 @@ from markupsafe import escape
 from . import (__version__, actors, build_version, collect, countries, crawler, db, downloader, graphs, home, logos,
                paging, registry, series, topics, trends, updates)
 from . import compare as compare_mod
-from . import datajobs, dataset, doclist, folders, review, watch
+from . import dataset, doclist, folders, review, updater, watch
+from . import jobs as jobrunner
 from .config import FILES
 
 HERE = Path(__file__).parent
@@ -106,25 +107,27 @@ async def static_cache(request: Request, call_next):
                                              else "no-cache")
     return response
 
-_jobs: dict[str, str] = {}      # background job name -> status text
-_jobs_lock = threading.Lock()
+_age_cache: dict = {}
 
 
-def _run_job(name: str, fn, *args):
-    def target():
-        try:
-            result = fn(*args)
-            status = f"finished: {result}"
-        except Exception as e:  # noqa: BLE001 - surface any failure in the UI
-            status = f"failed: {type(e).__name__}: {e}"
-        with _jobs_lock:
-            _jobs[name] = status
-    with _jobs_lock:
-        if _jobs.get(name, "").startswith("running"):
-            return False
-        _jobs[name] = "running…"
-    threading.Thread(target=target, daemon=True).start()
-    return True
+def header_status() -> dict:
+    """For the header's Update button: how old the data is (last check of the report pages) and the running job."""
+    now = time.time()
+    if now - _age_cache.get("at", 0) > 30:
+        with db.session() as con:
+            since = updater.all_checked_since(con)
+            latest = con.execute("SELECT MAX(last_crawled) FROM pages").fetchone()[0]
+        _age_cache.update(at=now, last=since, latest=latest,
+                          days=(dt.datetime.now() - dt.datetime.fromisoformat(since[:19])).days if since else None)
+    j = jobrunner.state()
+    running = j if j and j["status"] == "running" else None
+    pct = int(100 * running["progress"]["done"] / running["progress"]["total"]) if running and running["progress"]["total"] else None
+    return {"last": _age_cache["last"], "latest": _age_cache["latest"], "days": _age_cache["days"],
+            "job": running and running["title"], "pct": pct}
+
+
+tpl.env.globals["header_status"] = header_status
+tpl.env.filters["days_ago"] = lambda ts: (dt.datetime.now() - dt.datetime.fromisoformat(ts[:19])).days
 
 
 @app.on_event("startup")
@@ -144,7 +147,7 @@ def home_page(request: Request):
 def _home(request: Request, q: str = "", problems: list | None = None):
     return tpl.TemplateResponse(request, "home.html", {
         "d": home.dashboard(), "q": q, "problems": problems or [], "operators": home.OPERATORS,
-        "examples": home.examples(), "jobs": dict(_jobs)})
+        "examples": home.examples()})
 
 
 @app.get("/search")
@@ -176,7 +179,7 @@ def whats_new(request: Request, day: str = ""):
     pg = paging.paginate(u.get("n", 0), request.query_params.get("page", "1"), size, "/new", {"day": day},
                          anchor="#reports")
     return tpl.TemplateResponse(request, "new.html", {
-        "u": u, "TOPICS": topics.taxonomy()["topics"], "pg": pg, "jobs": dict(_jobs),
+        "u": u, "TOPICS": topics.taxonomy()["topics"], "pg": pg,
         "page_docs": u.get("docs", [])[pg["offset"]:pg["offset"] + size],
         "by_source": {g["source_id"]: g for g in u.get("agencies", [])}})
 
@@ -221,8 +224,7 @@ def compare_page(request: Request, q: str = "", actor: str = "", topic: str = ""
               "topic": topic, "year_from": year_from, "year_to": year_to, "country": country, "coalition": coalition,
               "type": type},
         "examples": [("Wagner Group", "actor"), ("Ransomware & extortion", "topic"), ("Fancy Bear", "actor"),
-                     ("Hybrid threats & grey-zone activity", "topic")],
-        "jobs": dict(_jobs)})
+                     ("Hybrid threats & grey-zone activity", "topic")]})
 
 
 @app.get("/data")
@@ -238,14 +240,14 @@ def data_page(request: Request):
         except (TypeError, ValueError):
             r["summary"] = {}
     size = sum(f.stat().st_size for f in FILES.rglob("*") if f.is_file()) if FILES.exists() else 0
-    logs = sorted(datajobs.logs_dir().glob("*.log"), reverse=True)[:15] if datajobs.logs_dir().exists() else []
+    logs = sorted(jobrunner.logs_dir().glob("*.log"), reverse=True)[:15] if jobrunner.logs_dir().exists() else []
     last_dir = next((str(Path(r["summary"]["manifest"]).parent) for r in runs
                      if r["kind"] == "export" and r["summary"].get("manifest")
                      and folders.allowed(Path(r["summary"]["manifest"]).parent)
                      and Path(r["summary"]["manifest"]).parent.is_dir()), "")
     return tpl.TemplateResponse(request, "data.html", {"me": dataset.installation(), "fresh": fresh, "runs": runs,
                                                       "files_bytes": size, "logs": [p.name for p in logs], "last_dir": last_dir,
-                                                      "roots": [str(r) for r in folders.roots()], "jobs": dict(_jobs)})
+                                                      "roots": [str(r) for r in folders.roots()]})
 
 
 def _api_error(e: Exception, status: int = 400):
@@ -283,12 +285,6 @@ def api_data_estimate(what: str = "all", since: str = ""):
     return {"files": n, "files_bytes": files_bytes, "database_bytes": db_bytes, "total": files_bytes + db_bytes + (30 << 20)}
 
 
-def _busy():
-    if any(st.startswith("running") for st in _jobs.values()):
-        return "a crawl or download is running – wait for it to finish"
-    return None
-
-
 @app.post("/api/data/export")
 def api_data_export(dest: str = Form(...), what: str = Form("all"), since: str = Form(""), part_size: str = Form("2000"),
                     name: str = Form("")):
@@ -298,7 +294,7 @@ def api_data_export(dest: str = Form(...), what: str = Form("all"), since: str =
             raise ValueError("part size must be between 50 MB and 100 GB")
         if what == "since" and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", since):
             raise ValueError("choose the day from which report files are included")
-        r = datajobs.export(dest, files=what != "catalogue", since=since if what == "since" else None,
+        r = jobrunner.export(dest, files=what != "catalogue", since=since if what == "since" else None,
                             part_size=size_mb * 1_000_000, name=name.strip())
     except (PermissionError, FileNotFoundError, ValueError) as e:
         return _api_error(e)
@@ -308,7 +304,7 @@ def api_data_export(dest: str = Form(...), what: str = Form("all"), since: str =
 @app.post("/api/data/check")
 def api_data_check(manifest: str = Form(...)):
     try:
-        r = datajobs.check(manifest)
+        r = jobrunner.check(manifest)
     except (PermissionError, FileNotFoundError) as e:
         return _api_error(e)
     return r if "error" not in r else JSONResponse(r, status_code=409)
@@ -316,10 +312,8 @@ def api_data_check(manifest: str = Form(...)):
 
 @app.post("/api/data/import")
 def api_data_import(manifest: str = Form(...), prefer: str = Form("local")):
-    if _busy():
-        return JSONResponse({"error": _busy()}, status_code=409)
     try:
-        r = datajobs.import_(manifest, prefer)
+        r = jobrunner.import_(manifest, prefer)
     except (PermissionError, FileNotFoundError) as e:
         return _api_error(e)
     return r if "error" not in r else JSONResponse(r, status_code=409)
@@ -327,20 +321,83 @@ def api_data_import(manifest: str = Form(...), prefer: str = Form("local")):
 
 @app.post("/api/data/cancel")
 def api_data_cancel():
-    return {"cancelled": datajobs.cancel()}
+    return {"cancelled": jobrunner.cancel()}
 
 
 @app.get("/api/data/job")
 def api_data_job():
-    return {"job": datajobs.state()}
+    return {"job": jobrunner.state()}
 
 
 @app.get("/data/logs/{name}")
 def data_log(name: str):
-    p = datajobs.log_path(name)
+    p = jobrunner.log_path(name)
     if p is None:
         raise HTTPException(404, "no such log")
     return PlainTextResponse(p.read_text(encoding="utf-8", errors="replace"))
+
+
+@app.get("/update")
+def update_page(request: Request, country: str = "", state: str = "", q: str = "", page: str = "1", per_page: str = ""):
+    """Check the agencies for new reports: what to do, which sources, progress, and every source's last check."""
+    rows = updater.sources_status(country, state, q)
+    allrows = updater.sources_status() if (country or state or q) else rows
+    size = paging.per_page_of(per_page, 200)       # usually every source on one page, so all can be ticked
+    pg = paging.paginate(len(rows), page, size, "/update", {"country": country, "state": state, "q": q,
+                         "per_page": size if size != 200 else ""}, anchor="#sources", default=200)
+    with db.session() as con:
+        fresh = dataset.freshness(con)
+        counts = dict(con.execute("""SELECT d.status, COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
+                                     WHERE d.hidden=0 AND s.active=1 GROUP BY d.status""").fetchall())
+    from collections import Counter
+    logs = sorted(jobrunner.logs_dir().glob("update-*.log"), reverse=True)[:10] if jobrunner.logs_dir().exists() else []
+    return tpl.TemplateResponse(request, "update.html", {
+        "rows": rows[pg["offset"]:pg["offset"] + size], "pg": pg, "f": {"country": country, "state": state, "q": q},
+        "states": Counter(r["state"] for r in allrows), "stale_n": sum(1 for r in allrows if r["stale"] and r["state"] != "manual"),
+        "countries": sorted({r["country"] for r in allrows}, key=lambda k: COUNTRY_NAMES.get(k, k)),
+        "fresh": fresh, "counts": counts, "history": updater.history(), "logs": [p.name for p in logs],
+        "since": _since(),
+        "actions": updater.ACTIONS, "plan": updater.plan()})
+
+
+def _since() -> str | None:
+    with db.session() as con:
+        return updater.all_checked_since(con)
+
+
+def _update_form(action: str, scope: str, country: str, sources: str, stale_days: str, retry_failed: str) -> dict:
+    ids = [int(x) for x in sources.split(",") if x.strip().isdigit()]
+    days = int(stale_days) if stale_days.strip().isdigit() else 7
+    return {"action": action, "scope": scope, "country": country, "sources": ids, "stale_days": days,
+            "retry_failed": retry_failed in ("1", "true", "on")}
+
+
+@app.get("/api/update/plan")
+def api_update_plan(action: str = "full", scope: str = "all", country: str = "", sources: str = "", stale_days: str = "7",
+                    retry_failed: str = ""):
+    return updater.plan(**_update_form(action, scope, country, sources, stale_days, retry_failed))
+
+
+@app.post("/api/update")
+def api_update(action: str = Form("full"), scope: str = Form("all"), country: str = Form(""), sources: str = Form(""),
+               stale_days: str = Form("7"), retry_failed: str = Form("")):
+    f = _update_form(action, scope, country, sources, stale_days, retry_failed)
+    if scope == "sources" and not f["sources"]:
+        return JSONResponse({"error": "tick the sources to check in the table"}, status_code=400)
+    if scope == "country" and not country:
+        return JSONResponse({"error": "choose a country"}, status_code=400)
+    r = jobrunner.update(**f)
+    return r if "error" not in r else JSONResponse(r, status_code=409)
+
+
+@app.get("/api/job")
+def api_job():
+    return {"job": jobrunner.state()}
+
+
+@app.post("/api/job/cancel")
+def api_job_cancel():
+    return {"cancelled": jobrunner.cancel()}
 
 
 @app.get("/feed.atom")
@@ -356,7 +413,7 @@ def watch_page(request: Request, notice: str = ""):
         if "cells" in it:
             it["latest"] = watch.latest(it["query"])
     return tpl.TemplateResponse(request, "watch.html", {"o": o, "notice": notice, "file": "sources/watchlist.yaml",
-                                                       "operators": home.OPERATORS, "jobs": dict(_jobs)})
+                                                       "operators": home.OPERATORS})
 
 
 @app.post("/watch/add")
@@ -452,7 +509,7 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
 
     return tpl.TemplateResponse(request, "index.html", {
         "docs": docs, "total": total, "pg": pg,
-        "facets": facets, "f": params, "counts": counts, "jobs": dict(_jobs), "qs": qs,
+        "facets": facets, "f": params, "counts": counts, "qs": qs,
         "TOPICS": tax, "CATEGORIES": topics.taxonomy()["categories"], "topic_counts": topic_counts,
         "actor_row": actor_row, "editions": editions, "series_row": series_row,
         "watch_query": watch.to_query({**params, "topic": chosen}) if total else None,
@@ -475,8 +532,7 @@ def topics_page(request: Request):
                FROM doc_topics t JOIN documents d ON d.id=t.doc_id JOIN sources s ON s.id=d.source_id
                WHERE d.hidden=0 AND s.active=1 GROUP BY t.topic""")}
         indexed = con.execute("SELECT COUNT(*), SUM(taxonomy_hash IS NOT NULL) FROM doc_index").fetchone()
-    return tpl.TemplateResponse(request, "topics.html", {"tax": tax, "stats": rows, "indexed": indexed,
-                                                        "jobs": dict(_jobs)})
+    return tpl.TemplateResponse(request, "topics.html", {"tax": tax, "stats": rows, "indexed": indexed})
 
 
 @app.get("/sources")
@@ -501,8 +557,7 @@ def sources(request: Request):
             regions.append((name, []))
         regions[-1][1].append((country, items))
     return tpl.TemplateResponse(request, "sources.html", {"sources": rows, "groups": ordered, "regions": regions,
-                                                         "pages": pages, "series_by": series.by_source(),
-                                                         "jobs": dict(_jobs)})
+                                                         "pages": pages, "series_by": series.by_source()})
 
 
 @app.get("/series")
@@ -519,7 +574,7 @@ def series_catalogue(request: Request, country: str = "", q: str = "", page: str
     countries_ = sorted({c["source"]["country"] for c in series.catalogue() if c["source"]}, key=lambda k: COUNTRY_NAMES.get(k, k))
     return tpl.TemplateResponse(request, "series.html", {
         "items": cat[pg["offset"]:pg["offset"] + size], "pg": pg, "f": {"country": country, "q": q},
-        "countries": countries_, "jobs": dict(_jobs)})
+        "countries": countries_})
 
 
 @app.get("/series/{series_id}")
@@ -528,7 +583,7 @@ def series_page(request: Request, series_id: str, lang: str = ""):
     if d is None:
         raise HTTPException(404, "unknown series")
     return tpl.TemplateResponse(request, "series_detail.html", {**d, "TOPICS": topics.taxonomy()["topics"],
-                                                               "kinds": actors.KINDS, "jobs": dict(_jobs)})
+                                                               "kinds": actors.KINDS})
 
 
 @app.get("/sources/coverage")
@@ -549,7 +604,7 @@ def coverage_page(request: Request, source: str = "", page: str = "1", per_page:
               "listed": sum(c["counts"].get("listed", 0) for c in cov)}
     return tpl.TemplateResponse(request, "coverage.html", {
         "coverage": cov, "proposals": props[pg["offset"]:pg["offset"] + size], "pg": pg, "source": source,
-        "confirmed_names": confirmed_names, "totals": totals, "jobs": dict(_jobs)})
+        "confirmed_names": confirmed_names, "totals": totals})
 
 
 def _back_to(request: Request, fallback: str = "/sources/coverage"):
@@ -610,13 +665,13 @@ def collect_page(request: Request, tab: str = "missing", source: str = "", page:
     return tpl.TemplateResponse(request, "collect.html", {
         "tab": tab, "tabs": COLLECT_TABS, "counts": collect.status_counts(source), "items": items[pg["offset"]:pg["offset"] + size],
         "pg": pg, "source": source, "all_sources": all_sources, "fresh": collect.freshness(), "notice": notice,
-        "today": dt.date.today(), "jobs": dict(_jobs)})
+        "today": dt.date.today()})
 
 
 def _index_new():
-    """Text, pages, topics, dates and actors for new reports – the same steps as `update` after a download."""
-    from . import dating
-    return {"topics": topics.index(), "dates": dating.date_documents(), "actors": actors.index()}
+    """Text, pages, topics, dates and actors for reports added by hand – unless a job runs (the next update indexes
+    them then)."""
+    jobrunner.start("index", jobrunner.index_steps, steps=updater.INDEX_STEPS)
 
 
 def _collect_redirect(request: Request, result: dict | None = None, error: str = ""):
@@ -638,7 +693,7 @@ def collect_upload(request: Request, source_id: int = Form(...), url: str = Form
         with db.session() as con:
             key = con.execute("SELECT key FROM sources WHERE id=?", (source_id,)).fetchone()["key"]
         series.attach_url(key, series_name, url.strip())
-    _run_job("index new reports", _index_new)
+    _index_new()
     return _collect_redirect(request, result)
 
 
@@ -649,7 +704,7 @@ def collect_inbox(request: Request, path: str = Form(...), source_id: int = Form
         result = collect.import_inbox(path, source_id, url, title=title, lang=lang, year=year)
     except ValueError as e:
         return _collect_redirect(request, error=str(e))
-    _run_job("index new reports", _index_new)
+    _index_new()
     return _collect_redirect(request, result)
 
 
@@ -665,17 +720,11 @@ def collect_checked(request: Request, source_id: int = Form(...), note: str = Fo
     return _back_to(request, "/collect?tab=manual")
 
 
-def _update_all():
-    """What `python -m rozvedka update` does – started by hand (there is no periodic job)."""
-    out = {"crawl": crawler.crawl(), "download": downloader.download(), "titles_improved": downloader.improve_titles()}
-    out.update(_index_new())
-    return out
-
-
 @app.post("/jobs/update")
 def job_update(request: Request):
-    _run_job("update", _update_all)
-    return _back_to(request, "/collect")
+    """Older pages' "Update now": a full update of every source, followed on the Update page."""
+    jobrunner.update("full", "all")
+    return RedirectResponse("/update", status_code=303)
 
 
 @app.get("/changelog")
@@ -683,7 +732,7 @@ def changelog(request: Request):
     import markdown   # our own CHANGELOG.md – trusted content
     text = (HERE.parent / "CHANGELOG.md").read_text(encoding="utf-8")
     html = markdown.markdown(text, extensions=["extra"], output_format="html")
-    return tpl.TemplateResponse(request, "changelog.html", {"body": html, "jobs": dict(_jobs)})
+    return tpl.TemplateResponse(request, "changelog.html", {"body": html})
 
 
 @app.get("/favicon.ico", include_in_schema=False)
@@ -709,7 +758,7 @@ def _trend_page(request: Request, view: str):
     return tpl.TemplateResponse(request, "trends.html", {
         "view": view, "views": TREND_VIEWS, "TOPICS": tax["topics"], "CATEGORIES": tax["categories"],
         "topic_names": {k: t["name"] for k, t in tax["topics"].items()},
-        "years": years, "countries": sorted(present, key=lambda c: COUNTRY_NAMES.get(c, c)), "jobs": dict(_jobs)})
+        "years": years, "countries": sorted(present, key=lambda c: COUNTRY_NAMES.get(c, c))})
 
 
 @app.get("/trends")
@@ -801,7 +850,7 @@ def actors_page(request: Request, kind: str = "", q: str = "", min_docs: int = 2
     maxdocs = max((r["docs"] for r in rows), default=1)
     return tpl.TemplateResponse(request, "actors.html", {
         "rows": rows[pg["offset"]:pg["offset"] + size], "pg": pg, "kinds": actors.KINDS, "counts": counts, "f": f,
-        "maxdocs": maxdocs, "meta": actors.stamp(), "jobs": dict(_jobs)})
+        "maxdocs": maxdocs, "meta": actors.stamp()})
 
 
 @app.get("/actors/review")
@@ -809,7 +858,7 @@ def actors_review(request: Request, page: str = "1", per_page: str = "", kind: s
     """Precision review: random passages of the names with the most impact, to mark right or wrong."""
     q = review.queue(page, paging.per_page_of(per_page, 5) if per_page else 5, kind)
     return tpl.TemplateResponse(request, "review.html", {"q": q, "f": {"kind": kind}, "kinds": actors.KINDS,
-                                                        "notice": notice, "jobs": dict(_jobs)})
+                                                        "notice": notice})
 
 
 @app.post("/actors/review")
@@ -830,7 +879,7 @@ def actor_names_page(request: Request, status: str = "used", page: str = "1", pe
                          {"status": status if status == "ignored" else ""})
     return tpl.TemplateResponse(request, "actor_names.html", {
         "rows": actors.top_names(size, status, pg["offset"]), "pg": pg, "status": status,
-        "kinds": actors.KINDS, "jobs": dict(_jobs)})
+        "kinds": actors.KINDS})
 
 
 @app.get("/actors/{a}/with/{b}")
@@ -843,8 +892,7 @@ def actor_pair_page(request: Request, a: str, b: str, year_from: int = 0, year_t
     filters = {"year_from": year_from or "", "year_to": year_to or "", "coalition": coalition, "topic": topic,
                "type": type, "per_page": size if size != 25 else ""}
     pg = paging.paginate(d["docs"], page, size, f"/actors/{a}/with/{b}", filters, default=25)
-    return tpl.TemplateResponse(request, "pair.html", {**d, "pg": pg, "TOPICS": topics.taxonomy()["topics"],
-                                                      "jobs": dict(_jobs)})
+    return tpl.TemplateResponse(request, "pair.html", {**d, "pg": pg, "TOPICS": topics.taxonomy()["topics"]})
 
 
 def _years_desc():
@@ -857,8 +905,7 @@ def _years_desc():
 def network_page(request: Request):
     tax = topics.taxonomy()
     return tpl.TemplateResponse(request, "network.html", {
-        "kinds": actors.KINDS, "years": _years_desc(), "TOPICS": tax["topics"], "CATEGORIES": tax["categories"],
-        "jobs": dict(_jobs)})
+        "kinds": actors.KINDS, "years": _years_desc(), "TOPICS": tax["topics"], "CATEGORIES": tax["categories"]})
 
 
 @app.get("/api/network")
@@ -871,7 +918,7 @@ def api_network(year_from: int = 0, year_to: int = 0, coalition: str = "", type:
 
 @app.get("/map/mentions")
 def mentions_page(request: Request):
-    return tpl.TemplateResponse(request, "mentions.html", {"years": _years_desc(), "jobs": dict(_jobs),
+    return tpl.TemplateResponse(request, "mentions.html", {"years": _years_desc(),
                                                          "reporting": sorted(COUNTRY_NAMES.items(), key=lambda x: x[1])})
 
 
@@ -887,7 +934,7 @@ def api_mentions(request: Request, mode: str = "about", target: str = "", year_f
 
 @app.get("/topics/map")
 def topic_map_page(request: Request):
-    return tpl.TemplateResponse(request, "topic_map.html", {"years": _years_desc(), "jobs": dict(_jobs)})
+    return tpl.TemplateResponse(request, "topic_map.html", {"years": _years_desc()})
 
 
 @app.get("/api/topics/tree")
@@ -905,7 +952,7 @@ def actor_page(request: Request, key: str, page: str = "1", per_page: str = ""):
                          anchor="#passages", default=25)
     return tpl.TemplateResponse(request, "actor.html", {**d, "pg": pg, "kinds": actors.KINDS, "meta": actors.stamp(),
                                                        "reviewed_out": review.of_actor(key),
-                                                       "TOPICS": topics.taxonomy()["topics"], "jobs": dict(_jobs)})
+                                                       "TOPICS": topics.taxonomy()["topics"]})
 
 
 @app.get("/api/events")
@@ -915,7 +962,7 @@ def api_events():
 
 @app.get("/map")
 def world_map(request: Request):
-    return tpl.TemplateResponse(request, "map.html", {"jobs": dict(_jobs), "TYPE_NAMES": TYPE_NAMES})
+    return tpl.TemplateResponse(request, "map.html", {"TYPE_NAMES": TYPE_NAMES})
 
 
 @app.get("/api/map")
@@ -1032,15 +1079,21 @@ def add_doc(request: Request, source_id: int = Form(...), url: str = Form(...), 
 
 
 @app.post("/jobs/crawl")
-def job_crawl(request: Request, country: str = Form(""), agency: str = Form("")):
-    _run_job(f"crawl {country} {agency}".strip(), crawler.crawl, country or None, agency or None)
-    return _back(request, "/sources")
+def job_crawl(request: Request, country: str = Form(""), agency: str = Form(""), source_id: str = Form("")):
+    """Check for new reports (all sources, a country or one source) – followed on the Update page."""
+    if source_id.isdigit():
+        jobrunner.update("check", "sources", sources=[int(source_id)])
+    elif country:
+        jobrunner.update("check", "country", country=country)
+    else:
+        jobrunner.update("check", "all")
+    return RedirectResponse("/update", status_code=303)
 
 
 @app.post("/jobs/download")
 def job_download(request: Request, country: str = Form(""), retry_failed: str = Form("")):
-    _run_job(f"download {country}".strip(), downloader.download, country or None, bool(retry_failed))
-    return _back(request)
+    jobrunner.update("download", "country" if country else "all", country=country, retry_failed=bool(retry_failed))
+    return RedirectResponse("/update", status_code=303)
 
 
 @app.post("/jobs/sync")

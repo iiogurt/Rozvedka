@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% from "_jobpanel.html" import job_panel %}
+{% block title %}Update · Rozvedka{% endblock %}
+{% block head %}<script src="{{ asset('jobs.js') }}" defer></script><script src="{{ asset('update.js') }}" defer></script>{% endblock %}
+{% macro age(ts) %}{% if ts %}{% set d = ts|days_ago %}<span class="{{ 'warn' if d >= 7 }}" title="{{ ts[:16].replace('T', ' ') }}">{{ 'today' if d == 0 else (d ~ ' d ago') }}</span>{% else %}<span class="muted">never</span>{% endif %}{% endmacro %}
+{% block main %}
+<h1 class="page-h">Update – check the agencies for new reports</h1>
+<p class="muted">Rozvedka looks for new reports only when you start it here (there is no schedule). An update visits the
+  report pages of the agencies in the registry, lists the reports it has not seen before, downloads them and indexes them
+  (text, topics, dates, actors). Sources that block automatic access are collected by hand on <a href="/collect">To collect</a>.</p>
+
+<div class="h-counters dx-cards">
+  <a href="#sources"><b>{{ age(since) }}</b><span>every source checked since {{ (since or 'never')[:10] }}</span></a>
+  <a href="#sources"><b>{{ age(fresh.last_crawl) }}</b><span>last check of any source</span></a>
+  <a href="/new"><b>{{ (fresh.last_discovered or 'never')[:10] }}</b><span>last new report found</span></a>
+  <a href="/documents?status=new"><b>{{ counts.get('new', 0)|num }}</b><span>waiting for download</span></a>
+  <a href="/documents?status=failed"><b>{{ counts.get('failed', 0)|num }}</b><span>downloads failed</span></a>
+  <a href="/update?state=error#sources"><b>{{ states.get('error', 0) + states.get('blocked', 0) }}</b><span>sources with errors or blocked</span></a>
+  <a href="/collect"><b>{{ states.get('manual', 0) }}</b><span>sources collected by hand</span></a>
+</div>
+
+{{ job_panel() }}
+
+<section class="viz-card" id="start">
+  <h2 class="viz-title">1 · What to do</h2>
+  <div class="dx-choices">
+    {% for key, label in actions.items() %}<label class="dx-choice"><input type="radio" name="action" value="{{ key }}" {{ 'checked' if loop.first }}>
+      <b>{{ {'full': 'Full update', 'check': 'Check only', 'download': 'Download waiting reports'}[key] }}{{ ' (recommended)' if loop.first }}</b>
+      <span class="muted small">{{ {'full': 'check the report pages, download the new reports and index them – the same as python -m rozvedka update',
+        'check': 'list the new reports without downloading them – to see what is there first',
+        'download': 'fetch the reports already found but not yet downloaded'}[key] }}</span>
+      {% if key == 'download' %}<span class="small"><label><input type="checkbox" id="retry"> also retry the {{ counts.get('failed', 0) }} failed downloads</label></span>{% endif %}
+    </label>{% endfor %}
+  </div>
+
+  <h2 class="viz-title">2 · Which sources</h2>
+  <div class="upd-scope">
+    <label><input type="radio" name="scope" value="all" checked> all sources</label>
+    <label><input type="radio" name="scope" value="stale"> not checked for <input type="number" id="stale-days" value="7" min="1" max="365"> days
+      <span class="muted small">({{ stale_n }} with 7)</span></label>
+    <label><input type="radio" name="scope" value="country"> one country
+      <select id="country" aria-label="Country"><option value="">choose…</option>
+        {% for c in countries %}<option value="{{ c }}">{{ COUNTRY_NAMES.get(c, c) }}</option>{% endfor %}</select></label>
+    <label><input type="radio" name="scope" value="sources"> the sources ticked in the table below <b id="ticked-n">(0)</b></label>
+  </div>
+  <p class="dx-space small" id="plan">{{ plan.pages }} report pages of {{ plan.sources }} sources.</p>
+  <button type="button" class="dx-primary" id="update-go" data-starts-job>Start</button>
+</section>
+
+<section class="viz-card" id="sources">
+  <div class="viz-head"><h2 class="viz-title">Sources</h2>
+    <div class="viz-actions small"><a href="/sources">registry and report pages</a></div></div>
+  <p class="viz-sub muted small">When each source's report pages were last checked, with what result, and how many new reports
+    that check found. Tick sources to check only those, or use <i>Check now</i> on one.</p>
+  <form class="filters" method="get" action="/update#sources">
+    <input type="search" name="q" value="{{ f.q }}" placeholder="Agency…" aria-label="Agency">
+    <select name="country" aria-label="Country"><option value="">All countries</option>
+      {% for c in countries %}<option value="{{ c }}" {{ 'selected' if f.country == c }}>{{ COUNTRY_NAMES.get(c, c) }}</option>{% endfor %}</select>
+    <button>Filter</button>
+  </form>
+  <div class="kind-chips">
+    <a class="topic-chip {{ 'on' if not f.state }}" href="/update?country={{ f.country }}&q={{ f.q|urlencode }}#sources">all ({{ states.values()|sum }})</a>
+    {% for st, label in (('ok', 'checked fine'), ('error', 'errors'), ('blocked', 'blocked by robots.txt'), ('skipped', 'skipped'), ('never', 'never checked'), ('manual', 'collected by hand')) %}
+      {% if states.get(st) %}<a class="topic-chip {{ 'on' if f.state == st }}" href="/update?state={{ st }}&country={{ f.country }}&q={{ f.q|urlencode }}#sources">{{ label }} ({{ states[st] }})</a>{% endif %}{% endfor %}
+    <a class="topic-chip {{ 'on' if f.state == 'stale' }}" href="/update?state=stale&country={{ f.country }}&q={{ f.q|urlencode }}#sources">not checked for 7 days ({{ stale_n }})</a>
+  </div>
+  {{ pager(pg, "sources") }}
+  <div class="tablewrap"><table class="docs upd-table">
+    <thead><tr><th><input type="checkbox" id="tick-all" aria-label="Tick all sources on this page"></th><th>Source</th><th>Pages</th>
+      <th>Last checked</th><th>Result</th><th class="num">Reports</th><th class="num">New in last check</th><th class="num">Waiting</th><th></th></tr></thead>
+    <tbody>{% for r in rows %}<tr class="st-row-{{ r.state }}">
+      <td>{% if r.state != 'manual' %}<input type="checkbox" class="tick" value="{{ r.id }}" aria-label="Tick {{ r.agency }}">{% endif %}</td>
+      <td class="src"><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="{{ r.country }}" width="20" height="15">
+        <a href="/documents?source={{ r.id }}"><b>{{ r.agency }}</b></a> <span class="muted small">{{ r.name_en or '' }}</span>
+        {% if r.access not in ('auto', 'manual') %}<span class="tag" title="How the site is fetched">{{ r.access }}</span>{% endif %}</td>
+      <td class="num">{{ r.pages }}</td>
+      <td class="num">{{ age(r.last) }}</td>
+      <td><details class="upd-pages"><summary><span class="upd-state upd-{{ r.state }}">{{ {'ok': 'fine', 'error': 'error', 'blocked': 'blocked', 'skipped': 'skipped', 'never': 'never checked', 'manual': 'by hand'}[r.state] }}</span></summary>
+        <ul>{% for p in r.statuses %}<li><a href="{{ p.url }}" rel="noopener" target="_blank">{{ p.url[:70] }}</a>
+          <span class="upd-state upd-{{ p.state }}">{{ p.status or 'never checked' }}</span> <span class="muted">{{ (p.when or '')[:16].replace('T', ' ') }}</span></li>{% endfor %}</ul></details></td>
+      <td class="num"><a href="/documents?source={{ r.id }}">{{ r.docs }}</a></td>
+      <td class="num">{% if r.day %}<a href="/documents?source={{ r.id }}&added_from={{ r.day }}&added_to={{ r.day }}&sort=added" title="Reports first found on {{ r.day }}">{{ r.new_last }}</a>{% else %}–{% endif %}</td>
+      <td class="num">{% if r.waiting %}<a href="/documents?source={{ r.id }}&status=new">{{ r.waiting }}</a>{% else %}0{% endif %}</td>
+      <td>{% if r.state == 'manual' %}<a class="small" href="/collect?source={{ r.key|urlencode }}">to collect</a>
+        {% else %}<button type="button" class="upd-now" data-starts-job data-source="{{ r.id }}" title="Check {{ r.agency }}'s report pages now">Check now</button>{% endif %}</td>
+    </tr>{% else %}<tr><td colspan="9" class="empty">No source matches.</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {{ pager(pg, "sources") }}
+</section>
+
+<section class="viz-card">
+  <h2 class="viz-title">History</h2>
+  {% if history %}<div class="vt-scroll"><table class="vt">
+    <thead><tr><th>finished</th><th>what</th><th>took</th><th>result</th></tr></thead>
+    {% for h in history %}{% set d = h.data %}<tr><td>{{ (h.finished_at or '')[:16].replace('T', ' ') }}</td><td>{{ 'check' if h.kind == 'crawl' else h.kind }}</td>
+      <td>{% if h.seconds %}{{ (h.seconds / 60)|round(1) }} min{% else %}–{% endif %}</td>
+      <td>{% if h.kind == 'crawl' %}{{ d.pages }} pages, <b>{{ d.new_docs }}</b> new{% if d.errors %}, {{ d.errors }} errors{% endif %}{% if d.skipped %}, {{ d.skipped }} skipped{% endif %}
+        {% else %}{% for k, v in d.items() %}{{ k }} {{ v }}{{ ', ' if not loop.last }}{% endfor %}{% endif %}</td></tr>{% endfor %}
+  </table></div>{% else %}<p class="muted">Nothing checked yet.</p>{% endif %}
+  {% if logs %}<p class="small"><span class="muted">Logs:</span> {% for l in logs %}<a href="/data/logs/{{ l }}" target="_blank">{{ l }}</a>{{ ' · ' if not loop.last }}{% endfor %}</p>{% endif %}
+  <details class="small"><summary class="muted">The same on the command line</summary>
+    <pre class="dx-cmd">python -m rozvedka update [--country CZ]     # full update
+python -m rozvedka crawl [--country CZ] [--agency BIS]   # check only
+python -m rozvedka download [--retry-failed]             # download waiting reports</pre></details>
+</section>
+{% endblock %}
