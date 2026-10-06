@@ -686,6 +686,12 @@ def changelog(request: Request):
     return tpl.TemplateResponse(request, "changelog.html", {"body": html, "jobs": dict(_jobs)})
 
 
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    """Browsers ask for /favicon.ico even when the page names its icons."""
+    return FileResponse(HERE / "static" / "favicon.ico", media_type="image/x-icon")
+
+
 @app.get("/api/version")
 def version():
     return {"version": __version__, "build": build_version()}
