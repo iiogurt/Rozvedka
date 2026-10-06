@@ -79,7 +79,7 @@ Each item: why · what · done when · version step.
    minor
 4. **Reports without a topic** (383) – sample them: add missing terms to `topics.yaml` (general rule first), mark
    non-reports with their document type (B3). *Done when* below 5 % of real reports. · patch
-5. **Year conflicts** – list reports whose stored year contradicts strong evidence (file-name date stamp, folder,
+5. ✅ (0.31.0) **Year conflicts** – list reports whose stored year contradicts strong evidence (file-name date stamp, folder,
    cover year) for review in the portal; never overwrite silently. · minor
 
 ### C. Reading workflow

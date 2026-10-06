@@ -19,6 +19,7 @@ from markupsafe import escape
 from . import (__version__, actors, build_version, collect, countries, crawler, db, downloader, graphs, home, logos,
                paging, registry, series, topics, trends, updates)
 from . import compare as compare_mod
+from . import dating
 from . import dataset, doclist, folders, report, review, updater, watch
 from . import jobs as jobrunner
 from .config import FILES
@@ -507,7 +508,7 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
         merged = {**params, **kw}
         return urlencode({k: v for k, v in merged.items() if v not in ("", 0, None, [])}, doseq=True)
 
-    return tpl.TemplateResponse(request, "index.html", {
+    return tpl.TemplateResponse(request, "index.html", {"year_conflicts": len(dating.conflicts()), 
         "docs": docs, "total": total, "pg": pg,
         "facets": facets, "f": params, "counts": counts, "qs": qs,
         "TOPICS": tax, "CATEGORIES": topics.taxonomy()["categories"], "topic_counts": topic_counts,
@@ -1018,6 +1019,36 @@ def logo(source_id: int):
     return FileResponse(path, media_type=LOGO_TYPES.get(path.suffix.lstrip("."), "application/octet-stream"),
                         headers={"Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; img-src data:",
                                  "X-Content-Type-Options": "nosniff", "Cache-Control": "max-age=86400"})
+
+
+@app.get("/years")
+def years_page(request: Request, kind: str = "", source: str = "", page: str = "1", per_page: str = ""):
+    """Year conflicts: stored years that strong evidence contradicts, for review."""
+    src = int(source) if source.isdigit() else None
+    kind = kind if kind in dating.CONFLICT_KINDS else ""
+    every = dating.conflicts()
+    rows = [c for c in every if (not kind or c["kind"] == kind) and (not src or c["source_id"] == src)]
+    size = paging.per_page_of(per_page, 50)
+    pg = paging.paginate(len(rows), page, size, "/years", {"kind": kind, "source": source,
+                                                           "per_page": size if size != 50 else ""}, default=50)
+    by_kind = {k: sum(1 for c in every if c["kind"] == k) for k in dating.CONFLICT_KINDS}
+    agencies: dict = {}
+    for c in every:
+        agencies.setdefault(c["source_id"], {"id": c["source_id"], "agency": c["agency"], "country": c["country"], "n": 0})["n"] += 1
+    return tpl.TemplateResponse(request, "years.html", {
+        "rows": rows[pg["offset"]:pg["offset"] + size], "pg": pg, "total": len(every), "shown": len(rows),
+        "f": {"kind": kind, "source": src}, "kinds": dating.CONFLICT_KINDS, "by_kind": by_kind,
+        "agencies": sorted(agencies.values(), key=lambda a: (-a["n"], a["agency"])),
+        "decided": len(dating.load_reviews())})
+
+
+@app.post("/years/resolve")
+async def years_resolve(request: Request):
+    form = await request.form()
+    # a row's own button names its report in the address; the buttons below the table act on the ticked reports
+    ids = [int(x) for x in (request.query_params.getlist("doc") or form.getlist("doc")) if str(x).isdigit()]
+    dating.resolve(ids, use_found=form.get("action") == "use")
+    return _back(request, "/years")
 
 
 @app.get("/report/{doc_id}")

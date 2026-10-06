@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}Year conflicts · Documents · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/documents">← Documents</a></p>
+<h1 class="page-h">Year conflicts</h1>
+<p class="muted small">Reports whose stored year is contradicted by strong evidence. Nothing here is changed automatically:
+  <b>Use the year found</b> sets the report's year (marked <i>set by hand</i>, as after an edit); <b>Keep</b> keeps the stored
+  year and stops listing that conflict. Every verdict is written with its evidence to <code>sources/year_reviews.yaml</code>
+  ({{ decided }} so far) and travels with datasets.</p>
+
+<section class="viz-card">
+  <h2 class="viz-title">Evidence <span class="muted small">{{ total }} open conflict{{ 's' if total != 1 }}</span></h2>
+  <p class="muted small viz-sub">How it is found (<code>rozvedka/dating.py</code>, rebuilt each time reports are dated): a <b>Japanese era year</b>
+    in the title that differs from the stored year; a <b>date stamp</b> in the file name (<code>20170426_…</code>) that is neither the
+    stored year nor the year after it (reports appear the year after the one they cover); a <b>report heading on the cover page</b>
+    (“Annual Report 2023”) naming another year, unless the title itself carries the stored year. Left out: years set by hand,
+    hidden reports, headings beyond the cover page, and reports without text.</p>
+  <table class="yc-kinds small">
+    {% for k, label in kinds.items() %}<tr class="{{ 'on' if f.kind == k }}"><th><a href="/years?kind={{ k }}">{{ label }}</a></th>
+      <td class="n"><a href="/years?kind={{ k }}">{{ by_kind[k] }}</a></td></tr>{% endfor %}
+  </table>
+  {% if agencies %}<p class="small rp-chips"><span class="muted">By agency:</span>
+    {% for a in agencies %}<a class="mchip{{ ' linked' if f.source == a.id }}" href="/years?source={{ a.id }}{{ '&kind=' ~ f.kind if f.kind }}">{{ a.country }} · {{ a.agency }}&nbsp;<span class="muted">{{ a.n }}</span></a> {% endfor %}
+    {% if f.kind or f.source %}<a class="small" href="/years">all</a>{% endif %}</p>{% endif %}
+</section>
+
+{{ pager(pg, "conflicts") }}
+{% if rows %}
+<form method="post" action="/years/resolve" id="yc-form">
+<table class="docs yc">
+  <thead><tr><th><input type="checkbox" id="yc-all" title="Select all on this page" aria-label="Select all on this page"></th>
+    <th>Report</th><th class="n">Stored</th><th class="n">Found</th><th>Evidence</th><th></th></tr></thead>
+  <tbody>
+  {% for c in rows %}
+    <tr>
+      <td><input type="checkbox" name="doc" value="{{ c.doc_id }}" aria-label="Select {{ c.title }}"></td>
+      <td class="title"><img class="flag-sm" src="{{ flag_url(c.country) }}" alt="{{ c.country }}" width="20" height="15">
+        <span class="muted small">{{ c.agency }}</span> <a href="/report/{{ c.doc_id }}">{{ c.title }}</a>
+        <div class="meta">{% if c.local_path %}<a href="/doc/{{ c.doc_id }}" target="_blank">PDF</a> · {% endif %}<a href="{{ c.url }}" target="_blank" rel="noopener">original ↗</a>
+          {% if c.year_source %} · <span title="{{ c.year_source }}">stored year estimated</span>{% endif %}</div></td>
+      <td class="n">{{ c.stored }}</td>
+      <td class="n"><b>{{ c.found }}</b></td>
+      <td class="small ev"><span class="ctag">{{ kinds[c.kind] }}</span>
+        {% if c.kind == 'heading' and c.local_path %}<a href="/doc/{{ c.doc_id }}#page=1" target="_blank">{{ c.evidence }}</a>{% else %}{{ c.evidence }}{% endif %}</td>
+      <td class="actions">
+        <button name="action" value="use" formaction="/years/resolve?doc={{ c.doc_id }}" title="Set the year to {{ c.found }}">Use {{ c.found }}</button>
+        <button name="action" value="keep" formaction="/years/resolve?doc={{ c.doc_id }}" title="Keep {{ c.stored }} and stop listing this conflict">Keep {{ c.stored }}</button></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<p class="yc-bulk small">Selected reports: <button name="action" value="use">Use the year found</button>
+  <button name="action" value="keep">Keep the stored year</button></p>
+</form>
+<script>
+  document.getElementById("yc-all").addEventListener("change", (e) => {
+    document.querySelectorAll('#yc-form input[name="doc"]').forEach((b) => { b.checked = e.target.checked; });
+  });
+</script>
+{% else %}<p class="muted">No open conflict{{ ' with this filter' if f.kind or f.source }}.</p>{% endif %}
+{{ pager(pg, "conflicts") }}
+{% endblock %}
