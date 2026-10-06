@@ -334,19 +334,22 @@ sudo apt install ocrmypdf tesseract-ocr tesseract-ocr-eng tesseract-ocr-spa … 
 > The portal has no login. It listens on your LAN; do not expose it to the internet.
 
 > [!NOTE]
-> `data/` is not in git. It holds the database (`rozvedka.db`), the downloaded PDFs (`files/`, 12+ GB), logos and
-> the actor gazetteer. Back it up separately.
+> `data/` is not in git. It holds the database (`rozvedka.db`), the downloaded PDFs (`files/`, 14+ GB), logos and
+> the actor gazetteer. Back it up as a dataset (*Sources → Data exchange*).
 
-### Run as a service
+### Starting the portal
 
-systemd user units, no root needed (except once for `enable-linger`, which keeps them running without a login):
+The portal runs when it is started – it is not set up to start by itself after a reboot, and nothing runs on a
+schedule (both the owner's decisions; updates are started on the *Update* page):
 
 ```bash
-systemctl --user link "$PWD/deploy/rozvedka-web.service" "$PWD/deploy/rozvedka-update.service" "$PWD/deploy/rozvedka-update.timer"
-systemctl --user daemon-reload
-systemctl --user enable --now rozvedka-web.service rozvedka-update.timer   # portal + weekly update (Sun 03:00)
-sudo loginctl enable-linger "$USER"
+cd ~/Documents/Projects/Rozvedka
+nohup .venv/bin/python -m rozvedka serve > data/logs/portal.log 2>&1 &
 ```
+
+`deploy/rozvedka-web.service` is a systemd user unit for whoever wants the portal managed by systemd
+(`systemctl --user link "$PWD/deploy/rozvedka-web.service" && systemctl --user start rozvedka-web`); without
+`loginctl enable-linger` it runs only while that user is logged in.
 
 ## Commands
 
