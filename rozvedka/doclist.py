@@ -2,13 +2,13 @@
 list shows for the same parameters."""
 import re
 
-from . import actors, countries, db, series, topics, trends
+from . import actors, countries, db, doctypes, series, topics, trends
 
 
 def build(country: str = "", type: str = "", lang: str = "", year="", status: str = "", q: str = "", source: int = 0,
           show_hidden: int = 0, coalition: str = "", topic=(), year_from="", year_to="", indexed: int = 0,
           actor: str = "", main: int = 0, cluster: str = "", series_id: str = "", added_from: str = "",
-          added_to: str = "", undated: int = 0) -> dict:
+          added_to: str = "", undated: int = 0, doc_type: str = "", all_types: int = 0) -> dict:
     """SQL condition (over documents d JOIN sources s) and its arguments for the Documents list's parameters."""
     tax = topics.taxonomy()["topics"]
     topic = [topic] if isinstance(topic, str) else list(topic or [])
@@ -20,6 +20,10 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
         where.append(f"s.country IN ({','.join('?' * len(codes))})"); args += codes
     if not show_hidden:
         where.append("d.hidden=0 AND d.status NOT IN ('missing','duplicate','skipped')")
+    if doc_type in doctypes.TYPES:          # one document type, also one that is not counted as a report
+        where.append("d.doc_type=?"); args.append(doc_type)
+    elif not all_types:                     # by default, as every count: statements, finance tables and forms left out
+        where.append(doctypes.COUNTED)
     for col, val in (("s.country", country), ("s.type", type), ("d.lang", lang), ("d.status", status)):
         if val:
             where.append(f"{col}=?"); args.append(val)

@@ -837,3 +837,6 @@ table.yc td.actions { white-space: nowrap; width: 1%; }
 table.yc td.actions button { display: block; width: 100%; margin: 0 0 3px; }
 table.yc td.ev { max-width: 420px; }
 .yc-bulk { margin: 8px 0; }
+.badge-type { font-size: 10.5px; padding: 0 5px; border-radius: 3px; border: 1px solid var(--line); color: var(--muted); margin-left: 6px; cursor: help; }
+.badge-type.badge-off { border-style: dashed; font-style: italic; }
+.rp-type { display: inline-flex; gap: 4px; margin-left: 8px; } .rp-type select, .rp-type button { font-size: 12px; padding: 1px 4px; }

@@ -27,6 +27,21 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.32.0] – 2026-10-06
+
+### Added
+- **Document types**: every file gets a type from rules on its title and file name (many languages), its report
+  series and its page count – annual or periodic report, threat / risk assessment, strategy / white paper, bulletin /
+  warning, guide / factsheet, other report, and three kinds that are not reports: statement / press release, budget /
+  accounts table, form. The type and its rule show on Documents and on the report page, where it can be corrected
+  (kept in `sources/doc_types.yaml`, merged on dataset import). New command `type-documents`, run after every update
+  and import. Documents has a type filter with counts.
+
+### Changed
+- Counts, charts and dashboards leave out statements, budget tables and forms (133 files today, mostly UK ISC press
+  notices and Slovak budget tables), as they leave out hidden files; the Documents list leaves them out by default and
+  links them ("+ 133 … not counted"), and the Trends notes list them under *Left out*.
+
 ## [0.31.1] – 2026-10-06
 
 ### Added
@@ -599,7 +614,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.31.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.32.0...HEAD
+[0.32.0]: https://github.com/iiogurt/Rozvedka/compare/v0.31.1...v0.32.0
 [0.31.1]: https://github.com/iiogurt/Rozvedka/compare/v0.31.0...v0.31.1
 [0.31.0]: https://github.com/iiogurt/Rozvedka/compare/v0.30.0...v0.31.0
 [0.30.0]: https://github.com/iiogurt/Rozvedka/compare/v0.29.1...v0.30.0

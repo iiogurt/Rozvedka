@@ -36,7 +36,8 @@ FORMAT = "rozvedka-dataset"
 FORMAT_VERSION = 1
 PART_SIZE = 2_000_000_000
 CHUNK = 1 << 20
-PORTAL_LISTS = ("series.yaml", "watchlist.yaml", "actor_reviews.yaml", "year_reviews.yaml")     # written by the portal: merged on import
+PORTAL_LISTS = ("series.yaml", "watchlist.yaml", "actor_reviews.yaml", "year_reviews.yaml",
+                "doc_types.yaml")     # written by the portal: merged on import
 
 
 Cancelled = progress.Cancelled
@@ -789,6 +790,18 @@ def _merge_lists(mpath: Path, m: dict) -> dict:
                 if added:
                     dating.save_reviews(list(ours.values()), ours_p)
                 out[name] = f"{added} year verdicts added or updated"
+            elif name == "doc_types.yaml":
+                from . import doctypes
+                ours = doctypes.load_hand(ours_p)
+                added = 0
+                for r in theirs or []:
+                    if isinstance(r, dict) and r.get("url") and (
+                            r["url"] not in ours or (r.get("set") or "") > (ours[r["url"]].get("set") or "")):
+                        ours[r["url"]] = r
+                        added += 1
+                if added:
+                    doctypes.save_hand(ours, ours_p)
+                out[name] = f"{added} document types added or updated"
             elif name == "series.yaml":
                 from . import series
                 ours = series.load(ours_p)

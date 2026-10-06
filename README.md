@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.31.1-1f4e79)
+![version](https://img.shields.io/badge/version-0.32.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -113,6 +113,16 @@ The library itself (`/documents`): every report with its agency, country, langua
   or year; hide irrelevant files; add a document by URL for sites that block automatic downloads.
 - Page through the results with numbered pages, first/last, "go to page", and 25 / 50 / 100 / 200 / 500 per page –
   the same pager on every list in the portal (actors, names, passages).
+- **Document types** – every file is typed by transparent rules on its title and file name (in the library's
+  languages), its report series and its page count: annual or periodic report, threat / risk assessment, strategy,
+  bulletin, guide, other report – or **not a report**: statement / press release, budget table, form. The type and
+  the rule behind it are on each row and on the report page, where it can be corrected by hand
+  (`sources/doc_types.yaml`). Statements, budget tables and forms stay in the library but are left out of every
+  count, chart and dashboard, as hidden files are; the Documents list says how many it leaves out and shows them with
+  the type filter. Sampled precision: 48 of 50 types right.
+
+  <img src="docs/images/doc-types.png" alt="Documents with every type shown: press notices marked as statements not counted, a risk register as an assessment" width="900">
+
 - **Year conflicts** (`/years`, linked from the Documents summary): reports whose stored year is contradicted by strong
   evidence – a Japanese era year in the title, a date stamp in the file name, a report heading on the cover naming
   another year – with the evidence and one click to use the year found or keep the stored one. Nothing changes
@@ -126,7 +136,7 @@ The library itself (`/documents`): every report with its agency, country, langua
 
 Every report title in the portal opens its own page (`/report/<id>`); the PDF stays one click away:
 
-- **where it comes from** – agency, the official address, the page it was found on, how it got into the library
+- **where it comes from** – agency, the document type and the rule that set it, the official address, the page it was found on, how it got into the library
   (crawler, address pattern, by hand), when it was listed and downloaded, size, pages, SHA-256, and whether its text
   came from OCR; how its year was found;
 - **series and editions** – which edition of which series it is, the previous and next edition, the same edition in
