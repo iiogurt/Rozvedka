@@ -171,3 +171,17 @@ def test_yearly_report_pages_are_followed_despite_navigation_pdfs(monkeypatch):
     assert status.startswith("ok") and "4 sub-pages" in status
     assert {u for u in stored if "raport-20" in u} == {f"https://x.al/files/raport-{y}.pdf" for y in (2021, 2022, 2023, 2024)}
     assert not any("RFC-2350" in u or "eidas" in u for u in stored)
+
+
+def test_documents_on_the_domain_a_page_redirects_to_are_kept(monkeypatch):
+    from types import SimpleNamespace
+    from rozvedka import crawler
+    html = '<a href="https://crisiscenter.be/files/BNRA-2023-2026_EN.pdf">Belgian National Risk Assessment 2023-2026</a>'
+    monkeypatch.setattr(crawler, "get_page", lambda url, src: SimpleNamespace(status=200, content_type="text/html", text=html,
+                                                                             url="https://crisiscenter.be/en/identifying-risks"))
+    stored = []
+    monkeypatch.setattr(crawler, "_store", lambda con, sid, pid, docs, lang, allowed, families: stored.extend(
+        d["url"] for d in docs if crawler.domain_family(d["url"]) in families) or len(stored))
+    src = {"id": 1, "access": "auto", "homepage": "https://crisiscentrum.be/", "agency": "NCCN", "domains": None}
+    crawler.crawl_page(None, src, {"url": "https://crisiscentrum.be/en/identifying-risks", "id": 1, "lang": "en", "note": None}, {"en"})
+    assert stored == ["https://crisiscenter.be/files/BNRA-2023-2026_EN.pdf"]

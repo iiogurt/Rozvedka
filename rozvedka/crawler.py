@@ -217,7 +217,8 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
     resp = get_page(page["url"], src)
     if resp.status != 200:
         return f"http {resp.status}", 0
-    families = official_families(src, page["url"])
+    # the agency's own page may redirect to another of its domains (crisiscentrum.be → crisiscenter.be): trust that too
+    families = official_families(src, page["url"]) | ({domain_family(resp.url)} if getattr(resp, "url", None) else set())
     if "pdf" in resp.content_type:
         return "ok", _store(con, src["id"], page["id"], [{"url": page["url"], "title": page["note"] or src["agency"]}],
                             page["lang"], allowed_langs)
