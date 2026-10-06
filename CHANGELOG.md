@@ -27,6 +27,30 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.29.0] – 2026-10-06
+
+### Added
+- **Update page** (`/update`) and an **⟳ Update** button in the header of every page with the age of the data (every
+  source checked since …, amber after a week) or the running job's progress. The page: what to do (full update,
+  check only, download waiting reports with optional retry of failed ones), which sources (all, not checked for N days,
+  one country, ticked ones) with the number of pages and the expected duration (measured on earlier runs); a progress
+  panel with the steps, the source being checked, downloads done, time left, live log and the result with links to
+  What's new; cancelling between pages or downloads; every source's last check, outcome per report page, reports,
+  new ones and waiting ones, with filters and *Check now*; the history of checks and downloads.
+- `ROZVEDKA_DB` chooses another database file.
+
+### Changed
+- The old crawl, download and *Update now* buttons (Sources, To collect, Documents) start the same jobs and open the
+  Update page; their one-line status banner is gone.
+- All long jobs from the portal – updates, dataset export and import, indexing after a hand upload – run through one
+  runner (`rozvedka/jobs.py`): one at a time, with progress, log and cancel. Indexers run as separate processes, as
+  they start worker processes of their own (the old *Update now* forked them from the portal's threads).
+- Crawls and downloads record when they started, so the page can show how long they took.
+
+### Fixed
+- Background indexing jobs could reach the default library instead of the one in use (`ROZVEDKA_DATA`/`ROZVEDKA_DB`
+  are now passed exactly); tests never start indexer processes.
+
 ## [0.28.1] – 2026-10-06
 
 ### Added
@@ -521,7 +545,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.28.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.29.0...HEAD
+[0.29.0]: https://github.com/iiogurt/Rozvedka/compare/v0.28.1...v0.29.0
 [0.28.1]: https://github.com/iiogurt/Rozvedka/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/iiogurt/Rozvedka/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/iiogurt/Rozvedka/compare/v0.26.0...v0.27.0

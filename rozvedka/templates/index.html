@@ -62,7 +62,7 @@
   <span class="muted">library: {{ counts.get('downloaded', 0) }} downloaded · {{ counts.get('new', 0) }} waiting · {{ counts.get('failed', 0) }} failed</span>
   <form method="post" action="/jobs/download" class="inline">
     <input type="hidden" name="country" value="{{ f.country }}">
-    <button title="Download all waiting documents{{ ' for ' ~ f.country if f.country }}">Download waiting{{ ' (' ~ f.country ~ ')' if f.country }}</button>
+    <button title="Download all waiting documents{{ ' for ' ~ f.country if f.country }} – followed on the Update page">Download waiting{{ ' (' ~ f.country ~ ')' if f.country }}</button>
   </form>
 </div>
 

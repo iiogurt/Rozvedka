@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% from "_jobpanel.html" import job_panel %}
 {% block title %}Data exchange · Rozvedka{% endblock %}
-{% block head %}<script src="{{ asset('data.js') }}" defer></script>{% endblock %}
+{% block head %}<script src="{{ asset('jobs.js') }}" defer></script><script src="{{ asset('data.js') }}" defer></script>{% endblock %}
 {% block main %}
 <nav class="subnav" aria-label="Source views"><a href="/sources">Agencies</a><a href="/sources/coverage">Coverage</a><a href="/collect">To collect</a><a href="/data" class="on">Data exchange</a></nav>
 <h1 class="page-h">Data exchange</h1>
@@ -15,25 +16,14 @@
   <a href="/new"><b>{{ (fresh.last_discovered or 'never')[:10] }}</b><span>last report found</span></a>
 </div>
 
-<section class="viz-card dx-job" id="job" hidden aria-live="polite">
-  <div class="viz-head"><h2 class="viz-title" id="job-title">Working…</h2>
-    <div class="viz-actions"><a id="job-log-link" href="#" target="_blank">full log</a></div></div>
-  <ol class="dx-steps" id="job-steps"></ol>
-  <div class="dx-bar"><progress id="job-bar" max="1"></progress><span id="job-pct"></span></div>
-  <p class="dx-nums small muted" id="job-nums"></p>
-  <div class="dx-result" id="job-result" hidden></div>
+{% call job_panel() %}
   <div class="dx-actions" id="job-import" hidden>
     <fieldset class="dx-prefer"><legend class="small">When a hand edit differs (hidden, title, language, a year set by hand)</legend>
       <label><input type="radio" name="prefer" value="local" checked> keep this library's</label>
       <label><input type="radio" name="prefer" value="dataset"> take the dataset's</label></fieldset>
     <button type="button" class="dx-primary" id="job-import-go">Import this dataset</button>
   </div>
-  <div class="dx-actions">
-    <button type="button" id="job-cancel">Cancel</button>
-    <button type="button" id="job-close" hidden>Close</button>
-  </div>
-  <details class="dx-log" open><summary class="small muted">Log</summary><pre id="job-log"></pre></details>
-</section>
+{% endcall %}
 
 <div class="seg dx-tabs" role="tablist">
   <label><input type="radio" name="tab" value="export" checked> ⬆ Export</label>
@@ -63,7 +53,7 @@
     <label>Label <input id="label" maxlength="30" placeholder="optional, e.g. a name or occasion"></label>
   </div>
   <p class="dx-space small" id="space"></p>
-  <button type="button" class="dx-primary" id="export-go" disabled>Export</button>
+  <button type="button" class="dx-primary" id="export-go" data-starts-job disabled>Export</button>
 </section>
 
 <section class="viz-card" id="tab-import" hidden>

@@ -5,7 +5,7 @@ import time
 import pytest
 from fastapi.testclient import TestClient
 
-from rozvedka import dataset, datajobs, db, folders
+from rozvedka import dataset, db, folders, jobs as datajobs
 from test_dataset import a, export, use  # noqa: F401 - fixtures and helpers of the dataset tests
 
 
@@ -83,7 +83,7 @@ def test_cancel_only_before_changes(tmp_path, monkeypatch):
         return {"ok": True}
 
     datajobs.start("export", slow)
-    assert datajobs.start("export", slow)["error"].startswith("another export")              # one job at a time
+    assert datajobs.start("export", slow)["error"].startswith("export is running")              # one job at a time
     time.sleep(0.1)
     assert datajobs.cancel()
     j = wait()

@@ -1,0 +1,18 @@
+{# The progress panel of long jobs (update, export, check, import) – filled by static/jobs.js.
+   `caller()` adds page-specific controls shown under the result (e.g. the import choice after a check). #}
+{% macro job_panel() %}
+<section class="viz-card dx-job" id="job" hidden aria-live="polite">
+  <div class="viz-head"><h2 class="viz-title" id="job-title">Working…</h2>
+    <div class="viz-actions"><a id="job-log-link" href="#" target="_blank">full log</a></div></div>
+  <ol class="dx-steps" id="job-steps"></ol>
+  <div class="dx-bar"><progress id="job-bar" max="1"></progress><span id="job-pct"></span></div>
+  <p class="dx-nums small muted" id="job-nums"></p>
+  <div class="dx-result" id="job-result" hidden></div>
+  {% if caller is defined %}{{ caller() }}{% endif %}
+  <div class="dx-actions">
+    <button type="button" id="job-cancel">Cancel</button>
+    <button type="button" id="job-close" hidden>Close</button>
+  </div>
+  <details class="dx-log" open><summary class="small muted">Log</summary><pre id="job-log"></pre></details>
+</section>
+{% endmacro %}

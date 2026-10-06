@@ -6,7 +6,7 @@
 <div class="summary">
   <span><b>{{ sources|length }}</b> agencies and institutions in <b>{{ groups|length }}</b> groups</span>
   <form method="post" action="/jobs/sync" class="inline"><button title="Reload sources/registry.yaml">Reload registry</button></form>
-  <form method="post" action="/jobs/crawl" class="inline"><button title="Crawl every source (slow)">Crawl all</button></form>
+  <a class="dx-primary upd-link" href="/update">⟳ Check for new reports…</a>
 </div>
 
 <div class="coalition-filter" role="group" aria-label="Show countries in coalition">
@@ -71,9 +71,9 @@
         {% endfor %}
       </ul>
       <div class="actions-row">
-        <form method="post" action="/jobs/crawl" class="inline">
-          <input type="hidden" name="country" value="{{ s.country }}"><input type="hidden" name="agency" value="{{ s.agency }}">
-          <button>Crawl now</button></form>
+        <form method="post" action="/jobs/crawl" class="inline" title="Check this agency's report pages now – followed on the Update page">
+          <input type="hidden" name="source_id" value="{{ s.id }}">
+          <button>Check now</button></form>
       </div>
       <form method="post" action="/add" class="addform">
         <input type="hidden" name="source_id" value="{{ s.id }}">

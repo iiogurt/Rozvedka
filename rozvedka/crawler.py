@@ -1,14 +1,15 @@
 """Discover report documents on registry pages (no downloading)."""
+import json
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib.parse import unquote, urldefrag, urljoin, urlsplit
 
 import warnings
 
 from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 
-from . import db, fetch, registry
+from . import db, fetch, progress, registry
 from .config import FOLLOW_LIMIT
 
 log = logging.getLogger("rozvedka.crawl")
@@ -280,43 +281,77 @@ def fix_future_years(con) -> int:
     return len(rows)
 
 
-def crawl(country: str | None = None, agency: str | None = None) -> dict:
+def selection(con, country: str | None = None, agency: str | None = None, source_ids=None,
+              stale_days: int | None = None) -> list[tuple]:
+    """The (source, its active pages) a crawl will visit: optionally one country, one agency, chosen sources, or the
+    sources not checked for `stale_days` days (their pages crawled longest ago or never)."""
+    q, args = "SELECT * FROM sources WHERE active=1", []
+    if country:
+        q += " AND country=?"; args.append(country.upper())
+    if agency:
+        q += " AND agency=?"; args.append(agency)
+    if source_ids:
+        ids = [int(i) for i in source_ids]
+        q += f" AND id IN ({','.join('?' * len(ids))})"; args += ids
+    out = []
+    cutoff = (datetime.now() - timedelta(days=stale_days)).isoformat(timespec="seconds") if stale_days else None
+    for src in con.execute(q + " ORDER BY country, agency", args).fetchall():
+        pages = con.execute("SELECT * FROM pages WHERE source_id=? AND active=1", (src["id"],)).fetchall()
+        if cutoff and pages and all((p["last_crawled"] or "") >= cutoff for p in pages):
+            continue          # checked recently enough
+        out.append((src, pages))
+    return out
+
+
+def crawl(country: str | None = None, agency: str | None = None, source_ids=None, stale_days: int | None = None) -> dict:
+    """Visit the report pages and record new reports (links only). Reports progress per page; a cancelled crawl stops
+    between pages – what was found so far is kept."""
+    started = datetime.now().isoformat(timespec="seconds")
     registry.sync()
-    stats = {"pages": 0, "new_docs": 0, "errors": 0, "skipped": 0}
+    stats = {"pages": 0, "new_docs": 0, "errors": 0, "skipped": 0, "sources": {}}
     with db.session() as con:
         stats["years_fixed"] = fix_future_years(con)
-        q = "SELECT * FROM sources WHERE active=1"
-        args = []
-        if country:
-            q += " AND country=?"; args.append(country.upper())
-        if agency:
-            q += " AND agency=?"; args.append(agency)
-        for src in con.execute(q, args).fetchall():
-            pages = con.execute("SELECT * FROM pages WHERE source_id=? AND active=1", (src["id"],)).fetchall()
+        chosen = selection(con, country, agency, source_ids, stale_days)
+        total = sum(len(p) for _, p in chosen)
+        log.info("checking %d report pages of %d sources", total, len(chosen))
+        for src, pages in chosen:
+            per = stats["sources"].setdefault(src["key"], {"pages": 0, "new": 0, "errors": 0, "skipped": 0})
             allowed_langs = {l for p in pages if p["lang"] for l in p["lang"].split("+")} | {"en"}
-            stats["new_docs"] += add_patterns(con, src)
+            found = add_patterns(con, src)
+            stats["new_docs"] += found
+            per["new"] += found
             for page in pages:
+                progress.tick("Checking report pages", stats["pages"], total, note=f"{src['country']} {src['agency']}")
                 stats["pages"] += 1
+                per["pages"] += 1
                 if src["access"] == "manual" or (src["access"] == "browser-js" and not fetch.CHROMIUM):
                     status, new = f"skipped ({src['access']})", 0
                     stats["skipped"] += 1
+                    per["skipped"] += 1
                 elif not page["verified"]:
                     status, new = "skipped (blocked page – open in browser)", 0
                     stats["skipped"] += 1
+                    per["skipped"] += 1
                 else:
                     try:
                         status, new = crawl_page(con, src, page, allowed_langs)
                     except fetch.Blocked:
                         status, new = "blocked by robots.txt", 0
                         stats["errors"] += 1
+                        per["errors"] += 1
                     except Exception as e:  # noqa: BLE001
                         status, new = f"error: {type(e).__name__}: {e}"[:300], 0
                         stats["errors"] += 1
+                        per["errors"] += 1
                 stats["new_docs"] += new
+                per["new"] += new
                 con.execute("UPDATE pages SET last_crawled=?, last_status=? WHERE id=?",
                             (datetime.now().isoformat(timespec="seconds"), status, page["id"]))
                 con.commit()
                 log.info("%-5s %-18s %-5s %s -> %s, +%d", src["country"], src["agency"][:18], page["lang"],
                          page["url"][:80], status, new)
-        con.execute("INSERT INTO runs(kind,finished_at,summary) VALUES('crawl',datetime('now'),?)", (str(stats),))
+        progress.tick("Checking report pages", stats["pages"], total)
+        stats["sources"] = {k: v for k, v in stats["sources"].items() if v["new"] or v["errors"]}   # keep the run short
+        con.execute("INSERT INTO runs(kind,started_at,finished_at,summary) VALUES('crawl',?,?,?)",
+                    (started, datetime.now().isoformat(timespec="seconds"), json.dumps(stats, ensure_ascii=False)))
     return stats

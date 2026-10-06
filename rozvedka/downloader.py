@@ -1,6 +1,7 @@
 """Download discovered documents to local storage."""
 import concurrent.futures as cf
 import hashlib
+import json
 import logging
 import re
 import unicodedata
@@ -8,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
-from . import db, fetch
+from . import db, fetch, progress
 from .config import FILES, MAX_FILE_MB
 from .crawler import is_poor_title
 
@@ -116,23 +117,41 @@ def download_one(doc_id: int) -> str:
     return status
 
 
-def download(country: str | None = None, retry_failed: bool = False, limit: int | None = None, workers: int = 4) -> dict:
+def download(country: str | None = None, retry_failed: bool = False, limit: int | None = None, workers: int = 4,
+             source_ids=None) -> dict:
+    """Download the waiting reports (and the failed ones with retry_failed). Reports progress per file; a cancelled
+    download finishes the files in progress and starts no more."""
+    started = datetime.now().isoformat(timespec="seconds")
     statuses = ("new", "failed") if retry_failed else ("new",)
     q = f"""SELECT d.id FROM documents d JOIN sources s ON s.id=d.source_id
             WHERE d.status IN ({','.join('?' * len(statuses))}) AND d.hidden=0 AND s.access!='manual'"""
     args = list(statuses)
     if country:
         q += " AND s.country=?"; args.append(country.upper())
+    if source_ids:
+        ids = [int(i) for i in source_ids]
+        q += f" AND s.id IN ({','.join('?' * len(ids))})"; args += ids
     q += " ORDER BY d.year DESC NULLS LAST, d.id"
     if limit:
         q += f" LIMIT {int(limit)}"
     with db.session() as con:
         ids = [r["id"] for r in con.execute(q, args)]
     stats: dict[str, int] = {}
+    log.info("downloading %d reports", len(ids))
+    progress.tick("Downloading new reports", 0, len(ids))
     # per-host delay in fetch keeps this polite even with several workers
-    with cf.ThreadPoolExecutor(workers) as ex:
-        for st in ex.map(download_one, ids):
+    ex = cf.ThreadPoolExecutor(workers)
+    try:
+        futures = [ex.submit(download_one, i) for i in ids]
+        for n, fut in enumerate(cf.as_completed(futures), 1):
+            st = fut.result()
             stats[st] = stats.get(st, 0) + 1
+            progress.tick("Downloading new reports", n, len(ids), note=", ".join(f"{k} {v}" for k, v in sorted(stats.items())))
+    except progress.Cancelled:
+        ex.shutdown(wait=True, cancel_futures=True)      # the files being fetched finish; no new ones start
+        raise
+    ex.shutdown(wait=True)
     with db.session() as con:
-        con.execute("INSERT INTO runs(kind,finished_at,summary) VALUES('download',datetime('now'),?)", (str(stats),))
+        con.execute("INSERT INTO runs(kind,started_at,finished_at,summary) VALUES('download',?,?,?)",
+                    (started, datetime.now().isoformat(timespec="seconds"), json.dumps(stats)))
     return stats
