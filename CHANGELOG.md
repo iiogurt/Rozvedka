@@ -27,6 +27,21 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.32.1] – 2026-10-06
+
+### Changed
+- **Fewer reports without a topic: 14.5 % → 4.8 %** of the counted reports with text (463 → 151). The keyword list
+  gained the languages it lacked for the hazard, resilience, cyber and crime topics – Croatian, Slovenian, Russian,
+  Greek, Hungarian, Portuguese, and Albanian, Macedonian, Turkish and Icelandic for the new sources – plus the Peruvian
+  disaster vocabulary (huaicos, damnificados, simulacros, El Niño), "SOCTA" and malware-analysis terms. Two new topics:
+  **Crime statistics** (police crime statistics such as the German PKS) and **Cyber security practice & standards**
+  (ISMS, certification, encryption, monitoring, awareness, cyber exercises). 66 topics, 4,400 terms.
+- Terms that turned into common words of another language once accents are folded were left out or written as exact
+  words (Turkish *taşkın* → "tasking", Latvian *šiem* → "siem", Croatian *suše* → "SUSE"); tests guard these cases.
+- New document type **Law / regulation** (gazette numbers such as "82/15", *Zakon*, *Uredba*, *Gesetz*, *Act on the*,
+  *rozporządzenie* …): 84 files, mostly Croatian civil-protection legislation, not counted as reports. EU project
+  funding sheets (POSEUR / POCI codes) are budget tables.
+
 ## [0.32.0] – 2026-10-06
 
 ### Added
@@ -614,7 +629,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.32.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.32.1...HEAD
+[0.32.1]: https://github.com/iiogurt/Rozvedka/compare/v0.32.0...v0.32.1
 [0.32.0]: https://github.com/iiogurt/Rozvedka/compare/v0.31.1...v0.32.0
 [0.31.1]: https://github.com/iiogurt/Rozvedka/compare/v0.31.0...v0.31.1
 [0.31.0]: https://github.com/iiogurt/Rozvedka/compare/v0.30.0...v0.31.0

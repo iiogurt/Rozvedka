@@ -61,7 +61,7 @@
   <span><b>{{ total }}</b> documents match</span>
   {% set n_left = type_counts.items()|selectattr(0, 'in', NOT_REPORTS)|map(attribute=1)|sum %}
   {% if not f.doc_type and not f.all_types and n_left %}<a class="muted small" href="/documents?{{ qs(all_types=1, page=1) }}"
-    title="Statements and press releases, budget tables and forms are not counted as reports – here or in any count of the portal">+ {{ n_left }} statement{{ 's' if n_left != 1 }}, finance tables and forms not counted</a>{% endif %}
+    title="Statements and press releases, laws, budget tables and forms are not counted as reports – here or in any count of the portal">+ {{ n_left }} statements, laws, finance tables and forms not counted</a>{% endif %}
   {% if watch_query %}<form method="post" action="/watch/add" class="inline" title="Follow this search update by update on the Watchlist: {{ watch_query }}">
     <input type="hidden" name="query" value="{{ watch_query }}"><button class="watch-btn">☆ Watch this search</button></form>{% endif %}
   {% set cur = f.sort or 'year' %}<span class="muted small">sorted by

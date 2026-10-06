@@ -49,6 +49,15 @@ def test_term_regex(term, text, hit):
      "russia"),
     ("Ransomware groups such as LockBit and Akira extorted victims; ransom demands rose.", "", "ransomware"),
     ("Short text", "Nasjonal trusselvurdering: høyreekstremisme", "right-wing-extremism"),   # title alone suffices
+    # languages added for the hazard, resilience, cyber and crime topics (0.32.1)
+    ("Procjena rizika od katastrofa: poplave, bujice i klizišta. Poplave su najveći rizik.", "", "floods-storms"),
+    ("Ocena tveganja za poplave. Poplave in zemeljski plazovi ogrožajo naselja.", "", "floods-storms"),
+    ("Sustav civilne zaštite i skloništa; civilna zaštita djeluje u svim općinama.", "", "civil-defence"),
+    ("Emergencias y damnificados por huaicos; atención de emergencias en Piura.", "", "crisis-management"),
+    ("Kibernetički kriminal i prijevare: zlonamjerni softver i računalni kriminal.", "", "cybercrime-fraud"),
+    ("Οργανωμένο έγκλημα και ναρκωτικά: η κοκαΐνη και τα ναρκωτικά.", "", "drug-trafficking"),
+    ("Polizeiliche Kriminalstatistik (PKS): Fallzahlen, Tatverdächtige und Aufklärungsquote.", "", "crime-statistics"),
+    ("ISO 27001 information security management; encryption and intrusion detection; Locked Shields.", "", "cyber-security-practice"),
 ])
 def test_classify_finds_topic(text, title, expected):
     assert expected in [f["key"] for f in classify(text, title)]
@@ -63,3 +72,13 @@ def test_single_passing_mention_is_not_enough():
 def test_fts_query_is_safe():
     assert fts_query('ruská "hybridní hrozby" 2025') == '"hybridní hrozby" AND "ruská"* AND "2025"*'
     assert fts_query('drop table"; --') == '"drop"* AND "table"*'
+
+
+@pytest.mark.parametrize("text,not_expected", [
+    ("Tasking orders and tasking cycles; tasking again. Storm troopers.", "floods-storms"),         # Turkish taşkın → taskin
+    ("SUSE Linux and SUSE updates; Linux drought of patches.", "wildfires-heat-drought"),           # suše → suse
+    ("Šiem gadījumiem un šiem dokumentiem; šiem nolūkiem šifrēšana.", "cyber-security-practice"),  # Latvian šiem → siem
+])
+def test_false_friends_from_accent_folding(text, not_expected):
+    """Terms are folded (š → s, ş → s): a term from one language must not become a common word of another."""
+    assert not_expected not in [f["key"] for f in classify(text * 5)]
