@@ -27,6 +27,11 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.31.1] – 2026-10-06
+
+### Added
+- The tests run on GitHub Actions for every pull request and every push to `main`.
+
 ## [0.31.0] – 2026-10-06
 
 ### Added
@@ -594,7 +599,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.31.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.31.1...HEAD
+[0.31.1]: https://github.com/iiogurt/Rozvedka/compare/v0.31.0...v0.31.1
 [0.31.0]: https://github.com/iiogurt/Rozvedka/compare/v0.30.0...v0.31.0
 [0.30.0]: https://github.com/iiogurt/Rozvedka/compare/v0.29.1...v0.30.0
 [0.29.1]: https://github.com/iiogurt/Rozvedka/compare/v0.29.0...v0.29.1

@@ -119,7 +119,7 @@ Each item: why · what · done when · version step.
 1. **The portal starts after a reboot** – install `deploy/rozvedka-web.service` as a user service with
    `loginctl enable-linger prisonmaster` (needs sudo – owner's approval); **remove the weekly update timer from
    `deploy/`** (the owner declined periodic jobs). · patch
-2. **CI** – GitHub Actions running the tests on every PR. · patch
+2. ✅ (0.31.1) **CI** – GitHub Actions running the tests on every PR. · patch
 3. **Split `app.py`** into route modules (documents, actors, trends, maps, data, update) and a small migration helper. · patch
 4. **Performance** – cache actor and network results per index version (1–3 s pages); the home page takes ~0.7 s. · patch
 5. **Optional remote access** – stays LAN-only; if wanted, through a VPN (WireGuard / Tailscale), never exposed. · docs

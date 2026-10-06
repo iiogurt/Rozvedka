@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.31.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.31.1-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -551,6 +551,8 @@ flowchart LR
   prioritised next steps.
 - **Workflow:** `main` always holds working code. Work on a branch (`feat/…`, `fix/…`, `sources/…`, `docs/…`) and
   merge through a pull request. Registry edits go in their own commits (`sources: add Latvian SAB reports page`).
+- **CI:** GitHub Actions (`.github/workflows/tests.yml`) runs the test suite on every pull request and push to
+  `main`; a pull request is merged only when it is green.
 - **Never commit** `data/`, `.env` or credentials – `.gitignore` covers them.
 - **Versioning:** [Semantic Versioning](https://semver.org) by significance – *patch* for fixes, sources, keywords
   and visual changes; *minor* for new capabilities; *major* for incompatible changes (table in
