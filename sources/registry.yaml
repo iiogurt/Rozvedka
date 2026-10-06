@@ -91,6 +91,7 @@
     - {lang: cs, kind: archive, url: "https://archiv.mv.gov.cz/clanek/extremismus-vyrocni-zpravy-o-extremismu-a-strategie-boje-proti-extremismu.aspx"}
 
 # ════════════════════════ SLOVAKIA ════════════════════════
+# Civil protection (checked 2026-10-06): only district-level territorial analyses (minv.sk); no national report.
 - country: SK
   agency: SIS
   name_local: "Slovenská informačná služba"
@@ -242,6 +243,7 @@
     - {lang: de, kind: archive, url: "https://www.bka.de/DE/AktuelleInformationen/StatistikenLagebilder/statistikenlagebilder_node.html"}
 
 # ════════════════════════ AUSTRIA ════════════════════════
+# Civil protection (checked 2026-10-06): the BMI published one national risk analysis summary (bmi.gv.at/204_english/disaster_management); no regular series.
 - country: AT
   agency: DSN
   name_local: "Direktion Staatsschutz und Nachrichtendienst"
@@ -286,6 +288,7 @@
     - {lang: de, kind: archive, url: "https://www.cert.at/de/berichte"}
 
 # ════════════════════════ ESTONIA ════════════════════════
+# Civil protection (checked 2026-10-06): the State Chancellery compiles the national risk analysis (Emergency Act 2024) with a public summary planned; none published yet.
 - country: EE
   agency: KAPO
   name_local: "Kaitsepolitseiamet"
@@ -339,6 +342,7 @@
     - {lang: en, kind: archive, url: "https://www.ria.ee/en/authority-news-and-contact/news-media-contact/studies-analyses-overviews"}
 
 # ════════════════════════ LATVIA ════════════════════════
+# Civil protection (checked 2026-10-06): the state civil-protection plan and its risk assessment are government acts, not published as reports.
 - country: LV
   agency: VDD
   name_local: "Valsts drošības dienests"
@@ -399,6 +403,7 @@
     - {lang: lv, kind: archive, url: "https://cert.lv/lv/par-mums/parskati"}
 
 # ════════════════════════ LITHUANIA ════════════════════════
+# Civil protection (checked 2026-10-06): a national threat and emergency risk assessment exists (2024) but is not published on vrm.lrv.lt / PAGD.
 - country: LT
   agency: VSD + AOTD
   name_local: "Valstybės saugumo departamentas; Antrasis operatyvinių tarnybų departamentas"
@@ -961,6 +966,7 @@
     - {lang: hu, kind: current, url: "https://www.katasztrofavedelem.hu/26421/kockazatok-azonositasa"}
 
 # ════════════════════════ ROMANIA ════════════════════════
+# Civil protection (checked 2026-10-06): IGSU's national risk assessment 2018 and country report 2020 are on old.igsu.ro, which timed out – retry later.
 # (Foreign Intelligence Service SIE publishes no public reports.)
 - country: RO
   agency: SRI
@@ -993,6 +999,7 @@
     - {lang: ro, kind: archive, url: "https://www.dnsc.ro/doc/raport", verified: false}
 
 # ════════════════════════ BULGARIA ════════════════════════
+# Civil protection (checked 2026-10-06): only strategies and programmes on strategy.bg; no published national risk assessment found.
 - country: BG
   agency: ДАНС / DANS
   name_local: "Държавна агенция „Национална сигурност“"
@@ -1100,6 +1107,7 @@
     - {lang: sl, kind: current, url: "https://www.gov.si/teme/ocenjevanje-zmoznosti-obvladovanja-tveganj-za-nesrece/"}
 
 # ════════════════════════ GREECE ════════════════════════
+# Civil protection (checked 2026-10-06): civilprotection.gov.gr publishes public-preparedness brochures and hazard maps, no risk assessment reports.
 - country: GR
   agency: NCSA
   name_local: "Εθνική Αρχή Κυβερνοασφάλειας"
@@ -1116,6 +1124,7 @@
     - {lang: en, kind: current, url: "https://cyber.gov.gr/en/"}
 
 # ════════════════════════ CYPRUS ════════════════════════
+# Civil protection (checked 2026-10-06): Civil Defence ran national risk assessments (2016, 2018); moi.gov.cy disallows crawling – none added.
 - country: CY
   agency: DSA
   name_local: "Αρχή Ψηφιακής Ασφάλειας"
