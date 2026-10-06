@@ -27,6 +27,12 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.28.1] – 2026-10-06
+
+### Added
+- Browser tab icon: a small radar scope like the home page's banner (SVG, with a 16/32 px `favicon.ico` and a 180 px
+  icon for phones and Safari).
+
 ## [0.28.0] – 2026-10-05
 
 ### Added
@@ -515,7 +521,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.28.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.28.1...HEAD
+[0.28.1]: https://github.com/iiogurt/Rozvedka/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/iiogurt/Rozvedka/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/iiogurt/Rozvedka/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/iiogurt/Rozvedka/compare/v0.25.0...v0.26.0

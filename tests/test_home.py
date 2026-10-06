@@ -130,3 +130,13 @@ def test_static_files_are_stamped_and_revalidated(library):
     assert re.search(r'src="/static/home\.js\?v=[0-9a-f]{8}"', page)
     assert "immutable" in client.get(css).headers["cache-control"]
     assert client.get("/static/style.css").headers["cache-control"] == "no-cache"
+
+
+def test_tab_icons(library):
+    client = TestClient(app())
+    page = client.get("/").text
+    for name in ("favicon.svg", "favicon.ico", "apple-touch-icon.png"):
+        href = re.search(rf'href="(/static/{name}\?v=[0-9a-f]{{8}})"', page).group(1)
+        assert client.get(href).status_code == 200
+    r = client.get("/favicon.ico")
+    assert r.status_code == 200 and r.headers["content-type"] == "image/x-icon" and r.content[:4] == b"\x00\x00\x01\x00"
