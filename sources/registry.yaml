@@ -271,6 +271,20 @@
     - {lang: de+en, kind: current, url: "https://verteidigungspolitik.at/risikobild", note: "Risikobild / Risk Monitor (German + English)"}
     - {lang: de, kind: archive, url: "https://www.bmlv.gv.at/wissen-forschung/publikationen/index.shtml"}
 
+- country: AT
+  agency: CERT.at
+  name_local: "CERT.at – Computer Emergency Response Team Austria"
+  name_en: "Austrian national CERT"
+  homepage: "https://www.cert.at/"
+  hq: {address: "Vienna, Austria", lat: 48.20835, lon: 16.3725, precision: city}
+  description: "Austria's national CERT (with GovCERT Austria for the federal administration). Yearly report on the state of IT security in Austria since 2013."
+  type: cyber
+  access: auto
+  frequency: yearly
+  report_types: [Jahresbericht]
+  pages:
+    - {lang: de, kind: archive, url: "https://www.cert.at/de/berichte"}
+
 # ════════════════════════ ESTONIA ════════════════════════
 - country: EE
   agency: KAPO
@@ -369,6 +383,20 @@
   pages:
     - {lang: lv, kind: archive, url: "https://www.midd.gov.lv/lv/parskati"}
     - {lang: en, kind: archive, url: "https://www.midd.gov.lv/en/node/29"}
+
+- country: LV
+  agency: CERT.LV
+  name_local: "Informācijas tehnoloģiju drošības incidentu novēršanas institūcija CERT.LV"
+  name_en: "Information Technology Security Incident Response Institution of Latvia"
+  homepage: "https://cert.lv/"
+  hq: {address: "Riga, Latvia", lat: 56.9494, lon: 24.10518, precision: city}
+  description: "Latvia's national CERT (Ministry of Defence). Periodic and annual reports on cyber-security incidents and threats."
+  type: cyber
+  access: auto
+  frequency: periodic
+  report_types: [Pārskati]
+  pages:
+    - {lang: lv, kind: archive, url: "https://cert.lv/lv/par-mums/parskati"}
 
 # ════════════════════════ LITHUANIA ════════════════════════
 - country: LT
@@ -493,6 +521,20 @@
   pages:
     - {lang: sv, kind: archive, url: "https://www.mcf.se/sv/publikationer/"}
     - {lang: en, kind: archive, url: "https://www.mcf.se/en/publications/"}
+
+- country: SE
+  agency: NCSC-SE
+  name_local: "Nationellt cybersäkerhetscenter"
+  name_en: "National Cyber Security Centre of Sweden"
+  homepage: "https://www.ncsc.se/"
+  hq: {address: "Stockholm, Sweden", lat: 59.32512, lon: 18.07109, precision: city}
+  description: "Swedish national cyber-security centre (with CERT-SE). Annual reports on reported IT incidents."
+  type: cyber
+  access: auto
+  frequency: yearly
+  report_types: [Årsrapport om it-incidenter]
+  pages:
+    - {lang: sv, kind: archive, url: "https://www.ncsc.se/sv/radgivning-och-stod/hantera-och-rapportera-it-incidenter-och-cyberangrepp/arsrapporter-om-it-incidenter/"}
 
 # ════════════════════════ DENMARK ════════════════════════
 - country: DK
@@ -620,6 +662,21 @@
   pages:
     - {lang: nl, kind: current, url: "https://www.ncsc.nl/cybersecurity-themas"}
 
+- country: NL
+  agency: ANV
+  name_local: "Analistennetwerk Nationale Veiligheid"
+  name_en: "National Security Analysts Network"
+  homepage: "https://www.rivm.nl/nationale-veiligheid"
+  hq: {address: "Bilthoven, Netherlands", lat: 52.12897, lon: 5.20461, precision: city}
+  description: "Network of government and research institutes (secretariat at RIVM) that writes the national risk assessment for the NCTV: the Rijksbrede Risicoanalyse Nationale Veiligheid with its theme reports (natural disasters, cyber, interference, military threats, vital infrastructure …)."
+  type: civil-protection
+  access: auto
+  frequency: periodic
+  report_types: [Rijksbrede Risicoanalyse Nationale Veiligheid, themarapportages]
+  pages:
+    - {lang: nl, kind: current, url: "https://www.rivm.nl/nationale-veiligheid/actuele-analyses/rijksbrede-risicoanalyse-nationale-veiligheid-2022"}
+    - {lang: nl, kind: archive, url: "https://www.rivm.nl/nationale-veiligheid/actuele-analyses"}
+
 # ════════════════════════ BELGIUM ════════════════════════
 - country: BE
   agency: VSSE
@@ -670,6 +727,20 @@
     - {lang: nl, kind: current, url: "https://ccb.belgium.be/nl/news/kerncijfers-2025", verified: false}
     - {lang: fr, kind: current, url: "https://ccb.belgium.be/fr/news/chiffres-cles-2025", verified: false}
     - {lang: de, kind: current, url: "https://ccb.belgium.be/de/news/kennzahlen-2025", verified: false}
+
+- country: BE
+  agency: NCCN
+  name_local: "Centre de Crise National / Nationaal Crisiscentrum"
+  name_en: "National Crisis Center"
+  homepage: "https://crisiscentrum.be/"
+  hq: {address: "Brussels, Belgium", lat: 50.84674, lon: 4.35249, precision: city}
+  description: "Belgian federal crisis centre; coordinates the national risk identification and publishes the Belgian National Risk Assessment (2018–2023, 2023–2026)."
+  type: civil-protection
+  access: auto
+  frequency: periodic
+  report_types: [Belgian National Risk Assessment]
+  pages:
+    - {lang: en, kind: current, url: "https://crisiscentrum.be/en/what-do-authorities-do/identifying-risks"}
 
 # ════════════════════════ FRANCE ════════════════════════
 - country: FR
@@ -843,6 +914,21 @@
   pages:
     - {lang: pt, kind: archive, url: "https://www.cncs.gov.pt/pt/observatorio/", verified: false}
 
+- country: PT
+  agency: ANEPC
+  name_local: "Autoridade Nacional de Emergência e Proteção Civil"
+  name_en: "National Authority for Emergency and Civil Protection"
+  homepage: "https://prociv.gov.pt/"
+  hq: {address: "Carnaxide, Portugal", lat: 38.72553, lon: -9.24632, precision: city}
+  description: "Portuguese civil-protection authority. National risk assessment (Avaliação Nacional de Risco), activity reports."
+  type: civil-protection
+  access: auto
+  frequency: periodic
+  report_types: [Avaliação Nacional de Risco, Relatório de Atividades]
+  pages:
+    - {lang: pt, kind: current, url: "https://prociv.gov.pt/pt/prevencao-e-preparacao/avaliacao-de-riscos/avaliacao-nacional-de-risco/"}
+    - {lang: pt, kind: archive, url: "https://prociv.gov.pt/pt/anepc/instrumentos-de-gestao/plano-e-relatorio-de-atividades/"}
+
 # ════════════════════════ HUNGARY ════════════════════════
 - country: HU
   agency: NBSZ NKI
@@ -858,6 +944,20 @@
   notes: "Hungarian civil intelligence (AH, IH) publish no regular public reports."
   pages:
     - {lang: hu, kind: archive, url: "https://nki.gov.hu/it-biztonsag/elemzesek/"}
+
+- country: HU
+  agency: BM OKF
+  name_local: "Belügyminisztérium Országos Katasztrófavédelmi Főigazgatóság"
+  name_en: "National Directorate General for Disaster Management"
+  homepage: "https://www.katasztrofavedelem.hu/"
+  hq: {address: "Budapest, Hungary", lat: 47.48185, lon: 19.14491, precision: city}
+  description: "Hungarian disaster-management authority. National disaster risk assessment (Nemzeti katasztrófakockázat-értékelés) and its yearly reports."
+  type: civil-protection
+  access: auto
+  frequency: yearly
+  report_types: [Nemzeti katasztrófakockázat-értékelés]
+  pages:
+    - {lang: hu, kind: current, url: "https://www.katasztrofavedelem.hu/26421/kockazatok-azonositasa"}
 
 # ════════════════════════ ROMANIA ════════════════════════
 # (Foreign Intelligence Service SIE publishes no public reports.)
@@ -925,6 +1025,35 @@
     - {lang: hr, kind: archive, url: "https://soa.hr/hr/javni-dokumenti-soa-e/194"}
     - {lang: en, kind: archive, url: "https://soa.hr/en/public-documents-soa/194"}
 
+- country: HR
+  agency: Civilna zaštita
+  name_local: "Ravnateljstvo civilne zaštite"
+  name_en: "Civil Protection Directorate"
+  homepage: "https://civilna-zastita.gov.hr/"
+  hq: {address: "Zagreb, Croatia", lat: 45.8131, lon: 15.97728, precision: city}
+  description: "Croatian civil-protection directorate (Ministry of the Interior). Disaster risk assessment for the Republic of Croatia (2019, 2024) and guidelines."
+  type: civil-protection
+  access: auto
+  frequency: periodic
+  report_types: [Procjena rizika od katastrofa za Republiku Hrvatsku]
+  pages:
+    - {lang: hr, kind: current, url: "https://civilna-zastita.gov.hr/dokumenti-50/50"}
+
+- country: HR
+  agency: CERT.hr
+  name_local: "Nacionalni CERT (CARNET)"
+  name_en: "Croatian National CERT"
+  homepage: "https://www.cert.hr/"
+  hq: {address: "Zagreb, Croatia", lat: 45.8131, lon: 15.97728, precision: city}
+  description: "Croatia's national CERT, run by CARNET. Annual reports on computer-security incidents since 2015."
+  type: cyber
+  access: auto
+  frequency: yearly
+  report_types: [Godišnji izvještaj]
+  pages:
+    - {lang: hr, kind: archive, url: "https://www.cert.hr/tag/godisnji-izvjestaj/"}
+    - {lang: hr, kind: current, url: "https://www.cert.hr/"}
+
 # ════════════════════════ SLOVENIA ════════════════════════
 - country: SI
   agency: SOVA
@@ -953,6 +1082,21 @@
   report_types: [letno poročilo]
   pages:
     - {lang: sl, kind: archive, url: "https://www.cert.si/letna_porocila/"}
+
+- country: SI
+  agency: URSZR
+  name_local: "Uprava Republike Slovenije za zaščito in reševanje"
+  name_en: "Administration for Civil Protection and Disaster Relief"
+  homepage: "https://www.gov.si/drzavni-organi/organi-v-sestavi/uprava-za-zascito-in-resevanje/"
+  hq: {address: "Ljubljana, Slovenia", lat: 46.05003, lon: 14.50693, precision: city}
+  description: "Slovenian civil-protection administration; coordinates the national disaster risk assessment (version 3.0, 2023), the assessments of risk-management capability (2020, 2024) and the sector assessments (cyber, floods, drought, epidemics …)."
+  type: civil-protection
+  access: auto
+  frequency: periodic
+  report_types: [Državna ocena tveganj za nesreče, ocena zmožnosti obvladovanja tveganj]
+  pages:
+    - {lang: sl, kind: current, url: "https://www.gov.si/teme/ocenjevanje-tveganj-za-nesrece/"}
+    - {lang: sl, kind: current, url: "https://www.gov.si/teme/ocenjevanje-zmoznosti-obvladovanja-tveganj-za-nesrece/"}
 
 # ════════════════════════ GREECE ════════════════════════
 - country: GR

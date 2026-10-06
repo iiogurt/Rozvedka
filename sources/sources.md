@@ -1,6 +1,6 @@
 # Rozvedka – official security report sources
 
-Generated from `sources/registry.yaml` — 124 sources, 213 pages.
+Generated from `sources/registry.yaml` — 134 sources, 227 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
@@ -56,6 +56,7 @@ _EU (1995) · Schengen (1997)_
 |---|---|---|---|
 | **DSN** – Directorate State Protection and Intelligence Service<br>_Direktion Staatsschutz und Nachrichtendienst_<br>[www.dsn.gv.at](https://www.dsn.gv.at/) | Austrian domestic intelligence and state-protection service. The annual Verfassungsschutzbericht covers extremism, terrorism, espionage and cyber threats. | Verfassungsschutzbericht | [de archive](https://www.dsn.gv.at/501/) |
 | **BMLV** – Federal Ministry of Defence<br>_Bundesministerium für Landesverteidigung_<br>[www.bundesheer.at](https://www.bundesheer.at/) | Austrian defence ministry. The annual Risikobild (Risk Monitor) assesses the international security environment and the risks it poses to Austria and Europe. | Risikobild | [de+en current](https://verteidigungspolitik.at/risikobild) · [de archive](https://www.bmlv.gv.at/wissen-forschung/publikationen/index.shtml) |
+| **CERT.at** – Austrian national CERT<br>_CERT.at – Computer Emergency Response Team Austria_<br>[www.cert.at](https://www.cert.at/) | Austria's national CERT (with GovCERT Austria for the federal administration). Yearly report on the state of IT security in Austria since 2013. | Jahresbericht | [de archive](https://www.cert.at/de/berichte) |
 
 ## Estonia
 
@@ -76,6 +77,7 @@ _EU (2004) · NATO (2004) · Schengen (2007) · JEF (2014)_
 | **VDD** – State Security Service<br>_Valsts drošības dienests_<br>[vdd.gov.lv](https://vdd.gov.lv/) | Latvian counter-intelligence and internal security service. Annual reports on Russian intelligence and influence, extremism, terrorism and protection of the constitutional order. | annual report | [lv archive](https://vdd.gov.lv/noderigi/gada-parskati) · [en archive](https://vdd.gov.lv/en/useful/annual-reports) |
 | **SAB** – Constitution Protection Bureau<br>_Satversmes aizsardzības birojs_<br>[www.sab.gov.lv](https://www.sab.gov.lv/) | Latvian foreign intelligence service and national cyber-security coordinator. Annual reports and analytical reports on Russia and threats to Western countries. | annual report | [lv archive](https://www.sab.gov.lv/gada-parskati/) · [en archive](https://www.sab.gov.lv/en/annual-reports/) |
 | **MIDD** – Defence Intelligence and Security Service<br>_Militārās izlūkošanas un drošības dienests_<br>[www.midd.gov.lv](https://www.midd.gov.lv/) | Latvian military intelligence. Annual threat assessments on Russia's armed forces, hybrid activity, sabotage and information operations against Latvia. | threat assessment and activity report | [lv archive](https://www.midd.gov.lv/lv/parskati) · [en archive](https://www.midd.gov.lv/en/node/29) |
+| **CERT.LV** – Information Technology Security Incident Response Institution of Latvia<br>_Informācijas tehnoloģiju drošības incidentu novēršanas institūcija CERT.LV_<br>[cert.lv](https://cert.lv/) | Latvia's national CERT (Ministry of Defence). Periodic and annual reports on cyber-security incidents and threats. | Pārskati | [lv archive](https://cert.lv/lv/par-mums/parskati) |
 
 ## Lithuania
 
@@ -105,6 +107,7 @@ _EU (1995) · NATO (2024) · Schengen (2001) · JEF (2017)_
 | **Säpo** – Swedish Security Service<br>_Säkerhetspolisen_<br>[www.sakerhetspolisen.se](https://www.sakerhetspolisen.se/) | Swedish security and counter-intelligence service. The annual assessment covers foreign powers' espionage and influence, violent extremism, terrorism and protective security. | Säkerhetspolisens lägesbild / annual assessment | [sv archive ⚠](https://www.sakerhetspolisen.se/om-sakerhetspolisen/publikationer/sakerhetspolisens-lagesbilder.html) · [en archive ⚠](https://sakerhetspolisen.se/ovriga-sidor/other-languages/english-engelska/press-room/the-swedish-security-services-annual-assesments.html) |
 | **MUST** – Military Intelligence and Security Service<br>_Militära underrättelse- och säkerhetstjänsten_<br>[www.forsvarsmakten.se](https://www.forsvarsmakten.se/) | Swedish military intelligence within the Armed Forces. Annual overviews of the military threat, Russia, hybrid activity and security threats to Swedish defence. | Must årsöversikt | [sv current](https://www.forsvarsmakten.se/aktuellt/nyheter/must-arsoversikt-2025/) |
 | **MCF (ex-MSB)** – Swedish Civil Defence and Resilience Agency<br>_Myndigheten för civilt försvar_<br>[www.mcf.se](https://www.mcf.se/) | Swedish civil-defence and emergency-preparedness agency (formerly MSB). National risk and capability assessments and crisis-preparedness guidance such as 'In case of crisis or war'. | national risk and capability assessment, preparedness guidance | [sv archive](https://www.mcf.se/sv/publikationer/) · [en archive](https://www.mcf.se/en/publications/) |
+| **NCSC-SE** – National Cyber Security Centre of Sweden<br>_Nationellt cybersäkerhetscenter_<br>[www.ncsc.se](https://www.ncsc.se/) | Swedish national cyber-security centre (with CERT-SE). Annual reports on reported IT incidents. | Årsrapport om it-incidenter | [sv archive](https://www.ncsc.se/sv/radgivning-och-stod/hantera-och-rapportera-it-incidenter-och-cyberangrepp/arsrapporter-om-it-incidenter/) |
 
 ## Denmark
 
@@ -127,6 +130,7 @@ _EU (1958) · NATO (1949) · Schengen (1995) · JEF (2014)_
 | **MIVD** – Defence Intelligence and Security Service<br>_Militaire Inlichtingen- en Veiligheidsdienst_<br>[www.defensie.nl/onderwerpen/militaire-inlichtingen-en-veiligheid](https://www.defensie.nl/onderwerpen/militaire-inlichtingen-en-veiligheid) | Dutch military intelligence. Annual reports on military threats, Russia and the war in Ukraine, China and threats against the defence sector. | openbaar jaarverslag | [nl current](https://www.defensie.nl/documenten/2026/04/21/openbaar-jaarverslag-2025-militaire-inlichtingen--en-veiligheidsdienst) · [nl archive](https://www.eerstekamer.nl/kamerstukdossier/verslagen_aivd_en_mivd) |
 | **NCTV** – National Coordinator for Security and Counterterrorism<br>_Nationaal Coördinator Terrorismebestrijding en Veiligheid_<br>[www.nctv.nl](https://www.nctv.nl/) | Coordinates Dutch counter-terrorism, cyber security and crisis management. Publishes the Terrorist Threat Assessment Netherlands (DTN) and the Cyber Security Assessment Netherlands (CSBN). | Dreigingsbeeld Terrorisme Nederland, Cybersecuritybeeld Nederland | [nl archive](https://www.nctv.nl/documenten) · [en archive](https://english.nctv.nl/documents) · [nl current](https://www.nctv.nl/onderwerpen/cybersecuritybeeld-nederland) |
 | **NCSC-NL** – National Cyber Security Centre<br>_Nationaal Cyber Security Centrum_<br>[www.ncsc.nl](https://www.ncsc.nl/) | Dutch national cyber-security centre for government and vital sectors. Security advisories, threat information and guidance. | publications<br>_Site renders its documents with scripts that expose no document links (checked 2026-10-06). Its main report, the Cybersecuritybeeld Nederland, is published by the NCTV and collected there._ | [nl current](https://www.ncsc.nl/cybersecurity-themas) |
+| **ANV** – National Security Analysts Network<br>_Analistennetwerk Nationale Veiligheid_<br>[www.rivm.nl/nationale-veiligheid](https://www.rivm.nl/nationale-veiligheid) | Network of government and research institutes (secretariat at RIVM) that writes the national risk assessment for the NCTV: the Rijksbrede Risicoanalyse Nationale Veiligheid with its theme reports (natural disasters, cyber, interference, military threats, vital infrastructure …). | Rijksbrede Risicoanalyse Nationale Veiligheid, themarapportages | [nl current](https://www.rivm.nl/nationale-veiligheid/actuele-analyses/rijksbrede-risicoanalyse-nationale-veiligheid-2022) · [nl archive](https://www.rivm.nl/nationale-veiligheid/actuele-analyses) |
 
 ## Belgium
 
@@ -137,6 +141,7 @@ _EU (1958) · NATO (1949) · Schengen (1995)_
 | **VSSE** – State Security Service<br>_Veiligheid van de Staat / Sûreté de l'État_<br>[www.vsse.be](https://www.vsse.be/) | Belgian civil intelligence service. Its public intelligence report covers espionage, foreign interference, extremism, terrorism and proliferation. | intelligence report | [nl archive](https://vsse.be/nl/publicaties) · [fr archive](https://vsse.be/fr/publications) · [en current](https://www.vsse.be/nl/nieuws/intelligence-report-2025-english) |
 | **OCAD/OCAM/CUTA** – Coordination Unit for Threat Analysis<br>_Coördinatieorgaan voor de dreigingsanalyse / Organe de coordination pour l'analyse de la menace_<br>[cuta.belgium.be](https://cuta.belgium.be/) | Belgian threat-assessment body that sets the national terror threat level. Annual reports and analyses of terrorism and violent extremism. | annual report, threat analysis | [nl archive](https://ocad.belgium.be/publicaties/) · [fr archive](https://ocam.belgium.be/publications/) · [de archive](https://koba.belgium.be/veroeffentlichungen/) · [en archive](https://cuta.belgium.be/publications/) |
 | **CCB** – Centre for Cybersecurity Belgium<br>_Centrum voor Cybersecurity België / Centre pour la Cybersécurité Belgique_<br>[ccb.belgium.be](https://ccb.belgium.be/) | Belgian national cyber-security authority (CERT.be). Annual reports and key figures on cyber threats, phishing and incidents in Belgium. | annual report, key figures | [en current ⚠](https://ccb.belgium.be/news/key-figures-2025) · [nl current ⚠](https://ccb.belgium.be/nl/news/kerncijfers-2025) · [fr current ⚠](https://ccb.belgium.be/fr/news/chiffres-cles-2025) · [de current ⚠](https://ccb.belgium.be/de/news/kennzahlen-2025) |
+| **NCCN** – National Crisis Center<br>_Centre de Crise National / Nationaal Crisiscentrum_<br>[crisiscentrum.be](https://crisiscentrum.be/) | Belgian federal crisis centre; coordinates the national risk identification and publishes the Belgian National Risk Assessment (2018–2023, 2023–2026). | Belgian National Risk Assessment | [en current](https://crisiscentrum.be/en/what-do-authorities-do/identifying-risks) |
 
 ## France
 
@@ -176,6 +181,7 @@ _EU (1986) · NATO (1949) · Schengen (1995)_
 |---|---|---|---|
 | **SSI** – Internal Security System<br>_Sistema de Segurança Interna_<br>[www.ssi.gov.pt](https://www.ssi.gov.pt/) | Coordinates Portugal's internal-security forces. The Annual Internal Security Report (RASI) covers crime, terrorism, extremism, cybercrime and civil protection. | RASI | [pt archive ⚠](https://ssi.gov.pt/publicacoes/relatorio-anual-de-seguranca-interna/) · [pt current](https://www.portugal.gov.pt/pt/gc25/comunicacao/documentos/rasi-2025-relatorio-anual-de-seguranca-interna) |
 | **CNCS** – National Cybersecurity Centre<br>_Centro Nacional de Cibersegurança_<br>[www.cncs.gov.pt](https://www.cncs.gov.pt/) | Portuguese national cyber-security authority. Its observatory publishes the annual 'Risks & Conflicts' report on cyber threats to Portugal. | Riscos & Conflitos | [pt archive ⚠](https://www.cncs.gov.pt/pt/observatorio/) |
+| **ANEPC** – National Authority for Emergency and Civil Protection<br>_Autoridade Nacional de Emergência e Proteção Civil_<br>[prociv.gov.pt](https://prociv.gov.pt/) | Portuguese civil-protection authority. National risk assessment (Avaliação Nacional de Risco), activity reports. | Avaliação Nacional de Risco, Relatório de Atividades | [pt current](https://prociv.gov.pt/pt/prevencao-e-preparacao/avaliacao-de-riscos/avaliacao-nacional-de-risco/) · [pt archive](https://prociv.gov.pt/pt/anepc/instrumentos-de-gestao/plano-e-relatorio-de-atividades/) |
 
 ## Hungary
 
@@ -184,6 +190,7 @@ _EU (2004) · NATO (1999) · Schengen (2007)_
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **NBSZ NKI** – Special Service for National Security – National Cyber Security Center<br>_Nemzetbiztonsági Szakszolgálat – Nemzeti Kibervédelmi Intézet_<br>[nki.gov.hu](https://nki.gov.hu/) | Hungarian national cyber-security centre (NCSC-HU). Analyses and threat assessments of cyber incidents affecting Hungary. | cyber threat analyses<br>_Hungarian civil intelligence (AH, IH) publish no regular public reports._ | [hu archive](https://nki.gov.hu/it-biztonsag/elemzesek/) |
+| **BM OKF** – National Directorate General for Disaster Management<br>_Belügyminisztérium Országos Katasztrófavédelmi Főigazgatóság_<br>[www.katasztrofavedelem.hu](https://www.katasztrofavedelem.hu/) | Hungarian disaster-management authority. National disaster risk assessment (Nemzeti katasztrófakockázat-értékelés) and its yearly reports. | Nemzeti katasztrófakockázat-értékelés | [hu current](https://www.katasztrofavedelem.hu/26421/kockazatok-azonositasa) |
 
 ## Romania
 
@@ -209,6 +216,8 @@ _EU (2013) · NATO (2009) · Schengen (2023)_
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **SOA** – Security and Intelligence Agency<br>_Sigurnosno-obavještajna agencija_<br>[www.soa.hr](https://www.soa.hr/) | Croatian security and intelligence service. Public reports describe the security environment, foreign intelligence activity, terrorism, extremism and cyber threats. | javno izvješće / public report<br>_Public reports 2014–2022 and 2025; none found for 2023–2024._ | [hr archive](https://soa.hr/hr/javni-dokumenti-soa-e/194) · [en archive](https://soa.hr/en/public-documents-soa/194) |
+| **Civilna zaštita** – Civil Protection Directorate<br>_Ravnateljstvo civilne zaštite_<br>[civilna-zastita.gov.hr](https://civilna-zastita.gov.hr/) | Croatian civil-protection directorate (Ministry of the Interior). Disaster risk assessment for the Republic of Croatia (2019, 2024) and guidelines. | Procjena rizika od katastrofa za Republiku Hrvatsku | [hr current](https://civilna-zastita.gov.hr/dokumenti-50/50) |
+| **CERT.hr** – Croatian National CERT<br>_Nacionalni CERT (CARNET)_<br>[www.cert.hr](https://www.cert.hr/) | Croatia's national CERT, run by CARNET. Annual reports on computer-security incidents since 2015. | Godišnji izvještaj | [hr archive](https://www.cert.hr/tag/godisnji-izvjestaj/) · [hr current](https://www.cert.hr/) |
 
 ## Slovenia
 
@@ -218,6 +227,7 @@ _EU (2004) · NATO (2004) · Schengen (2007)_
 |---|---|---|---|
 | **SOVA** – Slovenian Intelligence and Security Agency<br>_Slovenska obveščevalno-varnostna agencija_<br>[www.gov.si/drzavni-organi/vladne-sluzbe/slovenska-obvescevalno-varnostna-agencija](https://www.gov.si/drzavni-organi/vladne-sluzbe/slovenska-obvescevalno-varnostna-agencija/) | Slovenian civil intelligence and security agency. Annual activity summaries on the security situation, terrorism, extremism, cyber and hybrid threats. | Aktivnosti SOVE | [sl archive](https://www.gov.si/drzavni-organi/vladne-sluzbe/slovenska-obvescevalno-varnostna-agencija/) |
 | **SI-CERT** – Slovenian Computer Emergency Response Team<br>_SI-CERT (Nacionalni odzivni center za kibernetsko varnost)_<br>[www.cert.si](https://www.cert.si/) | Slovenian national CERT. Annual reports on cyber incidents, fraud and threats handled in Slovenia. | letno poročilo | [sl archive](https://www.cert.si/letna_porocila/) |
+| **URSZR** – Administration for Civil Protection and Disaster Relief<br>_Uprava Republike Slovenije za zaščito in reševanje_<br>[www.gov.si/drzavni-organi/organi-v-sestavi/uprava-za-zascito-in-resevanje](https://www.gov.si/drzavni-organi/organi-v-sestavi/uprava-za-zascito-in-resevanje/) | Slovenian civil-protection administration; coordinates the national disaster risk assessment (version 3.0, 2023), the assessments of risk-management capability (2020, 2024) and the sector assessments (cyber, floods, drought, epidemics …). | Državna ocena tveganj za nesreče, ocena zmožnosti obvladovanja tveganj | [sl current](https://www.gov.si/teme/ocenjevanje-tveganj-za-nesrece/) · [sl current](https://www.gov.si/teme/ocenjevanje-zmoznosti-obvladovanja-tveganj-za-nesrece/) |
 
 ## Greece
 
