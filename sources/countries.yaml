@@ -1,8 +1,9 @@
 # Countries and groups used by the registry: display name, region and coalition memberships.
 #
 # coalitions: year the country joined (for Schengen: year of full implementation).
-# Status as of 2026-09-30. Sources: official member lists of NATO, the EU, the Schengen area, G7,
-# AUKUS and the Joint Expeditionary Force; Five Eyes = UKUSA signals-intelligence partners.
+# Status as of 2026-09-30 (Iceland, Albania, Montenegro, North Macedonia, Türkiye added 2026-10-06). Sources: official
+# member lists of NATO, the EU, the Schengen area, G7, AUKUS and the Joint Expeditionary Force; Five Eyes = UKUSA
+# signals-intelligence partners.
 #
 # Quote "NO": a bare NO is read as boolean false by YAML.
 
@@ -20,6 +21,7 @@ regions:
   - "EU member states"
   - "EU and NATO"
   - "Other European democracies"
+  - "Other NATO members"
   - "Americas"
   - "Latin America"
   - "Asia-Pacific"
@@ -61,6 +63,12 @@ countries:
   "NO": {name: "Norway", region: "Other European democracies", coalitions: {NATO: 1949, SCHENGEN: 2001, JEF: 2014}}
   CH: {name: "Switzerland", region: "Other European democracies", coalitions: {SCHENGEN: 2008}}
   UA: {name: "Ukraine", region: "Other European democracies", coalitions: {}}
+  IS: {name: "Iceland", region: "Other European democracies", coalitions: {NATO: 1949, SCHENGEN: 2001, JEF: 2021}}
+  # NATO members outside the EU (years: nato.int member list, checked 2026-10-06)
+  AL: {name: "Albania", region: "Other NATO members", coalitions: {NATO: 2009}}
+  ME: {name: "Montenegro", region: "Other NATO members", coalitions: {NATO: 2017}}
+  MK: {name: "North Macedonia", region: "Other NATO members", coalitions: {NATO: 2020}}
+  TR: {name: "Türkiye", region: "Other NATO members", coalitions: {NATO: 1952}}
 
   US: {name: "United States", region: "Americas", coalitions: {NATO: 1949, FVEY: 1946, G7: 1975, AUKUS: 2021}}
   CA: {name: "Canada", region: "Americas", coalitions: {NATO: 1949, FVEY: 1948, G7: 1976}}
