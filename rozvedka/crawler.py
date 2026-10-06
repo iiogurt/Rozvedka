@@ -18,7 +18,8 @@ warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)   # some site
 DOC_RE = re.compile(
     r"(\.pdf($|[?#]))|__blob=publicationFile|/document/download/|/attachments/[^/]+/download|/file\.html$|/doc/[^/]+\.pdf|"
     r"/documents/[^?#]*\.pdf/|"   # Liferay document library: /documents/<ids>/<name>.pdf/<uuid>?download=true
-    r"/bitstreams?/[^?#]+/download",  # DSpace repositories: /bitstreams/<uuid>/download
+    r"/bitstreams?/[^?#]+/download|"  # DSpace repositories: /bitstreams/<uuid>/download
+    r"/library/\?itemid=",            # Episerver media libraries (Icelandic government: stjornarradid.is/library/?itemid=…)
     re.I)
 JUNK_RE = re.compile(
     r"cookie|privacy|gdpr|ochrana-osobnich|osobnych-udajov|datenschutz|impressum|"
@@ -31,7 +32,8 @@ REPORT_WORDS = re.compile(
     r"zpr[aá]v|spr[aá]v|raport|bericht|lagebild|risikobild|verslag|jaarverslag|dreigingsbeeld|rapport|relazion|informe|"
     r"relat[oó]rio|ataskait|gr[eė]sm|p[aā]rskat|aastaraamat|katsaus|[oö]versikt|l[aä]gesbild|vurdering|risikovurdering|"
     r"izvje|poro[cč]il|доклад|evkonyv|évkönyv|jelent|tesat|iocta|socta|fimi|(19[89]\d|20[0-4]\d)|"
-    r"publikation|publication|publicaties|risk|risiko|dokumenti|lagebericht",
+    r"publikation|publication|publicaties|risk|risiko|dokumenti|lagebericht|"
+    r"sk[yý]rsl|rapor|извешт|проценк|publikacii|yay[iı]nlar",
     re.I)
 YEAR_RE = re.compile(r"(?<!\d)(19[89]\d|20[0-4]\d)(?!\d)")
 
