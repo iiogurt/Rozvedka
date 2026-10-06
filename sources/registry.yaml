@@ -603,6 +603,7 @@
   pages:
     - {lang: nl, kind: archive, url: "https://www.nctv.nl/documenten"}
     - {lang: en, kind: archive, url: "https://english.nctv.nl/documents"}
+    - {lang: nl, kind: current, url: "https://www.nctv.nl/onderwerpen/cybersecuritybeeld-nederland"}
 
 - country: NL
   agency: NCSC-NL
@@ -612,9 +613,10 @@
   hq: {address: "Turfmarkt 147, 2511 DP Den Haag, Netherlands", lat: 52.07907, lon: 4.32185, precision: address}
   description: "Dutch national cyber-security centre for government and vital sectors. Security advisories, threat information and guidance."
   type: cyber
-  access: auto
+  access: manual
   frequency: periodic
   report_types: [publications]
+  notes: "Site renders its documents with scripts that expose no document links (checked 2026-10-06). Its main report, the Cybersecuritybeeld Nederland, is published by the NCTV and collected there."
   pages:
     - {lang: nl, kind: current, url: "https://www.ncsc.nl/cybersecurity-themas"}
 
@@ -711,9 +713,9 @@
   type: intelligence-civil
   access: auto
   frequency: periodic
-  report_types: [FIMI threat reports]
+  report_types: [FIMI threat reports, activity report]
   pages:
-    - {lang: fr, kind: current, url: "https://www.sgdsn.gouv.fr/nos-missions/proteger/proteger-le-debat-public-contre-les-ingerences-numeriques-etrangeres"}
+    - {lang: fr, kind: current, url: "https://www.sgdsn.gouv.fr/viginum/publications"}
 
 # ════════════════════════ ITALY ════════════════════════
 - country: IT
@@ -961,10 +963,10 @@
   hq: {address: "Αθήνα, Greece", lat: 37.97556, lon: 23.73483, precision: city}
   description: "Greek national cyber-security authority. National cyber-security strategy, handbooks and guidance."
   type: cyber
-  access: auto
-  frequency: periodic
+  access: manual
+  frequency: irregular
   report_types: [strategy, handbooks]
-  notes: "Greek intelligence (EYP) and civil protection publish no regular public threat reports."
+  notes: "No regular reports on the site, which exposes no document links (checked 2026-10-06). Greek intelligence (EYP) and civil protection publish no regular public threat reports."
   pages:
     - {lang: en, kind: current, url: "https://cyber.gov.gr/en/"}
 
@@ -990,13 +992,14 @@
   name_en: "State Intelligence Service"
   homepage: "https://sre.gouvernement.lu/"
   hq: {address: "Luxembourg, Luxembourg", lat: 49.61128, lon: 6.1298, precision: city}
-  description: "Luxembourg's intelligence service. Public information is mainly the annual report of the parliamentary oversight commission."
+  description: "Luxembourg's intelligence service. Annual activity report (since 2021) and awareness brochures (espionage, radicalisation, travel security)."
   type: intelligence-civil
-  access: auto
+  access: browser-js
   frequency: yearly
-  report_types: [oversight commission report]
+  report_types: [Rapport d'activité, brochures]
+  notes: "The publications list is rendered by scripts (browser-js)."
   pages:
-    - {lang: fr, kind: current, url: "https://sre.gouvernement.lu/fr/supervision.html"}
+    - {lang: fr, kind: current, url: "https://sre.gouvernement.lu/fr/actualites/publications.html"}
 
 - country: LU
   agency: HCPN
@@ -1039,8 +1042,11 @@
   access: auto
   frequency: periodic
   report_types: [National Cyber Risk Assessment]
+  notes: "The assessments are published on gov.ie, the government portal."
   pages:
     - {lang: en, kind: current, url: "https://www.ncsc.gov.ie/ncra/"}
+    - {lang: en, kind: current, url: "https://www.gov.ie/en/department-of-justice-home-affairs-and-migration/publications/ncsc-2025-national-cyber-risk-assessment/"}
+    - {lang: en, kind: archive, url: "https://www.gov.ie/en/publication/5a871-national-cyber-risk-assessment-2022/"}
 
 - country: IE
   agency: OEP
@@ -1048,13 +1054,15 @@
   name_en: "Office of Emergency Planning"
   homepage: "https://www.gov.ie/en/office-of-emergency-planning/"
   hq: {address: "Dublin, Ireland", lat: 53.34938, lon: -6.26056, precision: city}
-  description: "Irish government office coordinating national emergency planning. Emergency-planning frameworks and public preparedness material."
+  description: "Irish government office coordinating national emergency planning. Publishes the National Risk Assessment for Ireland (2017, 2020, 2023)."
   type: civil-protection
   access: auto
   frequency: periodic
-  report_types: [emergency planning publications]
+  report_types: [National Risk Assessment]
   pages:
-    - {lang: en, kind: current, url: "https://www.gov.ie/en/office-of-emergency-planning/"}
+    - {lang: en, kind: current, url: "https://www.gov.ie/en/office-of-emergency-planning/guides/our-national-risks"}
+    - {lang: en, kind: archive, url: "https://www.gov.ie/ga/preasraitis/5e685-national-risk-assessment-for-ireland-2020/"}
+    - {lang: en, kind: archive, url: "https://www.gov.ie/en/office-of-emergency-planning/publications/national-risk-assessment-for-ireland-2017"}
 
 # (Malta: no regular public security reports found from MSS or civil protection.)
 
@@ -1251,6 +1259,70 @@
   report_types: [research]
   pages:
     - {lang: en, kind: archive, url: "https://ccdcoe.org/library/publications/"}
+
+# ════════════════════════ NATO MEMBERS OUTSIDE THE EU ════════════════════════
+# Researched 2026-10-06. Not added, with the reason:
+#   Albania – SHISH (state intelligence service): its site publishes no documents.
+#   Montenegro – ANB, civil protection, CIRT.ME: no regular public reports found on their sites or gov.me
+#     (the ANB reports to parliament's security committee; anb.gov.me and cirt.me did not resolve).
+#   Türkiye – MİT publishes no reports; AFAD activity reports not found on afad.gov.tr.
+- country: IS
+  agency: Þjóðaröryggisráð
+  name_local: "Þjóðaröryggisráð"
+  name_en: "National Security Council of Iceland"
+  homepage: "https://www.stjornarradid.is/verkefni/almannaoryggi/thjodaroryggi/"
+  hq: {address: "Lækjartorg, 101 Reykjavík, Iceland", lat: 64.14761, lon: -21.93637, precision: street}
+  description: "Iceland has no intelligence service; the National Security Council (Act 98/2016) oversees the national security policy. Publishes assessments of the security situation and outlook, and yearly reports on the implementation of the national security strategy."
+  type: other
+  access: auto
+  frequency: yearly
+  report_types: [Mat á ástandi og horfum í þjóðaröryggismálum, Skýrsla um framkvæmd þjóðaröryggisstefnu]
+  pages:
+    - {lang: is, kind: archive, url: "https://www.stjornarradid.is/verkefni/almannaoryggi/thjodaroryggi/utgefid-efni/"}
+
+- country: AL
+  agency: AKSK
+  name_local: "Autoriteti Kombëtar për Sigurinë Kibernetike"
+  name_en: "National Cyber Security Authority"
+  homepage: "https://aksk.gov.al/"
+  hq: {address: "Tirana, Albania", lat: 41.32815, lon: 19.81844, precision: city}
+  description: "Albania's national cyber-security authority and CSIRT. Annual reports since 2017, cyber-governance and incident reports."
+  type: cyber
+  access: auto
+  frequency: yearly
+  report_types: [Raport vjetor]
+  pages:
+    - {lang: sq, kind: archive, url: "https://aksk.gov.al/category/raporte/raporte-vjetore/"}
+
+- country: MK
+  agency: ANB
+  name_local: "Агенција за национална безбедност"
+  name_en: "National Security Agency"
+  homepage: "https://anb.gov.mk/"
+  hq: {address: "Skopje, North Macedonia", lat: 41.99622, lon: 21.43189, precision: city}
+  description: "North Macedonia's security and counter-intelligence agency (since 2019). Publishes a national threat assessment in Macedonian, Albanian and English."
+  type: intelligence-civil
+  access: auto
+  frequency: periodic
+  report_types: [Проценка на закани (threat assessment)]
+  pages:
+    - {lang: mk, kind: current, url: "https://anb.gov.mk/publikacii/"}
+    - {lang: sq, kind: current, url: "https://anb.gov.mk/al/publikacii/"}
+    - {lang: en, kind: current, url: "https://anb.gov.mk/en/publikacii/"}
+
+- country: TR
+  agency: EGM Narkotik
+  name_local: "Emniyet Genel Müdürlüğü – Narkotik Suçlarla Mücadele Başkanlığı"
+  name_en: "Turkish National Police – Counter-Narcotics Department"
+  homepage: "https://www.narkotik.pol.tr/"
+  hq: {address: "Ankara, Türkiye", lat: 39.92078, lon: 32.85405, precision: city}
+  description: "Counter-narcotics department of the Turkish National Police and national focal point (TUBİM) for the EU drugs agency. Yearly Türkiye Drug Report since 2006 (also in English), national drug strategies."
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Türkiye Uyuşturucu Raporu, Turkish National Drug Report]
+  pages:
+    - {lang: tr, kind: archive, url: "https://www.narkotik.pol.tr/ulusalyayinlar"}
 
 # ════════════════════════ OTHER (outside EU/NATO scope, from user's collection) ════════════════════════
 - country: OTHER
