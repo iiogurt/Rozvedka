@@ -155,10 +155,11 @@ def test_yearly_report_pages_are_followed_despite_navigation_pdfs(monkeypatch):
     """An archive page with a few navigation PDFs and one page per yearly report: the report pages are followed."""
     from types import SimpleNamespace
     from rozvedka import crawler
-    listing = """<a href="/files/eidas-list.pdf">eIDAS</a><a href="/files/scheme.pdf">e-ID scheme</a>
+    listing = """<a href="/files/eidas-list.pdf">eIDAS</a><a href="/files/scheme.pdf">e-ID scheme</a><a href="/files/brochure.pdf">Brochure</a><a href="/files/guide.pdf">Guide</a>
                  <a href="/files/RFC-2350.pdf">RFC 2350</a><a href="/files/privacy-statement-x.pdf">Statement</a>
                  <a href="/raport-vjetor-2021/">Raport vjetor 2021</a><a href="/raport-vjetor-2022/">Raport vjetor 2022</a>
-                 <a href="/raport-vjetor-2023/">Raport vjetor 2023</a><a href="/raport-vjetor-2024/">Raport vjetor 2024</a>"""
+                 <a href="/raport-vjetor-2023/">Raport vjetor 2023</a><a href="/raport-vjetor-2024/">Raport vjetor 2024</a>
+                 <a href="/2026/05/dobesi-kritike-ne-notepad/">Dobësi kritike në Notepad++ – raport</a>"""
     pages = {"https://x.al/raporte/": listing}
     for y in (2021, 2022, 2023, 2024):
         pages[f"https://x.al/raport-vjetor-{y}/"] = f'<a href="/files/raport-{y}.pdf">Shkarko</a>'
@@ -171,6 +172,7 @@ def test_yearly_report_pages_are_followed_despite_navigation_pdfs(monkeypatch):
     assert status.startswith("ok") and "4 sub-pages" in status
     assert {u for u in stored if "raport-20" in u} == {f"https://x.al/files/raport-{y}.pdf" for y in (2021, 2022, 2023, 2024)}
     assert not any("RFC-2350" in u or "eidas" in u for u in stored)
+    assert crawler.LOW_RELEVANCE_RE.search("Përditësime të Sigurisë – Mozilla CVE-2026-8090")
 
 
 def test_documents_on_the_domain_a_page_redirects_to_are_kept(monkeypatch):

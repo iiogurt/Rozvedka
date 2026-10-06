@@ -74,7 +74,8 @@ LOW_RELEVANCE_RE = re.compile((
     r"protocolo de servicio|política de tratamiento de datos|politica de relacionamiento|política de relacionamiento|"
     r"carta de trato digno|lenguaje claro|participación ciudadana|manuales de comunicación|"
     r"reporte complementario|informe de emergencia n|boletín informativo sísmico|boletin informativo sismico|"
-    r"obrazac|eur-lex"   # Croatian "form"; links to EU law texts
+    r"obrazac|eur-lex|"   # Croatian "form"; links to EU law texts
+    r"cve.\d{4}.\d{4,}"   # vulnerability bulletins of CERTs (advisories, not reports)
 ).replace(" ", r"[\s_-]+"), re.I)   # filenames use _ or - where titles use spaces
 
 
@@ -237,7 +238,9 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
     # archive pages often link to one sub-page per report ("Annual report 2021" → its page with the PDF); follow those
     # one level deep when the page has few documents of its own, or more year-specific report pages than documents
     # (the few PDFs then are usually site navigation)
-    yearly = [(u, t) for u, t in subs if YEAR_RE.search(unquote(u) + " " + t)]
+    # a yearly report page: its link text names a report and a year ("Raport vjetor 2021") – a year in the address
+    # alone is not enough (blogs put the date in every post's address)
+    yearly = [(u, t) for u, t in subs if YEAR_RE.search(t) and REPORT_WORDS.search(YEAR_RE.sub(" ", t))]
     if len(docs) < 3 or len(yearly) > len(docs):
         page_url = page["url"].rstrip("/")
         for url, sub_title in (subs if len(docs) < 3 else yearly):

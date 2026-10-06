@@ -645,7 +645,9 @@
   pages:
     - {lang: nl, kind: archive, url: "https://www.nctv.nl/documenten"}
     - {lang: en, kind: archive, url: "https://english.nctv.nl/documents"}
-    - {lang: nl, kind: current, url: "https://www.nctv.nl/onderwerpen/cybersecuritybeeld-nederland"}
+    - {lang: nl, kind: current, url: "https://www.nctv.nl/documenten/2025/11/26/cybersecuritybeeld-nederland-2025"}
+    - {lang: nl, kind: archive, url: "https://www.nctv.nl/documenten/2024/10/28/cybersecuritybeeld-nederland-2024"}
+    - {lang: nl, kind: archive, url: "https://www.nctv.nl/documenten/2023/07/03/cybersecuritybeeld-nederland-2023"}
 
 - country: NL
   agency: NCSC-NL
@@ -675,7 +677,6 @@
   report_types: [Rijksbrede Risicoanalyse Nationale Veiligheid, themarapportages]
   pages:
     - {lang: nl, kind: current, url: "https://www.rivm.nl/nationale-veiligheid/actuele-analyses/rijksbrede-risicoanalyse-nationale-veiligheid-2022"}
-    - {lang: nl, kind: archive, url: "https://www.rivm.nl/nationale-veiligheid/actuele-analyses"}
 
 # ════════════════════════ BELGIUM ════════════════════════
 - country: BE
@@ -1462,9 +1463,10 @@
   hq: {address: "Ankara, Türkiye", lat: 39.92078, lon: 32.85405, precision: city}
   description: "Counter-narcotics department of the Turkish National Police and national focal point (TUBİM) for the EU drugs agency. Yearly Türkiye Drug Report since 2006 (also in English), national drug strategies."
   type: police-ct
-  access: auto
+  access: manual
   frequency: yearly
   report_types: [Türkiye Uyuşturucu Raporu, Turkish National Drug Report]
+  notes: "robots.txt disallows /kurumlar/, where all report files are stored (checked 2026-10-06): the reports are listed, and collected by hand."
   pages:
     - {lang: tr, kind: archive, url: "https://www.narkotik.pol.tr/ulusalyayinlar"}
 
