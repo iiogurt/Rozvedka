@@ -20,6 +20,9 @@ next steps. Read it at the start of a session; update it (mark items done, re-pr
   publish regular reports (e.g. CEPA). Every report comes from its publisher's own domain; no aggregators or mirrors.
   The two are **always told apart visually** (badge, marker, filter) wherever a source, report, count or map point
   is shown, and every view says which kinds it counts.
+- A new think tank gets a credibility profile in `sources/publishers.yaml` (funding disclosure with evidence URL and
+  date, donor governments) before it is crawled; run `fetch-publishers` afterwards. Admission: regular reports on its
+  own domain, funding at least partly disclosed, on no sanctions list (`docs/PUBLISHER_PROFILES.md`).
 - **Whenever the scope widens** (new states, institutions or kinds of publisher), also refresh the actor gazetteer
   from Wikidata / Wikipedia / MITRE ATT&CK (`python -m rozvedka fetch-actors --refresh`, which also refreshes the
   cross-language search concepts, then `index-actors`) so

@@ -43,6 +43,7 @@ def main():
     im.add_argument("--check", action="store_true", help="only verify the dataset and compare it with this library")
     im.add_argument("--prefer", choices=["local", "dataset"], default="local", help="whose hand edits win in a conflict")
     im.add_argument("--no-index", action="store_true", help="skip matching topics, dates and actors afterwards")
+    sub.add_parser("fetch-publishers", help="checks of the think tanks: EU register, FARA, sanctions lists, Wikidata")
     sub.add_parser("fetch-ratings", help="democracy ratings of states over time (V-Dem, Freedom House, World Bank WGI)")
     sub.add_parser("fetch-concepts", help="names of the search concepts in every language, from Wikidata (cross-language search)")
     fa = sub.add_parser("fetch-actors", help="download the actor gazetteer (Wikidata, Wikipedia, MITRE ATT&CK)")
@@ -97,6 +98,11 @@ def main():
         print(concepts.fetch())     # the search concepts' names too: widening the scope refreshes both
         from . import ratings
         print(ratings.fetch())      # and the states' democracy ratings
+        from . import publishers
+        print(publishers.fetch())   # and the think tanks' checks
+    elif a.cmd == "fetch-publishers":
+        from . import publishers
+        print(publishers.fetch())
     elif a.cmd == "fetch-ratings":
         from . import ratings
         print(ratings.fetch())

@@ -1,0 +1,174 @@
+# Credibility profiles of the independent publishers (think tanks) – hand-researched evidence, see
+# docs/PUBLISHER_PROFILES.md. Keyed by the registry source key (country/agency).
+#
+# funding.disclosure – what the publisher itself publishes about who funds it (Transparify's method):
+#   amounts     donors named with the amount each gave            (Transparify ★★★★★)
+#   brackets    donors named in funding brackets                  (★★★★)
+#   names       donors named, no amounts                          (★★★)
+#   categories  only kinds of funders or shares, few or no names  (★★)
+#   none        donors not disclosed                              (★ and below)
+# funding.governments – donor governments named by the publisher (ISO 3166 alpha-3); a donor government rated an
+#   autocracy by V-Dem (Regimes of the World) is flagged automatically from the ratings data.
+# Every claim has its evidence URL and the date it was checked. Fetched automatically (`fetch-publishers`): EU
+# Transparency Register entry, US FARA registration, US/UK/EU/UN sanctions lists, Wikidata/Wikipedia identity.
+
+US/CEPA:
+  wikipedia: "Center for European Policy Analysis"
+  funding:
+    disclosure: names
+    evidence: "https://cepa.org/about/our-supporters/"
+    checked: 2026-10-07
+    note: "Supporters (individuals, corporations incl. defence and technology companies, foundations, governments) are listed without amounts; no single funder above 50 % of revenue. The page refuses automated requests; checked through search results and the EU Transparency Register."
+    governments: []
+
+US/CSIS:
+  wikipedia: "Center for Strategic and International Studies"
+  funding:
+    disclosure: brackets
+    evidence: "https://www.csis.org/about/financial-information/donors/us-and-alliedpartner-government"
+    checked: 2026-10-07
+    note: "Donors in four brackets ($250,000 and up … $5,000–49,999), by category; FY2025 list. Government donors: United States, Japan, Taiwan ($250,000+); Denmark, Republic of Korea, United Arab Emirates ($100,000–249,999); Germany, Norway, United Kingdom; New Zealand, NATO."
+    governments: [USA, JPN, TWN, DNK, KOR, ARE, DEU, NOR, GBR, NZL]
+  former_ratings:
+    - {by: Transparify, year: 2016, rating: "4 stars – broadly transparent (donors grouped in brackets)", source: "https://onthinktanks.org/wp-content/uploads/2016/09/OnThinkTanks_TransparifyCharts.pdf"}
+
+US/ISW:
+  wikipedia: "Institute for the Study of War"
+  funding:
+    disclosure: none
+    evidence: "https://responsiblestatecraft.org/think-tanks-iran-war/"
+    checked: 2026-10-07
+    note: "ISW states it is funded by foundations, corporations and individuals and takes no government money, but 'does not share information about our supporters or their giving histories outside standard 990 reporting' (ISW to Responsible Statecraft); former corporate supporters include defence contractors. US tax returns (Form 990) show totals only."
+    governments: []
+
+US/Freedom House:
+  wikipedia: "Freedom House"
+  funding:
+    disclosure: categories
+    evidence: "https://www.longtermwiki.com/organizations/freedom-house"
+    checked: 2026-10-07
+    note: "Audited financial statements and US tax returns show revenue by type: US federal grants were about 85 % of revenue (FY2022: $79.6M of $93.7M). Individual private donors are not listed with amounts. Also the source of the Freedom in the World ratings used on /ratings."
+    governments: [USA]
+
+GB/ISD:
+  wikipedia: "Institute for Strategic Dialogue"
+  funding:
+    disclosure: categories
+    evidence: "https://register-of-charities.charitycommission.gov.uk/en/charity-search/-/charity-details/5010329/what-who-how-where"
+    checked: 2026-10-07
+    note: "UK registered charity 1141069: annual accounts at the Charity Commission; funded by governments, trusts, foundations, companies and individuals. No public list of funders with amounts found. (A 2016 report on secret Bahrain funding concerned IISS, not ISD.)"
+    governments: []
+
+DE/ECFR:
+  wikipedia: "European Council on Foreign Relations"
+  funding:
+    disclosure: names
+    evidence: "https://ecfr.eu/pages/funding"
+    checked: 2026-10-07
+    note: "Foundations, governments and corporations named by category with a chart of shares, no amounts per donor. Governments: Germany, France, Netherlands, United Kingdom, Denmark, Ireland, Italy, Japan, Norway, Spain, Sweden, Czechia, Poland, Switzerland, Republic of Korea."
+    governments: [DEU, FRA, NLD, GBR, DNK, IRL, ITA, JPN, NOR, ESP, SWE, CZE, POL, CHE, KOR]
+
+SE/V-Dem:
+  wikipedia: "V-Dem Institute"
+  funding:
+    disclosure: names
+    evidence: "https://v-dem.net/documents/74/Organization_Management_v16.pdf"
+    checked: 2026-10-07
+    note: "Academic institute at the University of Gothenburg; funders named with grant numbers (Swedish Research Council, ERC, EU, Swedish Ministry for Foreign Affairs, Wallenberg foundations, Mo Ibrahim Foundation). Also the source of the V-Dem ratings used on /ratings."
+    governments: [SWE]
+
+SE/SIPRI:
+  wikipedia: "Stockholm International Peace Research Institute"
+  funding:
+    disclosure: amounts
+    evidence: "https://www.sipri.org/about/funding/sipri-funding-2014"
+    checked: 2026-10-07
+    note: "Yearly tables of every funder with the amount; core grant from the Swedish Ministry for Foreign Affairs (about half of the budget)."
+    governments: [SWE]
+  former_ratings:
+    - {by: Transparify, year: 2016, rating: "5 stars – highly transparent", source: "https://onthinktanks.org/wp-content/uploads/2016/09/OnThinkTanks_TransparifyCharts.pdf"}
+
+NL/ICCT:
+  wikipedia: "International Centre for Counter-Terrorism"
+  funding:
+    disclosure: categories
+    evidence: "https://zoek.officielebekendmakingen.nl/kst-27925-768.pdf"
+    checked: 2026-10-07
+    note: "Founded 2010 by Asser Institute, Clingendael and Leiden University; subsidised by the Dutch government (the cabinet decided in 2026 to end the subsidy – parliamentary letter); project partners NATO, UN, EU, US government. No public list of funders with amounts found."
+    governments: [NLD]
+
+NL/Clingendael:
+  wikipedia: "Netherlands Institute of International Relations Clingendael"
+  funding:
+    disclosure: brackets
+    evidence: "https://www.clingendael.org/transparency"
+    checked: 2026-10-07
+    note: "Full list of clients categorised by size of contribution, published every year (2019–2025)."
+    governments: [NLD]
+  former_ratings:
+    - {by: Transparify, year: 2016, rating: "5 stars – highly transparent", source: "https://onthinktanks.org/wp-content/uploads/2016/09/OnThinkTanks_TransparifyCharts.pdf"}
+
+NL/HCSS:
+  wikipedia: "The Hague Centre for Strategic Studies"
+  funding:
+    disclosure: brackets
+    evidence: "https://hcss.nl/finance-transparency/"
+    checked: 2026-10-07
+    note: "Annual client overview by size (> €500k … €10–50k); sources above €10,000 disclosed, but 'sometimes, because of national security or company-confidentiality reasons, sources of funding cannot be publicly disclosed'. Clients include the Dutch ministries, US DoD, UK FCDO and the Taipei Representative Office."
+    governments: [NLD, USA, GBR, LUX]
+
+FR/IFRI:
+  wikipedia: "French Institute of International Relations"
+  funding:
+    disclosure: categories
+    evidence: "https://www.ifri.org/fr/presse-contenus-repris-sur-le-site/lifri-collecte-ses-fonds-en-conciliant-public-et-prive"
+    checked: 2026-10-07
+    note: "Foundation of public utility; public subsidy from the Prime Minister's office down to about 19 % of the budget, the rest from more than 90 companies and individuals; no list of donors with amounts found."
+    governments: [FRA]
+
+EE/ICDS:
+  wikipedia: "International Centre for Defence and Security"
+  funding:
+    disclosure: categories
+    evidence: "https://solo.stanford.edu/opportunities/international-centre-defence-and-security-7"
+    checked: 2026-10-07
+    note: "Financed by the Estonian Ministry of Defence, to which it is affiliated while operationally independent; no donor list found and not in the EU Transparency Register."
+    governments: [EST]
+
+SK/GLOBSEC:
+  wikipedia: "GLOBSEC"
+  funding:
+    disclosure: names
+    evidence: "https://www.globsec.org/what-we-do/publications/globsec-brochure"
+    checked: 2026-10-07
+    note: "Annual report names its partners and gives shares by kind (2023: corporations 42 %, institutions incl. governments 38 %, foundations and NGOs 20 %; no entity above 10 %); no amounts per donor. Partners include the European Commission, the US Global Engagement Center, Canada and Slovak ministries."
+    governments: [USA, CAN, SVK]
+
+AU/ASPI:
+  wikipedia: "Australian Strategic Policy Institute"
+  funding:
+    disclosure: amounts
+    evidence: "https://techtracker.aspi.org.au/funding-and-team"
+    checked: 2026-10-07
+    note: "Set up by the Australian government; the Department of Defence gave over 30 % of revenue (2023–24) and other federal agencies 28.8 %. Annual reports list funders with amounts (US State Department and Department of Defense, UK, Japan, Israel, Netherlands, NATO, defence companies). Senate Estimates found Defence funding not clearly declared in 2018–19."
+    governments: [AUS, USA, GBR, JPN, ISR, NLD]
+
+AU/Lowy Institute:
+  wikipedia: "Lowy Institute"
+  funding:
+    disclosure: names
+    evidence: "https://lowyinstitute.org/about/funding-support"
+    checked: 2026-10-07
+    note: "Corporate and government members and major donors named, no amounts; founded with the Lowy family's gift, which continues; the Australian government funds named projects (DFAT)."
+    governments: [AUS]
+  former_ratings:
+    - {by: Transparify, year: 2016, rating: "names donors but not amounts", source: "https://onthinktanks.org/wp-content/uploads/2016/09/OnThinkTanks_TransparifyCharts.pdf"}
+
+AU/IEP:
+  wikipedia: "Institute for Economics and Peace"
+  funding:
+    disclosure: none
+    evidence: "https://www.economicsandpeace.org/about/"
+    checked: 2026-10-07
+    note: "Founded in 2007 by entrepreneur Steve Killelea, whose gift funds it; the site names multilateral partners (UN, World Bank, Australian DFAT) but publishes no donor list or amounts."
+    governments: []
