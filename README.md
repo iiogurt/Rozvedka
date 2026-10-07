@@ -805,10 +805,10 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | | Status |
 |---|---|
 | **Raspberry Pi OS / Debian 13, Python 3.13, ARM64** | the reference installation |
-| Linux x86-64 and ARM64, Python 3.11–3.13 | test suite passes in CI |
+| Linux x86-64 and ARM64, Python 3.10–3.13 | test suite passes in CI |
 | macOS, Python 3.13 | test suite passes in CI; external disks appear under `/Volumes` in the folder picker |
 | Windows, Python 3.13 | test suite passes in CI; the folder picker offers only your home folder and OCR needs the tools on `PATH` – WSL is the smoother way |
-| Python 3.10 and older | not supported |
+| Python 3.9 and older | not supported (the code uses Python 3.10 syntax) |
 
 - **Python packages:** pinned in `requirements.txt` (FastAPI, Uvicorn, Jinja2, httpx, pypdf, PyYAML, Beautiful
   Soup, Markdown); checked with `pip-audit`.
