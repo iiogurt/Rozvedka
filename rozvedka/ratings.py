@@ -103,6 +103,7 @@ def fetch(out: Path | None = None) -> dict:
                                       "citation": f"World Bank, Worldwide Governance Indicators ({data[0].get('lastupdated', '')})",
                                       "retrieved": today, "rows": n}
     store["names"] = {code: name for name, code in owid_names.items()}      # alpha-3 → country name (any country)
+    store["iso2to3"] = {a2: a3 for a2, a3 in iso3.items() if a3 in store["values"]}   # every country, for the map
     # library countries → alpha-3 (World Bank list; else the country's name as Our World in Data spells it)
     for code, name in names.items():
         a3 = iso3.get(code) or owid_names.get(name)
@@ -122,7 +123,7 @@ def fetch(out: Path | None = None) -> dict:
 def load(path: Path | None = None) -> dict:
     p = path or STORE
     if not p.exists():
-        return {"retrieved": None, "measures": {}, "iso3": {}, "values": {}, "names": {}}
+        return {"retrieved": None, "measures": {}, "iso3": {}, "values": {}, "names": {}, "iso2to3": {}}
     return json.loads(p.read_text(encoding="utf-8"))
 
 
@@ -182,3 +183,26 @@ def profile(country: str, year: int | None = None) -> dict | None:
             prev = v
         reg["changes"] = changes
     return out
+
+
+MAP_FROM = 1990
+
+
+def map_data() -> dict:
+    """Every country's measures per year since 1990, keyed by its two-letter code (as the map's country shapes are),
+    with the sources – for the Democracy map, which changes years in the browser without asking again."""
+    d = load()
+    if not d.get("values"):
+        return {"years": [], "countries": {}, "measures": {}, "regimes": REGIMES, "retrieved": None}
+    last = max(int(y) for v in d["values"].values() for m in v.values() for y in m)
+    years = list(range(MAP_FROM, last + 1))
+    iso2to3 = {**d.get("iso2to3", {}), **d.get("iso3", {})}       # library countries win (e.g. Taiwan, by name)
+    countries = {}
+    for a2, a3 in iso2to3.items():
+        vals = d["values"].get(a3, {})
+        countries[a2] = {"iso3": a3, "name": d.get("names", {}).get(a3, a2), "library": a2 in d.get("iso3", {}),
+                         "values": {k: [vals.get(k, {}).get(str(y)) for y in years] for k in MEASURES}}
+    measures = {k: {**{f: m[f] for f in ("name", "by", "short", "scale", "license", "about", "home")},
+                    "citation": d["measures"].get(k, {}).get("citation"), "source": d["measures"].get(k, {}).get("source")}
+                for k, m in MEASURES.items()}
+    return {"years": years, "countries": countries, "measures": measures, "regimes": REGIMES, "retrieved": d["retrieved"]}

@@ -52,7 +52,17 @@
   });
   cluster.on("clustermouseout", (e) => e.layer.unbindTooltip());
 
-  let markers = [], shading = null, coalitionNames = {}, countryStats = {};
+  let markers = [], shading = null, coalitionNames = {}, countryStats = {}, ratingsData = null;
+  const REGIME = { 3: "#0072b2", 2: "#56b4e9", 1: "#e69f00", 0: "#d55e00" };
+  // the state's regime type in the latest rated year (V-Dem, /api/ratings/map), for shading and the agency cards
+  function regimeOf(iso) {
+    const c = ratingsData && ratingsData.countries[iso];
+    const arr = c && c.values.vdem_regime;
+    if (!arr) return null;
+    for (let i = arr.length - 1; i >= 0; i--) if (arr[i] != null) return { v: Math.round(arr[i]), year: ratingsData.years[i] };
+    return null;
+  }
+  const shadeMode = () => document.getElementById("shade").value;
 
   function pinIcon(a) {
     const hollow = a.hq_precision !== "address";
@@ -77,6 +87,7 @@
         <div class="hc-acr"><img class="hc-flag" src="${esc(a.flag)}" alt=""> ${esc(a.agency)}</div>
         <div class="hc-en">${esc(a.name_en)}</div>${local}</div></div>
       <div class="hc-type" style="--c:${TYPE_COLORS[a.type] || "#aaa"}"><span class="dot solid"></span>${esc(a.type_name)} · ${esc(a.country_name)}</div>
+      ${(() => { const r = regimeOf(a.country); return r ? `<div class="hc-regime"><span class="rt-dot" style="background:${REGIME[r.v]}"></span>${esc(ratingsData.regimes[r.v])} <span class="muted">(V-Dem ${r.year})</span></div>` : ""; })()}
       ${a.type === "think-tank" ? `<div class="pub-note">◆ Independent think tank – not run by a state · credibility: ${esc(a.credibility_label || "not assessed")}</div>` : ""}
       ${a.coalitions.length ? `<div class="hc-coal">${coalitionChips(a)}</div>` : ""}
       <p class="hc-desc">${esc(firstSentence(a.description))}</p>
@@ -135,6 +146,11 @@
   }
   function countryStyle(f) {
     const coal = document.getElementById("coalition").value;
+    if (shadeMode() === "regime") {             // every country by its regime type; the library's states outlined
+      const r = regimeOf(f.properties.iso), st = countryStats[f.properties.iso];
+      return r ? { fillColor: REGIME[r.v], fillOpacity: 0.5, color: st && st.docs ? "#d0d7de" : "#3a434e", weight: st && st.docs ? 1 : 0.4 }
+               : { fillOpacity: 0, color: "#3a434e", weight: 0.4 };
+    }
     const st = countryStats[f.properties.iso];
     const c = st && st.docs > 0 && (!coal || st.coalitions.includes(coal)) ? st : null;
     const max = Math.max(1, ...Object.values(countryStats).map((x) => x.docs));
@@ -153,16 +169,19 @@
     shading = L.geoJSON(geo, {
       pane: "countries", style: countryStyle,
       onEachFeature: (f, layer) => {
-        if (!countryStats[f.properties.iso]) return;
+        if (!countryStats[f.properties.iso] && !regimeOf(f.properties.iso)) return;
         layer.bindTooltip(() => {
           const c = countryStats[f.properties.iso] || { name: f.properties.name, agencies: 0, docs: 0, coalitions: [] };
           const tags = c.coalitions.map((k) => esc((coalitionNames[k] || {}).short || k)).join(" · ");
           const topicName = document.getElementById("topic").selectedOptions[0]?.text;
+          const r = regimeOf(f.properties.iso);
           return `<b>${esc(c.name)}</b><br>${c.agencies} agencies · ${c.docs} documents` +
                  (document.getElementById("topic").value ? ` on <i>${esc(topicName)}</i>` : "") +
+                 (r ? `<br><span class="rt-dot" style="background:${REGIME[r.v]}"></span>${esc(ratingsData.regimes[r.v])} (V-Dem ${r.year})` : "") +
                  (tags ? `<br><span class="muted">${tags}</span>` : "");
         }, { sticky: true, className: "hq-tip country-tip" });
         layer.on("click", () => {
+          if (!countryStats[f.properties.iso]) return;
           const t = document.getElementById("topic").value;
           window.location.href = `/documents?country=${encodeURIComponent(f.properties.iso)}${t ? `&topic=${encodeURIComponent(t)}` : ""}`;
         });
@@ -193,8 +212,17 @@
     render();
     if (shading) { shading.setStyle(countryStyle); fadeShading(); }
   });
-  document.getElementById("shade").addEventListener("change", (e) => {
-    if (shading) e.target.checked ? shading.addTo(map) : map.removeLayer(shading);
+  const shadeSel = document.getElementById("shade");
+  if (["reports", "regime", ""].includes(params.get("shade"))) shadeSel.value = params.get("shade");
+  shadeSel.addEventListener("change", (e) => {
+    const url = new URL(window.location);
+    e.target.value === "reports" ? url.searchParams.delete("shade") : url.searchParams.set("shade", e.target.value);
+    history.replaceState(null, "", url);
+    document.getElementById("legend-reports").hidden = e.target.value !== "reports";
+    document.getElementById("legend-regime").hidden = e.target.value !== "regime";
+    if (!shading) return;
+    if (!e.target.value) { map.removeLayer(shading); return; }
+    shading.addTo(map); shading.setStyle(countryStyle); fadeShading();
   });
   document.getElementById("tiles").addEventListener("change", (e) => {
     e.target.checked ? tiles.addTo(map) : map.removeLayer(tiles);
@@ -211,6 +239,7 @@
   // ── data ──
   let firstLoad = true;
   async function load(topic) {
+    if (!ratingsData) ratingsData = await fetch("/api/ratings/map").then((r) => r.json()).catch(() => null);
     const data = await fetch(`/api/map${topic ? `?topic=${encodeURIComponent(topic)}` : ""}`).then((r) => r.json());
     coalitionNames = data.coalitions;
     countryStats = data.countries;
@@ -242,6 +271,7 @@
       if (!window.location.hash && markers.length) map.fitBounds(L.latLngBounds(markers.map(({ m }) => m.getLatLng())), { padding: [30, 30] });
       focusFromHash();
       try { await loadCountries(); } catch (e) { console.warn("country shapes unavailable", e); }
+      if (shadeSel.value !== "reports") shadeSel.dispatchEvent(new Event("change"));
       firstLoad = false;
     } else if (shading) {
       shading.setStyle(countryStyle); fadeShading();

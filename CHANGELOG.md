@@ -27,6 +27,21 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.38.0] – 2026-10-07
+
+### Added
+- **Democracy map** (`/map/democracy`): every country coloured by V-Dem regime type, Liberal Democracy Index, its
+  change in ten years, Freedom House or World Bank Voice and Accountability, for any year 1990–2025 with a slider and a
+  ▶ play button. The panel counts states per regime type (world and library), lists the library's states with a trend
+  line, change arrow and the number of their official reports that year (each opens the documents); hover cards show
+  every measure of the year. The library's sources appear as dots sized by their reports, think tanks in their
+  credibility colour. Settings are kept in the address.
+- Headquarters map: **"Shade countries by"** now offers the regime type (V-Dem, latest year) besides the number of
+  reports, and agency cards and country tooltips show the state's regime type.
+
+### Changed
+- The map panel is wider (360 px) so the three map views' tabs fit.
+
 ## [0.37.1] – 2026-10-07
 
 ### Added
@@ -726,7 +741,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.37.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.38.0...HEAD
+[0.38.0]: https://github.com/iiogurt/Rozvedka/compare/v0.37.1...v0.38.0
 [0.37.1]: https://github.com/iiogurt/Rozvedka/compare/v0.37.0...v0.37.1
 [0.37.0]: https://github.com/iiogurt/Rozvedka/compare/v0.36.0...v0.37.0
 [0.36.0]: https://github.com/iiogurt/Rozvedka/compare/v0.35.0...v0.36.0

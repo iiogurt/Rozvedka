@@ -1070,6 +1070,26 @@ def api_network(year_from: int = 0, year_to: int = 0, coalition: str = "", type:
                                max(10, min(actors_n, 120)), max(1, min_pair), min(max(threshold, 0.05), 0.9), kind)
 
 
+@app.get("/map/democracy")
+def democracy_map_page(request: Request):
+    return tpl.TemplateResponse(request, "map_democracy.html", {"MEASURES": ratings.MEASURES})
+
+
+@app.get("/api/ratings/map")
+def api_ratings_map():
+    """Democracy ratings of every country per year, plus the library's official reports per country and year (each
+    count is the Documents list /documents?country=…&year=…&type=official)."""
+    data = ratings.map_data()
+    with db.session() as con:
+        reports: dict[str, dict] = {}
+        for c, y, n in con.execute(f"""SELECT s.country, d.year, COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
+                                       WHERE {trends.LISTED} AND {trends.OFFICIAL} AND d.year IS NOT NULL
+                                       GROUP BY s.country, d.year"""):
+            reports.setdefault(c, {})[str(y)] = n
+    data["reports"] = reports
+    return data
+
+
 @app.get("/map/mentions")
 def mentions_page(request: Request):
     return tpl.TemplateResponse(request, "mentions.html", {"years": _years_desc(),

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Democracy over time · Map · Rozvedka{% endblock %}
+{% block body_class %}theme-dark map-page{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ asset('vendor/leaflet/leaflet.css') }}">{% endblock %}
+{% block main %}
+<div class="mapwrap">
+  <aside class="mappanel dm-panel" aria-label="Map controls">
+    <nav class="subnav map-tabs" aria-label="Map views"><a href="/map">Headquarters</a><a href="/map/democracy" class="on">Democracy</a><a href="/map/mentions">Who reports on whom</a></nav>
+    <form id="dm" onsubmit="return false">
+      <label class="coal-select">Colour countries by
+        <select name="measure">
+          <option value="vdem_regime">Regime type – V-Dem Regimes of the World</option>
+          <option value="vdem_libdem">Liberal Democracy Index – V-Dem (0–1)</option>
+          <option value="change">Change of the Liberal Democracy Index in 10 years</option>
+          <option value="fh_score">Freedom in the World – Freedom House (0–100)</option>
+          <option value="wgi_va">Voice and Accountability – World Bank (−2.5…+2.5)</option>
+        </select></label>
+      <div class="dm-year">
+        <button type="button" id="play" title="Play the years" aria-label="Play the years">▶</button>
+        <input type="range" name="year" id="year" min="1990" max="2025" step="1" aria-label="Year">
+        <b id="year-label"></b>
+      </div>
+      <label class="chk"><input type="checkbox" name="sources" checked> the library's sources (dot size: reports)</label>
+      <label class="chk"><input type="checkbox" name="only" > only the library's states</label>
+    </form>
+    <div id="legend" class="dm-legend"></div>
+    <div id="counts" class="dm-counts small"></div>
+    <h3 class="dm-h">The library's states <span class="muted small" id="list-note"></span></h3>
+    <ol id="list" class="maplist dm-list"></ol>
+    <p class="muted small" id="sources-note"></p>
+  </aside>
+  <div id="map" class="map" role="region" aria-label="World map of democracy ratings by year"></div>
+</div>
+<script src="{{ asset('vendor/leaflet/leaflet.js') }}"></script>
+<script src="{{ asset('map_democracy.js') }}"></script>
+{% endblock %}

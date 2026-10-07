@@ -115,8 +115,9 @@ Each item: why · what · done when · version step.
 7. **Positions held** (old D16), **organisation charts** (old D17), **more seeds where reports point** (old D18). · minor / patch
 
 8. ✅ (0.36.0) **Democracy ratings of states over time** – V-Dem, Freedom House, World Bank WGI per country and year; on
-   report pages the ratings of the report's year. Next: map shading by rating and year; filter reports by the regime type
-   of their state in their year.
+   report pages the ratings of the report's year. ✅ (0.38.0) Democracy map: shading by rating and year, regime shading
+   and regime on the agency cards of the Headquarters map. Next: filter reports by the regime type of their state in
+   their year.
 9. ✅ (0.37.0) **Think-tank credibility profiles** – evidence checklist instead of a score, see
    [`PUBLISHER_PROFILES.md`](PUBLISHER_PROFILES.md); badge coloured by the rating, a profile page per think tank. Next:
    re-check the hand-researched funding evidence yearly; people & methods check.

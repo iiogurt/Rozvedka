@@ -69,3 +69,18 @@ def test_pages(library):
     assert "When this report was written the state\n        was a liberal democracy" in client.get("/report/1").text
     assert "rt-warn" not in client.get("/report/2").text                  # same type since 2018: no warning
     assert "V-Dem LDI 0.32" in client.get("/sources").text
+
+
+def test_democracy_map(library):
+    d = ratings.map_data()
+    assert d["years"][0] == 1990 and d["years"][-1] == 2025
+    hu = d["countries"]["HU"]
+    assert hu["library"] and hu["iso3"] == "HUN"
+    assert hu["values"]["vdem_regime"][d["years"].index(2018)] == 1
+    assert hu["values"]["vdem_libdem"][d["years"].index(2017)] is None    # no value that year: no colour, no guess
+    client = TestClient(app_module.app)
+    api = client.get("/api/ratings/map").json()
+    assert api["reports"]["HU"] == {"2009": 1, "2020": 1}                 # official reports per publication year
+    t = client.get("/map/democracy").text
+    assert 'value="change"' in t and "map_democracy.js" in t
+    assert 'href="/map/democracy"' in client.get("/map").text             # reachable from the other map views
