@@ -16,7 +16,7 @@ from fastapi.templating import Jinja2Templates
 
 from markupsafe import Markup, escape
 
-from . import (__version__, actors, build_version, collect, countries, crawler, db, downloader, graphs, home, logos,
+from . import (__version__, actor_profiles, actors, build_version, collect, countries, crawler, db, downloader, graphs, home, logos,
                paging, registry, series, topics, trends, updates)
 from . import compare as compare_mod
 from . import dating
@@ -1126,7 +1126,17 @@ def actor_page(request: Request, key: str, page: str = "1", per_page: str = ""):
                          anchor="#passages", default=25)
     return tpl.TemplateResponse(request, "actor.html", {**d, "pg": pg, "kinds": actors.KINDS, "meta": actors.stamp(),
                                                        "reviewed_out": review.of_actor(key),
-                                                       "TOPICS": topics.taxonomy()["topics"]})
+                                                       "TOPICS": topics.taxonomy()["topics"],
+                                                       "profile": actor_profiles.profile(key)})
+
+
+@app.get("/actor-image/{key}")
+def actor_image(key: str):
+    path = actor_profiles.image_path(key)
+    if not path:
+        raise HTTPException(404, "no picture")
+    return FileResponse(path, media_type=actor_profiles.IMAGE_TYPES.get(path.suffix.lstrip(".").lower(), "application/octet-stream"),
+                        headers={"X-Content-Type-Options": "nosniff", "Cache-Control": "max-age=86400"})
 
 
 @app.get("/api/events")

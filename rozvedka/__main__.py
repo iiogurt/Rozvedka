@@ -45,6 +45,8 @@ def main():
     im.add_argument("--no-index", action="store_true", help="skip matching topics, dates and actors afterwards")
     sub.add_parser("fetch-publishers", help="checks of the think tanks: EU register, FARA, sanctions lists, Wikidata")
     sub.add_parser("fetch-ratings", help="democracy ratings of states over time (V-Dem, Freedom House, World Bank WGI)")
+    fp = sub.add_parser("fetch-actor-profiles", help="pictures, key facts and Wikipedia summaries of the actors the reports name")
+    fp.add_argument("--refresh", action="store_true", help="download every picture again")
     sub.add_parser("fetch-concepts", help="names of the search concepts in every language, from Wikidata (cross-language search)")
     fa = sub.add_parser("fetch-actors", help="download the actor gazetteer (Wikidata, Wikipedia, MITRE ATT&CK)")
     fa.add_argument("--refresh", action="store_true", help="read the Wikipedia infoboxes again instead of the cache")
@@ -100,6 +102,11 @@ def main():
         print(ratings.fetch())      # and the states' democracy ratings
         from . import publishers
         print(publishers.fetch())   # and the think tanks' checks
+        from . import actor_profiles
+        print(actor_profiles.fetch(refresh=a.refresh))   # and the actors' pictures and facts
+    elif a.cmd == "fetch-actor-profiles":
+        from . import actor_profiles
+        print(actor_profiles.fetch(refresh=a.refresh))
     elif a.cmd == "fetch-publishers":
         from . import publishers
         print(publishers.fetch())
