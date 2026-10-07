@@ -54,6 +54,8 @@ SHOTS = {
     "review": ("/actors/review", 1100, [], None),
     "network": ("/network", 1100, [("sleep", 6)], None),
     "map": ("/map", 800, [("sleep", 5)], None),
+    "democracy-map": ("/map/democracy?measure=vdem_regime&year=2025", 900, [("sleep", 6)], None),
+    "democracy-change": ("/map/democracy?measure=change&year=2025", 900, [("sleep", 6)], None),
     "mentions": (f"/map/mentions?mode=about&about={CHINA}", 800, [("sleep", 6)], None),
     "mindmap": ("/topics/map", 1000, [("sleep", 16)], None),     # its data takes ~11 s on the Pi
     "update": ("/update", 1200, [], None),

@@ -9,7 +9,7 @@
 {% block main %}
 <div class="mapwrap">
   <aside class="mappanel" aria-label="Map filters">
-    <nav class="subnav map-tabs" aria-label="Map views"><a href="/map" class="on">Headquarters</a><a href="/map/mentions">Who reports on whom</a></nav>
+    <nav class="subnav map-tabs" aria-label="Map views"><a href="/map" class="on">Headquarters</a><a href="/map/democracy">Democracy</a><a href="/map/mentions">Who reports on whom</a></nav>
     <h2 class="panel-h">Agency headquarters</h2>
     <p class="muted small">Hover a pin for the agency card, click for details and links.
       Pins sit on the publicly listed headquarters or contact address.
@@ -33,8 +33,19 @@
         <span class="dot solid type-dot-{{ key }}"></span>{{ name }} <span class="muted cnt" data-type="{{ key }}"></span></label>
       {% endfor %}
     </fieldset>
-    <label class="chk"><input type="checkbox" id="shade" checked> Shade countries by number of reports</label>
-    <div class="shade-legend" aria-hidden="true"><span>fewer</span><i></i><span>more reports</span></div>
+    <label class="coal-select">Shade countries by
+      <select id="shade">
+        <option value="reports">number of reports</option>
+        <option value="regime">regime type today (V-Dem)</option>
+        <option value="">nothing</option>
+      </select></label>
+    <div class="shade-legend" id="legend-reports" aria-hidden="true"><span>fewer</span><i></i><span>more reports</span></div>
+    <div class="dm-legend small" id="legend-regime" hidden>
+      <span><span class="rt-dot" style="background:#0072b2"></span>liberal democracy</span>
+      <span><span class="rt-dot" style="background:#56b4e9"></span>electoral democracy</span>
+      <span><span class="rt-dot" style="background:#e69f00"></span>electoral autocracy</span>
+      <span><span class="rt-dot" style="background:#d55e00"></span>closed autocracy</span>
+      <div class="muted">regime type of the latest year, V-Dem · over time: <a href="/map/democracy">Democracy</a></div></div>
     <label class="chk"><input type="checkbox" id="tiles" checked> Street map (OpenStreetMap, darkened)</label>
     <input type="search" id="find" placeholder="Find agency…" aria-label="Find agency">
     <ol id="list" class="maplist"></ol>

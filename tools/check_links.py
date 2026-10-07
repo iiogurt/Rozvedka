@@ -15,7 +15,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 from rozvedka import compare, home, updates, watch  # noqa: E402
 from rozvedka.app import app  # noqa: E402
 
-PAGES = ["/", "/new", "/watch", "/compare", "/actors/review", "/data", "/documents", "/years", "/ratings", "/publishers", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/map", "/collect"]
+PAGES = ["/", "/new", "/watch", "/compare", "/actors/review", "/data", "/documents", "/years", "/ratings", "/publishers", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/map", "/map/democracy", "/collect"]
 
 
 def main() -> int:

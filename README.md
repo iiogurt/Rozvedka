@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.37.1-1f4e79)
+![version](https://img.shields.io/badge/version-0.38.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -325,10 +325,25 @@ Which actors the reports name **together more often than their frequency predict
 <td><b>Headquarters</b> – every agency on a dark world map, coloured by type, with a hover card.</td>
 <td><b>Who reports on whom</b> – the share of each country's reports that name a country, or what one country or coalition reports on.</td>
 </tr>
+<tr>
+<td width="50%"><img src="docs/images/democracy-map.png" alt="World map coloured by V-Dem regime type in 2025, with the library's states listed"></td>
+<td width="50%"><img src="docs/images/democracy-change.png" alt="World map coloured by the ten-year change of the Liberal Democracy Index"></td>
+</tr>
+<tr>
+<td><b>Democracy</b> – every country coloured by its regime type, Liberal Democracy Index, its ten-year change, Freedom House
+or World Bank score, in any year since 1990 (slider, ▶ plays the years).</td>
+<td>The panel counts states per regime in the world and in the library, and ranks the library's states with a trend
+line, the change and the number of reports of that year – each count opens its documents.</td>
+</tr>
 </table>
 
 Countries are recognised by their names and demonyms in the report languages (from Wikidata); a country's own
 reports are left out, and selections with fewer than 10 reports are greyed out.
+
+The Headquarters view can also shade countries by today's regime type, and each agency card shows its state's regime
+type (V-Dem, latest year), so a report can be read with its state's record in mind. On the Democracy view the library's
+sources are dots sized by their reports (think tanks dashed, in their credibility colour); hovering a country shows all
+measures of that year with a trend line, and every colour and count names its source and retrieval date.
 
 ### 🧠 Topic mind map
 
