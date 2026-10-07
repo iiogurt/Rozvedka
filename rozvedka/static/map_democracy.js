@@ -58,8 +58,8 @@
   const docsUrl = (iso, y) => `/documents?country=${encodeURIComponent(iso)}&year=${y}&type=official`;
 
   // a small line of the Liberal Democracy Index since 1990, the chosen year marked
-  function spark(c, y) {
-    const arr = c.values.vdem_libdem || [], w = 70, h = 16, n = arr.length;
+  function spark(c, y, w = 70, h = 16) {
+    const arr = c.values.vdem_libdem || [], n = arr.length;
     const pts = arr.map((v, i) => v == null ? null : `${(i / (n - 1) * w).toFixed(1)},${(h - 1 - v * (h - 2)).toFixed(1)}`).filter(Boolean);
     const x = (idx(y) / (n - 1) * w).toFixed(1);
     return `<svg class="dm-spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">
@@ -70,14 +70,19 @@
   // ── drawing ──
   function tooltip(f) {
     const c = data.countries[f.properties.iso], y = year();
-    if (!c) return `<b>${esc(f.properties.name)}</b><br><span class="muted">no rating</span>`;
-    const row = (k, label) => `<tr><th>${label}</th><td>${esc(fmt(k, val(c, k, y)))}</td></tr>`;
+    if (!c) return `<div class="tip-h"><b>${esc(f.properties.name)}</b></div><span class="muted">no rating in these datasets</span>`;
+    const key = measure();
+    const row = (k, label, by) => `<tr${k === key ? ' class="on"' : ""}><th>${label}</th><td>${esc(fmt(k, val(c, k, y)))}</td><td class="src">${by}</td></tr>`;
     const n = reportsIn(f.properties.iso, y);
-    return `<b>${esc(c.name)}</b> · ${y}<table class="dm-tip">
-      ${row("vdem_regime", "regime")}${row("vdem_libdem", "V-Dem LDI")}${row("change", `LDI change since ${y - CHANGE_SPAN}`)}
-      ${row("fh_score", "Freedom House")}${row("wgi_va", "World Bank VA")}</table>
-      ${c.library ? `<span class="${n ? "" : "muted"}">${n} official report${n === 1 ? "" : "s"} from ${y} in the library${n ? " – click to list them" : ""}</span>`
-                  : '<span class="muted">not a reporting state of the library</span>'}`;
+    return `<div class="tip-h"><b>${esc(c.name)}</b><span class="muted">${y}</span></div>
+      <table class="dm-tip">
+      ${row("vdem_regime", "Regime type", "V-Dem")}${row("vdem_libdem", "Liberal Democracy Index", "V-Dem")}
+      ${row("change", `LDI change since ${y - CHANGE_SPAN}`, "V-Dem")}
+      ${row("fh_score", "Freedom in the World", "Freedom House")}${row("wgi_va", "Voice and Accountability", "World Bank")}</table>
+      <div class="tip-spark"><span class="muted">LDI ${data.years[0]}</span>${spark(c, y, 190, 26)}<span class="muted">${data.years.at(-1)}</span></div>
+      <div class="tip-foot">${c.library
+        ? `<span class="${n ? "" : "muted"}">${n} official report${n === 1 ? "" : "s"} from ${y} in the library</span>${n ? '<span class="hint">click to list them</span>' : ""}`
+        : '<span class="muted">not a reporting state of the library</span>'}</div>`;
   }
 
   function style(f) {
@@ -113,8 +118,12 @@
       return L.circleMarker([a.lat, a.lon], {
         radius: 2.5 + 9 * Math.sqrt(a.n_docs / max), weight: 1.2, color: tt ? (CRED[a.credibility] || "#f0e442") : "#ffffff",
         fillColor: tt ? (CRED[a.credibility] || "#f0e442") : "#0d1117", fillOpacity: tt ? 0.55 : 0.75, dashArray: tt ? "2 2" : null,
-      }).bindTooltip(`<b>${esc(a.agency)}</b>${tt ? " ◆ think tank" : ""}<br>${esc(a.name_en || "")}<br>${a.n_docs} reports in the library`,
-                     { className: "hq-tip" })
+      }).bindTooltip(`<div class="tip-h"><b>${esc(a.agency)}</b><span class="muted">${esc(a.country_name || "")}</span></div>
+          ${a.name_en && a.name_en !== a.agency ? `<div class="tip-sub">${esc(a.name_en)}</div>` : ""}
+          <div class="small" style="color:${tt ? CRED[a.credibility] || CRED.unassessed : "#9aa1ab"}">${tt ? `◆ think tank · ${esc(a.credibility_label || "not assessed")}` : esc(a.type_name || "")}</div>
+          <div class="tip-foot">${a.n_docs} report${a.n_docs === 1 ? "" : "s"} in the library${a.y0 ? ` · ${a.y0}–${a.y1}` : ""}
+            <span class="hint">click for ${tt ? "its profile" : "its reports"}</span></div>`,
+                     { className: "hq-tip country-tip", direction: "top", offset: [0, -6] })
         .on("click", () => { window.location.href = tt ? `/publisher/${a.id}` : `/documents?source=${a.id}`; });
     })).addTo(map);
   }

@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.38.1] – 2026-10-07
+
+### Fixed
+- Map hover cards no longer squeeze into a narrow column with one word per line (near the right edge of the map, and
+  on the Democracy map almost always); they are sized by their content and fully opaque, and their pointer matches the
+  side they open on.
+- A cluster's agency list near the top of the map opens below the cluster instead of being cut off.
+
+### Changed
+- Democracy map hover card: each measure with its source, the measure the map shows in bold, and a larger
+  Liberal Democracy Index trend line 1990–2025. Source dots: country, agency type or think-tank credibility, years
+  covered and what a click opens. Countries without agencies say so instead of "0 agencies · 0 documents".
+
 ## [0.38.0] – 2026-10-07
 
 ### Added
@@ -741,7 +754,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.38.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.38.1...HEAD
+[0.38.1]: https://github.com/iiogurt/Rozvedka/compare/v0.38.0...v0.38.1
 [0.38.0]: https://github.com/iiogurt/Rozvedka/compare/v0.37.1...v0.38.0
 [0.37.1]: https://github.com/iiogurt/Rozvedka/compare/v0.37.0...v0.37.1
 [0.37.0]: https://github.com/iiogurt/Rozvedka/compare/v0.36.0...v0.37.0
