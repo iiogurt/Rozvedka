@@ -167,3 +167,21 @@ def test_person_names_inside_other_names_are_skipped():
     ids = {(r["actor_key"], r["name"]): r["id"] for r in names}
     f = found("Alan Turing broke Enigma. The Alan Turing Institute. USS Theodore Roosevelt; Theodore Roosevelt said.", ids)
     assert f == {("Q30", "Alan Turing"): ["Alan Turing"], ("Q31", "Theodore Roosevelt"): ["Theodore Roosevelt"]}
+
+
+def test_suggest_forgives_spelling_and_fills_with_neighbours(library, monkeypatch):
+    from fastapi.testclient import TestClient
+    from rozvedka import app as app_module
+    actors.index(workers=1)
+    monkeypatch.setitem(actors._suggest_cache, "at", None)
+    fed = actors.suggest("Federl Securty")                       # misspelt words still find the actor
+    assert fed[0]["key"] == "Q3" and fed[0]["via"] is None
+    assert actors.suggest("fsb")[0] == {**actors.suggest("fsb")[0], "key": "Q3", "via": "FSB"}   # an alias, shown as such
+    assert actors.suggest("Wagnr")[0]["key"] == "Q5"              # one letter missing
+    wag = actors.suggest("wagner group")
+    near = [s for s in wag if s.get("near")]
+    assert wag[0]["key"] == "Q5" and [s["key"] for s in near] == ["Q3"]     # named in the same passage as the hit
+    assert near[0]["near"]["link"] == "/actors/Q5/with/Q3"
+    assert actors.suggest("x") == [] and actors.suggest("zzzzqqq") == []
+    api = TestClient(app_module.app).get("/api/actors/suggest?q=federal").json()
+    assert api["actors"][0]["key"] == "Q3" and api["actors"][0]["picture"] is None

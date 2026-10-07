@@ -1007,6 +1007,13 @@ def actors_page(request: Request, kind: str = "", q: str = "", min_docs: int = 2
         "maxdocs": maxdocs, "meta": actors.stamp()})
 
 
+@app.get("/api/actors/suggest")
+def api_actor_suggest(q: str = ""):
+    """Actors for the search box as one types: names and aliases, accents and misspellings forgiven."""
+    return {"q": q, "actors": [{**r, "picture": f"/actor-image/{r['key']}" if actor_profiles.image_path(r["key"]) else None}
+                               for r in actors.suggest(q)]}
+
+
 @app.get("/actors/review")
 def actors_review(request: Request, page: str = "1", per_page: str = "", kind: str = "", notice: str = ""):
     """Precision review: random passages of the names with the most impact, to mark right or wrong."""

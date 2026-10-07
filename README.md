@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.40.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.41.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -293,6 +293,13 @@ no periodic job.
 - Beyond security services and armed groups the index covers political parties (AfD, FPÖ, Rassemblement
   National, United Russia, CCP …) and companies, think tanks and media (Cambridge Analytica, Heritage Foundation,
   RT, Huawei, Gazprom …); add more as seeds in `sources/actors.yaml`.
+- **Search with suggestions** on the Actors page: type part of any name or alias, in any language and with any
+  spelling – *prigozin*, *hezbolah*, *alkaida*, *Лукашенко*, *apt 28* – and up to 12 actors appear with picture, kind,
+  report count and the alias that matched. With fewer than ten direct matches, the actors named most often in the
+  same passages as the best match fill the list (e.g. Wagner Group and Putin for Prigozhin). ↑ ↓ Enter to open one.
+
+<img src="docs/images/actor-search.png" alt="Actor search: a misspelt name finds Prigozhin, followed by the actors most often named with him" width="900">
+
 - Name matching is rule-based and transparent: every name used (or not used, with the reason) is listed, and
   `/actors/names` shows the most frequent matches for review.
 - **Precision review** (`/actors/review`): random passages of the names that put the most reports on their actor,

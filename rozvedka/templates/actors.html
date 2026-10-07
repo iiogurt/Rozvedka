@@ -2,8 +2,12 @@
 {% from "_pager.html" import pager %}
 {% block title %}Actors · Rozvedka{% endblock %}
 {% block main %}
-<form class="filters" method="get" action="/actors">
-  <input type="search" name="q" value="{{ f.q }}" placeholder="Find actor or alias…" aria-label="Find actor">
+<form class="filters" method="get" action="/actors" id="actor-search">
+  <div class="ac-wrap">
+    <input type="search" name="q" value="{{ f.q }}" placeholder="Find actor or alias – any spelling…" aria-label="Find actor"
+           autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="ac-list" id="ac-q">
+    <ul id="ac-list" class="ac-list" role="listbox" hidden></ul>
+  </div>
   {% if f.kind %}<input type="hidden" name="kind" value="{{ f.kind }}">{% endif %}
   {% if f.per_page %}<input type="hidden" name="per_page" value="{{ f.per_page }}">{% endif %}
   <label class="chk">mentioned in at least
@@ -62,4 +66,58 @@
       (CC BY-SA 4.0), MITRE ATT&amp;CK® (© The MITRE Corporation, reproduced with permission).</li>
   </ul>
 </section>
+<script>
+/* Suggestions while typing (/api/actors/suggest): names and aliases in any language, accents and misspellings
+   forgiven; ↑ ↓ choose, Enter opens the actor, Esc closes; Enter without a choice filters the list below. */
+(function () {
+  const input = document.getElementById("ac-q"), list = document.getElementById("ac-list");
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  let items = [], active = -1, timer = null, seq = 0;
+  function close() { list.hidden = true; input.setAttribute("aria-expanded", "false"); active = -1; input.removeAttribute("aria-activedescendant"); }
+  function mark(i) {
+    active = i;
+    list.querySelectorAll("li").forEach((li, j) => li.classList.toggle("on", j === i));
+    if (i >= 0) { input.setAttribute("aria-activedescendant", `ac-${i}`); list.children[i].scrollIntoView({ block: "nearest" }); }
+  }
+  function show(data) {
+    items = data.actors;
+    if (!items.length) {
+      list.innerHTML = '<li class="ac-none muted small">No actor by that name – the list below filters by the exact text</li>';
+    } else {
+      let near = false;
+      list.innerHTML = items.map((a, i) => {
+        const head = a.near && !near ? (near = true, `<li class="ac-sep muted small" role="presentation">Often named together with ${esc(a.near.label)}</li>`) : "";
+        return head + `<li id="ac-${i}" role="option" data-i="${i}">
+          ${a.picture ? `<img src="${esc(a.picture)}" alt="" loading="lazy">` : `<span class="ac-ph" aria-hidden="true">${esc(a.label.slice(0, 1))}</span>`}
+          <span class="ac-main"><b>${esc(a.label)}</b>${a.via ? ` <span class="ac-via">as “${esc(a.via)}”</span>` : ""}
+            <span class="ac-sub muted">${esc(a.kind_name)}${a.description ? " · " + esc(a.description) : ""}</span></span>
+          <span class="ac-n" title="${a.near ? `${a.near.docs} reports name both` : "reports naming this actor"}">${a.near ? a.near.docs + "×" : a.docs}</span></li>`;
+      }).join("");
+    }
+    list.hidden = false; input.setAttribute("aria-expanded", "true"); mark(-1);
+  }
+  input.addEventListener("input", () => {
+    clearTimeout(timer);
+    const q = input.value.trim();
+    if (q.length < 2) { close(); return; }
+    timer = setTimeout(() => {
+      const n = ++seq;
+      fetch("/api/actors/suggest?q=" + encodeURIComponent(q)).then((r) => r.json())
+        .then((d) => { if (n === seq && input.value.trim() === q) show(d); }).catch(() => {});
+    }, 180);
+  });
+  input.addEventListener("keydown", (e) => {
+    if (list.hidden) return;
+    if (e.key === "ArrowDown") { e.preventDefault(); if (items.length) mark((active + 1) % items.length); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); if (items.length) mark((active - 1 + items.length) % items.length); }
+    else if (e.key === "Escape") { close(); }
+    else if (e.key === "Enter" && active >= 0) { e.preventDefault(); location.href = "/actors/" + items[active].key; }
+  });
+  list.addEventListener("mousedown", (e) => {   // before the input loses focus
+    const li = e.target.closest("li[data-i]");
+    if (li) { e.preventDefault(); location.href = "/actors/" + items[+li.dataset.i].key; }
+  });
+  input.addEventListener("blur", () => setTimeout(close, 100));
+})();
+</script>
 {% endblock %}

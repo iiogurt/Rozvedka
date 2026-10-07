@@ -121,6 +121,10 @@ Each item: why · what · done when · version step.
 9. ✅ (0.37.0) **Think-tank credibility profiles** – evidence checklist instead of a score, see
    [`PUBLISHER_PROFILES.md`](PUBLISHER_PROFILES.md); badge coloured by the rating, a profile page per think tank. Next:
    re-check the hand-researched funding evidence yearly; people & methods check.
+10. ✅ (0.40.0) **Actor profiles** – picture (flag, logo or photo, free licences only, with author and licence), key
+    Wikidata facts and the Wikipedia lead on every actor page (`fetch-actor-profiles`). ✅ (0.41.0) actor search with
+    suggestions: aliases in every language, misspellings forgiven, related actors to fill the list. Next: a non-free
+    logo is skipped (e.g. Wagner) – an official emblem from the group's own register entry could fill such gaps.
 
 ### E. Engineering and operations
 
