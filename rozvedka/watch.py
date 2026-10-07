@@ -58,7 +58,7 @@ def remove(query: str, path: Path | None = None) -> None:
 def to_query(params: dict) -> str | None:
     """Documents-list parameters → a search-console query, or None when a filter has no query form."""
     if any(params.get(k) for k in ("cluster", "series", "main", "indexed", "status", "show_hidden", "undated",
-                                   "added_from", "added_to", "doc_type", "all_types", "all_files")):
+                                   "added_from", "added_to", "doc_type", "all_types", "all_files", "exact")):
         return None
     tax = topics.taxonomy()["topics"]
     quote = lambda v: f'"{v}"' if " " in v else v   # noqa: E731

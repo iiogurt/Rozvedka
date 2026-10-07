@@ -34,7 +34,7 @@
   <select name="status"><option value="">Any status</option>
     {% for s in ['downloaded','new','browser-only','failed'] %}<option value="{{ s }}" {{ 'selected' if f.status == s }}>{{ s }}</option>{% endfor %}
   </select>
-  {% for k in ('year_from', 'year_to', 'indexed', 'actor', 'main', 'cluster', 'series', 'added_from', 'added_to', 'undated', 'all_files', 'per_page') %}{% if f[k] %}<input type="hidden" name="{{ k }}" value="{{ f[k] }}">{% endif %}{% endfor %}
+  {% for k in ('year_from', 'year_to', 'indexed', 'actor', 'main', 'cluster', 'series', 'added_from', 'added_to', 'undated', 'all_files', 'exact', 'per_page') %}{% if f[k] %}<input type="hidden" name="{{ k }}" value="{{ f[k] }}">{% endif %}{% endfor %}
   <label class="chk"><input type="checkbox" name="show_hidden" value="1" {{ 'checked' if f.show_hidden }}> hidden too</label>
   <button>Filter</button>
   <a class="reset" href="/documents">Reset</a>
@@ -57,6 +57,16 @@
   {% if f.main %}<a class="topic-chip on" href="/documents?{{ qs(main='', page=1) }}" title="Remove">topics among each report's 3 main topics ✕</a>{% endif %}
   {% if f.indexed %}<a class="topic-chip on" href="/documents?{{ qs(indexed='', page=1) }}" title="Remove – the Trends charts count only documents with topic-classified text">classified text only ✕</a>{% endif %}
 </div>{% endif %}
+{% if expansions %}<div class="xl-box">
+  {% for e in expansions %}<div class="xl-line"><b>“{{ e.typed }}”</b> also finds its names in other languages –
+    <span class="muted small">{{ e.names|length }} from Wikidata <a href="{{ e.url }}" target="_blank" rel="noopener">{{ e.qid }}</a>
+      “{{ e.title }}” (revision {{ e.revision }}, retrieved {{ e.retrieved }})</span>
+    <details class="xl-names"><summary class="small">show the names</summary>
+      {% for lang, items in e.names|groupby(0) %}<span class="xl-lang"><span class="ctag">{{ lang }}</span> {{ items|map(attribute=1)|join(', ') }}</span>{% endfor %}
+    </details></div>{% endfor %}
+  <a class="small" href="/documents?{{ qs(exact=1, page=1) }}">Search only the words as typed</a>
+</div>{% elif f.exact and f.q %}<div class="xl-box small">Exact search: only “{{ f.q }}” as typed.
+  <a href="/documents?{{ qs(exact='', page=1) }}">Also find it in other languages</a></div>{% endif %}
 <div class="summary">
   <span><b>{{ total }}</b> documents match</span>
   {% if independent and f.type not in ('think-tank', 'official') %}<a class="small pub-count" href="/documents?{{ qs(type='think-tank', page=1) }}"

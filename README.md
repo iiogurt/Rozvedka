@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.34.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.35.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -107,8 +107,15 @@ The library itself (`/documents`): every report with its agency, country, langua
 
 - Filter by country, coalition (EU, NATO, Five Eyes, G7, Schengen, AUKUS, JEF, NATO IP4), agency type, language,
   year or year range, download status, topic (several at once) and actor.
-- **Full-text search inside the reports** – `"quoted phrases"`, `OR` for translations
-  (`drone OR Drohne OR dron`), results with highlighted snippets, sorted by relevance, year or date added.
+- **Full-text search inside the reports** – `"quoted phrases"`, `OR` for your own alternatives, results with
+  highlighted snippets, sorted by relevance, year or date added.
+- **Cross-language search** – a word that names one of ~100 security concepts (`sources/concepts.yaml`) also finds
+  its names in the other languages of the library: *Drohne* finds 449 reports instead of 25 (drone, dron, дрон,
+  bezpilotní letoun, mehitamata õhusõiduk …). The names are the labels and aliases of the concept's Wikidata item,
+  shown above the results with the item, its revision and the retrieval date; *Search only the words as typed* turns
+  it off. Trends term charts stay literal.
+
+  <img src="docs/images/cross-language.png" alt="Searching Drohne: the names in 30 languages from Wikidata, and translated hits highlighted" width="900">
 - Open a report's own page (its title), the downloaded PDF, or the agency's original; correct a title, language
   or year; hide irrelevant files; add a document by URL for sites that block automatic downloads.
 - Page through the results with numbered pages, first/last, "go to page", and 25 / 50 / 100 / 200 / 500 per page –

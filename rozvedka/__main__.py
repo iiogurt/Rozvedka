@@ -43,6 +43,7 @@ def main():
     im.add_argument("--check", action="store_true", help="only verify the dataset and compare it with this library")
     im.add_argument("--prefer", choices=["local", "dataset"], default="local", help="whose hand edits win in a conflict")
     im.add_argument("--no-index", action="store_true", help="skip matching topics, dates and actors afterwards")
+    sub.add_parser("fetch-concepts", help="names of the search concepts in every language, from Wikidata (cross-language search)")
     fa = sub.add_parser("fetch-actors", help="download the actor gazetteer (Wikidata, Wikipedia, MITRE ATT&CK)")
     fa.add_argument("--refresh", action="store_true", help="read the Wikipedia infoboxes again instead of the cache")
     ia = sub.add_parser("index-actors", help="find the gazetteer's actors in the report texts")
@@ -90,8 +91,12 @@ def main():
         print(doctypes.type_documents())
         print(works.group())
     elif a.cmd == "fetch-actors":
-        from . import actor_sources
+        from . import actor_sources, concepts
         print(actor_sources.fetch(refresh=a.refresh))
+        print(concepts.fetch())     # the search concepts' names too: widening the scope refreshes both
+    elif a.cmd == "fetch-concepts":
+        from . import concepts
+        print(concepts.fetch())
     elif a.cmd == "export":
         from . import dataset
         size = a.part_size.strip().upper()

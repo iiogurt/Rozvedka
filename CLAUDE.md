@@ -21,7 +21,8 @@ next steps. Read it at the start of a session; update it (mark items done, re-pr
   The two are **always told apart visually** (badge, marker, filter) wherever a source, report, count or map point
   is shown, and every view says which kinds it counts.
 - **Whenever the scope widens** (new states, institutions or kinds of publisher), also refresh the actor gazetteer
-  from Wikidata / Wikipedia / MITRE ATT&CK (`python -m rozvedka fetch-actors --refresh`, then `index-actors`) so
+  from Wikidata / Wikipedia / MITRE ATT&CK (`python -m rozvedka fetch-actors --refresh`, which also refreshes the
+  cross-language search concepts, then `index-actors`) so
   subjects, groups and individuals named by the new sources are known.
 - For every agency: list **every language version** (original, English, others), each as its own page entry with
   its language tagged, and **archive pages of older reports**, not only the latest edition. Each agency also gets a

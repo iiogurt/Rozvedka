@@ -27,6 +27,20 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.35.0] – 2026-10-07
+
+### Added
+- **Cross-language search**: a search word naming one of 107 security concepts (drone, ransomware, espionage,
+  disinformation, flood, civil protection …, `sources/concepts.yaml`) also finds the concept's names in every library
+  language – the labels and aliases of its Wikidata item, fetched by the new `fetch-concepts` command (also run by
+  `fetch-actors`) with the item's revision and the retrieval date. Documents shows what was added and where it comes
+  from, with *Search only the words as typed*. Example: *Drohne* – 25 reports as typed, 449 in all languages.
+- The Wikidata / Wikipedia fetch also covers Albanian, Macedonian, Turkish, Icelandic, Irish and Maltese names.
+
+### Fixed
+- Search results sorted by relevance computed the relevance with one full-text query per row (seconds per page);
+  now once per search.
+
 ## [0.34.0] – 2026-10-07
 
 ### Added
@@ -668,7 +682,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.34.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.35.0...HEAD
+[0.35.0]: https://github.com/iiogurt/Rozvedka/compare/v0.34.0...v0.35.0
 [0.34.0]: https://github.com/iiogurt/Rozvedka/compare/v0.33.0...v0.34.0
 [0.33.0]: https://github.com/iiogurt/Rozvedka/compare/v0.32.1...v0.33.0
 [0.32.1]: https://github.com/iiogurt/Rozvedka/compare/v0.32.0...v0.32.1

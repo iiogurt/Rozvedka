@@ -91,7 +91,7 @@ Each item: why · what · done when · version step.
    official URL). · minor
 3. **Actor timeline** (old C14) – first and last mention per agency, mentions per year by reporting country, how the
    connected actors changed. · minor
-4. **Cross-language search** – a word typed in one language also finds its translations where the topic taxonomy knows
+4. ✅ (0.35.0) **Cross-language search** – a word typed in one language also finds its translations where the topic taxonomy knows
    them (`Drohne` → `drone`, `dron`, …), shown as an explained expansion. · minor
 5. **Edition diff for a series** – what a new annual report says that the previous one did not (new actors, topics up
    or down, new passages naming watched actors). · minor
@@ -121,7 +121,8 @@ Each item: why · what · done when · version step.
    `deploy/`** (the owner declined periodic jobs). · patch
 2. ✅ (0.31.1) **CI** – GitHub Actions running the tests on every PR. · patch
 3. **Split `app.py`** into route modules (documents, actors, trends, maps, data, update) and a small migration helper. · patch
-4. **Performance** – cache actor and network results per index version (1–3 s pages); the home page takes ~0.7 s. · patch
+4. **Performance** – cache actor and network results per index version (1–3 s pages); the home page takes ~0.7 s;
+   a cross-language search takes ~3 s on the Pi (highlighting ~40 alternatives) against ~1 s as typed. · patch
 5. **Optional remote access** – stays LAN-only; if wanted, through a VPN (WireGuard / Tailscale), never exposed. · docs
 
 ### Done since 0.16.0

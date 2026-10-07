@@ -32,7 +32,7 @@ CONFIG = ROOT / "sources" / "actors.yaml"
 GAZETTEER = DATA / "gazetteer" / "actors.json"
 UA = "Rozvedka/0.x (personal research library; https://github.com/iiogurt/Rozvedka)"
 LANGS = ["en", "mul", "de", "fr", "es", "it", "nl", "pt", "cs", "sk", "pl", "sl", "hr", "hu", "ro", "bg", "el", "et", "lv",
-         "lt", "fi", "sv", "da", "nb", "nn", "ru", "uk", "ja", "zh", "ko"]
+         "lt", "fi", "sv", "da", "nb", "nn", "ru", "uk", "ja", "zh", "ko", "sq", "mk", "tr", "is", "ga", "mt"]
 ATTACK_URL = "https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack.json"
 SPARQL = "https://query.wikidata.org/sparql"
 WD_API = "https://www.wikidata.org/w/api.php"
