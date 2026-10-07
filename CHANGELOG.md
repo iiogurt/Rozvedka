@@ -27,6 +27,15 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.41.0] – 2026-10-07
+
+### Added
+- **Actor search with suggestions** (Actors page): as you type, up to 12 actors whose names or aliases match – in any
+  language, accents ignored, misspellings forgiven (letter-triple similarity, or one letter off for short words) –
+  with picture, kind, number of reports and the alias that matched. With fewer than ten direct matches, the actors
+  most often named in the same passages as the best match fill the list, with the number of reports naming both.
+  Keyboard: ↑ ↓ to choose, Enter to open, Esc to close; Enter without a choice still filters the list.
+
 ## [0.40.0] – 2026-10-07
 
 ### Added
@@ -779,7 +788,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.40.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.41.0...HEAD
+[0.41.0]: https://github.com/iiogurt/Rozvedka/compare/v0.40.0...v0.41.0
 [0.40.0]: https://github.com/iiogurt/Rozvedka/compare/v0.39.0...v0.40.0
 [0.39.0]: https://github.com/iiogurt/Rozvedka/compare/v0.38.1...v0.39.0
 [0.38.1]: https://github.com/iiogurt/Rozvedka/compare/v0.38.0...v0.38.1

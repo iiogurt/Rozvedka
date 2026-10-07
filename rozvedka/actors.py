@@ -31,7 +31,9 @@ import concurrent.futures as cf
 import hashlib
 import json
 import logging
+import math
 import re
+import time
 import unicodedata
 from functools import lru_cache
 
@@ -856,3 +858,122 @@ def top_names(limit: int = 300, status: str = "used", offset: int = 0) -> list[d
         r["origins"] = json.loads(r["origins"] or "[]")
         r["weak"] = is_weak(tuple(json.loads(r["tokens"] or "[]")))
     return rows
+
+
+# ── suggestions for the actor search: every name and alias, accents and spelling forgiven ──
+SUGGEST_LIMIT = 12
+_suggest_cache: dict = {"at": None, "stamp": None, "entries": [], "actors": {}}
+
+
+def _norm(s: str) -> str:
+    """'Jabhat al-Nuṣra' → 'jabhat al nusra': accents and punctuation gone, lowercase, single spaces."""
+    return " ".join(re.findall(r"\w+", fold(s).lower()))
+
+
+def _grams(s: str) -> set[str]:
+    s = f" {s} "
+    return {s[i:i + 3] for i in range(len(s) - 2)}
+
+
+def _windows(words: list[str]) -> dict[int, list[set[str]]]:
+    """Trigrams of every run of 1–3 consecutive words: a typed phrase is compared with runs as long as itself."""
+    return {k: [_grams(" ".join(words[i:i + k])) for i in range(len(words) - k + 1)] for k in (1, 2, 3)}
+
+
+def _suggest_index() -> tuple[list, dict]:
+    """(normalised name, its words, its word-run trigrams, actor key, the name as written) of every name of every
+    actor the reports name, and the actors themselves – rebuilt after an actor update, else kept for ten minutes."""
+    st = stamp().get("names_hash")
+    c = _suggest_cache
+    if c["at"] is not None and c["stamp"] == st and time.monotonic() - c["at"] < 600:
+        return c["entries"], c["actors"]
+    found = {r["key"]: r for r in actor_list(min_docs=1, include_countries=True)}
+    with db.session() as con:
+        names = con.execute(f"""SELECT actor_key, name FROM actor_names WHERE actor_key IN
+                                ({','.join('?' * len(found))})""", list(found)).fetchall() if found else []
+    entries, seen = [], set()
+    for key, name in [(k, r["label"]) for k, r in found.items()] + [(n[0], n[1]) for n in names]:
+        n = _norm(name)
+        if len(n) < 2 or (key, n) in seen:
+            continue
+        seen.add((key, n))
+        words = n.split()
+        entries.append((n, words, _windows(words), key, name))
+    c.update(at=time.monotonic(), stamp=st, entries=entries, actors=found)
+    return entries, found
+
+
+def _one_edit(a: str, b: str) -> bool:
+    """a and b differ by one letter replaced, added, dropped or two neighbours swapped ("putn" ~ "putin")."""
+    if a == b or abs(len(a) - len(b)) > 1:
+        return a == b
+    i = 0
+    while i < min(len(a), len(b)) and a[i] == b[i]:
+        i += 1
+    if len(a) == len(b):
+        return a[i + 1:] == b[i + 1:] or (a[i:i + 2] == b[i:i + 2][::-1] and a[i + 2:] == b[i + 2:])
+    return (a[i + 1:] == b[i:]) if len(a) > len(b) else (a[i:] == b[i + 1:])
+
+
+FUZZY = 0.6        # Dice similarity of letter triples between what was typed and a run of words of a name
+
+
+def _rank(entries: list, found: dict, qn: str, qwords: list) -> dict[str, tuple[float, str]]:
+    qg, k = _grams(qn), min(len(qwords), 3)
+    best: dict[str, tuple[float, str]] = {}
+    for n, words, wins, key, name in entries:
+        if n == qn:
+            s = 100
+        elif n.startswith(qn):
+            s = 90
+        elif all(any(w.startswith(x) for w in words) for x in qwords):
+            s = 80                                   # every typed word starts a word of the name ("prig yev")
+        elif found[key]["kind"] == "country" or len(qn) < 4:
+            continue                                 # countries and very short input: no guessing
+        else:
+            sim = max((2 * len(qg & g) / (len(qg) + len(g)) for g in wins[k]), default=0)
+            if sim >= FUZZY:
+                s = 40 + 40 * sim                    # a close misspelling (0.6–1) ranks 64–80
+            elif len(qwords) == 1 and any(_one_edit(qn, w) for w in words):
+                s = 70                               # one keystroke off: short words share too few triples
+            else:
+                continue
+        s += 4 * math.log10(1 + found[key]["docs"])  # more reported actors a little ahead
+        if s > best.get(key, (0, ""))[0]:
+            best[key] = (s, name)
+    return best
+
+
+def suggest(q: str, limit: int = SUGGEST_LIMIT) -> list[dict]:
+    """Actors whose names match what was typed: exactly, at the start, at the start of a word or – for
+    misspellings – by shared letter triples. Among equal matches, actors in more reports come first. With fewer than
+    ten matches, the actors named most often in the same passages as the best match follow, marked as such."""
+    qn = _norm(q)
+    if len(qn) < 2:
+        return []
+    entries, found = _suggest_index()
+    best = _rank(entries, found, qn, qn.split())
+    ranked = sorted(best.items(), key=lambda kv: -kv[1][0])[:limit]
+    out = []
+    for key, (s, name) in ranked:
+        r = found[key]
+        out.append({"key": key, "label": r["label"], "kind": r["kind"], "kind_name": kind_name(r["kind"]),
+                    "docs": r["docs"], "description": r["description"] or "",
+                    "via": name if _norm(name) != _norm(r["label"]) else None, "score": round(s, 1)})
+    if out and len(out) < 10:
+        top, have = out[0], {o["key"] for o in out}
+        with db.session() as con:
+            near = con.execute("""SELECT other, COUNT(DISTINCT doc_id) n FROM (
+                                    SELECT b other, doc_id FROM actor_pairs WHERE a=? UNION ALL
+                                    SELECT a other, doc_id FROM actor_pairs WHERE b=?)
+                                  GROUP BY other ORDER BY n DESC LIMIT 40""", (top["key"], top["key"])).fetchall()
+        for other, n in near:
+            r = found.get(other)
+            if not r or other in have or r["kind"] == "country":
+                continue
+            out.append({"key": other, "label": r["label"], "kind": r["kind"], "kind_name": kind_name(r["kind"]),
+                        "docs": r["docs"], "description": r["description"] or "", "via": None,
+                        "near": {"label": top["label"], "docs": n, "link": f"/actors/{top['key']}/with/{other}"}})
+            if len(out) >= 10:
+                break
+    return out

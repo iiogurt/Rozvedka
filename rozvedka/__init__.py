@@ -5,7 +5,7 @@ from pathlib import Path
 
 # Single source of the release version (Semantic Versioning, https://semver.org).
 # Do not edit by hand: run `python3 tools/bump_version.py patch|minor|major` (see CHANGELOG.md, "Versioning").
-__version__ = "0.40.0"
+__version__ = "0.41.0"
 
 
 @lru_cache(maxsize=1)
