@@ -72,7 +72,7 @@
     <tbody>{% for r in rows %}<tr class="st-row-{{ r.state }}">
       <td>{% if r.state != 'manual' %}<input type="checkbox" class="tick" value="{{ r.id }}" aria-label="Tick {{ r.agency }}">{% endif %}</td>
       <td class="src"><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="{{ r.country }}" width="20" height="15">
-        <a href="/documents?source={{ r.id }}"><b>{{ r.agency }}</b></a> <span class="muted small">{{ r.name_en or '' }}</span>
+        <a href="/documents?source={{ r.id }}"><b>{{ r.agency }}</b></a>{{ pub_mark(r.id) }} <span class="muted small">{{ r.name_en or '' }}</span>
         {% if r.access not in ('auto', 'manual') %}<span class="tag" title="How the site is fetched">{{ r.access }}</span>{% endif %}</td>
       <td class="num">{{ r.pages }}</td>
       <td class="num">{{ age(r.last) }}</td>

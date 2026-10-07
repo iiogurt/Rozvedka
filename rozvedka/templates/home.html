@@ -4,7 +4,7 @@
 {% block body_class %}home{% endblock %}
 {% macro doc_row(r, when) %}
   <li><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="{{ r.country }}" width="20" height="15">
-    <a class="h-src" href="/documents?source={{ r.source_id }}">{{ r.agency }}</a>{{ pub_mark(r.source_id) }}
+    <span class="h-srcw"><a class="h-src" href="/documents?source={{ r.source_id }}">{{ r.agency }}</a>{{ pub_mark(r.source_id, compact=True) }}</span>
     <span class="h-when">{{ when }}</span>
     <span class="h-title"><a href="/report/{{ r.id }}">{{ r.title }}</a></span>
     <span class="lang">{{ r.lang or '?' }}</span></li>

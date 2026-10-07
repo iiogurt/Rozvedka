@@ -897,3 +897,7 @@ a.pub-ind { text-decoration: none; }
 .pc-redflag { color: var(--pl-redflag); } .pc-unknown { color: var(--pl-unassessed); }
 .pp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 0 16px; }
 .pp-bars td.bar { width: 60%; } .pp-bars .bar span { display: block; height: 10px; background: var(--accent); border-radius: 2px; }
+.h-srcw { display: flex; align-items: baseline; min-width: 0; }
+.h-srcw .h-src { min-width: 0; }
+.pub-ind.pub-compact { padding: 0 3px; margin-left: 3px; }
+.pub-ind.pub-compact::before { content: "◆"; }

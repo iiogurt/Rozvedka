@@ -94,14 +94,16 @@ def independent_ids() -> frozenset:
     return _independent["ids"]
 
 
-def pub_mark(source_id) -> Markup:
+def pub_mark(source_id, compact: bool = False) -> Markup:
     """The badge that marks an independent publisher next to its name, wherever a source or report is shown – coloured
-    and labelled by its credibility rating, and opening its profile."""
+    and labelled by its credibility rating, and opening its profile. Compact (narrow rows): the coloured ◆ alone, the
+    label in its tooltip."""
     if source_id in independent_ids():
         p = _independent["levels"][source_id]
-        return Markup(f'<a class="pub-ind pub-lv-{p["level"]}" href="/publisher/{int(source_id)}" title="Independent publisher – a '
-                      f'think tank, not run by a state. Credibility: {escape(p["label"])} – {escape(p["about"])}. '
-                      f'Open its profile">think tank · {escape(p["label"])}</a>')
+        text = "" if compact else f"think tank · {escape(p['label'])}"
+        return Markup(f'<a class="pub-ind pub-lv-{p["level"]}{" pub-compact" if compact else ""}" href="/publisher/{int(source_id)}" '
+                      f'title="Independent publisher – a think tank, not run by a state. Credibility: {escape(p["label"])} – '
+                      f'{escape(p["about"])}. Open its profile">{text}</a>')
     return Markup("")
 
 
