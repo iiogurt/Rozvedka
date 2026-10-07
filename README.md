@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.39.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.40.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -265,12 +265,17 @@ no periodic job.
 
 ### 🕵️ Actors
 
-<img src="docs/images/actor.png" alt="Actor page: mentions per year, reporting agencies and sourced reference data" width="900">
+<img src="docs/images/actor.png" alt="Actor page: profile with photo, key facts and Wikipedia lead, mentions per year, reporting agencies and sourced reference data" width="900">
 
 - An index of state services, cyber threat groups, terrorist-designated and armed groups, organised crime,
   movements and key people, built from **Wikidata**, **Wikipedia** and **MITRE ATT&CK**, and found by name in the
   report texts – in all report languages and with the aliases of each group (APT28 = Fancy Bear = Sofacy =
   Forest Blizzard).
+- **Profile** at the top of each actor page: a picture – a group's flag or logo, a person's photo, a country's
+  flag – with its author and licence from Wikimedia Commons, key facts from Wikidata (born, positions held,
+  citizenship; founded, founder, leader, ideology, headquarters, members) each linked to its statement, and the
+  opening of the Wikipedia article. Fetched with `fetch-actor-profiles` (part of `fetch-actors`) for every actor
+  the reports name; only freely licensed pictures are used, stored once as small thumbnails.
 - Each actor page: reference data with its source and revision, the Wikipedia lead, mentions per year, which
   agencies report on it, the topics of those reports, actors named in the same passage, and **the passages
   themselves with a link to the cited page of the PDF**.
@@ -465,6 +470,7 @@ nohup .venv/bin/python -m rozvedka serve > data/logs/portal.log 2>&1 &
 | `ocr [--limit N] [--workers 3]` | recognise the text of scanned reports (no text layer) with Tesseract via OCRmyPDF, in the report's language + English; stores the text with page breaks, marks it as OCR, leaves the PDF unchanged (part of `update` when installed) |
 | `date-documents [--check]` | give undated reports a year from their first pages – a report heading, else a publication date – with the evidence; `--check` measures accuracy on reports whose year is known (part of `update`) |
 | `fetch-actors [--refresh]` | download the actor gazetteer and connections from Wikidata, Wikipedia and MITRE ATT&CK (network; Wikipedia infoboxes are cached in `data/gazetteer/` – `--refresh` reads them again) |
+| `fetch-actor-profiles [--refresh]` | pictures (flag, logo or photo, with author and licence), key facts and Wikipedia leads of every actor the reports name, from Wikipedia, Wikidata and Wikimedia Commons (network; part of `fetch-actors`; `--refresh` downloads the pictures again) |
 | `index-actors [--rematch]` | find the actors in the report texts (offline) |
 | `fetch-logos [--refresh]` | download agency logos from their home pages |
 | `improve-titles` | replace poor document titles with the title stored in the PDF |
@@ -791,6 +797,7 @@ erDiagram
 | Flags | [flag-icons](https://github.com/lipis/flag-icons) | MIT ([`LICENSE.flag-icons`](rozvedka/static/flags/LICENSE.flag-icons)); `nato.svg`, `other.svg` drawn for this project |
 | Actor reference data | [Wikidata](https://www.wikidata.org) | CC0 |
 | Actor summaries | [English Wikipedia](https://en.wikipedia.org) | CC BY-SA 4.0, attributed with article and revision on each page (also in the actor screenshot above) |
+| Actor pictures | [Wikimedia Commons](https://commons.wikimedia.org) – the Wikipedia article image or the Wikidata flag / logo / image (`data/gazetteer/actor_images/`, not committed) | free licences only (CC BY, CC BY-SA, public domain …); author, licence and file page shown with each picture |
 | Threat groups | [MITRE ATT&CK®](https://attack.mitre.org) | © The MITRE Corporation, reproduced with permission |
 | Event dates | Wikidata via `tools/build_events.py` | CC0 |
 | Charts | [Apache ECharts](https://echarts.apache.org) 6.1.0, vendored | Apache-2.0 |

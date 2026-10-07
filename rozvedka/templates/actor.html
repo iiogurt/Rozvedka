@@ -5,11 +5,33 @@
 {% block head %}<script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>{% endblock %}
 {% block main %}
 <p class="small"><a href="/actors">← Actors</a></p>
-<header class="actor-head">
-  <h1>{{ a.label }}</h1>
-  <span class="topic-chip on">{{ kind_name }}</span>
-  {% if a.description %}<p class="actor-desc">{{ a.description }}
-    <span class="src">– {% if a.wikidata %}<a href="{{ a.wikidata.url }}">Wikidata</a>{% else %}<a href="{{ a.attack.url }}">MITRE ATT&amp;CK</a>{% endif %}</span></p>{% endif %}
+{% set pic = profile.picture if profile else none %}
+{% set wp = a.wikipedia if a.wikipedia and a.wikipedia.extract else (profile.wikipedia if profile and profile.wikipedia and profile.wikipedia.extract else none) %}
+{% macro fact_values(f, limit=99) %}{% set hidden = (f['values']|length - limit if f['values']|length > limit else 0) + f.more %}{% for v in f['values'][:limit] %}{% if v.qid %}<a href="https://www.wikidata.org/wiki/{{ v.qid }}">{{ v.text }}</a>{% elif v.url %}<a href="{{ v.url }}" rel="noopener">{{ v.text }}</a>{% else %}{{ v.text }}{% endif %}{% if v.when %} <span class="muted">({{ v.when }})</span>{% endif %}{{ ', ' if not loop.last }}{% endfor %}{% if hidden %} <span class="muted">+{{ hidden }} more</span>{% endif %}{% endmacro %}
+<header class="actor-head{{ ' has-pic' if pic or row.iso }}">
+  {% if pic %}<figure class="actor-pic{{ ' is-photo' if a.kind == 'person' }}">
+    {% set what = pic.what[:1]|upper ~ pic.what[1:] %}
+    <a href="{{ pic.page }}"><img src="/actor-image/{{ a.key }}" alt="{{ what }} – {{ a.label }}"></a>
+    <figcaption>{{ what }}{% if pic.author %} · {{ pic.author|truncate(60) }}{% endif %}
+      {% if pic.licence %}· {% if pic.licence_url %}<a href="{{ pic.licence_url }}">{{ pic.licence }}</a>{% else %}{{ pic.licence }}{% endif %}{% endif %}
+      · <a href="{{ pic.page }}">Wikimedia Commons</a></figcaption></figure>
+  {% elif row.iso %}<figure class="actor-pic"><img src="{{ flag_url(row.iso) }}" alt="Flag of {{ a.label }}"><figcaption>Flag</figcaption></figure>{% endif %}
+  <div class="actor-id">
+    <h1>{{ a.label }}</h1>
+    <span class="topic-chip on">{{ kind_name }}</span>
+    {% if a.description %}<p class="actor-desc">{{ a.description }}
+      <span class="src">– {% if a.wikidata %}<a href="{{ a.wikidata.url }}">Wikidata</a>{% else %}<a href="{{ a.attack.url }}">MITRE ATT&amp;CK</a>{% endif %}</span></p>{% endif %}
+    {% set key_facts = [] %}
+    {% if a.inception %}{% set _ = key_facts.append(('Founded', a.inception, 'P571')) %}{% endif %}
+    {% if a.dissolved %}{% set _ = key_facts.append(('Dissolved', a.dissolved, 'P576')) %}{% endif %}
+    {% if a.countries and a.kind != 'person' %}{% set _ = key_facts.append(('Country', a.countries|map(attribute='label')|join(', '), 'P17')) %}{% endif %}
+    {% if profile or key_facts %}<dl class="actor-keyfacts">
+      {% for label, value, prop in key_facts %}<div><dt>{{ label }}</dt><dd>{{ value }}</dd></div>{% endfor %}
+      {% for f in (profile.facts if profile else [])[:7 - key_facts|length] if f.prop != 'P856' %}<div><dt>{{ f.label }}</dt><dd>{{ fact_values(f, 3) }}</dd></div>{% endfor %}
+    </dl>{% endif %}
+    {% if wp %}<p class="actor-lead">{{ wp.extract.split('\n')[0]|truncate(520) }}
+      <span class="src">– <a href="{{ wp.url }}">Wikipedia</a> · <a href="#reference">more</a></span></p>{% endif %}
+  </div>
 </header>
 
 <div class="actor-grid">
@@ -60,7 +82,7 @@
   {% endif %}
 </section>
 
-<section class="viz-card facts">
+<section class="viz-card facts" id="reference">
   <h2 class="viz-title">Reference data</h2>
   <table class="facts-t">
     {% if a.wikidata %}<tr><th>Wikidata</th><td><a href="{{ a.wikidata.url }}">{{ a.qid }}</a></td>
@@ -76,17 +98,22 @@
       <td class="src"><a href="{{ a.wikidata.url }}#P3461">Wikidata P3461</a> – check each designation at its own source</td></tr>{% endif %}
     {% if a.attack %}<tr><th>MITRE ATT&amp;CK</th><td><a href="{{ a.attack.url }}">{{ a.attack.id }}</a> {{ a.attack.name }}</td>
       <td class="src">ATT&amp;CK Enterprise, modified {{ (a.attack.modified or '')[:10] }}, retrieved {{ a.attack.retrieved }}</td></tr>{% endif %}
-    {% if a.image %}<tr><th>Image</th><td><a href="{{ a.image }}">on Wikimedia Commons</a></td><td class="src"><a href="{{ a.wikidata.url }}#P154">Wikidata P154/P18</a></td></tr>{% endif %}
+    {% for f in (profile.facts if profile else []) %}<tr><th>{{ f.label }}</th><td>{{ fact_values(f) }}</td>
+      <td class="src"><a href="{{ a.wikidata.url }}#{{ f.prop }}">Wikidata {{ f.prop }}</a></td></tr>{% endfor %}
+    {% if pic %}<tr><th>Picture</th><td><a href="{{ pic.page }}">{{ pic.file }}</a> – {{ pic.what }}{% if pic.author %}, by {{ pic.author }}{% endif %}{% if pic.credit and pic.credit != pic.author and '://' not in pic.credit %} ({{ pic.credit|truncate(80) }}){% endif %}</td>
+      <td class="src">Wikimedia Commons, {% if pic.licence_url %}<a href="{{ pic.licence_url }}">{{ pic.licence }}</a>{% else %}{{ pic.licence or 'licence on the file page' }}{% endif %}; retrieved {{ profile.retrieved }}</td></tr>
+    {% elif a.image %}<tr><th>Image</th><td><a href="{{ a.image }}">on Wikimedia Commons</a></td><td class="src"><a href="{{ a.wikidata.url }}#P154">Wikidata P154/P18</a></td></tr>{% endif %}
     <tr><th>Listed because</th><td colspan="2"><ul class="plain">{% for r in a.reasons %}<li>{{ r.text }}{% if r.class %}
       – <a href="https://www.wikidata.org/wiki/{{ r.class }}">{{ r.class }}</a>{% endif %}</li>{% endfor %}</ul></td></tr>
   </table>
+  {% if profile and profile.facts %}<p class="src">Facts marked with a Wikidata property come from <a href="{{ a.wikidata.url }}">{{ a.qid }}</a>, revision {{ profile.wikidata_revision }}, retrieved {{ profile.retrieved }} (English labels).</p>{% endif %}
 
-  {% if a.wikipedia %}
+  {% if wp %}
   <h3 class="viz-mini">Wikipedia</h3>
-  <blockquote class="wp">{% for para in a.wikipedia.extract.split('\n') %}<p>{{ para }}</p>{% endfor %}</blockquote>
-  <p class="src">From the English Wikipedia article <a href="{{ a.wikipedia.url }}">{{ a.wikipedia.title }}</a>,
-    <a href="{{ a.wikipedia.revision_url }}">revision {{ a.wikipedia.revision }}</a> ({{ (a.wikipedia.revision_time or '')[:10] }}),
-    retrieved {{ a.wikipedia.retrieved }}; text under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
+  <blockquote class="wp">{% for para in wp.extract.split('\n') %}<p>{{ para }}</p>{% endfor %}</blockquote>
+  <p class="src">From the English Wikipedia article <a href="{{ wp.url }}">{{ wp.title }}</a>,
+    <a href="{{ wp.revision_url }}">revision {{ wp.revision }}</a> ({{ (wp.revision_time or '')[:10] }}),
+    retrieved {{ wp.retrieved or profile.retrieved }}; text under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
   {% endif %}
   {% if a.attack and a.attack.description %}
   <h3 class="viz-mini">MITRE ATT&amp;CK</h3>

@@ -49,7 +49,7 @@ SHOTS = {
     "topics": ("/topics", 1100, [], None),
     "terms": ("/trends/terms?term=drone&term=ransomware&term=disinformation", 1000, [("sleep", 4)], None),
     "matrix": ("/trends/matrix", 1000, [("sleep", 5)], None),
-    "actor": (f"/actors/{WAGNER}", 1200, [("sleep", 3)], None),
+    "actor": ("/actors/Q7747", 1200, [("sleep", 3)], None),        # a profile with a photo and facts
     "connections": (f"/actors/{WAGNER}", 900, [("sleep", 3)], "#connections"),
     "review": ("/actors/review", 1100, [], None),
     "network": ("/network", 1100, [("sleep", 6)], None),

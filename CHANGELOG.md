@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.40.0] – 2026-10-07
+
+### Added
+- **Actor profiles**: each actor page opens with a picture – the flag or logo of a group, the photo of a person, the
+  flag of a country – with author, licence and Commons file page; key facts from Wikidata (born, died, citizenship,
+  occupation, positions held with years; founded, founder, leader, ideology, headquarters, members, website), each
+  linked to its Wikidata statement in the reference table; and the opening of the English Wikipedia article (now
+  also for people, who had none before).
+- New command `python -m rozvedka fetch-actor-profiles` (also run by `fetch-actors`): fetches the profiles of every
+  actor the reports name into `data/gazetteer/actor_profiles.json` and stores each freely licensed picture once as a
+  small thumbnail; the portal makes no outside calls.
+
 ## [0.39.0] – 2026-10-07
 
 ### Added
@@ -767,7 +779,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.39.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.40.0...HEAD
+[0.40.0]: https://github.com/iiogurt/Rozvedka/compare/v0.39.0...v0.40.0
 [0.39.0]: https://github.com/iiogurt/Rozvedka/compare/v0.38.1...v0.39.0
 [0.38.1]: https://github.com/iiogurt/Rozvedka/compare/v0.38.0...v0.38.1
 [0.38.0]: https://github.com/iiogurt/Rozvedka/compare/v0.37.1...v0.38.0
