@@ -17,7 +17,7 @@
   <select name="coalition" aria-label="Coalition"><option value="">All coalitions</option>
     {% for key, c in COALITIONS.items() %}<option value="{{ key }}">{{ c.name }}</option>{% endfor %}
   </select>
-  <select name="type" aria-label="Agency type"><option value="">All agency types</option>
+  <select name="type" aria-label="Agency type"><option value="">All sources – official and think tanks</option><option value="official">Official agencies only</option>
     {% for key, name in TYPE_NAMES.items() %}<option value="{{ key }}">{{ name }}</option>{% endfor %}
   </select>
   {% if view == 'matrix' %}

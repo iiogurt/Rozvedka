@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.33.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.34.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -155,6 +155,16 @@ Every report title in the portal opens its own page (`/report/<id>`); the PDF st
 - **actors named**, each with its first passage and page number, and the countries named.
 
 ### 🏛️ Sources
+
+<img src="docs/images/sources-independent.png" alt="Sources: the separate section of independent think tanks, each card marked with a diamond badge" width="900">
+
+**Official agencies and independent publishers are always told apart.** Besides the state agencies and
+intergovernmental bodies, the library includes pro-democratic and security **think tanks** – CEPA, Freedom House,
+ISD, ECFR, V-Dem, SIPRI, ICCT, Clingendael, HCSS, IFRI, ICDS, ASPI, Lowy Institute, IEP; CSIS, ISW and GLOBSEC
+collected by hand. They are marked **◆ think tank** wherever a source or report appears (Documents, report page,
+home, What's new, Watchlist, Compare, Series, actor pages), have their own section on Sources, a yellow diamond
+instead of a dot on the map, and every count can leave them out with **“Official agencies only”**; the Trends notes
+and the Documents summary say how many think-tank reports a count includes.
 
 One card per agency: flag, logo, official name in the original language and in English, home page, a short
 description of what its reports cover, coalition tags with the year each country joined, the report pages it is

@@ -16,7 +16,7 @@
     {% for k in countries %}<option value="{{ k }}" {{ 'selected' if f.country == k }}>{{ COUNTRY_NAMES.get(k, k) }}</option>{% endfor %}</select>
   <select name="coalition" aria-label="Coalition"><option value="">All coalitions</option>
     {% for key, co in COALITIONS.items() %}<option value="{{ key }}" {{ 'selected' if f.coalition == key }}>{{ co.short }}</option>{% endfor %}</select>
-  <select name="type" aria-label="Agency type"><option value="">All agency types</option>
+  <select name="type" aria-label="Agency type"><option value="">All sources – official and think tanks</option><option value="official" {{ 'selected' if f.type == 'official' }}>Official agencies only</option>
     {% for key, name in TYPE_NAMES.items() %}<option value="{{ key }}" {{ 'selected' if f.type == key }}>{{ name }}</option>{% endfor %}</select>
   <button>Compare</button>
 </form>
@@ -38,7 +38,7 @@
     <article class="viz-card cmp-card">
       <header class="cmp-head">
         <img class="flag-sm" src="{{ flag_url(a.country) }}" alt="{{ a.country }}" width="20" height="15">
-        <a class="cmp-agency" href="/documents?source={{ a.source_id }}" title="{{ a.name_en or '' }}">{{ a.agency }}</a>
+        <a class="cmp-agency" href="/documents?source={{ a.source_id }}" title="{{ a.name_en or '' }}">{{ a.agency }}</a>{{ pub_mark(a.source_id) }}
         <span class="muted small">{{ TYPE_NAMES.get(a.type, a.type) }}</span>
         <span class="cmp-n"><a href="{{ a.url }}"><b>{{ a.n }}</b></a> <span class="muted small">of <a href="{{ a.of_url }}">{{ a.of }}</a></span></span>
       </header>

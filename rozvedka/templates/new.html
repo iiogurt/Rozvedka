@@ -62,7 +62,7 @@
         {% if d.source_id != ns.src %}{% set ns.src = d.source_id %}{% set g = by_source[d.source_id] %}
           {% if not loop.first %}</ol>{% endif %}
           <h3 class="nw-agency"><img class="flag-sm" src="{{ flag_url(g.country) }}" alt="{{ g.country }}" width="20" height="15">
-            <a href="/documents?source={{ g.source_id }}">{{ g.agency }}</a> <a class="muted small" href="{{ g.url }}">{{ g.docs|length }} new</a></h3>
+            <a href="/documents?source={{ g.source_id }}">{{ g.agency }}</a>{{ pub_mark(g.source_id) }} <a class="muted small" href="{{ g.url }}">{{ g.docs|length }} new</a></h3>
           <ol class="nw-docs">
         {% endif %}
         <li><span class="h-when">{{ d.year or '—' }}</span>

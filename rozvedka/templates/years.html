@@ -36,7 +36,7 @@
     <tr>
       <td><input type="checkbox" name="doc" value="{{ c.doc_id }}" aria-label="Select {{ c.title }}"></td>
       <td class="title"><img class="flag-sm" src="{{ flag_url(c.country) }}" alt="{{ c.country }}" width="20" height="15">
-        <span class="muted small">{{ c.agency }}</span> <a href="/report/{{ c.doc_id }}">{{ c.title }}</a>
+        <span class="muted small">{{ c.agency }}</span>{{ pub_mark(c.source_id) }} <a href="/report/{{ c.doc_id }}">{{ c.title }}</a>
         <div class="meta">{% if c.local_path %}<a href="/doc/{{ c.doc_id }}" target="_blank">PDF</a> · {% endif %}<a href="{{ c.url }}" target="_blank" rel="noopener">original ↗</a>
           {% if c.year_source %} · <span title="{{ c.year_source }}">stored year estimated</span>{% endif %}</div></td>
       <td class="n">{{ c.stored }}</td>

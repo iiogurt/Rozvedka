@@ -5,7 +5,7 @@
 {% block main %}
 <p class="small"><a href="/series">← Series</a> · <a href="/sources#s-{{ coverage.source.id }}">{{ coverage.source.agency }} on Sources</a>
   · <a href="/documents?series={{ id }}">all editions as documents</a> · <a href="/collect?source={{ s.source|urlencode }}">to collect</a></p>
-<h1 class="page-h"><img class="flag-sm" src="{{ flag_url(coverage.source.country) }}" alt=""> {{ coverage.source.agency }} – {{ s.name }}</h1>
+<h1 class="page-h"><img class="flag-sm" src="{{ flag_url(coverage.source.country) }}" alt=""> {{ coverage.source.agency }} – {{ s.name }}{{ pub_mark(coverage.source.id) }}</h1>
 <p class="muted small">{{ s.per_year }}× a year · {{ s.languages|join(', ') }} · since {{ s.since }} · {{ editions|length }} editions in the library.
   Series definition: <code>sources/series.yaml</code>.</p>
 

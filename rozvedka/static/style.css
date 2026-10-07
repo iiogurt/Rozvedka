@@ -841,3 +841,18 @@ table.yc td.ev { max-width: 420px; }
 .badge-type.badge-off { border-style: dashed; font-style: italic; }
 .rp-type { display: inline-flex; gap: 4px; margin-left: 8px; } .rp-type select, .rp-type button { font-size: 12px; padding: 1px 4px; }
 .variants { margin-left: 6px; font-size: 12px; color: var(--muted); } .variants a { margin-left: 2px; }
+
+/* independent publishers (think tanks): told apart from official agencies everywhere – a badge in lists, a diamond on the map */
+:root { --indep: #8a6d00; --indep-bg: rgba(240, 228, 66, .18); }
+:root[data-theme="dark"] { --indep: #f0e442; --indep-bg: rgba(240, 228, 66, .12); }
+.pub-ind { display: inline-block; font-size: 10.5px; line-height: 1.4; padding: 0 5px; margin-left: 5px; border-radius: 3px;
+           border: 1px solid var(--indep); color: var(--indep); background: var(--indep-bg); white-space: nowrap; cursor: help;
+           vertical-align: middle; font-weight: 600; letter-spacing: .02em; }
+.pub-ind::before { content: "◆ "; }
+.pub-note { color: var(--indep); font-size: 12px; margin-top: 3px; }
+.pub-banner { border-left: 4px solid var(--indep); background: var(--indep-bg); padding: 6px 10px; margin: 0 0 12px; font-size: 13px; }
+.pin-dot.diamond { border-radius: 2px; transform: rotate(45deg) scale(.9); }
+.type-dot-think-tank { --c: #8a6d00; } .theme-dark .type-dot-think-tank { --c: #f0e442; }
+.card.card-ind { border-left: 4px solid var(--indep); }
+.pub-count { color: var(--indep); }
+h2.region.region-ind { color: var(--indep); border-color: var(--indep); } .flag-ind { align-self: center; }

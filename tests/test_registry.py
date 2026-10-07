@@ -4,7 +4,8 @@ import pytest
 from rozvedka.registry import load, source_key
 
 SOURCES = load()
-TYPES = {"intelligence-civil", "intelligence-military", "cyber", "civil-protection", "police-ct", "eu-body", "nato", "other"}
+TYPES = {"intelligence-civil", "intelligence-military", "cyber", "civil-protection", "police-ct", "eu-body", "nato", "other",
+         "think-tank"}
 ACCESS = {"auto", "browser-ua", "tls-lenient", "browser-js", "manual"}
 KINDS = {"current", "archive", "series"}
 # rough (lat_min, lat_max, lon_min, lon_max) per country; EU members, EU bodies and NATO use the Europe box
@@ -50,3 +51,14 @@ def test_hq_location(s):
     lat0, lat1, lon0, lon1 = BOXES.get(s["country"], EUROPE)
     # a pin outside its country's box means the geocoder matched a namesake (London, Ontario …)
     assert lat0 <= hq["lat"] <= lat1 and lon0 <= hq["lon"] <= lon1, (s["country"], hq["lat"], hq["lon"])
+
+
+def test_publisher_is_official_or_independent():
+    """Think tanks are marked independent, so every view can tell them apart from state agencies."""
+    import re
+    for s in load():
+        assert s.get("publisher", "official") in ("official", "independent"), s["agency"]
+        assert (s["type"] == "think-tank") == (s.get("publisher") == "independent"), s["agency"]
+        for p in s.get("pages", []):
+            if p.get("follow"):
+                re.compile(p["follow"])

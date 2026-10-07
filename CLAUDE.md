@@ -15,7 +15,14 @@ next steps. Read it at the start of a session; update it (mark items done, re-pr
 - Scope: EU27 + EU bodies + NATO; other democracies (UK, Norway, Switzerland, Ukraine, USA, Canada, Mexico,
   Brazil, Argentina, Chile, Colombia, Peru, Australia, New Zealand, Japan, South Korea, Taiwan); a few
   international bodies (e.g. IPCC).
-- Only **official** sources: the agency's own domain (or its government portal). No aggregators or mirrors.
+- Sources are either **official** (state agencies, government portals, intergovernmental bodies) or, since
+  2026-10-07, **independent publishers** – pro-democratic and security think tanks and research institutes that
+  publish regular reports (e.g. CEPA). Every report comes from its publisher's own domain; no aggregators or mirrors.
+  The two are **always told apart visually** (badge, marker, filter) wherever a source, report, count or map point
+  is shown, and every view says which kinds it counts.
+- **Whenever the scope widens** (new states, institutions or kinds of publisher), also refresh the actor gazetteer
+  from Wikidata / Wikipedia / MITRE ATT&CK (`python -m rozvedka fetch-actors --refresh`, then `index-actors`) so
+  subjects, groups and individuals named by the new sources are known.
 - For every agency: list **every language version** (original, English, others), each as its own page entry with
   its language tagged, and **archive pages of older reports**, not only the latest edition. Each agency also gets a
   profile (original and official English name, home page, short description of what its reports cover), coalition

@@ -97,7 +97,9 @@ MIGRATIONS = {
                   "work_id": "INTEGER", "work_why": "TEXT"},     # the file representing its report, and why (rozvedka/works.py)
     "sources": {"name_local": "TEXT", "name_en": "TEXT", "homepage": "TEXT", "description": "TEXT",
                 "logo_url": "TEXT", "logo_path": "TEXT", "hq_address": "TEXT", "lat": "REAL", "lon": "REAL",
-                "hq_precision": "TEXT", "domains": "TEXT"},
+                "hq_precision": "TEXT", "domains": "TEXT",
+                "publisher": "TEXT DEFAULT 'official'"},   # official (run by a state or states) | independent (think tank)
+    "pages": {"follow": "TEXT"},                  # regex: publication pages to open from a list page (think tanks)
 }
 
 

@@ -22,7 +22,7 @@
         <span class="row"><select name="year_from"><option value="">from</option>{% for y in years|reverse %}<option>{{ y }}</option>{% endfor %}</select>
         <select name="year_to"><option value="">to</option>{% for y in years %}<option>{{ y }}</option>{% endfor %}</select></span></label>
       <label class="coal-select">Agency type
-        <select name="type"><option value="">All agency types</option>
+        <select name="type"><option value="">All sources – official and think tanks</option><option value="official">Official agencies only</option>
           {% for key, name in TYPE_NAMES.items() %}<option value="{{ key }}">{{ name }}</option>{% endfor %}</select></label>
     </form>
     <p id="how" class="muted small"></p>

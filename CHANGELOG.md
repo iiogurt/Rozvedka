@@ -27,6 +27,28 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.34.0] – 2026-10-07
+
+### Added
+- **Independent publishers – think tanks** (owner's decision of 2026-10-07): 17 pro-democratic and security think
+  tanks, kept apart from the official agencies – 13 crawled (Freedom House, ISD, ECFR, V-Dem, SIPRI, ICCT,
+  Clingendael, HCSS, IFRI, ICDS, ASPI, Lowy Institute, IEP; 150 reports to start with) and 4 behind bot protection
+  collected by hand (CEPA, CSIS, ISW, GLOBSEC). Researched and left out for now: RUSI, SWP, Chatham House, Carnegie
+  (lists built by JavaScript), EU DisinfoLab (no PDFs), state-run institutes (OSW, PISM, NUPI).
+- **Always told apart**: registry field `publisher: official | independent` and source type *Think tank*; a ◆ *think
+  tank* badge next to the publisher in every list, a banner on their report pages, their own section on Sources, a
+  diamond marker on the map; "Official agencies only" in every scope selector (Documents, Trends, Network, Map
+  mentions, Compare); the home page counts official agencies and think tanks separately; the Documents summary and the
+  Trends notes say how many think-tank reports a count includes.
+- Crawler: `follow` – a pattern of publication pages to open from a list page (think-tank lists link to one page per
+  publication); titles from the publication page's own heading, without "Read more", dates or the site name; language
+  names count only in short link texts and at the end of file names ("…_Spanish_lowres.pdf"), not in titles about a
+  country ("Russian information warfare").
+
+### Changed
+- Actor gazetteer refreshed from Wikidata, Wikipedia and MITRE ATT&CK after widening the sources (now a standing rule:
+  every widening of scope refreshes it).
+
 ## [0.33.0] – 2026-10-07
 
 ### Added
@@ -646,7 +668,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.33.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.34.0...HEAD
+[0.34.0]: https://github.com/iiogurt/Rozvedka/compare/v0.33.0...v0.34.0
 [0.33.0]: https://github.com/iiogurt/Rozvedka/compare/v0.32.1...v0.33.0
 [0.32.1]: https://github.com/iiogurt/Rozvedka/compare/v0.32.0...v0.32.1
 [0.32.0]: https://github.com/iiogurt/Rozvedka/compare/v0.31.1...v0.32.0

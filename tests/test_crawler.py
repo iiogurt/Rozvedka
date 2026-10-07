@@ -187,3 +187,28 @@ def test_documents_on_the_domain_a_page_redirects_to_are_kept(monkeypatch):
     src = {"id": 1, "access": "auto", "homepage": "https://crisiscentrum.be/", "agency": "NCCN", "domains": None}
     crawler.crawl_page(None, src, {"url": "https://crisiscentrum.be/en/identifying-risks", "id": 1, "lang": "en", "note": None}, {"en"})
     assert stored == ["https://crisiscenter.be/files/BNRA-2023-2026_EN.pdf"]
+
+
+def test_language_names_only_in_short_link_texts_and_file_name_endings():
+    from rozvedka.crawler import guess_lang
+    assert guess_lang("https://v-dem.net/d/Democracy_Report_2026_Spanish_lowres.pdf", "x", "en", {"en"}) == "es"
+    assert guess_lang("https://x.org/a.pdf", "Spanish", "en", {"en"}) == "es"
+    # a title or file name *about* a country is not in its language
+    assert guess_lang("https://x.org/a.pdf", "Spinning the Globe: Russian Information Warfare and Its Reach", "en", {"en"}) == "en"
+    assert guess_lang("https://x.org/chinese-presence-caribbean.pdf", "x", "en", {"en"}) == "en"
+
+
+def test_publication_page_heading_and_link_noise():
+    from rozvedka.crawler import clean_link_text, page_heading
+    assert page_heading('<meta property="og:title" content="Bewitched sleep: Russians views | ECFR">') == "Bewitched sleep: Russians views"
+    assert page_heading("<h1> Chinese presence in the Caribbean </h1>") == "Chinese presence in the Caribbean"
+    assert clean_link_text("Read more about Adapting to War") == "Adapting to War"
+    assert clean_link_text("September 7, 2026 Lessons from Extremism Prevention") == "Lessons from Extremism Prevention"
+
+
+def test_site_name_is_dropped_from_titles():
+    from rozvedka.crawler import strip_site_name
+    src = {"agency": "ICDS", "name_en": "International Centre for Defence and Security (ICDS)", "name_local": None}
+    assert strip_site_name("Connecting the Ends - International Centre for Defence and Sec", src) == "Connecting the Ends"
+    assert strip_site_name("A European Theory of Victory - ICDS", src) == "A European Theory of Victory"
+    assert strip_site_name("Russia - the long war", src) == "Russia - the long war"

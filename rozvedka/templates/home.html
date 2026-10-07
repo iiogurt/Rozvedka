@@ -4,7 +4,7 @@
 {% block body_class %}home{% endblock %}
 {% macro doc_row(r, when) %}
   <li><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="{{ r.country }}" width="20" height="15">
-    <a class="h-src" href="/documents?source={{ r.source_id }}">{{ r.agency }}</a>
+    <a class="h-src" href="/documents?source={{ r.source_id }}">{{ r.agency }}</a>{{ pub_mark(r.source_id) }}
     <span class="h-when">{{ when }}</span>
     <span class="h-title"><a href="/report/{{ r.id }}">{{ r.title }}</a></span>
     <span class="lang">{{ r.lang or '?' }}</span></li>
@@ -21,10 +21,12 @@
 ╚═╝  ╚═╝ ╚═════╝ ╚══════╝  ╚═══╝  ╚══════╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝</pre>
     <h1 id="h-name" class="h-name">Rozvedka <span>· разведка · reconnaissance</span></h1>
     <div class="h-term">
-      <div><span class="h-prompt">&gt;</span> OPEN-SOURCE INTELLIGENCE · official reports of intelligence, security, cyber and civil-protection agencies</div>
+      <div><span class="h-prompt">&gt;</span> OPEN-SOURCE INTELLIGENCE · official reports of intelligence, security, cyber and civil-protection agencies, and ◆ independent think tanks</div>
       <div><span class="h-prompt">&gt;</span>
         <a href="{{ d.totals.reports.url }}"><b>{{ d.totals.reports.n|num }}</b> reports</a> ·
-        <a href="{{ d.totals.agencies.url }}"><b>{{ d.totals.agencies.n|num }}</b> agencies</a> ·
+        <a href="{{ d.totals.agencies.url }}"><b>{{ d.totals.agencies.n|num }}</b> official agencies</a> ·
+        {% if d.totals.think_tanks.n %}<a class="pub-count" href="{{ d.totals.think_tanks.url }}" title="Independent publishers – not run by states"><b>{{ d.totals.think_tanks.n }}</b> think tanks ◆</a>
+        (<a class="pub-count" href="{{ d.totals.think_tanks.reports_url }}">{{ d.totals.think_tanks.reports|num }} reports</a>) ·{% endif %}
         <a href="{{ d.totals.countries.url }}"><b>{{ d.totals.countries.n|num }}</b> countries</a> ·
         <b>{{ d.totals.languages.n }}</b> languages ·
         <a href="{{ d.totals.searchable.url }}" title="Reports whose text is extracted and indexed (full-text search, topics, actors)"><b>{{ d.totals.searchable.n|num }}</b> searchable</a>

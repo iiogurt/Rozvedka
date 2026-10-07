@@ -4,7 +4,8 @@
 {% block main %}
 <nav class="subnav" aria-label="Source views"><a href="/sources" class="on">Agencies</a><a href="/sources/coverage">Coverage</a><a href="/collect">To collect</a><a href="/data">Data exchange</a></nav>
 <div class="summary">
-  <span><b>{{ sources|length }}</b> agencies and institutions in <b>{{ groups|length }}</b> groups</span>
+  <span><b>{{ n_official }}</b> official agencies and institutions in <b>{{ groups|length }}</b> countries and bodies
+    {% if n_independent %}· <a class="pub-count" href="#independent"><b>{{ n_independent }}</b> independent think tanks ◆</a>{% endif %}</span>
   <form method="post" action="/jobs/sync" class="inline"><button title="Reload sources/registry.yaml">Reload registry</button></form>
   <a class="dx-primary upd-link" href="/update">⟳ Check for new reports…</a>
 </div>
@@ -16,18 +17,23 @@
 </div>
 
 <nav class="flagbar" aria-label="Jump to country">
-  {% for region, countries in regions %}{% if not loop.first %}<span class="flagsep" aria-hidden="true"></span>{% endif %}
+  {% for region, countries, ind in regions %}{% if not loop.first %}<span class="flagsep" aria-hidden="true"></span>{% endif %}
+  {% if ind %}<a class="pub-ind flag-ind" href="#independent" title="Independent publishers – think tanks, not run by states">think tanks</a>{% else %}
   {% for country, items in countries %}
   <a href="#c-{{ country }}" title="{{ COUNTRY_NAMES.get(country, country) }} ({{ items|length }})"
      data-coalitions="{{ coalition_tags(country)|map(attribute='key')|join(' ') }}{{ ' ' ~ country if country in ('EU', 'NATO') }}">
     <img src="{{ flag_url(country) }}" alt="" width="28" height="21"><span>{{ country }}</span></a>
-  {% endfor %}{% endfor %}
+  {% endfor %}{% endif %}{% endfor %}
 </nav>
 
-{% for region, countries in regions %}
-<h2 class="region">{{ region }}</h2>
+{% for region, countries, ind in regions %}
+{% if ind %}<h2 class="region region-ind" id="independent">◆ {{ region }}</h2>
+<p class="pub-banner">Not run by a state: pro-democratic and security think tanks and research institutes with regular reports.
+  They are kept apart from the official agencies above and marked ◆ wherever their reports appear; every count can leave them
+  out with “Official agencies only”.</p>
+{% else %}<h2 class="region">{{ region }}</h2>{% endif %}
 {% for country, items in countries %}
-<section class="country" id="c-{{ country }}"
+<section class="country" id="{{ 'ci-' if ind else 'c-' }}{{ country }}"
          data-coalitions="{{ coalition_tags(country)|map(attribute='key')|join(' ') }}{{ ' ' ~ country if country in ('EU', 'NATO') }}">
   <h2><img class="flag" src="{{ flag_url(country) }}" alt="" width="32" height="24">
     {{ COUNTRY_NAMES.get(country, country) }} <span class="muted">· {{ items|length }}</span>
@@ -35,14 +41,14 @@
       title="{{ t.name }} since {{ t.since }}">{{ t.short }}<span class="since"> {{ t.since }}</span></a>{% endfor %}</span></h2>
   <div class="cards">
   {% for s in items %}
-  <article class="card" id="s-{{ s.id }}">
+  <article class="card{{ ' card-ind' if is_independent(s.id) }}" id="s-{{ s.id }}">
     <div class="card-head">
       <div class="logo">
         {% if s.logo_path %}<img src="/logo/{{ s.id }}" alt="{{ s.agency }} logo" loading="lazy">
         {% else %}<span class="initials">{{ initials(s.agency) }}</span>{% endif %}
       </div>
       <div class="names">
-        <div class="acr">{{ s.agency }}</div>
+        <div class="acr">{{ s.agency }}{{ pub_mark(s.id) }}</div>
         <div class="name-en">{{ s.name_en or '' }}</div>
         {% if s.name_local and s.name_local != s.name_en %}<div class="name-local">{{ s.name_local }}</div>{% endif %}
       </div>

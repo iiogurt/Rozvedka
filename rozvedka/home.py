@@ -278,7 +278,12 @@ def dashboard(today: dt.date | None = None) -> dict:
         listed = one(f"SELECT COUNT(*) {base}")[0]
         totals = {
             "reports": {"n": listed, "url": DOCS},
-            "agencies": {"n": one(f"SELECT COUNT(DISTINCT s.id) {base}")[0], "url": "/sources"},
+            "agencies": {"n": one(f"SELECT COUNT(DISTINCT s.id) {base} AND {trends.OFFICIAL}")[0], "url": "/sources"},
+            # independent publishers (think tanks): counted apart from the official agencies, always marked ◆
+            "think_tanks": {"n": one(f"SELECT COUNT(DISTINCT s.id) {base} AND NOT {trends.OFFICIAL}")[0],
+                            "url": "/sources#independent",
+                            "reports": one(f"SELECT COUNT(*) {base} AND NOT {trends.OFFICIAL}")[0],
+                            "reports_url": docs_url(type="think-tank")},
             "countries": {"n": one(f"SELECT COUNT(DISTINCT s.country) {base} AND s.country NOT IN ('EU','NATO','OTHER')")[0],
                           "url": "/map"},
             "languages": {"n": one(f"SELECT COUNT(DISTINCT d.lang) {base} AND d.lang != ''")[0], "url": DOCS},
@@ -347,6 +352,7 @@ def figures(d: dict) -> list[tuple[str, int, str]]:
     """Every (label, count, Documents link) on the home page – for checking that each count matches its list."""
     out = [("reports", d["totals"]["reports"]["n"], d["totals"]["reports"]["url"]),
            ("searchable", d["totals"]["searchable"]["n"], d["totals"]["searchable"]["url"]),
+           ("think-tank reports", d["totals"]["think_tanks"]["reports"], d["totals"]["think_tanks"]["reports_url"]),
            ("newest year", d["newest_n"], d["newest_url"]),
            ("before", d["older"]["n"], d["older"]["url"]), ("undated", d["undated"]["n"], d["undated"]["url"])]
     out += [(f"added {a['days']} days", a["n"], a["url"]) for a in d["added"]]
