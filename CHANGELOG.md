@@ -27,6 +27,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.42.0] – 2026-10-07
+
 ### Security
 - **Importing a dataset can no longer write outside `data/files/`.** A crafted dataset could give a report file a path
   such as `../../.bashrc` and so place files anywhere the portal's user may write; such files are now skipped and
@@ -808,7 +810,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.41.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.0...HEAD
+[0.42.0]: https://github.com/iiogurt/Rozvedka/compare/v0.41.0...v0.42.0
 [0.41.0]: https://github.com/iiogurt/Rozvedka/compare/v0.40.0...v0.41.0
 [0.40.0]: https://github.com/iiogurt/Rozvedka/compare/v0.39.0...v0.40.0
 [0.39.0]: https://github.com/iiogurt/Rozvedka/compare/v0.38.1...v0.39.0
