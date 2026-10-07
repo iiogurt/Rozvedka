@@ -389,7 +389,6 @@ blockquote.p-text mark { background: #fde68a; color: #1d2126; padding: 0 2px; bo
 
 /* ── Network, mentions map, mind map ── */
 .chart-net { height: 720px; }
-.chart-tree { height: 1150px; }
 .map-tabs { margin: 0 0 6px; border-bottom-color: var(--line); }
 .map-tabs a { padding: 4px 8px; font-size: 13px; }
 .coal-select .row { display: flex; gap: 6px; }
@@ -401,9 +400,30 @@ blockquote.p-text mark { background: #fde68a; color: #1d2126; padding: 0 2px; bo
 .map-tabs { flex-wrap: nowrap; }
 .map-tabs a { padding: 4px 5px; white-space: nowrap; font-size: 12.5px; }
 .thin-legend .swatch { flex: 0 0 14px; height: 10px; border-radius: 2px; background: #4a515b; }
-.tree-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 12px; }
+.tree-grid { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 12px; }
 .tree-panel { border-left: 1px solid var(--line); padding-left: 12px; align-self: start; position: sticky; top: 70px; }
 .tree-panel h3 { margin: 4px 0; font-size: 15px; }
+/* topic mind map: a tidy tree drawn in SVG, each column as wide as its longest label, one row per visible leaf */
+.mm-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 4px 0 8px; }
+.mm-scroll { overflow-x: auto; min-height: 300px; }
+.mm { display: block; font-family: system-ui, sans-serif; }
+.mm.loading { opacity: .4; }
+.mm-links path { fill: none; stroke: var(--line); stroke-width: 1.2; }
+.mm-node { cursor: pointer; outline: none; }
+.mm-node text { fill: var(--ink); font-size: 12px; }
+.mm-node .mm-n { fill: var(--muted); }
+.mm-category text { font-size: 13px; font-weight: 700; }
+.mm-category .mm-n { font-weight: 400; }
+.mm-actor text { font-size: 11.5px; }
+.mm-category circle { fill: var(--ink); stroke: var(--ink); }
+.mm-topic circle { fill: var(--panel); stroke: var(--mm-topic); stroke-width: 2; }
+.mm-topic.folded circle { fill: var(--mm-topic); }
+.mm-category:not(.folded) circle { fill: var(--panel); stroke-width: 2; }
+.mm-actor circle { fill: var(--mm-actor); }
+.mm-node:hover text, .mm-node:focus-visible text { text-decoration: underline; }
+.mm-node:focus-visible circle { stroke: var(--accent); stroke-width: 3; }
+:root { --mm-topic: #2a78d6; --mm-actor: #eb6834; }
+:root[data-theme="dark"] { --mm-topic: #3987e5; --mm-actor: #d95926; }
 .tree-panel ul.plain li { margin: 3px 0; }
 @media (max-width: 900px) { .tree-grid { grid-template-columns: 1fr; } .tree-panel { border-left: 0; padding-left: 0; } }
 

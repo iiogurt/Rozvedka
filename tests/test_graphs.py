@@ -115,3 +115,16 @@ def test_topic_tree(library):
     assert list(kids) == ["Q5", "Q9"]                                   # 2×1.0 before 2×0.67
     assert parse_qs(urlsplit(kids["Q5"]["link"]).query) == {"indexed": ["1"], "topic": ["russia"], "actor": ["Q5"],
                                                            "main": ["1"]}
+
+
+def test_topic_tree_matches_main_topic_rule(library):
+    """The tree counts all topics in one query; each count equals the Documents filter's main-topic rule."""
+    t = graphs.topic_tree(per_topic=12, min_reports=1)
+    main_sql, main_args = topics.main_topic_clause()
+    with db.session() as con:
+        for c in t["tree"]["children"]:
+            for tp in c["children"]:
+                for a in tp["children"]:
+                    n = con.execute(f"""SELECT COUNT(DISTINCT d.id) FROM documents d JOIN doc_actors da ON da.doc_id=d.id
+                                        WHERE da.actor_key=? AND {main_sql}""", (a["key"], *main_args, tp["key"])).fetchone()[0]
+                    assert a["value"] == n, (tp["key"], a["key"])

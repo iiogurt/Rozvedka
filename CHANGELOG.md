@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.39.0] – 2026-10-07
+
+### Added
+- Topic mind map: **Expand all**, **Topics** and **Collapse all** buttons, keyboard support (Tab, Enter), and a count
+  of the topics and actors shown.
+
+### Changed
+- The topic mind map loads in under a second instead of ~11 s: its data comes from one database query instead of one
+  per topic (same counts – a test compares them with the Documents filter's rule).
+- The mind map is drawn as a tidy tree: each column is as wide as its longest label, long names wrap to two lines and
+  the page grows as branches unfold, so labels no longer overlap when a topic is expanded. It follows the light and
+  dark theme. Scroll-to-zoom and dragging are gone – the page scrolls instead.
+
 ## [0.38.1] – 2026-10-07
 
 ### Fixed
@@ -754,7 +767,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.38.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.39.0...HEAD
+[0.39.0]: https://github.com/iiogurt/Rozvedka/compare/v0.38.1...v0.39.0
 [0.38.1]: https://github.com/iiogurt/Rozvedka/compare/v0.38.0...v0.38.1
 [0.38.0]: https://github.com/iiogurt/Rozvedka/compare/v0.37.1...v0.38.0
 [0.37.1]: https://github.com/iiogurt/Rozvedka/compare/v0.37.0...v0.37.1

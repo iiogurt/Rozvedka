@@ -253,7 +253,6 @@ def topic_tree(per_topic: int = 6, coalition: str = "", year_from=None, year_to=
     """
     tax = topics.taxonomy()
     where, args, params = _scope(year_from, year_to, coalition)
-    main_sql, main_args = topics.main_topic_clause()
     with db.session() as con:
         actors.init()
         counts = dict(con.execute(f"""SELECT t.topic, COUNT(DISTINCT d.id) FROM doc_topics t
@@ -263,19 +262,27 @@ def topic_tree(per_topic: int = 6, coalition: str = "", year_from=None, year_to=
             f"""SELECT a.key, COUNT(DISTINCT d.id) FROM doc_actors da JOIN actors a ON a.key=da.actor_key
                 JOIN documents d ON d.id=da.doc_id JOIN sources s ON s.id=d.source_id
                 WHERE {where} AND a.kind != 'country' AND {NOT_BEFORE_FOUNDED} GROUP BY a.key""", args).fetchall())
+        # one pass instead of one query per topic: rank each scoped report's topics once, keep its main ones, then
+        # count (main topic, actor) pairs – the same rule as topics.main_topic_clause()
+        meta = [t for t, info in tax["topics"].items() if info.get("meta")]
         cand: dict[str, list] = {}
-        for t, info in tax["topics"].items():
-            if info.get("meta"):
-                continue
-            for r in con.execute(
-                    f"""SELECT a.key, a.label, a.kind, COUNT(DISTINCT d.id) n FROM doc_actors da
-                        JOIN actors a ON a.key=da.actor_key JOIN documents d ON d.id=da.doc_id
-                        JOIN sources s ON s.id=d.source_id
-                        WHERE {where} AND a.kind != 'country' AND {NOT_BEFORE_FOUNDED} AND {main_sql}
-                        GROUP BY a.key HAVING n >= ?""", (*args, *main_args, t, min_reports)):
-                share = r["n"] / totals[r["key"]]
-                cand.setdefault(t, []).append({**dict(r), "of": totals[r["key"]], "share": round(share, 4),
-                                               "score": r["n"] * share})
+        for r in con.execute(
+                f"""WITH scoped AS (SELECT d.id, d.year FROM documents d JOIN sources s ON s.id=d.source_id WHERE {where}),
+                         main AS (SELECT doc_id, topic FROM (
+                                    SELECT t.doc_id, t.topic, ROW_NUMBER() OVER (PARTITION BY t.doc_id
+                                           ORDER BY t.score DESC, t.topic) rk
+                                    FROM doc_topics t JOIN scoped ON scoped.id=t.doc_id
+                                    WHERE t.topic NOT IN ({','.join('?' * len(meta))}))
+                                  WHERE rk <= {topics.MAIN_TOPICS})
+                    SELECT m.topic, a.key, a.label, a.kind, COUNT(DISTINCT d.id) n
+                    FROM main m JOIN scoped d ON d.id=m.doc_id JOIN doc_actors da ON da.doc_id=m.doc_id
+                    JOIN actors a ON a.key=da.actor_key
+                    WHERE a.kind != 'country' AND {NOT_BEFORE_FOUNDED}
+                    GROUP BY m.topic, a.key HAVING n >= ?""", (*args, *meta, min_reports)):
+            share = r["n"] / totals[r["key"]]
+            cand.setdefault(r["topic"], []).append({**{k: r[k] for k in ("key", "label", "kind", "n")},
+                                                    "of": totals[r["key"]], "share": round(share, 4),
+                                                    "score": r["n"] * share})
     tops = {t: sorted(lst, key=lambda x: (-x["score"], x["label"]))[:per_topic] for t, lst in cand.items()}
     tree = {"name": "Library", "children": []}
     for ckey, cat in tax["categories"].items():

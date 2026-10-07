@@ -57,7 +57,7 @@ SHOTS = {
     "democracy-map": ("/map/democracy?measure=vdem_regime&year=2025", 900, [("sleep", 6)], None),
     "democracy-change": ("/map/democracy?measure=change&year=2025", 900, [("sleep", 6)], None),
     "mentions": (f"/map/mentions?mode=about&about={CHINA}", 800, [("sleep", 6)], None),
-    "mindmap": ("/topics/map", 1000, [("sleep", 16)], None),     # its data takes ~11 s on the Pi
+    "mindmap": ("/topics/map", 1000, [("sleep", 4)], None),
     "update": ("/update", 1200, [], None),
     # taken while a job runs (see the module docstring): start an export or a check on /data first
     "data-export": ("/data", 1000, [("sleep", 2)], None),
