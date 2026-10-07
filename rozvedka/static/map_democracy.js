@@ -5,6 +5,8 @@
    (Okabe–Ito, colour-blind safe), always with a label. */
 (function () {
   "use strict";
+  // hover cards fully opaque while open; Leaflet sets 0 when one closes, so only the card under the pointer shows
+  L.Tooltip.mergeOptions({ opacity: 1 });
   const $ = (s) => document.querySelector(s);
   const form = $("#dm");
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));

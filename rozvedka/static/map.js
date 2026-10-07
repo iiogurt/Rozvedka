@@ -1,6 +1,8 @@
 /* Rozvedka world map (dark): agency HQ pins with hover cards, clusters, countries shaded by report count. */
 (function () {
   "use strict";
+  // hover cards fully opaque while open; Leaflet sets 0 when one closes, so only the card under the pointer shows
+  L.Tooltip.mergeOptions({ opacity: 1 });
 
   // agency-type colours, tuned to stay readable on a dark basemap
   const TYPE_COLORS = {

@@ -1,6 +1,8 @@
 /* Who reports on whom: countries shaded by the share of reports that name a country. Every country opens its documents. */
 (function () {
   "use strict";
+  // hover cards fully opaque while open; Leaflet sets 0 when one closes, so only the card under the pointer shows
+  L.Tooltip.mergeOptions({ opacity: 1 });
   const $ = (s) => document.querySelector(s);
   const form = $("#scope");
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));

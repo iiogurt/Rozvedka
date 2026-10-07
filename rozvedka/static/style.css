@@ -223,8 +223,9 @@ body.theme-dark {
 .leaflet-tooltip.hq-tip { background: #161b22; color: #e6edf3; border: 1px solid #30363d; border-radius: 10px;
   box-shadow: 0 8px 28px rgba(0,0,0,.55); padding: 0; white-space: normal; font: 13px/1.45 system-ui, sans-serif; }
 /* a tooltip is positioned absolutely, so without a width it shrinks to its narrowest wrap (one word per line) near the
-   map's edge: size it by its content, up to a readable measure; fully opaque */
-.leaflet-tooltip.hq-tip { width: max-content; max-width: 320px; opacity: 1 !important; }
+   map's edge: size it by its content, up to a readable measure. Opacity is Leaflet's own (1 while open, see the map
+   scripts; 0 at once when closing) – forcing it here kept closing cards visible over the next ones */
+.leaflet-tooltip.hq-tip { width: max-content; max-width: 320px; }
 .leaflet-tooltip-top.hq-tip::before { border-top-color: #30363d; }
 .leaflet-tooltip-bottom.hq-tip::before { border-bottom-color: #30363d; }
 .leaflet-tooltip-left.hq-tip::before { border-left-color: #30363d; }
