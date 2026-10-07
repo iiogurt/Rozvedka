@@ -2099,3 +2099,269 @@
   report_types: [Informe SNIC / criminal statistics]
   pages:
     - {lang: es, kind: archive, url: "https://www.argentina.gob.ar/seguridad/estadisticascriminales/informes"}
+
+# ════════════════════════ INDEPENDENT PUBLISHERS – THINK TANKS ════════════════════════
+# Not run by a state (2026-10-07, owner's decision): pro-democratic and security think tanks and research institutes
+# with regular reports. `publisher: independent` marks them in every view; their reports come from their own domains.
+# Researched and left out for now: RUSI, SWP, Chatham House, Carnegie (publication lists built by JavaScript);
+# EU DisinfoLab (reports are web pages without PDF); state-run institutes (OSW, PISM, NUPI) – not independent.
+- country: US
+  agency: CEPA
+  name_local: "Center for European Policy Analysis"
+  name_en: "Center for European Policy Analysis (CEPA)"
+  homepage: "https://cepa.org/"
+  description: "Transatlantic think tank on Russia, Central and Eastern Europe, democratic resilience, information warfare and NATO's eastern flank; comprehensive reports on Russian military posture, disinformation and sanctions."
+  hq: {address: "Washington, DC, United States", lat: 38.8951, lon: -77.03638, precision: city}
+  type: think-tank
+  publisher: independent
+  access: manual
+  frequency: periodic
+  report_types: [comprehensive reports]
+  notes: "The site answers automated requests with a browser check (bot protection) – reports are collected by hand on To collect."
+  pages:
+    - {lang: en, kind: archive, url: "https://cepa.org/insights-analysis/comprehensive-reports/"}
+
+- country: US
+  agency: CSIS
+  name_local: "Center for Strategic and International Studies"
+  name_en: "Center for Strategic and International Studies (CSIS)"
+  homepage: "https://www.csis.org/"
+  description: "Washington security and defence think tank; reports on Russia's war, China, terrorism, missile defence, cyber and the defence industrial base."
+  hq: {address: "Washington, DC, United States", lat: 38.8951, lon: -77.03638, precision: city}
+  type: think-tank
+  publisher: independent
+  access: manual
+  frequency: periodic
+  report_types: [reports]
+  notes: "Automated requests get HTTP 403 – collected by hand."
+  pages:
+    - {lang: en, kind: archive, url: "https://www.csis.org/analysis?f%5B0%5D=content_type%3Areport"}
+
+- country: US
+  agency: ISW
+  name_local: "Institute for the Study of War"
+  name_en: "Institute for the Study of War (ISW)"
+  homepage: "https://www.understandingwar.org/"
+  description: "Daily Russian Offensive Campaign Assessments and Iran / China updates with maps; the most detailed open tracking of Russia's war against Ukraine."
+  hq: {address: "Washington, DC, United States", lat: 38.8951, lon: -77.03638, precision: city}
+  type: think-tank
+  publisher: independent
+  access: manual
+  frequency: periodic
+  report_types: [campaign assessments, reports]
+  notes: "Automated requests get HTTP 403 – collected by hand."
+  pages:
+    - {lang: en, kind: current, url: "https://www.understandingwar.org/"}
+
+- country: US
+  agency: Freedom House
+  name_local: "Freedom House"
+  name_en: "Freedom House"
+  homepage: "https://freedomhouse.org/"
+  description: "Pro-democracy organisation; annual Freedom in the World, Freedom on the Net and Nations in Transit ratings and reports on transnational repression and authoritarian influence."
+  hq: {address: "Washington, DC, United States", lat: 38.8951, lon: -77.03638, precision: city}
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: yearly
+  report_types: [Freedom in the World, Freedom on the Net, Nations in Transit, special reports]
+  pages:
+    - {lang: en, kind: archive, url: "https://freedomhouse.org/reports", follow: "freedomhouse\\.org/report/[a-z0-9-]+(/\\d{4}/[^/]+)?$"}
+
+- country: GB
+  agency: ISD
+  name_local: "Institute for Strategic Dialogue"
+  name_en: "Institute for Strategic Dialogue (ISD)"
+  homepage: "https://www.isdglobal.org/"
+  description: "London think tank on extremism, hate, disinformation and foreign information manipulation; research reports on online radicalisation, election integrity and hybrid threats."
+  hq: {address: "London, United Kingdom", lat: 51.50745, lon: -0.12777, precision: city}
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: periodic
+  report_types: [research reports, briefings]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.isdglobal.org/publications/", follow: "isdglobal\\.org/publication/[^/]+/?$"}
+
+- country: DE
+  agency: ECFR
+  name_local: "European Council on Foreign Relations"
+  name_en: "European Council on Foreign Relations (ECFR)"
+  homepage: "https://ecfr.eu/"
+  description: "Pan-European think tank (Berlin headquarters); policy briefs and polls on Russia, Ukraine, China, European defence and public opinion."
+  hq: {address: "Berlin, Germany", lat: 52.51739, lon: 13.39513, precision: city}
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: periodic
+  report_types: [policy briefs, polling reports]
+  pages:
+    - {lang: en, kind: archive, url: "https://ecfr.eu/analysis/?format=publication", follow: "ecfr\\.eu/publication/[^/]+/?$"}
+
+- country: SE
+  agency: V-Dem
+  name_local: "V-Dem Institute, University of Gothenburg"
+  name_en: "Varieties of Democracy (V-Dem) Institute"
+  homepage: "https://www.v-dem.net/"
+  description: "Academic institute measuring democracy worldwide; the annual Democracy Report on autocratisation, in several languages."
+  hq: {address: "Gothenburg, Sweden", lat: 57.70723, lon: 11.96702, precision: city}
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: yearly
+  report_types: [Democracy Report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.v-dem.net/publications/democracy-reports/"}
+
+- country: SE
+  agency: SIPRI
+  name_local: "Stockholm International Peace Research Institute"
+  name_en: "Stockholm International Peace Research Institute (SIPRI)"
+  homepage: "https://www.sipri.org/"
+  description: "Independent institute on armed conflict, military expenditure, arms transfers and nuclear forces; fact sheets, policy papers and Yearbook summaries."
+  hq: {address: "Solna, Sweden", lat: 59.36667, lon: 18.01667, precision: city}
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: periodic
+  report_types: [fact sheets, policy papers, insights, Yearbook summary]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.sipri.org/publications/search", follow: "sipri\\.org/publications/\\d{4}/(sipri-fact-sheets|sipri-policy-papers|sipri-insights-peace-and-security|sipri-policy-briefs|sipri-research-reports|sipri-yearbook)/[^/]+$"}
+
+- country: NL
+  agency: ICCT
+  name_local: "International Centre for Counter-Terrorism"
+  name_en: "International Centre for Counter-Terrorism (ICCT)"
+  homepage: "https://icct.nl/"
+  description: "Hague think tank on terrorism and counter-terrorism; reports on jihadism, right-wing extremism, foreign fighters, and how European security services see the threat."
+  hq: {address: "The Hague, Netherlands", lat: 52.07998, lon: 4.31135, precision: city}
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: periodic
+  report_types: [research papers, policy briefs]
+  pages:
+    - {lang: en, kind: archive, url: "https://icct.nl/publications", follow: "icct\\.nl/publication/[^/]+$"}
+
+- country: NL
+  agency: Clingendael
+  name_local: "Nederlands Instituut voor Internationale Betrekkingen Clingendael"
+  name_en: "Netherlands Institute of International Relations Clingendael"
+  homepage: "https://www.clingendael.org/"
+  description: "Dutch international-relations institute; reports and policy briefs on European security, Russia, China, conflict and resilience (some in Dutch)."
+  hq: {address: "The Hague, Netherlands", lat: 52.07998, lon: 4.31135, precision: city}
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: periodic
+  report_types: [reports, policy briefs]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.clingendael.org/publications", follow: "clingendael\\.org/publication/[^/]+$"}
+
+- country: NL
+  agency: HCSS
+  name_local: "The Hague Centre for Strategic Studies"
+  name_en: "The Hague Centre for Strategic Studies (HCSS)"
+  homepage: "https://hcss.nl/"
+  description: "Dutch strategic-studies think tank; reports on defence, hybrid threats, China, critical raw materials and military resilience (English and Dutch)."
+  hq: {address: "The Hague, Netherlands", lat: 52.07998, lon: 4.31135, precision: city}
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: periodic
+  report_types: [reports, position papers]
+  pages:
+    - {lang: en, kind: current, url: "https://hcss.nl/", follow: "hcss\\.nl/report/[^/]+/?$"}
+
+- country: FR
+  agency: IFRI
+  name_local: "Institut français des relations internationales"
+  name_en: "French Institute of International Relations (Ifri)"
+  homepage: "https://www.ifri.org/"
+  description: "French international-relations institute; studies and briefings on Russia, defence, security, energy and Asia (French and English)."
+  hq: {address: "Paris, France", lat: 48.85889, lon: 2.32004, precision: city}
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: periodic
+  report_types: [studies, briefings, notes]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.ifri.org/en/research/search-publications", follow: "ifri\\.org/(en|fr)/(studies|etudes|briefings|notes|publications)/[^/?]+$"}
+
+- country: EE
+  agency: ICDS
+  name_local: "Rahvusvaheline Kaitseuuringute Keskus"
+  name_en: "International Centre for Defence and Security (ICDS)"
+  homepage: "https://icds.ee/en/"
+  description: "Estonian defence and security think tank; reports and analyses on Russia, Baltic defence, hybrid threats and energy security."
+  hq: {address: "Tallinn, Estonia", lat: 59.43724, lon: 24.75727, precision: city}
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: periodic
+  report_types: [reports, analyses]
+  pages:
+    - {lang: en, kind: archive, url: "https://icds.ee/en/category/publications/report/", follow: "icds\\.ee/en/(?!author/|category/|tag/|page/|research/)[a-z0-9-]{25,}/$"}
+
+- country: SK
+  agency: GLOBSEC
+  name_local: "GLOBSEC"
+  name_en: "GLOBSEC"
+  homepage: "https://www.globsec.org/"
+  description: "Bratislava think tank; the annual GLOBSEC Trends survey of public attitudes to democracy, Russia and the West in Central and Eastern Europe, and reports on disinformation."
+  hq: {address: "Bratislava, Slovakia", lat: 48.1435, lon: 17.10829, precision: city}
+  type: think-tank
+  publisher: independent
+  access: manual
+  frequency: periodic
+  report_types: [GLOBSEC Trends, reports]
+  notes: "Automated requests get HTTP 403 – collected by hand."
+  pages:
+    - {lang: en, kind: archive, url: "https://www.globsec.org/what-we-do/publications"}
+
+- country: AU
+  agency: ASPI
+  name_local: "Australian Strategic Policy Institute"
+  name_en: "Australian Strategic Policy Institute (ASPI)"
+  homepage: "https://www.aspi.org.au/"
+  description: "Canberra defence and strategic-policy institute; reports on China, cyber, critical technologies, information operations and Indo-Pacific security."
+  hq: {address: "Canberra, Australia", lat: -35.29759, lon: 149.10127, precision: city}
+  domains: [amazonaws.com]
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: periodic
+  report_types: [reports, special reports]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.aspi.org.au/all-work/?s=&filter_tag=all&filter_programs=all&filter_category=report", follow: "aspi\\.org\\.au/report/[^/]+/?$"}
+
+- country: AU
+  agency: Lowy Institute
+  name_local: "Lowy Institute"
+  name_en: "Lowy Institute"
+  homepage: "https://www.lowyinstitute.org/"
+  description: "Sydney international-policy think tank; the Lowy Institute Poll, Asia Power Index and analyses on Indo-Pacific security."
+  hq: {address: "Sydney, Australia", lat: -33.86984, lon: 151.20828, precision: city}
+  domains: [sanity.io]
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: periodic
+  report_types: [analyses, Lowy Institute Poll]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.lowyinstitute.org/publications", follow: "lowyinstitute\\.org/publications/[a-z0-9-]+$"}
+
+- country: AU
+  agency: IEP
+  name_local: "Institute for Economics & Peace"
+  name_en: "Institute for Economics & Peace (IEP)"
+  homepage: "https://www.economicsandpeace.org/"
+  description: "Sydney research institute; the annual Global Terrorism Index, Global Peace Index, Positive Peace and Ecological Threat reports."
+  hq: {address: "Sydney, Australia", lat: -33.86984, lon: 151.20828, precision: city}
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: yearly
+  report_types: [Global Terrorism Index, Global Peace Index, Ecological Threat Report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.economicsandpeace.org/reports/"}
