@@ -54,7 +54,7 @@ RULES = [
                    r"analisis de riesgo\w*|ocena zagrozen|ocen\w* rizik\w*|hodnoceni hrozeb|analyza rizik|"
                    r"riskbedomning|risikovurdering|riskikuva|kockazat\w*|procjen\w* rizik\w*|ocena tveganj|"
                    r"te.sat|iocta|soc ta|horizon scan\w*|threat outlook|security outlook|global trends|"
-                   r"annual threat|worldwide threat|homeland threat|threat report|risikobilde|nasjonalt risikobilde)\b"),
+                   r"annual threat|worldwide threat|homeland threat|threat report|risikobilde|nasjonalt risikobilde|situation report)\b"),
     ("annual", r"\b(annual report|annual review|year in review|yearbook|vyrocni zprav\w*|vyrocn\w*|jahresbericht|"
                r"verfassungsschutzbericht|rapport annuel|rapport d.activite\w*|informe anual|memoria anual|"
                r"relazione annuale|relazione sulla politica|relatorio anual|relatorio de atividades|jaarverslag|"
@@ -64,7 +64,7 @@ RULES = [
     ("strategy", r"\b(strateg(y|ies|ie|ia|ias|ija|ije|iji|iju|ii|i|iei)|white paper|white book|weissbuch|livre blanc|libro blanco|libro bianco|witboek|"
                  r"bialej ksiegi|biala ksiega|bila kniha|national security policy|defence policy|"
                  r"doctrine|konzeption|koncepc\w*)\b"),
-    ("bulletin", r"\b(bulletin|warning|varovani|advisory|alert|newsletter|flash|situation report|sitrep|"
+    ("bulletin", r"\b(bulletin|warning|varovani|advisory|alert|newsletter|flash|sitrep|"
                  r"reporte (preliminar|complementario|de situacion)|quarter\w*|quartal\w*|ctvrtlet\w*|kwartaal\w*|"
                  r"monthly|mensual|monatlich|week(ly)?)\b"),
     ("guide", r"\b(guide\w*|guidance|handbook|manual|leitfaden|ratgeber|prirucka|handreichung|merkblatt|checklist|"

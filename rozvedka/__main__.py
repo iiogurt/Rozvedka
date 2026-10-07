@@ -30,7 +30,8 @@ def main():
     oc.add_argument("--limit", type=int); oc.add_argument("--workers", type=int, default=3)
     dd = sub.add_parser("date-documents", help="give undated reports a year from their first pages (with the evidence)")
     dd.add_argument("--check", action="store_true", help="only measure accuracy on reports whose year is known")
-    sub.add_parser("type-documents", help="give every report a document type (annual report, assessment, … form) by rule")
+    sub.add_parser("type-documents", help="give every report a document type (annual report, assessment, … form) by rule, "
+                                          "and group language versions and summaries into one report")
     ex = sub.add_parser("export", help="write the whole library as a dataset (parts + manifest) for backup or exchange")
     ex.add_argument("dir", help="folder to write into (e.g. a USB disk)")
     ex.add_argument("--no-files", action="store_true", help="catalogue only: database, lists and gazetteer, no report files")
@@ -74,6 +75,8 @@ def main():
         from . import dating, doctypes
         print(dating.date_documents())
         print(doctypes.type_documents())
+        from . import works
+        print(works.group())
         if actor_sources.GAZETTEER.exists():
             print(actors.index())
     elif a.cmd == "ocr":
@@ -83,8 +86,9 @@ def main():
         from . import dating
         print(dating.check() if a.check else dating.date_documents())
     elif a.cmd == "type-documents":
-        from . import doctypes
+        from . import doctypes, works
         print(doctypes.type_documents())
+        print(works.group())
     elif a.cmd == "fetch-actors":
         from . import actor_sources
         print(actor_sources.fetch(refresh=a.refresh))

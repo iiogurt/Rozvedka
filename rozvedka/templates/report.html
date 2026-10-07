@@ -47,7 +47,7 @@
     {% if prev %}{% set f = (prev.files.get(edition.lang) or prev.files.values()|first)|first %}<a href="/report/{{ f.id }}">← {{ prev.year }}</a>{% else %}<span class="muted">no earlier edition</span>{% endif %}
     ·
     {% if next %}{% set f = (next.files.get(edition.lang) or next.files.values()|first)|first %}<a href="/report/{{ f.id }}">{{ next.year }} →</a>{% else %}<span class="muted">no later edition in the library</span>{% endif %}</p>
-  {% if other_langs %}<p class="small rp-chips"><span class="muted">Same edition in other files:</span>
+  {% if other_langs and not files %}<p class="small rp-chips"><span class="muted">Same edition in other files:</span>
     {% for lg, f in other_langs %}<a class="mchip" href="/report/{{ f.id }}"><span class="ctag">{{ lg }}</span>&nbsp;{{ f.title }}</a> {% endfor %}</p>{% endif %}
   {% if this and prev %}
   <h3 class="small rp-h3">Against the {{ prev.year }} edition</h3>
@@ -64,6 +64,24 @@
   {% endif %}
 </section>
 </div>
+
+{% if files %}
+<section class="viz-card" id="files">
+  <h2 class="viz-title">Files of this report <span class="muted small">{{ files|length }}</span></h2>
+  <p class="muted small viz-sub">Language versions, summaries and file variants grouped into one report (<code>rozvedka/works.py</code>).
+    The report is counted once, through the file with most text (English preferred unless another version has 30 % more text){% if d.work_id != d.id %} – that is
+    <a href="/report/{{ d.work_id }}">another file</a>; this one is not counted again{% endif %}. Grouped by mistake? Add the address
+    to <code>separate</code> in <code>sources/works.yaml</code>.</p>
+  <table class="rp-topics small">
+    <thead><tr><th>Lang</th><th>File</th><th>Why it belongs here</th><th></th></tr></thead>
+    {% for f in files %}<tr class="{{ 'rp-main' if f.id == d.work_id }}"><td><span class="lang">{{ f.lang or '?' }}</span></td>
+      <th>{% if f.id == d.id %}{{ f.title }} <span class="muted">(this file)</span>{% else %}<a href="/report/{{ f.id }}">{{ f.title }}</a>{% endif %}
+        {% if f.id == d.work_id %} <span class="ctag">counted</span>{% endif %}</th>
+      <td class="muted">{{ f.work_why }}</td>
+      <td>{% if f.local_path %}<a href="/doc/{{ f.id }}" target="_blank">PDF</a>{% endif %} <a href="{{ f.url }}" target="_blank" rel="noopener">original ↗</a></td></tr>{% endfor %}
+  </table>
+</section>
+{% endif %}
 
 <section class="viz-card">
   <h2 class="viz-title">Topics</h2>

@@ -93,7 +93,8 @@ def session():
 MIGRATIONS = {
     "documents": {"year_source": "TEXT",      # where the year came from when not from the title/URL (rozvedka/dating.py)
                   "dataset": "TEXT",          # the dataset a report was imported from (rozvedka/dataset.py)
-                  "doc_type": "TEXT", "doc_type_why": "TEXT"},   # kind of publication and the rule behind it (rozvedka/doctypes.py)
+                  "doc_type": "TEXT", "doc_type_why": "TEXT",    # kind of publication and the rule behind it (rozvedka/doctypes.py)
+                  "work_id": "INTEGER", "work_why": "TEXT"},     # the file representing its report, and why (rozvedka/works.py)
     "sources": {"name_local": "TEXT", "name_en": "TEXT", "homepage": "TEXT", "description": "TEXT",
                 "logo_url": "TEXT", "logo_path": "TEXT", "hq_address": "TEXT", "lat": "REAL", "lon": "REAL",
                 "hq_precision": "TEXT", "domains": "TEXT"},

@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.32.1-1f4e79)
+![version](https://img.shields.io/badge/version-0.33.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -113,6 +113,15 @@ The library itself (`/documents`): every report with its agency, country, langua
   or year; hide irrelevant files; add a document by URL for sites that block automatic downloads.
 - Page through the results with numbered pages, first/last, "go to page", and 25 / 50 / 100 / 200 / 500 per page –
   the same pager on every list in the portal (actors, names, passages).
+- **Reports, not files** – the language versions, summaries and file variants of one report are grouped and counted
+  once: the edition of a yearly series in any language, the same address with another language marker (`_en.pdf` /
+  `_de.pdf`, `/en/` / `/fr/`), or the same title with a language or "summary" ending ("TE-SAT 2025 – Zusammenfassung").
+  The file with most text represents the report (English unless another version has 30 % more); each row lists the
+  other files ("also de fr …"), and the report page shows them all with the rule that grouped them. Asking for a
+  language, a series or *all files* lists every file. Mistaken groups are split in `sources/works.yaml`.
+
+  <img src="docs/images/doc-works.png" alt="Documents: a Swiss situation report listed once with its German version beside it" width="900">
+
 - **Document types** – every file is typed by transparent rules on its title and file name (in the library's
   languages), its report series and its page count: annual or periodic report, threat / risk assessment, strategy,
   bulletin, guide, other report – or **not a report**: statement / press release, law or regulation, budget table, form. The type and

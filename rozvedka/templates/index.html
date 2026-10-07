@@ -34,7 +34,7 @@
   <select name="status"><option value="">Any status</option>
     {% for s in ['downloaded','new','browser-only','failed'] %}<option value="{{ s }}" {{ 'selected' if f.status == s }}>{{ s }}</option>{% endfor %}
   </select>
-  {% for k in ('year_from', 'year_to', 'indexed', 'actor', 'main', 'cluster', 'series', 'added_from', 'added_to', 'undated', 'per_page') %}{% if f[k] %}<input type="hidden" name="{{ k }}" value="{{ f[k] }}">{% endif %}{% endfor %}
+  {% for k in ('year_from', 'year_to', 'indexed', 'actor', 'main', 'cluster', 'series', 'added_from', 'added_to', 'undated', 'all_files', 'per_page') %}{% if f[k] %}<input type="hidden" name="{{ k }}" value="{{ f[k] }}">{% endif %}{% endfor %}
   <label class="chk"><input type="checkbox" name="show_hidden" value="1" {{ 'checked' if f.show_hidden }}> hidden too</label>
   <button>Filter</button>
   <a class="reset" href="/documents">Reset</a>
@@ -62,6 +62,8 @@
   {% set n_left = type_counts.items()|selectattr(0, 'in', NOT_REPORTS)|map(attribute=1)|sum %}
   {% if not f.doc_type and not f.all_types and n_left %}<a class="muted small" href="/documents?{{ qs(all_types=1, page=1) }}"
     title="Statements and press releases, laws, budget tables and forms are not counted as reports – here or in any count of the portal">+ {{ n_left }} statements, laws, finance tables and forms not counted</a>{% endif %}
+  {% if other_files > 0 and not f.all_files %}<a class="muted small" href="/documents?{{ qs(all_files=1, page=1) }}"
+    title="Language versions, summaries and file variants of the listed reports: each report is listed and counted once, through the file with most text">+ {{ other_files }} other language version{{ 's' if other_files != 1 }} and summaries</a>{% endif %}
   {% if watch_query %}<form method="post" action="/watch/add" class="inline" title="Follow this search update by update on the Watchlist: {{ watch_query }}">
     <input type="hidden" name="query" value="{{ watch_query }}"><button class="watch-btn">☆ Watch this search</button></form>{% endif %}
   {% set cur = f.sort or 'year' %}<span class="muted small">sorted by
@@ -93,6 +95,8 @@
           {% if editions.get(d.id) %}{% set e = editions[d.id] %}<a class="badge-series" href="/series/{{ e.id }}" title="Edition {{ e.year }} ({{ e.lang }}) of the report series “{{ e.name }}” – all editions">{{ e.name }} · {{ e.year }}</a>{% endif %}
           {% if d.ocr and d.ocr.chars %}<span class="badge-ocr" title="The PDF has no text layer; its text was recognised by OCR ({{ d.ocr.engine }}, {{ d.ocr.langs }}, {{ d.ocr.date }}) – search and topics use it; recognition can misread words">OCR</span>{% endif %}
           {% if d.hand_added %}<span class="badge-hand {{ '' if d.hand_official else 'badge-warn' }}" title="Added by hand on {{ d.hand_added[:10] }} from {{ d.url }}{{ '' if d.hand_official else ' – this URL is not on the agency’s official domains' }}">added by hand{{ '' if d.hand_official else ' · unofficial URL' }}</span>{% endif %}
+          {% if d.variants %}<span class="variants" title="Other files of this report – {{ d.variants[0].work_why if d.variants[0].work_why else '' }}">also
+            {% for v in d.variants[:8] %}<a href="/report/{{ v.id }}" title="{{ v.title }}">{{ v.lang or '?' }}</a>{{ ' ' if not loop.last }}{% endfor %}{% if d.variants|length > 8 %} <a href="/report/{{ d.id }}#files">+{{ d.variants|length - 8 }}</a>{% endif %}</span>{% endif %}
           {% if d.doc_type %}<span class="badge-type{{ ' badge-off' if d.doc_type in NOT_REPORTS }}" title="{{ DOC_TYPES[d.doc_type][0] }}: {{ d.doc_type_why }}{{ ' – not counted as a report' if d.doc_type in NOT_REPORTS }}">{{ DOC_TYPES[d.doc_type][0] }}{{ ' · not counted' if d.doc_type in NOT_REPORTS }}</span>{% endif %}
           {% if d.pages_count %} · {{ d.pages_count }} pages{% endif %}
           {% if d.size %} · {{ (d.size / 1048576) | round(1) }} MB{% endif %}

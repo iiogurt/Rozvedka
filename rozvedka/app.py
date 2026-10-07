@@ -437,7 +437,7 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
           coalition: str = "", topic: list[str] = Query(default=[]), sort: str = "",
           year_from: str = "", year_to: str = "", indexed: int = 0, actor: str = "", main: int = 0,
           cluster: str = "", series_id: str = Query("", alias="series"), added_from: str = "", added_to: str = "", undated: int = 0,
-          doc_type: str = "", all_types: int = 0):
+          doc_type: str = "", all_types: int = 0, all_files: int = 0):
     tax = topics.taxonomy()["topics"]
     if doc_type == "all":                                   # the type list's "every type" choice
         doc_type, all_types = "", 1
@@ -446,7 +446,7 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
                  show_hidden=show_hidden, coalition=coalition, topic=topic, year_from=year_from, year_to=year_to,
                  indexed=indexed, actor=actor, main=main, cluster=cluster, series_id=series_id,
                  added_from=added_from, added_to=added_to, undated=undated)
-    flt = doclist.build(**fargs, doc_type=doc_type, all_types=all_types)
+    flt = doclist.build(**fargs, doc_type=doc_type, all_types=all_types, all_files=all_files)
     every_type = doclist.build(**fargs, all_types=1)       # the same filters over every type: counts per type
     where, args, chosen, fts = flt["where"], flt["args"], flt["chosen"], flt["fts"]
     base_where, base_args = flt["base_where"], flt["base_args"]
@@ -469,13 +469,17 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
                   coalition=coalition, topic=chosen, sort=sort if sort != "year" or chosen or q else "",
                   show_hidden=show_hidden or "", year_from=year_from, year_to=year_to, indexed=indexed or "",
                   actor=actor, main=main or "", cluster=cluster, series=series_id, added_from=added_from, added_to=added_to,
-                  undated=undated or "", doc_type=doc_type, all_types=all_types or "",
+                  undated=undated or "", doc_type=doc_type, all_types=all_types or "", all_files=all_files or "",
                   per_page=size if size != paging.PER_PAGE_CHOICES[2] else "")
     with db.session() as con:
         topics.init()
         total = con.execute(f"SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id WHERE {sql_where}",
                             args).fetchone()[0]
         pg = paging.paginate(total, page, size, "/documents", params)
+        # other language versions and summaries of the reports listed (one file per report is listed by default)
+        every_file = doclist.build(**fargs, doc_type=doc_type, all_types=all_types, all_files=1)
+        other_files = con.execute(f"""SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
+                                      WHERE {' AND '.join(every_file['where'])}""", every_file["args"]).fetchone()[0] - total
         type_counts = dict(con.execute(
             f"""SELECT COALESCE(d.doc_type, ''), COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
                 WHERE {' AND '.join(every_type['where'])} GROUP BY 1""", every_type["args"]).fetchall())
@@ -487,6 +491,14 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
                 WHERE {sql_where} ORDER BY {order} LIMIT ? OFFSET ?""",
             (*args, *order_args, size, pg["offset"]))]
         ids = [d["id"] for d in docs]
+        variants: dict[int, list] = {}          # the other files of each listed report
+        works_ids = [d["work_id"] for d in docs if d.get("work_id")]
+        if works_ids:
+            for r in con.execute(f"""SELECT id, work_id, lang, title FROM documents WHERE work_id IN ({','.join('?' * len(works_ids))})
+                                     ORDER BY lang, id""", works_ids):
+                variants.setdefault(r["work_id"], []).append(dict(r))
+        for d in docs:
+            d["variants"] = [v for v in variants.get(d.get("work_id"), []) if v["id"] != d["id"]]
         by_doc: dict[int, list] = {}
         if ids:
             for r in con.execute(f"""SELECT doc_id, topic, score FROM doc_topics WHERE doc_id IN ({','.join('?' * len(ids))})
@@ -519,6 +531,7 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
 
     return tpl.TemplateResponse(request, "index.html", {"year_conflicts": len(dating.conflicts()),
         "type_counts": type_counts, "DOC_TYPES": doctypes.TYPES, "NOT_REPORTS": doctypes.NOT_REPORTS,
+        "other_files": other_files,
         "docs": docs, "total": total, "pg": pg,
         "facets": facets, "f": params, "counts": counts, "qs": qs,
         "TOPICS": tax, "CATEGORIES": topics.taxonomy()["categories"], "topic_counts": topic_counts,
