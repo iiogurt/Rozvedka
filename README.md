@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.41.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.42.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -430,8 +430,8 @@ at a time (an update, an export or an import); the indexers run as separate proc
 ## Quick start
 
 ```bash
-git clone https://github.com/iiogurt/Rozvedka.git ~/Documents/Projects/Rozvedka
-cd ~/Documents/Projects/Rozvedka
+git clone https://github.com/iiogurt/Rozvedka.git      # any folder; nothing depends on where it lives
+cd Rozvedka
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 sudo apt install poppler-utils chromium      # pdftotext (text extraction), Chromium (JavaScript-only sites)
 sudo apt install ocrmypdf tesseract-ocr tesseract-ocr-eng tesseract-ocr-spa …   # optional: OCR for scanned reports
@@ -439,11 +439,14 @@ sudo apt install ocrmypdf tesseract-ocr tesseract-ocr-eng tesseract-ocr-spa … 
 .venv/bin/python -m rozvedka update          # crawl, download, extract and index (first run: hours)
 .venv/bin/python -m rozvedka fetch-actors    # reference data for the actor index (a few minutes)
 .venv/bin/python -m rozvedka index-actors
-.venv/bin/python -m rozvedka serve           # → http://<host>:8080
+.venv/bin/python -m rozvedka serve           # → http://127.0.0.1:8080 (this computer only)
+.venv/bin/python -m rozvedka serve --host 0.0.0.0   # → http://<this machine's address>:8080 for the home network
 ```
 
 > [!WARNING]
-> The portal has no login. It listens on your LAN; do not expose it to the internet.
+> The portal has no login. By default it answers only on this computer; with `--host 0.0.0.0` everyone on the
+> network can use it – start updates, imports and exports. Do that only on a trusted home network, and never forward
+> its port to the internet. See [Security](#security).
 
 > [!NOTE]
 > `data/` is not in git. It holds the database (`rozvedka.db`), the downloaded PDFs (`files/`, 14+ GB), logos and
@@ -455,12 +458,12 @@ The portal runs when it is started – it is not set up to start by itself after
 schedule (both the owner's decisions; updates are started on the *Update* page):
 
 ```bash
-cd ~/Documents/Projects/Rozvedka
-nohup .venv/bin/python -m rozvedka serve > data/logs/portal.log 2>&1 &
+cd Rozvedka                                   # the project folder
+nohup .venv/bin/python -m rozvedka serve --host 0.0.0.0 > data/logs/portal.log 2>&1 &
 ```
 
-`deploy/rozvedka-web.service` is a systemd user unit for whoever wants the portal managed by systemd
-(`systemctl --user link "$PWD/deploy/rozvedka-web.service" && systemctl --user start rozvedka-web`); without
+`deploy/rozvedka-web.service` is a template of a systemd user unit for whoever wants the portal managed by systemd;
+the commands to install it from the project folder are at its top (they fill in the folder's path). Without
 `loginctl enable-linger` it runs only while that user is logged in.
 
 ## Commands
@@ -483,7 +486,7 @@ nohup .venv/bin/python -m rozvedka serve > data/logs/portal.log 2>&1 &
 | `improve-titles` | replace poor document titles with the title stored in the PDF |
 | `export DIR [--no-files] [--since DATE] [--part-size 2G] [--name LABEL]` | write the whole library as a dataset – parts of at most 2 GB plus a manifest – for backup or to hand to someone else |
 | `import PATH [--check] [--prefer local\|dataset] [--no-index]` | verify a dataset, compare it with the library (newer / older / mixed / complementing), then restore it into an empty library or merge it into this one |
-| `serve [--host] [--port]` | run the portal (default `0.0.0.0:8080`) |
+| `serve [--host] [--port]` | run the portal (default `127.0.0.1:8080` – this computer only; `--host 0.0.0.0` for the home network) |
 | `stats` | documents found and downloaded per country |
 | `--version` | release version and git build |
 
@@ -503,6 +506,17 @@ Everything that defines *what* Rozvedka collects and recognises is a hand-editab
 | [`actors.yaml`](sources/actors.yaml) | which Wikidata classes, hand-listed seeds and countries make up the actor index, and matching corrections |
 | [`series.yaml`](sources/series.yaml) | confirmed report series per source (title stems per language, editions per year, editions confirmed as not published) – written by the portal, editable by hand |
 | [`events.yaml`](sources/events.yaml) | reference events for the trend charts (Wikipedia titles; dates are resolved from Wikidata) |
+
+Settings of an installation are environment variables (none is required):
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `ROZVEDKA_HOST` | `127.0.0.1` | address `serve` listens on – `0.0.0.0` for the home network (same as `--host`) |
+| `ROZVEDKA_PORT` | `8080` | port of `serve` (same as `--port`) |
+| `ROZVEDKA_ALLOWED_HOSTS` | – | extra host names the portal answers to, comma-separated (IP addresses, `localhost`, `*.local`, `*.lan` and the machine's own name always work) |
+| `ROZVEDKA_DATA` | `data/` in the project folder | where the database, report files, logos and gazetteer live |
+| `ROZVEDKA_DB` | `$ROZVEDKA_DATA/rozvedka.db` | another database file |
+| `ROZVEDKA_EXCHANGE_DIRS` | – | more folders the Data exchange folder picker may use, separated by `:` |
 
 <details>
 <summary><b>How sources are fetched</b> (<code>access</code> in the registry)</summary>
@@ -760,6 +774,49 @@ erDiagram
 | `uploads`, `collect_checks` | 0 / 0 | provenance of reports added by hand; “checked, nothing new” marks | To collect |
 | `runs` | 91 | every crawl, download and update with its summary | the Update page's history and estimates |
 | `actor_meta` | 2 | versions of the actor index | rebuilds only when needed |
+
+## Security
+
+Rozvedka is built for one person on one computer or a trusted home network, and has **no login**.
+
+- **Where it listens:** `serve` answers only on this computer unless started with `--host 0.0.0.0` (or
+  `ROZVEDKA_HOST`). Never forward the port to the internet or run it on a public server; for remote access use a VPN
+  (WireGuard, Tailscale).
+- **Other websites cannot use it through your browser:** requests that change something (updates, imports, exports,
+  edits) are refused when they come from another site (cross-site request forgery), and the portal answers only to
+  IP addresses, `localhost`, local names (`*.local`, `*.lan`) and names listed in `ROZVEDKA_ALLOWED_HOSTS` – so a
+  malicious page cannot point its own domain at your machine to read it (DNS rebinding). Responses forbid framing by
+  other sites and send no referrer to other sites.
+- **Datasets from others are untrusted:** importing checks every file's SHA-256, writes report files only below
+  `data/files/`, takes part files only from the manifest's folder, and shows manifest values only as text and numbers.
+- **Files:** the folder picker shows only `/media`, `/mnt`, `/run/media`, `/Volumes`, your home folder and folders
+  listed in `ROZVEDKA_EXCHANGE_DIRS`; PDFs, logos and
+  pictures are served only from `data/`; agency logos are sent with a policy that forbids scripts (an SVG could carry
+  one).
+- **What it sends out:** requests to the agencies' and think tanks' sites (robots.txt respected, one request per host
+  every 2 s), to Wikidata, Wikipedia, Wikimedia Commons, MITRE ATT&CK, Our World in Data, the World Bank and the
+  sanctions and lobbying registers when you run the `fetch-…` commands. No telemetry, no accounts, no CDN at runtime.
+- **Headless Chromium** renders the few JavaScript-only report pages (`access: browser`); it runs without its sandbox
+  (needed under some service managers), so keep it updated with the system.
+- Report a vulnerability through a private GitHub security advisory on the repository.
+
+## Compatibility
+
+| | Status |
+|---|---|
+| **Raspberry Pi OS / Debian 13, Python 3.13, ARM64** | the reference installation |
+| Linux x86-64 and ARM64, Python 3.10–3.13 | test suite passes in CI |
+| macOS, Python 3.13 | test suite passes in CI; external disks appear under `/Volumes` in the folder picker |
+| Windows, Python 3.13 | test suite passes in CI; the folder picker offers only your home folder and OCR needs the tools on `PATH` – WSL is the smoother way |
+| Python 3.9 and older | not supported (the code uses Python 3.10 syntax) |
+
+- **Python packages:** pinned in `requirements.txt` (FastAPI, Uvicorn, Jinja2, httpx, pypdf, PyYAML, Beautiful
+  Soup, Markdown); checked with `pip-audit`.
+- **System tools, optional:** `pdftotext` (poppler-utils) for better text extraction, `chromium` for JavaScript-only
+  sites, `ocrmypdf` + Tesseract for scanned reports. Without them those steps are skipped and the rest works.
+- **Browsers:** current Firefox, Chromium/Chrome, Safari and Edge; the pages need JavaScript for charts and maps.
+- **Resources:** the full library is about 16 GB of PDFs plus a 0.6 GB database; a first full update takes hours on a
+  Raspberry Pi 4/5.
 
 ## Development
 

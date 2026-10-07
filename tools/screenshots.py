@@ -6,7 +6,8 @@
     python3 tools/screenshots.py --base http://127.0.0.1:8080
 
 Drives headless Chromium over the DevTools protocol (needs `chromium` and the `websockets` package, which comes with
-uvicorn[standard]). Agency logos are removed before every shot – they are the agencies' marks and are not committed.
+uvicorn[standard]). Agency logos are removed before every shot – they are the agencies' marks and are not committed – and the machine's
+home folder is shown as /home/user (the folder picker and job logs would otherwise show the account name).
 The data-exchange shots need a job: start an export (data-export, taken while it runs) or a "Check and compare" of a
 dataset (data-import, taken when the check is done) on /data, then take that shot alone. Every other shot is plain.
 """
@@ -24,6 +25,15 @@ import websockets
 OUT = Path(__file__).resolve().parent.parent / "docs" / "images"
 PORT = 9333
 NO_LOGOS = 'document.querySelectorAll(\'img[src^="/logo/"], .logo-sm\').forEach((e) => e.remove()); 1'
+# the folder picker and job logs show the machine's home folder: the pictures say /home/user instead
+NO_HOME = r"""(() => { const re = /\/home\/(?!user\b)[^\/\s'"]+/g;   // not "user": that would loop
+  const clean = () => {
+    const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let n; (n = w.nextNode());) if (n.nodeValue.search(re) >= 0) n.nodeValue = n.nodeValue.replace(re, "/home/user");
+  };
+  clean();
+  new MutationObserver(clean).observe(document.body, { childList: true, subtree: true, characterData: true });
+  return 1; })()"""
 WAGNER, CHINA = "Q36597284", "Q148"
 
 # name: (path, height, steps, clip_from) – steps: ("eval", js) | ("type", text) | ("sleep", s); clip_from: a CSS
@@ -96,6 +106,7 @@ async def shoot(ws, name: str, base: str, path: str, height: int, steps: list, c
         elif kind == "sleep":
             await asyncio.sleep(arg)
     await call("Runtime.evaluate", expression=NO_LOGOS)
+    await call("Runtime.evaluate", expression=NO_HOME)
     await asyncio.sleep(0.5)
     y = 0
     if clip_from:

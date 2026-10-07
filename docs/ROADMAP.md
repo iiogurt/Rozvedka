@@ -129,7 +129,7 @@ Each item: why · what · done when · version step.
 ### E. Engineering and operations
 
 1. **The portal starts after a reboot** – install `deploy/rozvedka-web.service` as a user service with
-   `loginctl enable-linger prisonmaster` (needs sudo – owner's approval); **remove the weekly update timer from
+   `loginctl enable-linger <user>` (needs sudo – owner's approval); **remove the weekly update timer from
    `deploy/`** (the owner declined periodic jobs). · patch
 2. ✅ (0.31.1) **CI** – GitHub Actions running the tests on every PR. · patch
 3. **Split `app.py`** into route modules (documents, actors, trends, maps, data, update) and a small migration helper. · patch

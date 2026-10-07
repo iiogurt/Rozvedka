@@ -13,7 +13,7 @@ MANIFEST = ".manifest.json"
 
 def roots() -> list[Path]:
     extra = [Path(p) for p in os.environ.get("ROZVEDKA_EXCHANGE_DIRS", "").split(":") if p]
-    cands = extra + [Path("/media"), Path("/mnt"), Path("/run/media"), Path.home()]
+    cands = extra + [Path("/media"), Path("/mnt"), Path("/run/media"), Path("/Volumes"), Path.home()]   # /Volumes: macOS
     out = []
     for c in cands:
         try:
@@ -48,19 +48,28 @@ def check(path: str, writable: bool = False, file: bool = False) -> Path:
     return p
 
 
+def _plain_name(name) -> bool:
+    return isinstance(name, str) and bool(name) and Path(name).name == name and name not in (".", "..")
+
+
+def _int(v) -> int | None:
+    return v if isinstance(v, int) and not isinstance(v, bool) else None
+
+
 def _dataset_summary(manifest: Path) -> dict:
     try:
         m = json.loads(manifest.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return {"manifest": str(manifest), "name": manifest.name, "error": "not readable"}
-    parts = m.get("parts") or []
+    # a manifest is someone else's file: part names must be plain file names beside it, numbers must be numbers
+    parts = [p for p in (m.get("parts") or []) if isinstance(p, dict) and _plain_name(p.get("name"))]
     present = [p for p in parts if (manifest.parent / p["name"]).exists()]
     complete = len(present) == len(parts) and all((manifest.parent / p["name"]).stat().st_size == p["size"] for p in present)
     return {"manifest": str(manifest), "name": manifest.name, "id": m.get("dataset_id"), "created": m.get("created"),
             "label": m.get("name"), "app_version": m.get("app_version"), "installation": (m.get("installation") or {}).get("id"),
-            "bytes": m.get("bytes"), "parts": len(parts), "parts_present": len(present), "complete": complete,
-            "files": (m.get("scope") or {}).get("files_included"), "with_files": (m.get("scope") or {}).get("files"),
-            "since": (m.get("scope") or {}).get("since"), "documents": (m.get("freshness") or {}).get("documents"),
+            "bytes": _int(m.get("bytes")), "parts": len(parts), "parts_present": len(present), "complete": complete,
+            "files": _int((m.get("scope") or {}).get("files_included")), "with_files": (m.get("scope") or {}).get("files") is not False,
+            "since": (m.get("scope") or {}).get("since"), "documents": _int((m.get("freshness") or {}).get("documents")),
             "last_crawl": (m.get("freshness") or {}).get("last_crawl")}
 
 

@@ -215,7 +215,7 @@ def inbox() -> list[dict]:
         folder = rel.parts[0] if len(rel.parts) > 1 else ""
         _, pdf_title = downloader.pdf_info(f) if f.suffix.lower() == ".pdf" else (None, None)
         name = f.stem
-        out.append({"path": str(rel), "name": f.name, "size": f.stat().st_size, "is_pdf": f.suffix.lower() == ".pdf",
+        out.append({"path": rel.as_posix(), "name": f.name, "size": f.stat().st_size, "is_pdf": f.suffix.lower() == ".pdf",
                     "source_id": _guess_source(srcs, folder), "title": (pdf_title if downloader.good_pdf_title(pdf_title) else
                                                                        downloader.slug(name, 120).replace("-", " ")),
                     "year": crawler.guess_year(name, "") or "", "lang": crawler.guess_lang(f.name, name, "", set(), ) or ""})
