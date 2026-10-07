@@ -18,7 +18,7 @@
 <div class="series-grid">
 {% for c in items %}{% set s = c.series %}
   <article class="series-tile">
-    <h2><a href="/series/{{ c.id }}"><img class="flag-sm" src="{{ flag_url(c.source.country) }}" alt=""> {{ c.source.agency }} – {{ s.name }}</a></h2>
+    <h2><a href="/series/{{ c.id }}"><img class="flag-sm" src="{{ flag_url(c.source.country) }}" alt=""> {{ c.source.agency }} – {{ s.name }}</a>{{ pub_mark(c.source.id) }}</h2>
     <p class="small muted">{{ c.editions }} editions · {{ s.languages|join(', ') }} · {{ s.since }}–{{ c.latest[0] if c.latest else '' }}
       {% if c.complete_share is not none %} · <span title="editions in the library ÷ editions that should exist">{{ (c.complete_share * 100)|round|int }}% complete</span>{% endif %}
       {% if c.latest %} · latest: <a href="/report/{{ c.latest[2] }}">{{ c.latest[0] }} ({{ c.latest[1] }})</a>{% endif %}</p>

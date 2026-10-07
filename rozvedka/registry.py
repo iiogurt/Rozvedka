@@ -24,18 +24,19 @@ def sync(path=REGISTRY) -> dict:
             con.execute(
                 """INSERT INTO sources(key,country,agency,name_local,name_en,homepage,description,logo_url,
                                       hq_address,lat,lon,hq_precision,domains,
-                                      type,access,frequency,report_types,notes,active)
-                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)
+                                      type,access,frequency,report_types,notes,publisher,active)
+                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)
                    ON CONFLICT(key) DO UPDATE SET name_local=excluded.name_local, name_en=excluded.name_en,
                      homepage=excluded.homepage, description=excluded.description, logo_url=excluded.logo_url,
                      hq_address=excluded.hq_address, lat=excluded.lat, lon=excluded.lon,
                      hq_precision=excluded.hq_precision, domains=excluded.domains,
                      type=excluded.type, access=excluded.access, frequency=excluded.frequency,
-                     report_types=excluded.report_types, notes=excluded.notes, active=1""",
+                     report_types=excluded.report_types, notes=excluded.notes, publisher=excluded.publisher, active=1""",
                 (key, s["country"], s["agency"], s.get("name_local"), s.get("name_en"), s.get("homepage"),
                  s.get("description"), s.get("logo"), hq.get("address"), hq.get("lat"), hq.get("lon"),
                  hq.get("precision"), ",".join(s.get("domains", [])), s.get("type"), s.get("access", "auto"),
-                 s.get("frequency"), ", ".join(s.get("report_types", [])), s.get("notes")))
+                 s.get("frequency"), ", ".join(s.get("report_types", [])), s.get("notes"),
+                 s.get("publisher", "official")))
             sid = con.execute("SELECT id FROM sources WHERE key=?", (key,)).fetchone()["id"]
             seen_sources.add(sid)
             pages = list(s.get("pages", []))
@@ -47,10 +48,11 @@ def sync(path=REGISTRY) -> dict:
                           for y in range(y0, y1 + 1) for l in pat.get("langs", [""])]
             for p in pages:
                 con.execute(
-                    """INSERT INTO pages(source_id,url,lang,kind,note,verified,active) VALUES(?,?,?,?,?,?,1)
+                    """INSERT INTO pages(source_id,url,lang,kind,note,verified,follow,active) VALUES(?,?,?,?,?,?,?,1)
                        ON CONFLICT(source_id,url) DO UPDATE SET lang=excluded.lang, kind=excluded.kind,
-                         note=excluded.note, verified=excluded.verified, active=1""",
-                    (sid, p["url"], p.get("lang"), p.get("kind"), p.get("note"), 0 if p.get("verified") is False else 1))
+                         note=excluded.note, verified=excluded.verified, follow=excluded.follow, active=1""",
+                    (sid, p["url"], p.get("lang"), p.get("kind"), p.get("note"), 0 if p.get("verified") is False else 1,
+                     p.get("follow")))
                 seen_pages.add(con.execute("SELECT id FROM pages WHERE source_id=? AND url=?", (sid, p["url"])).fetchone()["id"])
         # deactivate things removed from the YAML (documents are kept)
         for (sid,) in con.execute("SELECT id FROM sources").fetchall():

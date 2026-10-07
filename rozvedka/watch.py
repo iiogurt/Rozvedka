@@ -150,7 +150,7 @@ def latest(query: str, limit: int = 5) -> list[dict]:
         topics.init()
         actors.init()
         rows = [dict(r) for r in con.execute(
-            f"""SELECT d.id, d.title, d.year, d.lang, d.url, d.local_path, d.discovered_at, s.country, s.agency, s.name_en,
+            f"""SELECT d.id, d.title, d.year, d.lang, d.url, d.local_path, d.discovered_at, s.country, s.agency, s.name_en, s.id source_id,
                        s.name_local, i.pages, i.ocr
                 FROM documents d JOIN sources s ON s.id=d.source_id LEFT JOIN doc_index i ON i.doc_id=d.id
                 WHERE {' AND '.join(f['where'])} ORDER BY d.discovered_at DESC, d.year DESC NULLS LAST, d.id DESC LIMIT ?""",
@@ -168,7 +168,7 @@ def latest(query: str, limit: int = 5) -> list[dict]:
                 spans = compare.fts_spans(con, r["id"], json.loads(t[0]) if t and t[0] else [])
             own = {topics.normalize(x).strip() for x in (r["agency"], r["name_en"], r["name_local"]) if x}
             spans = [sp for sp in spans if topics.normalize(body[sp[0]:sp[1]]).strip() not in own]
-            item = {k: r[k] for k in ("id", "title", "year", "lang", "url", "country", "agency")}
+            item = {k: r[k] for k in ("id", "title", "year", "lang", "url", "country", "agency", "source_id")}
             item["found"] = (r["discovered_at"] or "")[:10]
             item["ocr"] = actors._ocr_note(r["ocr"])
             if spans:

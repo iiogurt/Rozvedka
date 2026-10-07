@@ -144,4 +144,7 @@ backups and exchange (0.27–0.28), home page and search console (0.22), Update 
   Serbia, Bosnia and Herzegovina, Kosovo), Israel, India, South Africa, Uruguay, Costa Rica, Singapore. Each adds
   languages and work; worth it only where agencies publish regular reports.
 - **International organisations** (D2–D3) are outside "agencies" but inside "reliable official information" – include?
+- ✅ (0.34.0) **Think tanks** – the owner admitted pro-democratic and security think tanks (2026-10-07), always marked
+  apart from official agencies. Next candidates: RUSI, SWP, Chatham House, Carnegie (JavaScript lists, try browser
+  rendering), deeper archives of the 13 crawled ones.
 - **Oversight bodies** (D4) – include as their own agency type?

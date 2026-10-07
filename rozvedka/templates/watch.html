@@ -50,7 +50,7 @@
   <p class="viz-sub muted small">Watched since {{ it.added }}{% if it.last_day %}; last new reports on <a href="/new?day={{ it.last_day }}">{{ it.last_day }}</a>{% endif %}.
     The newest reports, each with its passage on the search (densest mentions or terms).</p>
   <ol class="passages">{% for p in it.latest %}<li>
-    <div class="p-head"><img class="flag-sm" src="{{ flag_url(p.country) }}" alt=""> <b>{{ p.agency }}</b> {{ p.year or '—' }} ·
+    <div class="p-head"><img class="flag-sm" src="{{ flag_url(p.country) }}" alt=""> <b>{{ p.agency }}</b>{{ pub_mark(p.source_id) }} {{ p.year or '—' }} ·
       <a class="p-title" href="/report/{{ p.id }}">{{ p.title }}</a> <span class="lang">{{ p.lang or '?' }}</span> <span class="muted small">found {{ p.found }}</span></div>
     {% if p.segments %}<blockquote class="p-text">{% for s in p.segments %}{% if s.mark %}<mark>{{ s.text }}</mark>{% else %}{{ s.text }}{% endif %} {% endfor %}</blockquote>{% endif %}
     <div class="p-foot small"><a href="{{ p.open }}" target="_blank">{% if p.page %}p. {{ p.page }}{% else %}open report{% endif %}</a> ·

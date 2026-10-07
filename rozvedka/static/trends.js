@@ -257,6 +257,7 @@
       <ul class="prov-list">
         <li><b>Documents:</b> the reports in this library (Documents page), each from an official agency page listed on
             <a href="/sources">Sources</a>. Filters: ${f}.</li>
+        <li><b>Publishers:</b> ${x.independent ? `official agencies and <a href="/documents?${new URLSearchParams({...p.filters, type: "think-tank"})}">${x.independent} reports of independent think tanks</a> (◆) – choose “Official agencies only” to leave them out` : "official agencies only"}.</li>
         <li><b>Left out:</b> ${x.undated} undated, ${x.unclassified} not yet text-indexed, ${x.before_min_year} from before 2000
             – of ${x.listed} listed documents in this filter; not counted as reports at all:
             <a href="/documents?${new URLSearchParams({...p.filters, doc_type: "all"})}">${x.not_reports} statements, laws, finance tables and forms</a>; counted once:

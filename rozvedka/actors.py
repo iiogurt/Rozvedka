@@ -631,7 +631,7 @@ def actor_detail(key: str, passages: int = 40, page: int | str = 1) -> dict | No
             near = nearby(con, d["doc_id"], key, s, e, linked)
             pages = json.loads(d["pages"]) if d["pages"] else None
             page = topics.page_of(pages, s)
-            shown.append({**{k: d[k] for k in ("doc_id", "title", "year", "agency", "country", "lang", "hits", "url")},
+            shown.append({**{k: d[k] for k in ("doc_id", "title", "year", "agency", "country", "lang", "hits", "url", "source_id")},
                           "ocr": _ocr_note(d["ocr"]),
                           "names": json.loads(d["names"]), "page": page, **_snippet(body, s, e), "nearby": near,
                           "open": f"/doc/{d['doc_id']}" + (f"#page={page}" if page else "")})
@@ -639,7 +639,7 @@ def actor_detail(key: str, passages: int = 40, page: int | str = 1) -> dict | No
             "agencies": sorted(agencies.values(), key=lambda a: -a["docs"]), "topics": topic_rows,
             "related": related, "passages": shown, "kind_name": kind_name(row["kind"]), "window": WINDOW,
             "connections": conns,
-            "before": [{**{k: d[k] for k in ("doc_id", "title", "year", "agency", "country")},
+            "before": [{**{k: d[k] for k in ("doc_id", "title", "year", "agency", "country", "source_id")},
                         "names": json.loads(d["names"])} for d in before]}
 
 
@@ -786,7 +786,7 @@ def pair_detail(a: str, b: str, year_from: int | None = None, year_to: int | Non
         if len(actors_) < 2:
             return None
         docs = [dict(r) for r in con.execute(
-            f"""SELECT p.doc_id, p.n, d.title, d.year, d.url, s.agency, s.country, i.pages, i.ocr
+            f"""SELECT p.doc_id, p.n, d.title, d.year, d.url, s.agency, s.country, s.id source_id, i.pages, i.ocr
                 FROM actor_pairs p JOIN documents d ON d.id=p.doc_id JOIN sources s ON s.id=d.source_id
                 JOIN doc_index i ON i.doc_id=d.id JOIN actors a1 ON a1.key=p.a JOIN actors a2 ON a2.key=p.b
                 WHERE p.a=? AND p.b=? AND {where} AND {PAIR_FOUNDED}
@@ -805,7 +805,7 @@ def pair_detail(a: str, b: str, year_from: int | None = None, year_to: int | Non
             snip = _snippet(body, s1, e2)
             # mark both names inside the joined passage
             mid = " ".join(body[e1:s2].split()) if s2 > e1 else ""
-            shown.append({**{k: d[k] for k in ("doc_id", "title", "year", "agency", "country", "url", "n")},
+            shown.append({**{k: d[k] for k in ("doc_id", "title", "year", "agency", "country", "url", "n", "source_id")},
                           "ocr": _ocr_note(d["ocr"]),
                           "page": page, "before": snip["before"], "first": " ".join(body[s1:e1].split()),
                           "middle": mid, "second": " ".join(body[s2:e2].split()) if s2 >= e1 else "",

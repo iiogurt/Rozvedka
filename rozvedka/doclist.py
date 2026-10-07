@@ -26,6 +26,8 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
         where.append(doctypes.COUNTED)
     if not (all_files or lang or series_id):  # one file per report, as every count – unless a language or series is asked for
         where.append(works.PRIMARY)
+    if type == "official":                  # every source run by a state or states – no think tanks
+        where.append(trends.OFFICIAL); type = ""
     for col, val in (("s.country", country), ("s.type", type), ("d.lang", lang), ("d.status", status)):
         if val:
             where.append(f"{col}=?"); args.append(val)

@@ -16,7 +16,7 @@
   <select name="coalition" aria-label="Coalition"><option value="">All coalitions</option>
     {% for key, c in COALITIONS.items() %}<option value="{{ key }}" {{ 'selected' if f.coalition == key }}>{{ c.short }}</option>{% endfor %}
   </select>
-  <select name="type"><option value="">All agency types</option>
+  <select name="type"><option value="">All sources – official and think tanks</option><option value="official" {{ 'selected' if f.type == 'official' }}>Official agencies only</option>
     {% for r in facets.type %}<option value="{{ r[0] }}" {{ 'selected' if f.type == r[0] }}>{{ TYPE_NAMES.get(r[0], r[0]) }}</option>{% endfor %}
   </select>
   <select name="lang"><option value="">All languages</option>
@@ -59,6 +59,8 @@
 </div>{% endif %}
 <div class="summary">
   <span><b>{{ total }}</b> documents match</span>
+  {% if independent and f.type not in ('think-tank', 'official') %}<a class="small pub-count" href="/documents?{{ qs(type='think-tank', page=1) }}"
+    title="Reports of independent think tanks among these – not state agencies; choose “Official agencies only” to leave them out">◆ {{ independent }} from think tanks</a>{% endif %}
   {% set n_left = type_counts.items()|selectattr(0, 'in', NOT_REPORTS)|map(attribute=1)|sum %}
   {% if not f.doc_type and not f.all_types and n_left %}<a class="muted small" href="/documents?{{ qs(all_types=1, page=1) }}"
     title="Statements and press releases, laws, budget tables and forms are not counted as reports – here or in any count of the portal">+ {{ n_left }} statements, laws, finance tables and forms not counted</a>{% endif %}
@@ -88,7 +90,7 @@
       <td class="src"><a href="/documents?{{ qs(source=d.source_id, page=1) }}" title="{{ d.name_en or '' }}">
         <img class="flag-sm" src="{{ flag_url(d.country) }}" alt="{{ d.country }}" width="20" height="15">
         {% if d.logo_path %}<img class="logo-sm" src="/logo/{{ d.source_id }}" alt="" loading="lazy">{% endif %}
-        {{ d.agency }}</a></td>
+        {{ d.agency }}</a>{{ pub_mark(d.source_id) }}</td>
       <td class="title">
         <a href="/report/{{ d.id }}">{{ d.title }}</a>
         <div class="meta">{% if d.local_path %}<a href="/doc/{{ d.id }}" target="_blank">PDF</a> · {% endif %}<a href="{{ d.url }}" target="_blank" rel="noopener">original ↗</a>

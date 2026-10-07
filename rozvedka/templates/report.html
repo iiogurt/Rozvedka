@@ -5,6 +5,8 @@
 <p class="small"><a href="/documents?source={{ d.source_id }}">← {{ d.agency }} – all reports</a>
   {% if series %} · <a href="/series/{{ edition.id }}">series “{{ series.name }}”</a>{% endif %}</p>
 <h1 class="page-h"><img class="flag-sm" src="{{ flag_url(d.country) }}" alt="{{ d.country }}" width="20" height="15"> {{ d.title }}</h1>
+{% if is_independent(d.source_id) %}<p class="pub-banner"><b>◆ Independent publisher.</b> {{ d.agency }} is a think tank, not a
+  state agency – its reports are analysis by a non-governmental institute, listed beside the official reports and marked as such.</p>{% endif %}
 <p class="rp-actions">
   {% if d.local_path %}<a class="rp-btn rp-primary" href="/doc/{{ d.id }}" target="_blank">Open the PDF</a>{% endif %}
   <a class="rp-btn" href="{{ d.url }}" target="_blank" rel="noopener">Official address ↗</a>
@@ -14,7 +16,7 @@
 <section class="viz-card">
   <h2 class="viz-title">Where it comes from</h2>
   <table class="kv small">
-    <tr><th>Agency</th><td><a href="/sources#s-{{ d.source_id }}">{{ d.agency }}</a>{% if d.name_en %} – {{ d.name_en }}{% endif %}
+    <tr><th>Publisher</th><td><a href="/sources#s-{{ d.source_id }}">{{ d.agency }}</a>{{ pub_mark(d.source_id) }}{% if d.name_en %} – {{ d.name_en }}{% endif %}
       <span class="muted">({{ d.country }}, {{ d.type }})</span></td></tr>
     <tr><th>Year</th><td>{{ d.year or '—' }}{% if d.year_source %} <span class="muted">– {{ 'set by hand' if d.year_source == 'set by hand' else 'estimated from ' ~ d.year_source }}</span>
       {% elif d.year %} <span class="muted">– from the title or address</span>{% endif %}

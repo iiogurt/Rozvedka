@@ -6,6 +6,7 @@
   const TYPE_COLORS = {
     "intelligence-civil": "#5aa9ff", "intelligence-military": "#9ccc65", "cyber": "#c792ea",
     "civil-protection": "#ffab40", "police-ct": "#ff6b6b", "eu-body": "#82b1ff", "nato": "#4dd0e1", "other": "#b0bec5",
+    "think-tank": "#f0e442",   // independent publishers: also a diamond instead of a dot, so shape tells them apart too
   };
   const PRECISION = { address: "exact building address", street: "street-level (house not matched)",
                       city: "city only – exact address not published" };
@@ -55,7 +56,7 @@
     const hollow = a.hq_precision !== "address";
     return L.divIcon({
       className: "pin",
-      html: `<span class="pin-dot${hollow ? " hollow" : ""}" style="--c:${TYPE_COLORS[a.type] || TYPE_COLORS.other}"></span>`,
+      html: `<span class="pin-dot${hollow ? " hollow" : ""}${a.type === "think-tank" ? " diamond" : ""}" style="--c:${TYPE_COLORS[a.type] || TYPE_COLORS.other}"></span>`,
       iconSize: [18, 18], iconAnchor: [9, 9], popupAnchor: [0, -8], tooltipAnchor: [0, -10],
     });
   }
@@ -74,6 +75,7 @@
         <div class="hc-acr"><img class="hc-flag" src="${esc(a.flag)}" alt=""> ${esc(a.agency)}</div>
         <div class="hc-en">${esc(a.name_en)}</div>${local}</div></div>
       <div class="hc-type" style="--c:${TYPE_COLORS[a.type] || "#aaa"}"><span class="dot solid"></span>${esc(a.type_name)} · ${esc(a.country_name)}</div>
+      ${a.type === "think-tank" ? `<div class="pub-note">◆ Independent think tank – not run by a state</div>` : ""}
       ${a.coalitions.length ? `<div class="hc-coal">${coalitionChips(a)}</div>` : ""}
       <p class="hc-desc">${esc(firstSentence(a.description))}</p>
       <div class="hc-foot"><span><b>${a.n_docs}</b> documents${years(a)}</span>

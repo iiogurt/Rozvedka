@@ -8,7 +8,7 @@
   <select name="coalition" aria-label="Reporting coalition"><option value="">Reports from all countries</option>
     {% for key, c in COALITIONS.items() %}<option value="{{ key }}">Reports from {{ c.name }}</option>{% endfor %}
   </select>
-  <select name="type" aria-label="Agency type"><option value="">All agency types</option>
+  <select name="type" aria-label="Agency type"><option value="">All sources – official and think tanks</option><option value="official">Official agencies only</option>
     {% for key, name in TYPE_NAMES.items() %}<option value="{{ key }}">{{ name }}</option>{% endfor %}
   </select>
   <select name="topic" aria-label="Only reports on a topic"><option value="">Reports on any topic</option>

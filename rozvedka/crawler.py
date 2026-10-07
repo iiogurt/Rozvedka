@@ -79,6 +79,7 @@ LOW_RELEVANCE_RE = re.compile((
 ).replace(" ", r"[\s_-]+"), re.I)   # filenames use _ or - where titles use spaces
 
 
+FILE_TAIL = r"lowres|hires|web|final|version|digital|full|summary|v\d+|\d+"     # what may follow a language in a file name
 LANG_NAMES = {
     "en": r"english|in english|anglicky|anglická verze|englisch|anglais|engels|englanniksi|på engelska|på engelsk|"
           r"in inglese|en inglés|em inglês|angol|английски|engleski|angleško|angliski|anglų|angļu|inglise",
@@ -86,6 +87,14 @@ LANG_NAMES = {
     "de": r"deutsch|german|německy|allemand|duits",
     "fr": r"français|french|francouzsky|französisch|frans",
     "sv": r"svenska|swedish|ruotsiksi|på svenska",
+    "es": r"español|espanol|spanish|en español|spanisch|espagnol",
+    "pt": r"português|portugues|portuguese|em português|portugiesisch",
+    "it": r"italiano|italian|in italiano|italienisch",
+    "nl": r"nederlands|dutch|niederländisch|néerlandais",
+    "pl": r"polski|polish|po polsku|polnisch",
+    "uk": r"українська|ukrainian|ukrainisch",
+    "ar": r"العربية|arabic|arabisch",
+    "zh": r"中文|chinese|chinesisch",
 }
 
 
@@ -98,8 +107,12 @@ def guess_lang(url: str, text: str, page_lang: str, allowed: set[str]) -> str:
     for lang in sorted(allowed, key=lambda l: l == default):   # try non-default languages first
         if re.search(rf"(?<![a-z])({LANG_TOKENS.get(lang, lang)})(?![a-z])", stem) or lang in segs:
             return lang
+    # a language name in a short link text ("English", "Spanish version") or at the end of the file name
+    # ("…_Spanish_lowres.pdf") – not anywhere in a title ("Russian information warfare" is in English)
+    short = len(text.split()) <= 6
     for lang, names in LANG_NAMES.items():
-        if lang != default and re.search(rf"(?<!\w)({names})(?!\w)", text.lower()):
+        if lang != default and ((short and re.search(rf"(?<!\w)({names})(?!\w)", text.lower()))
+                                or re.search(rf"(?<![a-z])({names})([ _.-]+({FILE_TAIL}))*$", stem.replace("_", " "))):
             return lang
     return default
 
@@ -138,8 +151,9 @@ def humanize_filename(url: str) -> str:
     return re.sub(r"[-_+]+", " ", stem).strip() or url
 
 
-def extract(html: str, base: str) -> tuple[list[dict], list[tuple[str, str]]]:
-    """Return (documents, candidate sub-pages) found on a page."""
+def extract(html: str, base: str, follow: str | None = None) -> tuple[list[dict], list[tuple[str, str]]]:
+    """Return (documents, candidate sub-pages) found on a page. With `follow` (a regex from the registry), the
+    sub-pages are the links matching it – the publication pages of a think tank's list – instead of report words."""
     soup = BeautifulSoup(html, "html.parser")
     for tag in soup(["script", "style", "noscript"]):
         tag.decompose()
@@ -160,9 +174,48 @@ def extract(html: str, base: str) -> tuple[list[dict], list[tuple[str, str]]]:
             continue
         if DOC_RE.search(url):
             docs.append({"url": url, "title": title})
+        elif follow:
+            if re.search(follow, url):
+                subs.append((url, title))
         elif urlsplit(url).netloc == urlsplit(base).netloc and REPORT_WORDS.search(unquote(url) + " " + title):
             subs.append((url, title))
     return docs, subs
+
+
+LINK_NOISE = re.compile(r"^(read more( about)?|link to:?|more about|download( the)?:?|view|open)\s+|"
+                        r"^((january|february|march|april|may|june|july|august|september|october|november|december)"
+                        r"\s+\d{1,2},?\s+\d{4}|\d{1,2}\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+\d{4})\s+", re.I)
+
+
+def page_heading(html: str) -> str:
+    """A publication page's own title: its og:title, else its first <h1> (site name after " | " dropped)."""
+    soup = BeautifulSoup(html, "html.parser")
+    meta = soup.find("meta", property="og:title")
+    text = meta.get("content", "") if meta else ""
+    if not text.strip():
+        h1 = soup.find("h1")
+        text = h1.get_text(" ") if h1 else ""
+    text = " ".join(text.split())
+    return re.split(r"\s+[|–—-]\s+(?=[^|–—-]{0,40}$)", text)[0] if " | " in text or " – " in text else text
+
+
+def strip_site_name(title: str, src) -> str:
+    """'A European Theory of Victory - HCSS' → 'A European Theory of Victory': a trailing segment that is the
+    publisher's own name (or the start of it, when the page cut it short) is dropped."""
+    names = [n.lower() for n in (src["agency"], src["name_en"], src["name_local"]) if n]
+    m = re.match(r"(.+?)\s+[|–—-]\s+([^|–—]{2,90})$", title or "")
+    if m:
+        tail = m.group(2).strip().lower().rstrip(".…")
+        if any(tail == n or n.startswith(tail) or tail.startswith(n) for n in names):
+            return m.group(1).strip()
+    return title
+
+
+def clean_link_text(text: str) -> str:
+    """Link text without "Read more about", "Link to:" or a leading date."""
+    for _ in range(2):
+        text = LINK_NOISE.sub("", text.strip())
+    return text
 
 
 def is_poor_title(title: str | None, url: str) -> bool:
@@ -187,7 +240,7 @@ def _store(con, source_id, page_id, docs, page_lang, allowed, families: set[str]
     for d in docs:
         if families and domain_family(d["url"]) not in families:
             continue   # cited third-party document (footnote, partner report) – not this agency's publication
-        lang = guess_lang(d["url"], d["title"], page_lang, allowed)
+        lang = guess_lang(d["url"], d.get("lang_hint") or d["title"], page_lang, allowed)
         year = guess_year(d["title"], d["url"])
         hidden = 1 if LOW_RELEVANCE_RE.search(d["title"] + " " + unquote(d["url"])) else 0
         old = con.execute("SELECT id, title FROM documents WHERE url=?", (d["url"],)).fetchone()
@@ -224,8 +277,9 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
     if "pdf" in resp.content_type:
         return "ok", _store(con, src["id"], page["id"], [{"url": page["url"], "title": page["note"] or src["agency"]}],
                             page["lang"], allowed_langs)
-    docs, subs = extract(resp.text, resp.url)
-    if not docs and fetch.CHROMIUM and src["access"] != "browser-js":
+    follow = page["follow"] if "follow" in page.keys() else None
+    docs, subs = extract(resp.text, resp.url, follow)
+    if not docs and not follow and fetch.CHROMIUM and src["access"] != "browser-js":
         # nothing found in the raw HTML – the list may be built by JavaScript; try once in a browser
         try:
             rendered = fetch.render(page["url"])
@@ -241,9 +295,11 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
     # a yearly report page: its link text names a report and a year ("Raport vjetor 2021") – a year in the address
     # alone is not enough (blogs put the date in every post's address)
     yearly = [(u, t) for u, t in subs if YEAR_RE.search(t) and REPORT_WORDS.search(YEAR_RE.sub(" ", t))]
-    if len(docs) < 3 or len(yearly) > len(docs):
+    if follow:
+        docs = []   # a think tank's list: its own PDFs are site furniture (terms, policies) – only publication pages count
+    if follow or len(docs) < 3 or len(yearly) > len(docs):
         page_url = page["url"].rstrip("/")
-        for url, sub_title in (subs if len(docs) < 3 else yearly):
+        for url, sub_title in (subs if follow or len(docs) < 3 else yearly):
             if followed >= FOLLOW_LIMIT or url.rstrip("/") == page_url:
                 continue
             followed += 1
@@ -253,9 +309,17 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
                     docs.append({"url": url, "title": sub_title})
                 elif r.status == 200:
                     sub_docs, _ = extract(r.text, r.url)
+                    heading = strip_site_name(page_heading(r.text) or clean_link_text(sub_title), src) if follow else ""
                     for d in sub_docs:
-                        # a bare filename says little; prefix the title of the page that linked it
-                        if d["title"] == humanize_filename(d["url"]) and sub_title:
+                        if follow and heading:
+                            # a publication page: its title is the page's own heading; the PDF's own link text
+                            # ("Read report", "Spanish") is added only when it says which file it is, and kept as a
+                            # language hint
+                            own = d["lang_hint"] = d["title"]
+                            d["title"] = heading if (len(sub_docs) == 1 or is_poor_title(own, d["url"])
+                                                     or own.lower() in heading.lower()) else f"{heading} – {own}"
+                        elif d["title"] == humanize_filename(d["url"]) and sub_title:
+                            # a bare filename says little; prefix the title of the page that linked it
                             d["title"] = f"{sub_title} – {d['title']}"
                     docs += sub_docs
             except Exception as e:  # noqa: BLE001 - one bad sub-page must not stop the crawl

@@ -14,7 +14,7 @@ from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, Red
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from markupsafe import escape
+from markupsafe import Markup, escape
 
 from . import (__version__, actors, build_version, collect, countries, crawler, db, downloader, graphs, home, logos,
                paging, registry, series, topics, trends, updates)
@@ -34,7 +34,7 @@ region_of = countries.region_of
 TYPE_NAMES = {
     "intelligence-civil": "Civil intelligence", "intelligence-military": "Military / foreign intelligence",
     "cyber": "Cyber security", "civil-protection": "Civil protection & crisis", "police-ct": "Police / counter-terrorism",
-    "eu-body": "EU body", "nato": "NATO", "other": "Other",
+    "eu-body": "EU body", "nato": "NATO", "other": "Other", "think-tank": "Think tank (independent)",
 }
 FLAGS = {p.stem for p in (HERE / "static" / "flags").glob("*.svg")}
 
@@ -79,6 +79,28 @@ tpl.env.globals.update(sid=series.sid, COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=T
                        BUILD=build_version())
 
 tpl.env.filters["num"] = lambda n: f"{n or 0:,}"
+
+_independent = {"at": 0.0, "ids": frozenset()}
+
+
+def independent_ids() -> frozenset:
+    """Sources not run by a state (think tanks) – refreshed every minute; few rows."""
+    if time.monotonic() - _independent["at"] > 60:
+        with db.session() as con:
+            _independent["ids"] = frozenset(r[0] for r in con.execute(
+                "SELECT id FROM sources WHERE COALESCE(publisher, 'official') = 'independent'"))
+        _independent["at"] = time.monotonic()
+    return _independent["ids"]
+
+
+def pub_mark(source_id) -> Markup:
+    """The badge that marks an independent publisher next to its name, wherever a source or report is shown."""
+    if source_id in independent_ids():
+        return Markup('<span class="pub-ind" title="Independent publisher – a think tank, not run by a state">think tank</span>')
+    return Markup("")
+
+
+tpl.env.globals.update(pub_mark=pub_mark, is_independent=lambda sid: sid in independent_ids())
 
 
 def asset(path: str) -> str:
@@ -476,6 +498,8 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
         total = con.execute(f"SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id WHERE {sql_where}",
                             args).fetchone()[0]
         pg = paging.paginate(total, page, size, "/documents", params)
+        independent = con.execute(f"""SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
+                                      WHERE {sql_where} AND NOT {trends.OFFICIAL}""", args).fetchone()[0]
         # other language versions and summaries of the reports listed (one file per report is listed by default)
         every_file = doclist.build(**fargs, doc_type=doc_type, all_types=all_types, all_files=1)
         other_files = con.execute(f"""SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
@@ -531,7 +555,7 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
 
     return tpl.TemplateResponse(request, "index.html", {"year_conflicts": len(dating.conflicts()),
         "type_counts": type_counts, "DOC_TYPES": doctypes.TYPES, "NOT_REPORTS": doctypes.NOT_REPORTS,
-        "other_files": other_files,
+        "other_files": other_files, "independent": independent,
         "docs": docs, "total": total, "pg": pg,
         "facets": facets, "f": params, "counts": counts, "qs": qs,
         "TOPICS": tax, "CATEGORIES": topics.taxonomy()["categories"], "topic_counts": topic_counts,
@@ -570,17 +594,26 @@ def sources(request: Request):
         for p in con.execute("SELECT * FROM pages WHERE active=1 ORDER BY lang, kind"):
             pages.setdefault(p["source_id"], []).append(p)
     # countries by region (EU members first), alphabetically by name within a region
-    groups: dict[str, list] = {}
-    for r in rows:
-        groups.setdefault(r["country"], []).append(r)
-    ordered = sorted(groups.items(), key=lambda kv: (region_of(kv[0])[0], COUNTRY_NAMES.get(kv[0], kv[0])))
-    regions: list[tuple[str, list]] = []
+    # official agencies by region (EU members first); independent publishers (think tanks) in a section of their own
+    official = [r for r in rows if (r["publisher"] or "official") == "official"]
+    independent = [r for r in rows if (r["publisher"] or "official") == "independent"]
+
+    def by_country(items):
+        groups: dict[str, list] = {}
+        for r in items:
+            groups.setdefault(r["country"], []).append(r)
+        return sorted(groups.items(), key=lambda kv: (region_of(kv[0])[0], COUNTRY_NAMES.get(kv[0], kv[0])))
+    ordered = by_country(official)
+    regions: list[tuple[str, list, bool]] = []
     for country, items in ordered:
         name = region_of(country)[1]
         if not regions or regions[-1][0] != name:
-            regions.append((name, []))
+            regions.append((name, [], False))
         regions[-1][1].append((country, items))
+    if independent:
+        regions.append(("Independent publishers – think tanks", by_country(independent), True))
     return tpl.TemplateResponse(request, "sources.html", {"sources": rows, "groups": ordered, "regions": regions,
+                                                         "n_official": len(official), "n_independent": len(independent),
                                                          "pages": pages, "series_by": series.by_source()})
 
 
