@@ -5,8 +5,9 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.42.0-1f4e79)
-![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
+[![release](https://img.shields.io/github/v/release/iiogurt/Rozvedka?color=1f4e79&label=release)](https://github.com/iiogurt/Rozvedka/releases/latest)
+[![tests](https://github.com/iiogurt/Rozvedka/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/iiogurt/Rozvedka/actions/workflows/tests.yml)
+![python](https://img.shields.io/badge/python-3.10–3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
 ![platform](https://img.shields.io/badge/runs%20on-Raspberry%20Pi-c51a4a?logo=raspberrypi&logoColor=white)
@@ -849,7 +850,8 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
   git switch main && git pull
   git tag -a v<version> -m "Rozvedka <version>" && git push origin v<version>
   ```
-  `bump_version.py` updates `rozvedka/__init__.py`, the changelog and the version badge above. GitHub releases
+  `bump_version.py` updates `rozvedka/__init__.py` and the changelog; the release badge above follows the latest
+  GitHub release by itself. GitHub releases
   carry the changelog section as notes; the portal shows the changelog at `/changelog`.
 
 ## Data sources and licences
