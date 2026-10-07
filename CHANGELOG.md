@@ -27,6 +27,12 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.42.4] – 2026-10-07
+
+### Changed
+
+- The ROZVEDKA lettering on the home page carries a háček over the E (Ě), as in the Czech *rozvědka*.
+
 ## [0.42.3] – 2026-10-07
 
 ### Fixed
@@ -830,7 +836,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.3...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.4...HEAD
+[0.42.4]: https://github.com/iiogurt/Rozvedka/compare/v0.42.3...v0.42.4
 [0.42.3]: https://github.com/iiogurt/Rozvedka/compare/v0.42.2...v0.42.3
 [0.42.2]: https://github.com/iiogurt/Rozvedka/compare/v0.42.1...v0.42.2
 [0.42.1]: https://github.com/iiogurt/Rozvedka/compare/v0.42.0...v0.42.1
