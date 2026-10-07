@@ -507,6 +507,17 @@ Everything that defines *what* Rozvedka collects and recognises is a hand-editab
 | [`series.yaml`](sources/series.yaml) | confirmed report series per source (title stems per language, editions per year, editions confirmed as not published) – written by the portal, editable by hand |
 | [`events.yaml`](sources/events.yaml) | reference events for the trend charts (Wikipedia titles; dates are resolved from Wikidata) |
 
+Settings of an installation are environment variables (none is required):
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `ROZVEDKA_HOST` | `127.0.0.1` | address `serve` listens on – `0.0.0.0` for the home network (same as `--host`) |
+| `ROZVEDKA_PORT` | `8080` | port of `serve` (same as `--port`) |
+| `ROZVEDKA_ALLOWED_HOSTS` | – | extra host names the portal answers to, comma-separated (IP addresses, `localhost`, `*.local`, `*.lan` and the machine's own name always work) |
+| `ROZVEDKA_DATA` | `data/` in the project folder | where the database, report files, logos and gazetteer live |
+| `ROZVEDKA_DB` | `$ROZVEDKA_DATA/rozvedka.db` | another database file |
+| `ROZVEDKA_EXCHANGE_DIRS` | – | more folders the Data exchange folder picker may use, separated by `:` |
+
 <details>
 <summary><b>How sources are fetched</b> (<code>access</code> in the registry)</summary>
 
@@ -763,6 +774,49 @@ erDiagram
 | `uploads`, `collect_checks` | 0 / 0 | provenance of reports added by hand; “checked, nothing new” marks | To collect |
 | `runs` | 91 | every crawl, download and update with its summary | the Update page's history and estimates |
 | `actor_meta` | 2 | versions of the actor index | rebuilds only when needed |
+
+## Security
+
+Rozvedka is built for one person on one computer or a trusted home network, and has **no login**.
+
+- **Where it listens:** `serve` answers only on this computer unless started with `--host 0.0.0.0` (or
+  `ROZVEDKA_HOST`). Never forward the port to the internet or run it on a public server; for remote access use a VPN
+  (WireGuard, Tailscale).
+- **Other websites cannot use it through your browser:** requests that change something (updates, imports, exports,
+  edits) are refused when they come from another site (cross-site request forgery), and the portal answers only to
+  IP addresses, `localhost`, local names (`*.local`, `*.lan`) and names listed in `ROZVEDKA_ALLOWED_HOSTS` – so a
+  malicious page cannot point its own domain at your machine to read it (DNS rebinding). Responses forbid framing by
+  other sites and send no referrer to other sites.
+- **Datasets from others are untrusted:** importing checks every file's SHA-256, writes report files only below
+  `data/files/`, takes part files only from the manifest's folder, and shows manifest values only as text and numbers.
+- **Files:** the folder picker shows only `/media`, `/mnt`, `/run/media`, `/Volumes`, your home folder and folders
+  listed in `ROZVEDKA_EXCHANGE_DIRS`; PDFs, logos and
+  pictures are served only from `data/`; agency logos are sent with a policy that forbids scripts (an SVG could carry
+  one).
+- **What it sends out:** requests to the agencies' and think tanks' sites (robots.txt respected, one request per host
+  every 2 s), to Wikidata, Wikipedia, Wikimedia Commons, MITRE ATT&CK, Our World in Data, the World Bank and the
+  sanctions and lobbying registers when you run the `fetch-…` commands. No telemetry, no accounts, no CDN at runtime.
+- **Headless Chromium** renders the few JavaScript-only report pages (`access: browser`); it runs without its sandbox
+  (needed under some service managers), so keep it updated with the system.
+- Report a vulnerability through a private GitHub security advisory on the repository.
+
+## Compatibility
+
+| | Status |
+|---|---|
+| **Raspberry Pi OS / Debian 13, Python 3.13, ARM64** | the reference installation |
+| Linux x86-64 and ARM64, Python 3.11–3.13 | test suite passes in CI |
+| macOS, Python 3.13 | test suite passes in CI; external disks appear under `/Volumes` in the folder picker |
+| Windows, Python 3.13 | test suite passes in CI; the folder picker offers only your home folder and OCR needs the tools on `PATH` – WSL is the smoother way |
+| Python 3.10 and older | not supported |
+
+- **Python packages:** pinned in `requirements.txt` (FastAPI, Uvicorn, Jinja2, httpx, pypdf, PyYAML, Beautiful
+  Soup, Markdown); checked with `pip-audit`.
+- **System tools, optional:** `pdftotext` (poppler-utils) for better text extraction, `chromium` for JavaScript-only
+  sites, `ocrmypdf` + Tesseract for scanned reports. Without them those steps are skipped and the rest works.
+- **Browsers:** current Firefox, Chromium/Chrome, Safari and Edge; the pages need JavaScript for charts and maps.
+- **Resources:** the full library is about 16 GB of PDFs plus a 0.6 GB database; a first full update takes hours on a
+  Raspberry Pi 4/5.
 
 ## Development
 

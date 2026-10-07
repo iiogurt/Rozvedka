@@ -13,7 +13,7 @@ MANIFEST = ".manifest.json"
 
 def roots() -> list[Path]:
     extra = [Path(p) for p in os.environ.get("ROZVEDKA_EXCHANGE_DIRS", "").split(":") if p]
-    cands = extra + [Path("/media"), Path("/mnt"), Path("/run/media"), Path.home()]
+    cands = extra + [Path("/media"), Path("/mnt"), Path("/run/media"), Path("/Volumes"), Path.home()]   # /Volumes: macOS
     out = []
     for c in cands:
         try:

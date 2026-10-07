@@ -56,6 +56,7 @@ next steps. Read it at the start of a session; update it (mark items done, re-pr
 - `main` always holds working code. Every change goes on a branch (`feat/…`, `fix/…`, `sources/…`, `docs/…`,
   `chore/…`) and is merged through a pull request **with a merge commit**.
 - Claude opens the PR, **merges it and cuts the release itself** – the owner does not want to do this manually.
+  Merge locally with a merge commit and push `main` (see "Operating an installation" on why not through the API).
   One PR per change; merge it before starting the next (no stacked PRs).
 - PR descriptions: what changed, how it was verified (tests, sample checks, screenshots), and the test count.
 - Registry edits go in their own commits (`sources: add Latvian SAB reports page`).
@@ -100,13 +101,17 @@ next steps. Read it at the start of a session; update it (mark items done, re-pr
 - Hand-written data files (`sources/*.yaml`) are the source of truth; generated fields (e.g. event dates) come
   from tools, never typed from memory. Quote the country code `"NO"` in YAML.
 
-## Operating the Raspberry Pi installation
+## Operating an installation
 
-- Project path `/home/prisonmaster/Documents/Projects/Rozvedka`; run project commands as the `prisonmaster`
-  user (`sudo -u prisonmaster .venv/bin/python -m rozvedka …`) and `chown -R prisonmaster:prisonmaster .` after
-  writing files as root.
-- Portal: `python -m rozvedka serve` on port 8080 (LAN only, no login – never expose it to the internet).
+- Machine-specific details (project path, the user that owns the checkout) are not kept in the repository. Run
+  project commands as the user that owns the checkout (`stat -c %U .`), e.g. `sudo -u <owner> .venv/bin/python -m
+  rozvedka …`, and give files written as root back to that user (`chown -R <owner>: .`).
+- Portal: `python -m rozvedka serve` on port 8080 – this computer only by default; `--host 0.0.0.0` (or
+  `ROZVEDKA_HOST`) for the home network. No login: never expose it to the internet.
+- Privacy before every push: no personal names, e-mails, home paths, host names or installation IDs in files or
+  screenshots; commits and merge commits use the noreply identity – merge pull requests locally (`git merge --no-ff`)
+  rather than through the GitHub API or web button, which stamp the account's primary e-mail on the merge commit.
 - Stop processes with `kill $(pgrep -f '^.venv/bin/python -m rozvedka serve')`. Never run `pkill -f`/`pgrep -f`
   with a pattern that also appears in the same shell command line – it matches and kills that shell.
-- Ask before anything needing `sudo` beyond running as `prisonmaster` (e.g. `loginctl enable-linger` for the
+- Ask before anything needing `sudo` beyond running as the checkout's owner (e.g. `loginctl enable-linger` for the
   systemd user services in `deploy/`).

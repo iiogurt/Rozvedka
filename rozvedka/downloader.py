@@ -73,7 +73,7 @@ def store_pdf(doc, dest: Path, tmp: Path) -> tuple[str, str | None, dict]:
     dest.parent.mkdir(parents=True, exist_ok=True)
     tmp.replace(dest)
     pages, pdf_title = pdf_info(dest)
-    fields = {"sha256": sha, "size": len(data), "local_path": str(dest.relative_to(FILES)), "pages_count": pages,
+    fields = {"sha256": sha, "size": len(data), "local_path": dest.relative_to(FILES).as_posix(), "pages_count": pages,
               "mime": "application/pdf", "downloaded_at": datetime.now().isoformat(timespec="seconds")}
     if (good_pdf_title(pdf_title) and is_poor_title(doc["title"], doc["url"])
             and not is_poor_title(pdf_title.strip(), doc["url"])):

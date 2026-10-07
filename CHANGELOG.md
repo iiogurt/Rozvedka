@@ -27,6 +27,26 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+### Security
+- **Importing a dataset can no longer write outside `data/files/`.** A crafted dataset could give a report file a path
+  such as `../../.bashrc` and so place files anywhere the portal's user may write; such files are now skipped and
+  counted. Part files must sit beside the manifest, and the values a manifest shows on the Data exchange page must be
+  numbers (no markup from someone else's file reaches the page).
+- **Requests from other websites are refused** when they would change something (updates, imports, exports, edits –
+  cross-site request forgery), and the portal answers only to IP addresses, `localhost`, local names and names in
+  `ROZVEDKA_ALLOWED_HOSTS` (DNS rebinding). Every response forbids framing by other sites, MIME sniffing and sending
+  the address to other sites.
+
+### Changed
+- **`serve` now listens on this computer only (127.0.0.1) by default.** For the home network start it with
+  `--host 0.0.0.0` or set `ROZVEDKA_HOST=0.0.0.0`; the systemd unit does so.
+- The systemd unit in `deploy/` is a template that works from any folder (install commands at its top) and runs with
+  a read-only system.
+- Report file and inbox paths are stored with `/` on every system (Windows stored `\`).
+- The folder picker also offers `/Volumes` (macOS disks).
+- Documentation: Security and Compatibility sections, the environment variables, an install that works from any
+  folder; CI measures Linux x86-64 and ARM64 with Python 3.10–3.13, macOS and Windows.
+
 ## [0.41.0] – 2026-10-07
 
 ### Added
