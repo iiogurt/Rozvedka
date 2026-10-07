@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% from "_ratings.html" import strip, badges %}
+{% macro status(st) %}<span class="pc-st pc-{{ st }}">{{ {'ok': '✓', 'partial': '◐', 'concern': '✗', 'redflag': '⚑', 'unknown': '–'}[st] }}</span>{% endmacro %}
+{% block title %}{{ s.agency }} · Think tank profile · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/publishers">← All think tanks</a> · <a href="/sources#s-{{ s.id }}">on Sources</a> · <a href="{{ docs_url(source=s.id) }}">its reports</a></p>
+<h1 class="page-h"><img class="flag-sm" src="{{ flag_url(s.country) }}" alt="" width="20" height="15"> {{ s.name_en or s.agency }} {{ pub_mark(s.id) }}</h1>
+{% if s.name_local and s.name_local != s.name_en %}<p class="muted">{{ s.name_local }}</p>{% endif %}
+<p class="pub-banner pub-lv-{{ p.level }}"><b>◆ Independent publisher – {{ p.label }}.</b> {{ s.agency }} is a think tank, not a state agency.
+  Rating: <b>{{ p.label }}</b>{% if p.reasons %}, because – {{ p.reasons|join('; ') }}{% else %} – {{ p.about }}{% endif %}.
+  It follows from the checks below, each with its evidence; there is no score.</p>
+<p class="small">{{ s.description }}{% if s.homepage %} · <a href="{{ s.homepage }}" target="_blank" rel="noopener">{{ s.homepage }}</a>{% endif %}
+  {% if s.access == 'manual' %} · <span class="muted">reports collected by hand: {{ s.notes }}</span>{% endif %}</p>
+
+<section class="viz-card">
+  <h2 class="viz-title">Credibility checks</h2>
+  <table class="pc-table small">
+    <thead><tr><th></th><th>Check</th><th>Finding</th><th>Evidence</th><th>Checked</th></tr></thead>
+    {% for c in p.checks %}<tr>
+      <td>{{ status(c.status) }}</td><th>{{ c.name }}</th>
+      <td>{{ c.text }}{% if c.stars %} <span class="muted">({{ '★' * c.stars }}{{ '☆' * (5 - c.stars) }} on Transparify's scale)</span>{% endif %}
+        {% if c.note %}<div class="muted">{{ c.note }}</div>{% endif %}
+        {% if c.entry and c.entry.eu_grants %}<details><summary class="muted">EU grants {{ c.entry.year[0] if c.entry.year }} – {{ c.entry.year[1] if c.entry.year }}</summary>
+          <ul>{% for g in c.entry.eu_grants %}<li>{{ g.source }} – €{{ '{:,.0f}'.format(g.amount) }}</li>{% endfor %}</ul></details>{% endif %}</td>
+      <td>{% for e in c.evidence %}<a href="{{ e.url }}" {% if e.url.startswith('http') %}target="_blank" rel="noopener"{% endif %}>{{ e.label }}</a>{{ ', ' if not loop.last }}{% endfor %}</td>
+      <td class="muted">{{ c.checked }}</td></tr>{% endfor %}
+    {% if not p.checks %}<tr><td colspan="5" class="muted">Not assessed yet – add it to <code>sources/publishers.yaml</code> and run <code>fetch-publishers</code>.</td></tr>{% endif %}
+  </table>
+  {% if p.former %}<p class="small"><span class="muted">Former ratings:</span>
+    {% for r in p.former %}<a href="{{ r.source }}" target="_blank" rel="noopener">{{ r.by }} {{ r.year }}</a>: {{ r.rating }}{{ '; ' if not loop.last }}{% endfor %}</p>{% endif %}
+  <p class="muted small">How the rating follows from the checks:
+    {% for k, (label, about) in PUB_LEVELS.items() %}<span class="pub-ind pub-lv-{{ k }}">{{ label }}</span> {{ about }}{{ ' · ' if not loop.last }}{% endfor %}.
+    Hand-researched: funding and government donors (<code>sources/publishers.yaml</code>); fetched {{ p.retrieved or '–' }}: EU Transparency Register,
+    US FARA, sanctions lists of the US, UK, EU and UN, Wikidata. See <a href="https://github.com/iiogurt/Rozvedka/blob/main/docs/PUBLISHER_PROFILES.md">the design</a>.</p>
+</section>
+
+<div class="pp-grid">
+<section class="viz-card">
+  <h2 class="viz-title">Identity</h2>
+  {% set idn = p.identity %}
+  {% if idn and idn.qid %}
+  <table class="kv small">
+    {% for label, values in idn.facts.items() %}<tr><th>{{ label }}</th><td>{{ values|join(', ') }}</td></tr>{% endfor %}
+  </table>
+  {% if idn.wikipedia %}<p class="small">{{ idn.wikipedia.extract }}</p>{% endif %}
+  <p class="muted small">From <a href="{{ idn.wikidata }}" target="_blank" rel="noopener">Wikidata {{ idn.qid }}</a> (revision {{ idn.revision }})
+    {% if idn.wikipedia %}and <a href="{{ idn.wikipedia.revision_url }}" target="_blank" rel="noopener">Wikipedia, revision of {{ (idn.wikipedia.revision_time or '')[:10] }}</a>{% endif %}, retrieved {{ p.retrieved }}.</p>
+  {% else %}<p class="muted small">No Wikipedia article / Wikidata item found{% if p.retrieved %} ({{ p.retrieved }}){% endif %}.</p>{% endif %}
+</section>
+
+<section class="viz-card">
+  <h2 class="viz-title">The state it works in</h2>
+  {% set rp = rating(s.country) %}
+  {% if rp %}<p class="small rt-row">{{ strip(rp, width=180, height=16) }}{{ badges(rp) }}</p>
+    <p class="muted small">{{ COUNTRY_NAMES.get(s.country, s.country) }} – democracy ratings since 1990 (<a href="/ratings">all states</a>). The think tank is not the state; its
+      host state's freedoms shape what it can publish.</p>
+  {% else %}<p class="muted small">No rating for {{ s.country }}.</p>{% endif %}
+</section>
+</div>
+
+<section class="viz-card">
+  <h2 class="viz-title">In this library <span class="muted small"><a href="{{ docs_url(source=s.id) }}">{{ n }} reports</a></span></h2>
+  <div class="pp-grid">
+    <div>
+      <h3 class="viz-mini">Reports per year</h3>
+      <table class="pp-bars small">{% for y, c in by_year[:15] %}<tr><th>{{ y }}</th>
+        <td class="bar"><span style="width: {{ (100 * c / max_year)|round(1) }}%"></span></td>
+        <td class="n"><a href="{{ docs_url(source=s.id, year=y) }}">{{ c }}</a></td></tr>{% endfor %}</table>
+      <h3 class="viz-mini">Main subjects</h3>
+      <p class="small">{% for t, name, c in top_topics %}<a class="topic-chip" href="{{ docs_url(source=s.id, topic=t) }}">{{ name }} <span class="muted">{{ c }}</span></a> {% endfor %}</p>
+    </div>
+    <div>
+      <h3 class="viz-mini">Named most</h3>
+      <p class="small">{% for a in top_actors %}<a class="mchip" href="{{ docs_url(source=s.id, actor=a.key) }}"><i class="kdot kind-{{ a.kind }}"></i>{{ a.label }}&nbsp;<span class="muted">{{ a.c }}</span></a> {% endfor %}</p>
+      <h3 class="viz-mini">Latest reports</h3>
+      <ol class="small">{% for d in latest %}<li><a href="/report/{{ d.id }}">{{ d.title }}</a> <span class="muted">{{ d.year or '' }} {{ d.lang }}</span></li>{% endfor %}</ol>
+      <p class="muted small">Collected from: {% for pg in pages %}<a href="{{ pg.url }}" target="_blank" rel="noopener">{{ pg.url }}</a>{{ ', ' if not loop.last }}{% endfor %}</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

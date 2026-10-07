@@ -27,6 +27,22 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.37.0] – 2026-10-07
+
+### Added
+- **Think-tank credibility profiles** (`/publishers`, *Sources → Think tanks*): checks with evidence instead of a score –
+  funding transparency on Transparify's scale (researched by hand for all 17 think tanks, with evidence links and
+  dates, `sources/publishers.yaml`), donor governments rated autocracies by V-Dem, EU Transparency Register entry (with
+  declared EU grants), US FARA registration, and the sanctions lists of the US (OFAC), UK, EU and UN (new command
+  `fetch-publishers`, also run by `fetch-actors`). Result today: transparent funding – SIPRI, Clingendael, HCSS, ASPI;
+  concerns – CSIS (United Arab Emirates among its donors), ISW and IEP (donors not disclosed); the others partly
+  transparent; no sanctions or FARA hits.
+- **The ◆ badge is coloured by that rating** (and labelled: "think tank · concerns"), opens the profile, and the map's
+  diamonds take the same colours; report pages of think tanks state the reason.
+- **A profile page per think tank** (`/publisher/<id>`): the checks with evidence, former ratings, identity from
+  Wikidata and Wikipedia (founded, headquarters, founders, leaders, revision), its state's democracy ratings, and its
+  reports in the library – per year, main subjects, actors named most, latest reports, report pages.
+
 ## [0.36.0] – 2026-10-07
 
 ### Added
@@ -695,7 +711,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.36.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.37.0...HEAD
+[0.37.0]: https://github.com/iiogurt/Rozvedka/compare/v0.36.0...v0.37.0
 [0.36.0]: https://github.com/iiogurt/Rozvedka/compare/v0.35.0...v0.36.0
 [0.35.0]: https://github.com/iiogurt/Rozvedka/compare/v0.34.0...v0.35.0
 [0.34.0]: https://github.com/iiogurt/Rozvedka/compare/v0.33.0...v0.34.0

@@ -1,6 +1,7 @@
 # Think tanks: how to show whether a publisher can be trusted
 
-Design for review (2026-10-07). Context: the library includes independent think tanks (0.34.0). Some "think tanks"
+Design accepted by the owner and implemented in 0.37.0 (2026-10-07): `rozvedka/publishers.py`, `sources/publishers.yaml`,
+`/publishers` and `/publisher/<id>`. Not yet built: the "people and methods" check. Context: the library includes independent think tanks (0.34.0). Some "think tanks"
 are created to influence politics and public opinion for a state or an interest group, so every independent publisher
 needs a visible, checkable profile.
 

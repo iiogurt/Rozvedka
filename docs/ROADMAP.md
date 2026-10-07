@@ -117,8 +117,9 @@ Each item: why · what · done when · version step.
 8. ✅ (0.36.0) **Democracy ratings of states over time** – V-Dem, Freedom House, World Bank WGI per country and year; on
    report pages the ratings of the report's year. Next: map shading by rating and year; filter reports by the regime type
    of their state in their year.
-9. **Think-tank credibility profiles** – evidence checklist instead of a score, see
-   [`PUBLISHER_PROFILES.md`](PUBLISHER_PROFILES.md); waits for the owner's review of the criteria. · minor
+9. ✅ (0.37.0) **Think-tank credibility profiles** – evidence checklist instead of a score, see
+   [`PUBLISHER_PROFILES.md`](PUBLISHER_PROFILES.md); badge coloured by the rating, a profile page per think tank. Next:
+   re-check the hand-researched funding evidence yearly; people & methods check.
 
 ### E. Engineering and operations
 

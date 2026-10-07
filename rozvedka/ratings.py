@@ -73,7 +73,7 @@ def fetch(out: Path | None = None) -> dict:
     today = dt.date.today().isoformat()
     names = countries.names()
     iso3 = _iso3_map()
-    store = {"retrieved": today, "measures": {}, "iso3": {}, "values": {}}
+    store = {"retrieved": today, "measures": {}, "iso3": {}, "values": {}, "names": {}}
     owid_names: dict[str, str] = {}
     for key, m in MEASURES.items():
         if "slug" in m:
@@ -102,6 +102,7 @@ def fetch(out: Path | None = None) -> dict:
             store["measures"][key] = {"source": f"https://data.worldbank.org/indicator/{m['indicator']}",
                                       "citation": f"World Bank, Worldwide Governance Indicators ({data[0].get('lastupdated', '')})",
                                       "retrieved": today, "rows": n}
+    store["names"] = {code: name for name, code in owid_names.items()}      # alpha-3 → country name (any country)
     # library countries → alpha-3 (World Bank list; else the country's name as Our World in Data spells it)
     for code, name in names.items():
         a3 = iso3.get(code) or owid_names.get(name)
@@ -121,7 +122,7 @@ def fetch(out: Path | None = None) -> dict:
 def load(path: Path | None = None) -> dict:
     p = path or STORE
     if not p.exists():
-        return {"retrieved": None, "measures": {}, "iso3": {}, "values": {}}
+        return {"retrieved": None, "measures": {}, "iso3": {}, "values": {}, "names": {}}
     return json.loads(p.read_text(encoding="utf-8"))
 
 

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Think tanks · Sources · Rozvedka{% endblock %}
+{% block main %}
+<nav class="subnav" aria-label="Source views"><a href="/sources">Agencies</a><a href="/publishers" class="on">Think tanks</a><a href="/sources/coverage">Coverage</a><a href="/ratings">Democracy ratings</a><a href="/collect">To collect</a><a href="/data">Data exchange</a></nav>
+<h1 class="page-h">Think tanks – credibility</h1>
+<p class="muted small">Independent publishers are not run by states, and some "think tanks" exist to influence politics for a state or an
+  interest group. No current, credible ranking of think tanks exists (the Go To index ended in 2020, Transparify in 2018), so each one
+  gets checks with evidence instead of a score: how openly it discloses who funds it, whether autocratic governments fund it, official
+  registers (EU Transparency Register, US FARA) and the sanctions lists of the US, UK, EU and UN. The badge colour shows the result
+  everywhere a think tank appears. Details: <a href="https://github.com/iiogurt/Rozvedka/blob/main/docs/PUBLISHER_PROFILES.md">the design</a>.</p>
+<p class="small">{% for k, (label, about) in PUB_LEVELS.items() %}<span class="pub-ind pub-lv-{{ k }}">{{ label }}</span> <span class="muted">{{ about }}</span>{{ ' · ' if not loop.last }}{% endfor %}</p>
+<section class="viz-card">
+  <table class="pc-table small">
+    <thead><tr><th>Think tank</th><th>Rating</th><th>Checks</th><th class="n">Reports</th></tr></thead>
+    {% for r in rows %}<tr>
+      <th><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="" width="20" height="15"> <a href="/publisher/{{ r.id }}">{{ r.agency }}</a>
+        <div class="muted" style="font-weight: normal">{{ r.name_en }}</div></th>
+      <td><a class="pub-ind pub-lv-{{ r.profile.level }}" href="/publisher/{{ r.id }}">{{ r.profile.label }}</a></td>
+      <td>{% for c in r.profile.checks %}<span class="pc-chk" title="{{ c.name }}: {{ c.text }}"><span class="pc-st pc-{{ c.status }}">{{ {'ok': '✓', 'partial': '◐', 'concern': '✗', 'redflag': '⚑', 'unknown': '–'}[c.status] }}</span> {{ c.name }}</span>{{ ' · ' if not loop.last }}{% endfor %}</td>
+      <td class="n">{% if r.n %}<a href="{{ docs_url(source=r.id) }}">{{ r.n }}</a>{% else %}<span class="muted">{{ 'by hand' if r.access == 'manual' else 0 }}</span>{% endif %}</td>
+    </tr>{% endfor %}
+  </table>
+  <p class="muted small">Fetched checks retrieved {{ meta.retrieved or '–' }} (<code>python -m rozvedka fetch-publishers</code>, also part of <code>fetch-actors</code>).</p>
+</section>
+{% endblock %}

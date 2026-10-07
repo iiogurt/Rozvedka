@@ -20,7 +20,7 @@ from . import (__version__, actors, build_version, collect, countries, crawler, 
                paging, registry, series, topics, trends, updates)
 from . import compare as compare_mod
 from . import dating
-from . import dataset, doclist, doctypes, folders, ratings, report, review, updater, watch
+from . import dataset, doclist, doctypes, folders, publishers, ratings, report, review, updater, watch
 from . import jobs as jobrunner
 from .config import FILES
 
@@ -80,28 +80,38 @@ tpl.env.globals.update(sid=series.sid, COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=T
 
 tpl.env.filters["num"] = lambda n: f"{n or 0:,}"
 
-_independent: dict = {"at": None, "ids": frozenset()}     # at=None: not loaded yet
+_independent: dict = {"at": None, "ids": frozenset(), "levels": {}}     # at=None: not loaded yet
 
 
 def independent_ids() -> frozenset:
-    """Sources not run by a state (think tanks) – refreshed every minute; few rows."""
+    """Sources not run by a state (think tanks), with their credibility rating – refreshed every minute; few rows."""
     if _independent["at"] is None or time.monotonic() - _independent["at"] > 60:
         with db.session() as con:
-            _independent["ids"] = frozenset(r[0] for r in con.execute(
-                "SELECT id FROM sources WHERE COALESCE(publisher, 'official') = 'independent'"))
+            rows = con.execute("SELECT id, key FROM sources WHERE COALESCE(publisher, 'official') = 'independent'").fetchall()
+        _independent["ids"] = frozenset(r[0] for r in rows)
+        _independent["levels"] = {r[0]: publishers.profile(r[1]) for r in rows}
         _independent["at"] = time.monotonic()
     return _independent["ids"]
 
 
 def pub_mark(source_id) -> Markup:
-    """The badge that marks an independent publisher next to its name, wherever a source or report is shown."""
+    """The badge that marks an independent publisher next to its name, wherever a source or report is shown – coloured
+    and labelled by its credibility rating, and opening its profile."""
     if source_id in independent_ids():
-        return Markup('<span class="pub-ind" title="Independent publisher – a think tank, not run by a state">think tank</span>')
+        p = _independent["levels"][source_id]
+        return Markup(f'<a class="pub-ind pub-lv-{p["level"]}" href="/publisher/{int(source_id)}" title="Independent publisher – a '
+                      f'think tank, not run by a state. Credibility: {escape(p["label"])} – {escape(p["about"])}. '
+                      f'Open its profile">think tank · {escape(p["label"])}</a>')
     return Markup("")
 
 
+def pub_profile(source_id):
+    return _independent["levels"].get(source_id) if source_id in independent_ids() else None
+
+
 tpl.env.globals.update(pub_mark=pub_mark, is_independent=lambda sid: sid in independent_ids(),
-                       rating=ratings.profile, REGIMES=ratings.REGIMES)
+                       rating=ratings.profile, REGIMES=ratings.REGIMES, pub_profile=pub_profile,
+                       PUB_LEVELS=publishers.LEVELS)
 
 
 def asset(path: str) -> str:
@@ -624,6 +634,58 @@ def sources(request: Request):
                                                          "pages": pages, "series_by": series.by_source()})
 
 
+@app.get("/publishers")
+def publishers_page(request: Request):
+    """Every independent publisher with its credibility rating and checks."""
+    independent_ids()
+    with db.session() as con:
+        rows = [dict(r) for r in con.execute(
+            f"""SELECT src.id, src.key, src.country, src.agency, src.name_en, src.homepage, src.access,
+                       (SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
+                        WHERE {trends.LISTED} AND d.source_id=src.id) n
+                FROM sources src WHERE src.active=1 AND COALESCE(src.publisher, 'official')='independent'""")]
+    order = list(publishers.LEVELS)
+    for r in rows:
+        r["profile"] = _independent["levels"].get(r["id"]) or publishers.profile(r["key"])
+    rows.sort(key=lambda r: (order.index(r["profile"]["level"]), r["agency"]))
+    return tpl.TemplateResponse(request, "publishers.html", {"rows": rows, "docs_url": home.docs_url,
+                                                           "meta": publishers.load()})
+
+
+@app.get("/publisher/{source_id}")
+def publisher_page(request: Request, source_id: int):
+    """One think tank: credibility checks with evidence, identity, registers, its state, and its reports here."""
+    with db.session() as con:
+        topics.init()
+        actors.init()
+        s = con.execute("SELECT * FROM sources WHERE id=?", (source_id,)).fetchone()
+        if s is None or (s["publisher"] or "official") != "independent":
+            raise HTTPException(404, "not an independent publisher")
+        s = dict(s)
+        base = f"FROM documents d JOIN sources s ON s.id=d.source_id WHERE {trends.LISTED} AND d.source_id=?"
+        n = con.execute(f"SELECT COUNT(*) {base}", (source_id,)).fetchone()[0]
+        by_year = con.execute(f"SELECT d.year, COUNT(*) {base} AND d.year IS NOT NULL GROUP BY d.year ORDER BY d.year DESC",
+                              (source_id,)).fetchall()
+        tax = topics.taxonomy()["topics"]
+        top_topics = [(t, tax[t]["name"], c) for t, c in con.execute(
+            f"""SELECT t.topic, COUNT(*) c FROM doc_topics t JOIN documents d ON d.id=t.doc_id JOIN sources s ON s.id=d.source_id
+                WHERE {trends.LISTED} AND d.source_id=? GROUP BY t.topic ORDER BY c DESC""", (source_id,))
+            if t in tax and not tax[t].get("meta")][:12]
+        top_actors = [dict(r) for r in con.execute(
+            f"""SELECT a.key, a.label, a.kind, COUNT(DISTINCT d.id) c FROM doc_actors da JOIN actors a ON a.key=da.actor_key
+                JOIN documents d ON d.id=da.doc_id JOIN sources s ON s.id=d.source_id
+                WHERE {trends.LISTED} AND d.source_id=? AND a.kind != 'country' AND {actors.NOT_BEFORE_FOUNDED}
+                  AND a.label NOT IN (?, ?) GROUP BY a.key ORDER BY c DESC, a.label LIMIT 15""",
+            (source_id, s["agency"], s["name_en"] or s["agency"]))]
+        latest = [dict(r) for r in con.execute(
+            f"SELECT d.id, d.title, d.year, d.lang {base} ORDER BY d.year DESC NULLS LAST, d.id DESC LIMIT 10", (source_id,))]
+        pages = [dict(r) for r in con.execute("SELECT * FROM pages WHERE source_id=? AND active=1", (source_id,))]
+    return tpl.TemplateResponse(request, "publisher.html", {
+        "s": s, "p": publishers.profile(s["key"]), "n": n, "by_year": by_year, "top_topics": top_topics,
+        "top_actors": top_actors, "latest": latest, "pages": pages, "docs_url": home.docs_url,
+        "max_year": max((c for _, c in by_year), default=1), "kinds": actors.KINDS})
+
+
 @app.get("/ratings")
 def ratings_page(request: Request, sort: str = "ldi"):
     """Democracy ratings of the library's states over time, with the number of reports from each."""
@@ -1072,6 +1134,8 @@ def map_data(topic: str = ""):
                WHERE s.active=1 GROUP BY s.id""", (topic, topic)).fetchall()
     agencies = [{**dict(r), "flag": flag_url(r["country"]), "logo": f"/logo/{r['id']}" if r["logo_path"] else None,
                  "type_name": TYPE_NAMES.get(r["type"], r["type"]),
+                 "credibility": (pub_profile(r["id"]) or {}).get("level"),       # think tanks: rating colour of the diamond
+                 "credibility_label": (pub_profile(r["id"]) or {}).get("label"),
                  "country_name": COUNTRY_NAMES.get(r["country"], r["country"]),
                  "coalitions": in_coalition_order(coalition_members_of(r["country"]))}
                 for r in rows if r["lat"] is not None]

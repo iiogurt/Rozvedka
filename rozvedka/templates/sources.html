@@ -3,7 +3,7 @@
 {% from "_ratings.html" import strip, badges %}
 {% block title %}Sources · Rozvedka{% endblock %}
 {% block main %}
-<nav class="subnav" aria-label="Source views"><a href="/sources" class="on">Agencies</a><a href="/sources/coverage">Coverage</a><a href="/ratings">Democracy ratings</a><a href="/collect">To collect</a><a href="/data">Data exchange</a></nav>
+<nav class="subnav" aria-label="Source views"><a href="/sources" class="on">Agencies</a><a href="/publishers">Think tanks</a><a href="/sources/coverage">Coverage</a><a href="/ratings">Democracy ratings</a><a href="/collect">To collect</a><a href="/data">Data exchange</a></nav>
 <div class="summary">
   <span><b>{{ n_official }}</b> official agencies and institutions in <b>{{ groups|length }}</b> countries and bodies
     {% if n_independent %}· <a class="pub-count" href="#independent"><b>{{ n_independent }}</b> independent think tanks ◆</a>{% endif %}</span>
@@ -30,8 +30,9 @@
 {% for region, countries, ind in regions %}
 {% if ind %}<h2 class="region region-ind" id="independent">◆ {{ region }}</h2>
 <p class="pub-banner">Not run by a state: pro-democratic and security think tanks and research institutes with regular reports.
-  They are kept apart from the official agencies above and marked ◆ wherever their reports appear; every count can leave them
-  out with “Official agencies only”.</p>
+  They are kept apart from the official agencies above and marked ◆ wherever their reports appear, in the colour of their
+  <a href="/publishers">credibility rating</a> (funding transparency, autocratic donors, official registers, sanctions lists); every
+  count can leave them out with “Official agencies only”.</p>
 {% else %}<h2 class="region">{{ region }}</h2>{% endif %}
 {% for country, items in countries %}
 <section class="country" id="{{ 'ci-' if ind else 'c-' }}{{ country }}"

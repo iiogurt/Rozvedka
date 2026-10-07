@@ -6,8 +6,9 @@
 <p class="small"><a href="/documents?source={{ d.source_id }}">← {{ d.agency }} – all reports</a>
   {% if series %} · <a href="/series/{{ edition.id }}">series “{{ series.name }}”</a>{% endif %}</p>
 <h1 class="page-h"><img class="flag-sm" src="{{ flag_url(d.country) }}" alt="{{ d.country }}" width="20" height="15"> {{ d.title }}</h1>
-{% if is_independent(d.source_id) %}<p class="pub-banner"><b>◆ Independent publisher.</b> {{ d.agency }} is a think tank, not a
-  state agency – its reports are analysis by a non-governmental institute, listed beside the official reports and marked as such.</p>{% endif %}
+{% if is_independent(d.source_id) %}{% set pp = pub_profile(d.source_id) %}<p class="pub-banner pub-lv-{{ pp.level }}"><b>◆ Independent publisher – {{ pp.label }}.</b>
+  {{ d.agency }} is a think tank, not a state agency – its reports are analysis by a non-governmental institute, listed beside the
+  official reports and marked as such. Credibility: {{ pp.reasons|join('; ') if pp.reasons else pp.about }} – <a href="/publisher/{{ d.source_id }}">see its profile</a>.</p>{% endif %}
 <p class="rp-actions">
   {% if d.local_path %}<a class="rp-btn rp-primary" href="/doc/{{ d.id }}" target="_blank">Open the PDF</a>{% endif %}
   <a class="rp-btn" href="{{ d.url }}" target="_blank" rel="noopener">Official address ↗</a>

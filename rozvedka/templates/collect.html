@@ -15,7 +15,7 @@
 </form>
 {% endmacro %}
 {% block main %}
-<nav class="subnav" aria-label="Source views"><a href="/sources">Agencies</a><a href="/sources/coverage">Coverage</a><a href="/ratings">Democracy ratings</a><a href="/collect" class="on">To collect</a><a href="/data">Data exchange</a></nav>
+<nav class="subnav" aria-label="Source views"><a href="/sources">Agencies</a><a href="/publishers">Think tanks</a><a href="/sources/coverage">Coverage</a><a href="/ratings">Democracy ratings</a><a href="/collect" class="on">To collect</a><a href="/data">Data exchange</a></nav>
 
 <div class="collect-head">
   <p class="small">Data last crawled <b>{{ fresh.last_crawl[:10] if fresh.last_crawl else 'never' }}</b>{% if fresh.crawl_days is not none %}

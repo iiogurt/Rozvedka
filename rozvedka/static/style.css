@@ -879,3 +879,21 @@ h2.region.region-ind { color: var(--indep); border-color: var(--indep); } .flag-
 .rt-val { margin-right: 8px; white-space: nowrap; }
 .rt-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; font-weight: normal; margin-top: 2px; }
 .rt-warn { border-left: 3px solid #e69f00; padding: 4px 8px; margin-top: 4px; background: rgba(230, 159, 0, .1); }
+
+/* think-tank credibility (rozvedka/publishers.py): badge colour = rating, always with its label (Okabe–Ito colours) */
+:root { --pl-transparent: #00795a; --pl-partial: #8a6d00; --pl-concerns: #b36b00; --pl-redflag: #c24400; --pl-unassessed: #6b7280; }
+:root[data-theme="dark"] { --pl-transparent: #2ec4a0; --pl-partial: #f0e442; --pl-concerns: #e69f00; --pl-redflag: #ff7a3d; --pl-unassessed: #9aa1ab; }
+a.pub-ind { text-decoration: none; }
+.pub-lv-transparent { --indep: var(--pl-transparent); --indep-bg: color-mix(in srgb, var(--pl-transparent) 14%, transparent); }
+.pub-lv-partial { --indep: var(--pl-partial); --indep-bg: color-mix(in srgb, var(--pl-partial) 14%, transparent); }
+.pub-lv-concerns { --indep: var(--pl-concerns); --indep-bg: color-mix(in srgb, var(--pl-concerns) 16%, transparent); }
+.pub-lv-redflag { --indep: var(--pl-redflag); --indep-bg: color-mix(in srgb, var(--pl-redflag) 20%, transparent); font-weight: 700; }
+.pub-lv-unassessed { --indep: var(--pl-unassessed); --indep-bg: transparent; }
+.pc-table { border-collapse: collapse; width: 100%; }
+.pc-table th, .pc-table td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.pc-table thead th { color: var(--muted); font-weight: normal; font-size: 12px; }
+.pc-st { font-weight: 700; white-space: nowrap; }
+.pc-ok { color: var(--pl-transparent); } .pc-partial { color: var(--pl-partial); } .pc-concern { color: var(--pl-concerns); }
+.pc-redflag { color: var(--pl-redflag); } .pc-unknown { color: var(--pl-unassessed); }
+.pp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 0 16px; }
+.pp-bars td.bar { width: 60%; } .pp-bars .bar span { display: block; height: 10px; background: var(--accent); border-radius: 2px; }

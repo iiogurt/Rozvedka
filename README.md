@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.36.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.37.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -176,6 +176,20 @@ and the Documents summary say how many think-tank reports a count includes.
 One card per agency: flag, logo, official name in the original language and in English, home page, a short
 description of what its reports cover, coalition tags with the year each country joined, the report pages it is
 crawled from (with language and current/archive), and a link to its headquarters on the map.
+
+### ◆ Think tanks – credibility profiles
+
+<img src="docs/images/think-tanks.png" alt="Think tanks: each with its credibility rating and the checks behind it" width="900">
+
+No current, credible ranking of think tanks exists, so each think tank gets **checks with evidence instead of a score**
+(*Sources → Think tanks*, `/publishers`): how openly it discloses who funds it (Transparify's scale: amounts, brackets,
+names, categories, none – researched by hand with the evidence link and date, `sources/publishers.yaml`), whether a
+donor government is an autocracy (V-Dem), its **EU Transparency Register** entry, **US foreign-agent (FARA)**
+registrations, and the **sanctions lists of the US, UK, EU and UN** (fetched: `python -m rozvedka fetch-publishers`).
+The result – *transparent funding*, *partly transparent*, *concerns*, *red flag* – colours the ◆ badge wherever the
+think tank appears and its diamond on the map, with the reason in words. Each think tank has a **profile page**: the
+checks and their evidence, former Transparify ratings, identity from Wikidata and Wikipedia, its state's democracy
+ratings, and its reports here – per year, main subjects, actors named most, latest reports.
 
 ### 🗳️ Democracy ratings of the reporting states
 
