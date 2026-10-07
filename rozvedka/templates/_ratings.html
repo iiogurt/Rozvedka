@@ -1,0 +1,26 @@
+{# Democracy ratings of a state over time (rozvedka/ratings.py). p = ratings.profile(country[, year]). #}
+{% macro strip(p, year=None, width=150, height=20, from_year=1990) %}
+{%- set reg = p.measures.get('vdem_regime') -%}{%- set ldi = p.measures.get('vdem_libdem') -%}
+{%- if reg -%}
+{%- set pts = reg.spark|selectattr(0, 'ge', from_year)|list -%}
+{%- set n = pts|length -%}
+<svg class="rt-strip" width="{{ width }}" height="{{ height }}" viewBox="0 0 {{ width }} {{ height }}" role="img"
+     aria-label="Regime type per year {{ from_year }}–{{ pts[-1][0] if pts }} (V-Dem) with the Liberal Democracy Index as a line">
+  {%- for y, v in pts %}<rect x="{{ (loop.index0 * width / n)|round(2) }}" y="0" width="{{ (width / n + 0.3)|round(2) }}" height="{{ height }}"
+      class="rt-r{{ v|int }}"><title>{{ y }}: {{ REGIMES[v|int] }}{% if ldi %}{% for yy, vv in ldi.spark if yy == y %} · LDI {{ '%.2f'|format(vv) }}{% endfor %}{% endif %}</title></rect>{% endfor -%}
+  {%- if ldi -%}{%- set lp = ldi.spark|selectattr(0, 'ge', from_year)|list -%}
+  <polyline class="rt-line" fill="none" points="{% for y, v in lp %}{{ ((y - from_year + 0.5) * width / n)|round(1) }},{{ (height - 2 - v * (height - 4))|round(1) }} {% endfor %}"/>{%- endif -%}
+  {%- if year and year >= from_year and n -%}<line class="rt-year" x1="{{ ((year - from_year + 0.5) * width / n)|round(1) }}" x2="{{ ((year - from_year + 0.5) * width / n)|round(1) }}" y1="0" y2="{{ height }}"><title>{{ year }}: the report's year</title></line>{%- endif -%}
+</svg>
+{%- endif -%}
+{% endmacro %}
+
+{% macro badges(p, year=None) %}
+{%- for key in ('vdem_regime', 'vdem_libdem', 'fh_score', 'wgi_va') %}{% set m = p.measures.get(key) %}{% if m %}
+  {%- set v = m.then if year else m.latest -%}
+  {%- if v %}<a class="rt-val" href="{{ m.url }}" target="_blank" rel="noopener"
+     title="{{ m.by }} – {{ m.name }}, {{ v[0] }}{{ ' (latest before ' ~ year ~ ')' if year and v[0] != year }}. {{ m.about }} Source: {{ m.citation or m.by }}, licence {{ m.license }}; retrieved {{ p.retrieved }}.">
+    {%- if key == 'vdem_regime' %}<span class="rt-dot rt-r{{ v[1]|int }}"></span>{{ REGIMES[v[1]|int] }}
+    {%- else %}{{ m.short }} {{ m.fmt.format(v[1]) }}{% endif %}</a>{% endif %}
+{%- endif %}{% endfor %}
+{% endmacro %}

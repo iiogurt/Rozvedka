@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.36.0] – 2026-10-07
+
+### Added
+- **Democracy ratings of the reporting states** (`/ratings`, *Sources → Democracy ratings*): regime type per year since
+  1990 (V-Dem Regimes of the World) with the V-Dem Liberal Democracy Index, the Freedom House Freedom in the World
+  score and the World Bank WGI Voice and Accountability indicator for all 49 library states – each value linked to its
+  source with licence and retrieval date; sort by the largest ten-year decline; regime changes listed. Country headings
+  on Sources show the strip; **report pages show the ratings of the report's year** and warn when the regime type has
+  changed since. New command `fetch-ratings` (also run by `fetch-actors`). The EIU Democracy Index is commercial and not
+  used; V-Dem's own download needs a registration form, so V-Dem and Freedom House data come via Our World in Data.
+- Design for think-tank credibility profiles (`docs/PUBLISHER_PROFILES.md`): existing rankings researched – none current
+  and credible – and an evidence checklist proposed instead of a score.
+
 ## [0.35.0] – 2026-10-07
 
 ### Added
@@ -682,7 +695,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.35.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.36.0...HEAD
+[0.36.0]: https://github.com/iiogurt/Rozvedka/compare/v0.35.0...v0.36.0
 [0.35.0]: https://github.com/iiogurt/Rozvedka/compare/v0.34.0...v0.35.0
 [0.34.0]: https://github.com/iiogurt/Rozvedka/compare/v0.33.0...v0.34.0
 [0.33.0]: https://github.com/iiogurt/Rozvedka/compare/v0.32.1...v0.33.0

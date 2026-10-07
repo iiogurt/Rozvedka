@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% from "_ratings.html" import strip, badges %}
+{% block title %}Democracy ratings · Sources · Rozvedka{% endblock %}
+{% block main %}
+<nav class="subnav" aria-label="Source views"><a href="/sources">Agencies</a><a href="/sources/coverage">Coverage</a><a href="/ratings" class="on">Democracy ratings</a><a href="/collect">To collect</a><a href="/data">Data exchange</a></nav>
+<h1 class="page-h">Democracy ratings of the reporting states</h1>
+<p class="muted small">How democratic was a state when its agencies wrote a report? A threat assessment from an electoral autocracy, or from a
+  democracy that has since slid, reads differently from one by a stable liberal democracy. Each row shows the state's regime type
+  year by year since 1990 (colour) with V-Dem's Liberal Democracy Index as a line, and the latest value of three independent
+  measurements. Every value opens its source; report pages show the ratings of the report's own year.</p>
+
+<section class="viz-card">
+  <div class="rt-legend small">
+    {% for k, label in REGIMES.items()|reverse %}<span><span class="rt-dot rt-r{{ k }}"></span>{{ label }}</span>{% endfor %}
+    <span class="muted">– Regimes of the World (V-Dem); white line: Liberal Democracy Index 0–1</span>
+  </div>
+  <p class="small"><span class="muted">Sort:</span>
+    {% for k, label in (('ldi', 'most democratic'), ('change', 'largest decline in ten years'), ('name', 'name')) %}
+      {% if sort == k %}<b>{{ label }}</b>{% else %}<a href="/ratings?sort={{ k }}">{{ label }}</a>{% endif %}{{ ' · ' if not loop.last }}{% endfor %}</p>
+  <table class="rt-table small">
+    <thead><tr><th>State</th><th>1990 → {{ rows[0].measures.vdem_regime.latest[0] if rows and rows[0].measures.vdem_regime }}</th>
+      {% for key in ('vdem_libdem', 'fh_score', 'wgi_va') %}<th class="n" title="{{ MEASURES[key].about }}">{{ MEASURES[key].by }}<br><span class="muted">{{ MEASURES[key].name }}</span></th>{% endfor %}
+      <th>Regime changes</th><th class="n">Official reports</th></tr></thead>
+    {% for r in rows %}<tr>
+      <th><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="" width="20" height="15"> {{ r.name }}</th>
+      <td>{{ strip(r, width=220, height=18) }}</td>
+      {% for key in ('vdem_libdem', 'fh_score', 'wgi_va') %}{% set m = r.measures.get(key) %}
+      <td class="n">{% if m and m.latest %}<a href="{{ m.url }}" target="_blank" rel="noopener" title="{{ m.latest[0] }} · {{ m.citation }} · {{ m.license }}">{{ m.fmt.format(m.latest[1]) }}</a> <span class="muted">{{ "’" ~ (m.latest[0]|string)[-2:] }}</span>{% else %}<span class="muted">–</span>{% endif %}</td>{% endfor %}
+      <td class="rt-changes">{% for c in r.measures.vdem_regime.changes if r.measures.vdem_regime %}<span title="{{ c.from }} → {{ c.to }}"><b>{{ c.year }}</b> <span class="rt-dot rt-r{{ REGIMES.items()|selectattr(1, 'equalto', c.to)|map(attribute=0)|first }}"></span>{{ c.to }}</span>{% endfor %}</td>
+      <td class="n">{% if r.n_docs %}<a href="{{ docs_url(country=r.country, type='official') }}">{{ r.n_docs|num }}</a>{% else %}<span class="muted">0</span>{% endif %}</td>
+    </tr>{% endfor %}
+  </table>
+</section>
+
+<section class="viz-card small">
+  <h2 class="viz-title">Where the ratings come from</h2>
+  <ul class="prov-list">
+    {% for key, m in MEASURES.items() %}<li><b>{{ m.by }} – {{ m.name }}</b>: {{ m.about }}
+      <span class="muted">Source: {{ meta.measures.get(key, {}).get('citation') or m.by }} via
+        <a href="{{ meta.measures.get(key, {}).get('source') }}" target="_blank" rel="noopener">{{ meta.measures.get(key, {}).get('source') }}</a>;
+        licence {{ m.license }}; retrieved {{ meta.measures.get(key, {}).get('retrieved') }}.</span></li>{% endfor %}
+    <li>V-Dem and Freedom House are also think tanks in this library; the World Bank measure is the official, intergovernmental third view.
+      The EIU Democracy Index is a commercial product and is not used. Ratings describe the state, not its agencies' work; they are
+      refreshed with <code>python -m rozvedka fetch-ratings</code> (also part of <code>fetch-actors</code>).</li>
+    <li>Not rated: the EU, NATO and other international bodies. Counted reports: official agencies only (◆ think tanks are not states).</li>
+  </ul>
+</section>
+{% endblock %}

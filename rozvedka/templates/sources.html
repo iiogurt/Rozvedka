@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% from "_series.html" import grid %}
+{% from "_ratings.html" import strip, badges %}
 {% block title %}Sources · Rozvedka{% endblock %}
 {% block main %}
-<nav class="subnav" aria-label="Source views"><a href="/sources" class="on">Agencies</a><a href="/sources/coverage">Coverage</a><a href="/collect">To collect</a><a href="/data">Data exchange</a></nav>
+<nav class="subnav" aria-label="Source views"><a href="/sources" class="on">Agencies</a><a href="/sources/coverage">Coverage</a><a href="/ratings">Democracy ratings</a><a href="/collect">To collect</a><a href="/data">Data exchange</a></nav>
 <div class="summary">
   <span><b>{{ n_official }}</b> official agencies and institutions in <b>{{ groups|length }}</b> countries and bodies
     {% if n_independent %}· <a class="pub-count" href="#independent"><b>{{ n_independent }}</b> independent think tanks ◆</a>{% endif %}</span>
@@ -38,7 +39,8 @@
   <h2><img class="flag" src="{{ flag_url(country) }}" alt="" width="32" height="24">
     {{ COUNTRY_NAMES.get(country, country) }} <span class="muted">· {{ items|length }}</span>
     <span class="coalitions">{% for t in coalition_tags(country) %}<a class="ctag ctag-{{ t.key }}" href="/documents?coalition={{ t.key }}"
-      title="{{ t.name }} since {{ t.since }}">{{ t.short }}<span class="since"> {{ t.since }}</span></a>{% endfor %}</span></h2>
+      title="{{ t.name }} since {{ t.since }}">{{ t.short }}<span class="since"> {{ t.since }}</span></a>{% endfor %}</span>
+    {% set rp = rating(country) %}{% if rp %}<span class="rt-row">{{ strip(rp, width=120, height=14) }}{{ badges(rp) }}<a class="muted" href="/ratings">democracy ratings</a></span>{% endif %}</h2>
   <div class="cards">
   {% for s in items %}
   <article class="card{{ ' card-ind' if is_independent(s.id) }}" id="s-{{ s.id }}">

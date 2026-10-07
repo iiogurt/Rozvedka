@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_ratings.html" import strip, badges %}
 {% set d = doc %}
 {% block title %}{{ d.title }} · {{ d.agency }} · Rozvedka{% endblock %}
 {% block main %}
@@ -22,6 +23,13 @@
       {% elif d.year %} <span class="muted">– from the title or address</span>{% endif %}
       {% if year_conflict %}<div class="badge-warn small">{{ conflict_kinds[year_conflict.kind] }} says <b>{{ year_conflict.found }}</b>: {{ year_conflict.evidence }}
         – <a href="/years?source={{ d.source_id }}">review</a></div>{% endif %}</td></tr>
+    {% set rp = rating(d.country, d.year) if d.year else none %}{% if rp %}{% set reg = rp.measures.get('vdem_regime') %}
+    <tr><th>State at the time</th><td><span class="rt-row">{{ strip(rp, d.year, width=150, height=16) }}{{ badges(rp, d.year) }}</span>
+      <span class="muted">– {{ COUNTRY_NAMES.get(d.country, d.country) }} in {{ d.year }}{{ ', the publisher’s country (a think tank is not the state)' if is_independent(d.source_id) }};
+        <a href="/ratings">all states</a></span>
+      {% if reg and reg.then_label and reg.then_label != reg.latest_label %}<div class="rt-warn small">When this report was written the state
+        was a {{ reg.then_label }}; since then: {% for c in reg.changes if c.year > (reg.then[0]) %}<b>{{ c.year }}</b> {{ c.to }}{{ ', ' if not loop.last }}{% endfor %}
+        (V-Dem).</div>{% endif %}</td></tr>{% endif %}
     <tr><th>Type</th><td>{% if d.doc_type %}{{ doc_types[d.doc_type][0] }} <span class="muted">– {{ d.doc_type_why }}{{ '; not counted as a report' if not doc_types[d.doc_type][1] }}</span>{% else %}<span class="muted">not typed yet</span>{% endif %}
       <form class="inline rp-type" method="post" action="/doc/{{ d.id }}/type"><select name="doc_type" aria-label="Correct the type">
         {% for k, (label, _) in doc_types.items() %}<option value="{{ k }}" {{ 'selected' if d.doc_type == k }}>{{ label }}</option>{% endfor %}</select>

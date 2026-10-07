@@ -862,3 +862,20 @@ h2.region.region-ind { color: var(--indep); border-color: var(--indep); } .flag-
 .xl-line { margin-bottom: 4px; }
 .xl-names summary { cursor: pointer; color: var(--accent); display: inline; }
 .xl-lang { display: inline-block; margin: 2px 10px 2px 0; }
+
+/* democracy ratings (/ratings, Sources, report pages): Regimes of the World colours – colour-blind-safe (Okabe–Ito) */
+.rt-r3 { fill: #0072b2; background: #0072b2; } .rt-r2 { fill: #56b4e9; background: #56b4e9; }
+.rt-r1 { fill: #e69f00; background: #e69f00; } .rt-r0 { fill: #d55e00; background: #d55e00; }
+.rt-strip { vertical-align: middle; border-radius: 2px; }
+.rt-line { stroke: #fff; stroke-width: 1.4; } :root:not([data-theme="dark"]) .rt-line { stroke: #111; }
+.rt-year { stroke: #fff; stroke-width: 2; stroke-dasharray: 2 2; }
+.rt-dot { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: baseline; }
+.rt-legend span { margin-right: 12px; white-space: nowrap; }
+.rt-table { border-collapse: collapse; width: 100%; }
+.rt-table th, .rt-table td { text-align: left; padding: 3px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.rt-table .n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rt-table thead th { font-weight: normal; color: var(--muted); font-size: 12px; }
+.rt-table td.rt-changes { white-space: normal; } .rt-changes span { display: inline-block; margin-right: 10px; white-space: nowrap; }
+.rt-val { margin-right: 8px; white-space: nowrap; }
+.rt-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; font-weight: normal; margin-top: 2px; }
+.rt-warn { border-left: 3px solid #e69f00; padding: 4px 8px; margin-top: 4px; background: rgba(230, 159, 0, .1); }
