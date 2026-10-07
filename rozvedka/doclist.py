@@ -2,13 +2,14 @@
 list shows for the same parameters."""
 import re
 
-from . import actors, countries, db, doctypes, series, topics, trends, works
+from . import actors, concepts, countries, db, doctypes, series, topics, trends, works
 
 
 def build(country: str = "", type: str = "", lang: str = "", year="", status: str = "", q: str = "", source: int = 0,
           show_hidden: int = 0, coalition: str = "", topic=(), year_from="", year_to="", indexed: int = 0,
           actor: str = "", main: int = 0, cluster: str = "", series_id: str = "", added_from: str = "",
-          added_to: str = "", undated: int = 0, doc_type: str = "", all_types: int = 0, all_files: int = 0) -> dict:
+          added_to: str = "", undated: int = 0, doc_type: str = "", all_types: int = 0, all_files: int = 0,
+          exact: int = 0) -> dict:
     """SQL condition (over documents d JOIN sources s) and its arguments for the Documents list's parameters."""
     tax = topics.taxonomy()["topics"]
     topic = [topic] if isinstance(topic, str) else list(topic or [])
@@ -62,7 +63,13 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
             actor_row = con.execute("SELECT key, label FROM actors WHERE key=?", (actor,)).fetchone()
     if source:
         where.append("s.id=?"); args.append(source)
-    fts = trends.or_query(q) if q.strip() else ""
+    # a search word naming a concept also finds its names in other languages (Wikidata) – unless the search is
+    # exact, or comes from a Trends chart, which counts terms literally as typed
+    expansions: list[dict] = []
+    if q.strip() and not exact and not indexed:
+        fts, expansions = concepts.expand(q)
+    else:
+        fts = trends.or_query(q) if q.strip() else ""
     if q.strip() and indexed:
         # link from a Trends chart: exactly the full-text match the chart counted
         where.append("d.id IN (SELECT rowid FROM doc_text WHERE doc_text MATCH ?)"); args.append(fts or '""')
@@ -78,7 +85,7 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
             where.append(sql); args += [*margs, t]
         else:
             where.append("d.id IN (SELECT doc_id FROM doc_topics WHERE topic=?)"); args.append(t)
-    return {"where": where, "args": args, "chosen": chosen, "fts": fts, "base_where": base_where,
+    return {"where": where, "args": args, "chosen": chosen, "fts": fts, "expansions": expansions, "base_where": base_where,
             "base_args": base_args, "editions": editions, "series_row": series_row, "actor_row": actor_row}
 
 

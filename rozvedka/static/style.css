@@ -856,3 +856,9 @@ table.yc td.ev { max-width: 420px; }
 .card.card-ind { border-left: 4px solid var(--indep); }
 .pub-count { color: var(--indep); }
 h2.region.region-ind { color: var(--indep); border-color: var(--indep); } .flag-ind { align-self: center; }
+
+/* cross-language search: what a search word was expanded to, and where the names come from */
+.xl-box { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 4px; padding: 6px 10px; margin: 6px 0 10px; font-size: 13px; }
+.xl-line { margin-bottom: 4px; }
+.xl-names summary { cursor: pointer; color: var(--accent); display: inline; }
+.xl-lang { display: inline-block; margin: 2px 10px 2px 0; }
