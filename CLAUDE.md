@@ -51,7 +51,7 @@ next steps. Read it at the start of a session; update it (mark items done, re-pr
 
 ## Git and GitHub
 
-- Repository: https://github.com/iiogurt/Rozvedka (private). Commit identity:
+- Repository: https://github.com/iiogurt/Rozvedka (**public** since 2026-10-07). Commit identity:
   `iiogurt <188860570+iiogurt@users.noreply.github.com>` (set per repository; never use a personal e-mail).
 - `main` always holds working code. Every change goes on a branch (`feat/…`, `fix/…`, `sources/…`, `docs/…`,
   `chore/…`) and is merged through a pull request **with a merge commit**.
@@ -73,9 +73,10 @@ next steps. Read it at the start of a session; update it (mark items done, re-pr
 - `CHANGELOG.md` follows Keep a Changelog. Note changes under **Unreleased** while working; plain, specific
   language about what the user gets.
 - Release steps, every time:
-  1. `python3 tools/bump_version.py patch|minor|major` – updates `rozvedka/__init__.py`, the changelog and the
-     README version badge (the repo is private, so the badge is static).
-  2. Run the tests; commit; open and merge the PR.
+  1. `python3 tools/bump_version.py patch|minor|major` – updates `rozvedka/__init__.py` and the
+     changelog (the README's release badge follows the latest GitHub release by itself).
+  2. Run the tests; commit; open the PR; after CI is green merge it locally (`git merge --no-ff`, noreply identity)
+     and push `main`.
   3. Tag the merge commit `v<version>` (annotated: `git tag -a v<version> -m "Rozvedka <version>"`) and push it.
   4. Create a GitHub release from that changelog section (mark it latest).
   5. Restart the portal so the footer / `/api/version` show the new version.

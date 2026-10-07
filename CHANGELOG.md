@@ -27,6 +27,12 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.42.1] – 2026-10-07
+
+### Changed
+- The repository is public. The README's version badge now shows the latest GitHub release by itself (a release no
+  longer edits it), with a badge of the test run on `main` and the supported Python versions (3.10–3.13).
+
 ## [0.42.0] – 2026-10-07
 
 ### Security
@@ -810,7 +816,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.1...HEAD
+[0.42.1]: https://github.com/iiogurt/Rozvedka/compare/v0.42.0...v0.42.1
 [0.42.0]: https://github.com/iiogurt/Rozvedka/compare/v0.41.0...v0.42.0
 [0.41.0]: https://github.com/iiogurt/Rozvedka/compare/v0.40.0...v0.41.0
 [0.40.0]: https://github.com/iiogurt/Rozvedka/compare/v0.39.0...v0.40.0
