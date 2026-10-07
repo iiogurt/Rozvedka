@@ -80,12 +80,12 @@ tpl.env.globals.update(sid=series.sid, COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=T
 
 tpl.env.filters["num"] = lambda n: f"{n or 0:,}"
 
-_independent = {"at": 0.0, "ids": frozenset()}
+_independent: dict = {"at": None, "ids": frozenset()}     # at=None: not loaded yet
 
 
 def independent_ids() -> frozenset:
     """Sources not run by a state (think tanks) – refreshed every minute; few rows."""
-    if time.monotonic() - _independent["at"] > 60:
+    if _independent["at"] is None or time.monotonic() - _independent["at"] > 60:
         with db.session() as con:
             _independent["ids"] = frozenset(r[0] for r in con.execute(
                 "SELECT id FROM sources WHERE COALESCE(publisher, 'official') = 'independent'"))

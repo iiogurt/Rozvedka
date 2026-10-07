@@ -13,7 +13,7 @@ def library(tmp_path, monkeypatch):
     monkeypatch.setattr(db, "DB_PATH", tmp_path / "t.db")
     monkeypatch.setattr(series, "SERIES_FILE", tmp_path / "series.yaml")
     monkeypatch.setattr(collect, "INBOX", tmp_path / "inbox")
-    app_module._independent["at"] = 0.0                       # forget the cached list of independent sources
+    app_module._independent["at"] = None                       # forget the cached list of independent sources
     db.init()
     collect.init()
     topics.init()
@@ -25,7 +25,7 @@ def library(tmp_path, monkeypatch):
             con.execute("""INSERT INTO documents(id,source_id,url,title,lang,year,status,local_path)
                            VALUES(?,?,?,?,'en',2025,'downloaded',?)""", (i, src, f"https://x/{i}.pdf", f"Report {i}", f"f{i}.pdf"))
     yield tmp_path
-    app_module._independent["at"] = 0.0
+    app_module._independent["at"] = None
 
 
 def test_official_filter_and_counts(library):
