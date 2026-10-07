@@ -1,0 +1,130 @@
+# Concepts for cross-language search – English Wikipedia article titles, grouped by topic (sources/topics.yaml).
+# `python -m rozvedka fetch-concepts` resolves each title to its Wikidata item and stores the item's labels and
+# aliases in the library's languages (data/gazetteer/concepts.json, with revision and retrieval date). A search word
+# equal to one of those labels also finds the others ("Drohne" → drone, dron, drón …); the expansion is shown with
+# its Wikidata source and can be switched off. Hand-written: add titles here; translations come only from Wikidata.
+
+extremism:
+  - Terrorism
+  - Right-wing extremism
+  - Left-wing terrorism
+  - Islamism
+  - Jihadism
+  - Radicalization
+  - Neo-Nazism
+  - Antisemitism
+  - Terrorism financing
+  - Lone wolf attack
+  - Foreign fighters in the Syrian civil war and War in Iraq
+  - Accelerationism
+  - Anarchism
+
+state-threats:
+  - Espionage
+  - Industrial espionage
+  - Disinformation
+  - Propaganda
+  - Foreign electoral intervention
+  - Sabotage
+  - Hybrid warfare
+  - Transnational repression
+  - Nuclear proliferation
+  - Cyberwarfare
+  - Insider threat
+  - Information warfare
+  - Economic sanctions
+  - Fake news
+
+geopolitics:
+  - Unmanned aerial vehicle
+  - Loitering munition
+  - Cruise missile
+  - Ballistic missile
+  - Hypersonic weapon
+  - Nuclear weapon
+  - Deterrence theory
+  - Conscription
+  - Military exercise
+  - Anti-aircraft warfare
+  - Arms industry
+  - Arms control
+  - Mobilization
+  - Naval mine
+
+cyber:
+  - Ransomware
+  - Phishing
+  - Denial-of-service attack
+  - Malware
+  - Cybercrime
+  - Zero-day vulnerability
+  - Advanced persistent threat
+  - Botnet
+  - Hacktivism
+  - Supply chain attack
+  - Artificial intelligence
+  - Deepfake
+  - Quantum computing
+  - Cryptocurrency
+  - Encryption
+  - Vulnerability (computer security)
+
+crime:
+  - Organized crime
+  - Illegal drug trade
+  - Human trafficking
+  - People smuggling
+  - Money laundering
+  - Political corruption
+  - Arms trafficking
+  - Child sexual abuse
+  - Cocaine
+  - Fentanyl
+  - Methamphetamine
+  - Cannabis (drug)
+
+migration:
+  - Illegal immigration
+  - Border control
+  - Right of asylum
+  - Refugee
+
+hazards:
+  - Climate change
+  - Flood
+  - Storm
+  - Drought
+  - Heat wave
+  - Wildfire
+  - Earthquake
+  - Tsunami
+  - Volcano
+  - Landslide
+  - Pandemic
+  - Epidemic
+  - Influenza
+  - Antimicrobial resistance
+  - Nuclear and radiation accidents and incidents
+  - Chemical accident
+  - Space weather
+  - Power outage
+
+resilience:
+  - Civil defense
+  - Civil protection
+  - Emergency management
+  - Crisis management
+  - Emergency evacuation
+  - Air raid shelter
+  - Food security
+  - Water security
+  - Energy security
+  - Critical infrastructure
+  - Business continuity planning
+  - Psychological resilience
+
+governance:
+  - Intelligence agency
+  - Mass surveillance
+  - Data retention
+  - Lawful interception
