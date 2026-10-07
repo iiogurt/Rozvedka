@@ -1,5 +1,6 @@
 """CLI: python -m rozvedka {sync-registry|crawl|download|update|serve|stats|index-topics|fetch-actors|index-actors|…}"""
 import argparse
+import os
 import logging
 
 from . import __version__, build_version, crawler, db, downloader, registry
@@ -19,7 +20,10 @@ def main():
     u = sub.add_parser("update", help="crawl + download new documents (for the timer)")
     u.add_argument("--country")
     s = sub.add_parser("serve", help="run the web portal")
-    s.add_argument("--host", default="0.0.0.0"); s.add_argument("--port", type=int, default=8080)
+    s.add_argument("--host", default=os.environ.get("ROZVEDKA_HOST", "127.0.0.1"),
+                   help="address to listen on: 127.0.0.1 (default) = this computer only; 0.0.0.0 = the whole network "
+                        "(no login – only on a trusted home network)")
+    s.add_argument("--port", type=int, default=int(os.environ.get("ROZVEDKA_PORT", 8080)))
     sub.add_parser("stats", help="print document counts")
     sub.add_parser("improve-titles", help="replace poor document titles with the title stored in the PDF")
     ix = sub.add_parser("index-topics", help="extract report text (full-text search) and tag documents with topics")

@@ -20,7 +20,7 @@ from . import (__version__, actor_profiles, actors, build_version, collect, coun
                paging, registry, series, topics, trends, updates)
 from . import compare as compare_mod
 from . import dating
-from . import dataset, doclist, doctypes, folders, publishers, ratings, report, review, updater, watch
+from . import dataset, doclist, doctypes, folders, guard, publishers, ratings, report, review, updater, watch
 from . import jobs as jobrunner
 from .config import FILES
 
@@ -132,6 +132,21 @@ def asset(path: str) -> str:
 
 _stamps: dict[tuple, str] = {}
 tpl.env.globals["asset"] = asset
+
+
+@app.middleware("http")
+async def request_guard(request: Request, call_next):
+    """No login: refuse unknown host names (DNS rebinding) and changes requested by other sites (CSRF) – rozvedka/guard.py."""
+    host = request.headers.get("host", "")
+    if not guard.allowed_host(host):
+        return PlainTextResponse(f"Host {host!r} is not allowed. Use the machine's address or name, or add it to "
+                                 "ROZVEDKA_ALLOWED_HOSTS.", status_code=421)
+    if not guard.same_site(request.method, host, request.headers.get("origin"), request.headers.get("referer")):
+        return PlainTextResponse("Refused: this request came from another site.", status_code=403)
+    response = await call_next(request)
+    for k, v in guard.HEADERS.items():
+        response.headers.setdefault(k, v)
+    return response
 
 
 @app.middleware("http")

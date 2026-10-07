@@ -4,9 +4,12 @@
   test's temporary library and could work on the real one.
 - A job started in the background by one test (e.g. indexing after an upload) finishes before the next test starts.
 """
+import os
 import time
 
 import pytest
+
+os.environ.setdefault("ROZVEDKA_ALLOWED_HOSTS", "testserver")   # the host name FastAPI's TestClient uses
 
 from rozvedka import jobs
 

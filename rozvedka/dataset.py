@@ -315,6 +315,11 @@ def verify(manifest_path: Path) -> dict:
         raise ValueError(f"{manifest_path.name} is not a Rozvedka dataset")
     if m.get("format_version", 0) > FORMAT_VERSION:
         raise ValueError(f"dataset format {m['format_version']} is newer than this app understands ({FORMAT_VERSION}) – update the app")
+    for part in m.get("parts") or []:     # parts are files beside the manifest, nothing else
+        name = part.get("name") if isinstance(part, dict) else None
+        if not isinstance(name, str) or Path(name).name != name or name in ("", ".", "..") \
+                or not isinstance(part.get("size"), int):
+            raise ValueError(f"{manifest_path.name}: invalid part entry {str(part)[:80]!r}")
     problems, total, done = [], sum(p["size"] for p in m["parts"]), 0
     log.info("verifying %d parts (%d bytes) of dataset %s", len(m["parts"]), total, m.get("dataset_id"))
     for part in m["parts"]:
@@ -670,9 +675,19 @@ def _copy_text(con, ds_id: int, here_id: int) -> None:
     con.execute(f"INSERT INTO doc_index(doc_id,{','.join(vals)}) VALUES(?{',?' * len(vals)})", (here_id, *vals.values()))
 
 
+def safe_target(rel: str | None) -> Path | None:
+    """Where a report file from a dataset goes: below data/files/, else None. The path comes from the dataset's own
+    database, which anyone can write – absolute paths, '..' and symlinked folders must not lead elsewhere."""
+    if not rel or Path(rel).is_absolute() or ".." in Path(rel).parts or "\\" in rel:
+        return None
+    root = config.FILES.resolve()
+    target = (root / rel).resolve()
+    return target if target.is_relative_to(root) and target != root else None
+
+
 def _extract(tar, plan: dict, m: dict) -> dict:
     """Read the rest of the stream: report files that are wanted (checked against their SHA-256), logos, gazetteer."""
-    stats = {"written": 0, "bytes": 0, "bad_checksum": 0, "logos": 0, "gazetteer": None}
+    stats = {"written": 0, "bytes": 0, "bad_checksum": 0, "unsafe_path": 0, "logos": 0, "gazetteer": None}
     wanted, logos = plan["wanted"], plan["logos"]
     gaz_tmp = None
     seen = set()
@@ -686,7 +701,11 @@ def _extract(tar, plan: dict, m: dict) -> dict:
             if not w:
                 continue
             seen.add(rel)
-            target = config.FILES / w["target"]
+            target = safe_target(w["target"])
+            if target is None:                   # a crafted dataset must not write outside the report folder
+                stats["unsafe_path"] += 1
+                log.warning("skipped %r: its path leads outside %s", w["target"], config.FILES)
+                continue
             target.parent.mkdir(parents=True, exist_ok=True)
             tmp = target.with_name(target.name + ".part")
             h = hashlib.sha256()

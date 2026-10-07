@@ -1,15 +1,22 @@
-# systemd user unit – install with: systemctl --user link "$PWD/deploy/rozvedka-web.service"
-# Assumes the project lives in ~/Documents/Projects/Rozvedka; adjust the paths below otherwise.
+# systemd user unit for the portal – a template: @ROZVEDKA_DIR@ is the project folder. Install from that folder with
+#   mkdir -p ~/.config/systemd/user
+#   sed "s|@ROZVEDKA_DIR@|$PWD|g" deploy/rozvedka-web.service > ~/.config/systemd/user/rozvedka-web.service
+#   systemctl --user daemon-reload && systemctl --user start rozvedka-web
+# It listens on the home network (0.0.0.0) – the portal has no login: never forward its port to the internet.
+# For this computer only, set ROZVEDKA_HOST=127.0.0.1 below.
 [Unit]
 Description=Rozvedka security reports portal
 After=network-online.target
 
 [Service]
-WorkingDirectory=%h/Documents/Projects/Rozvedka
-ExecStart=%h/Documents/Projects/Rozvedka/.venv/bin/python -m rozvedka serve --host 0.0.0.0 --port 8080
+WorkingDirectory=@ROZVEDKA_DIR@
+Environment=ROZVEDKA_HOST=0.0.0.0
+ExecStart=@ROZVEDKA_DIR@/.venv/bin/python -m rozvedka serve
 Restart=on-failure
 NoNewPrivileges=true
 PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=-/media -/mnt -/run/media
 
 [Install]
 WantedBy=default.target

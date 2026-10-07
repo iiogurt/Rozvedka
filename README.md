@@ -430,8 +430,8 @@ at a time (an update, an export or an import); the indexers run as separate proc
 ## Quick start
 
 ```bash
-git clone https://github.com/iiogurt/Rozvedka.git ~/Documents/Projects/Rozvedka
-cd ~/Documents/Projects/Rozvedka
+git clone https://github.com/iiogurt/Rozvedka.git      # any folder; nothing depends on where it lives
+cd Rozvedka
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 sudo apt install poppler-utils chromium      # pdftotext (text extraction), Chromium (JavaScript-only sites)
 sudo apt install ocrmypdf tesseract-ocr tesseract-ocr-eng tesseract-ocr-spa …   # optional: OCR for scanned reports
@@ -439,11 +439,14 @@ sudo apt install ocrmypdf tesseract-ocr tesseract-ocr-eng tesseract-ocr-spa … 
 .venv/bin/python -m rozvedka update          # crawl, download, extract and index (first run: hours)
 .venv/bin/python -m rozvedka fetch-actors    # reference data for the actor index (a few minutes)
 .venv/bin/python -m rozvedka index-actors
-.venv/bin/python -m rozvedka serve           # → http://<host>:8080
+.venv/bin/python -m rozvedka serve           # → http://127.0.0.1:8080 (this computer only)
+.venv/bin/python -m rozvedka serve --host 0.0.0.0   # → http://<this machine's address>:8080 for the home network
 ```
 
 > [!WARNING]
-> The portal has no login. It listens on your LAN; do not expose it to the internet.
+> The portal has no login. By default it answers only on this computer; with `--host 0.0.0.0` everyone on the
+> network can use it – start updates, imports and exports. Do that only on a trusted home network, and never forward
+> its port to the internet. See [Security](#security).
 
 > [!NOTE]
 > `data/` is not in git. It holds the database (`rozvedka.db`), the downloaded PDFs (`files/`, 14+ GB), logos and
@@ -455,12 +458,12 @@ The portal runs when it is started – it is not set up to start by itself after
 schedule (both the owner's decisions; updates are started on the *Update* page):
 
 ```bash
-cd ~/Documents/Projects/Rozvedka
-nohup .venv/bin/python -m rozvedka serve > data/logs/portal.log 2>&1 &
+cd Rozvedka                                   # the project folder
+nohup .venv/bin/python -m rozvedka serve --host 0.0.0.0 > data/logs/portal.log 2>&1 &
 ```
 
-`deploy/rozvedka-web.service` is a systemd user unit for whoever wants the portal managed by systemd
-(`systemctl --user link "$PWD/deploy/rozvedka-web.service" && systemctl --user start rozvedka-web`); without
+`deploy/rozvedka-web.service` is a template of a systemd user unit for whoever wants the portal managed by systemd;
+the commands to install it from the project folder are at its top (they fill in the folder's path). Without
 `loginctl enable-linger` it runs only while that user is logged in.
 
 ## Commands
@@ -483,7 +486,7 @@ nohup .venv/bin/python -m rozvedka serve > data/logs/portal.log 2>&1 &
 | `improve-titles` | replace poor document titles with the title stored in the PDF |
 | `export DIR [--no-files] [--since DATE] [--part-size 2G] [--name LABEL]` | write the whole library as a dataset – parts of at most 2 GB plus a manifest – for backup or to hand to someone else |
 | `import PATH [--check] [--prefer local\|dataset] [--no-index]` | verify a dataset, compare it with the library (newer / older / mixed / complementing), then restore it into an empty library or merge it into this one |
-| `serve [--host] [--port]` | run the portal (default `0.0.0.0:8080`) |
+| `serve [--host] [--port]` | run the portal (default `127.0.0.1:8080` – this computer only; `--host 0.0.0.0` for the home network) |
 | `stats` | documents found and downloaded per country |
 | `--version` | release version and git build |
 
