@@ -25,9 +25,10 @@
   const map = L.map("map", { worldCopyJump: true, minZoom: 2, maxZoom: 18 }).setView([35, 10], 2);
   map.createPane("countries"); map.getPane("countries").style.zIndex = 350;
 
-  // standard OpenStreetMap tiles, darkened in the browser by a CSS filter (.dark-tiles) – no API key needed
+  // standard OpenStreetMap tiles, darkened in the browser by a CSS filter (.dark-tiles) – no API key needed. OSM's tile
+  // policy requires a Referer: the portal sends none to other sites (guard.py), so the tiles send the page's origin
   const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19, className: "dark-tiles",
+    maxZoom: 19, className: "dark-tiles", referrerPolicy: "strict-origin-when-cross-origin",
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
 

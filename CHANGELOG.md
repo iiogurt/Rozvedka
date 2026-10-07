@@ -27,6 +27,13 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.42.2] – 2026-10-07
+
+### Fixed
+- Map: zoomed-in street tiles showed "Access blocked" from OpenStreetMap. Since 0.42.0 the portal sends no referrer to
+  other sites, and OpenStreetMap's tile policy requires one; the map tiles now send the page's origin (only the
+  address and port, never the page path).
+
 ## [0.42.1] – 2026-10-07
 
 ### Changed
@@ -816,7 +823,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.2...HEAD
+[0.42.2]: https://github.com/iiogurt/Rozvedka/compare/v0.42.1...v0.42.2
 [0.42.1]: https://github.com/iiogurt/Rozvedka/compare/v0.42.0...v0.42.1
 [0.42.0]: https://github.com/iiogurt/Rozvedka/compare/v0.41.0...v0.42.0
 [0.41.0]: https://github.com/iiogurt/Rozvedka/compare/v0.40.0...v0.41.0

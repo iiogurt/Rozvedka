@@ -48,3 +48,10 @@ def test_crafted_dataset_cannot_escape(tmp_path, monkeypatch):
         dataset.verify(m)
     s = folders._dataset_summary(m)
     assert s["documents"] is None and s["parts"] == 0           # markup is not a number; the bad part is ignored
+
+
+def test_map_tiles_send_a_referer():
+    """The portal sends no Referer to other sites, but OpenStreetMap blocks tile requests without one."""
+    from pathlib import Path
+    js = (Path(__file__).resolve().parent.parent / "rozvedka" / "static" / "map.js").read_text(encoding="utf-8")
+    assert 'referrerPolicy: "strict-origin-when-cross-origin"' in js and "Referrer-Policy" in guard.HEADERS
