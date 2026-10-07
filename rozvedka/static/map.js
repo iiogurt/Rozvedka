@@ -51,6 +51,16 @@
       { direction: "top", offset: [0, -14], className: "hq-tip", opacity: 1 }).openTooltip();
   });
   cluster.on("clustermouseout", (e) => e.layer.unbindTooltip());
+  // cards open above their pin; one that would leave the map at the top opens below it instead (and back again)
+  map.on("tooltipopen", (e) => {
+    const t = e.tooltip, o = t.options;
+    if (o.sticky || !["top", "bottom"].includes(o.direction)) return;
+    const off = L.point(o.offset);
+    if (o.upY === undefined) o.upY = off.y;                       // the offset of the upward card
+    o.direction = "top"; o.offset = [off.x, o.upY]; t.update();
+    const box = t.getElement().getBoundingClientRect(), top = map.getContainer().getBoundingClientRect().top;
+    if (box.top < top + 4) { o.direction = "bottom"; o.offset = [off.x, 4]; t.update(); }
+  });
 
   let markers = [], shading = null, coalitionNames = {}, countryStats = {}, ratingsData = null;
   const REGIME = { 3: "#0072b2", 2: "#56b4e9", 1: "#e69f00", 0: "#d55e00" };
@@ -175,7 +185,7 @@
           const tags = c.coalitions.map((k) => esc((coalitionNames[k] || {}).short || k)).join(" · ");
           const topicName = document.getElementById("topic").selectedOptions[0]?.text;
           const r = regimeOf(f.properties.iso);
-          return `<b>${esc(c.name)}</b><br>${c.agencies} agencies · ${c.docs} documents` +
+          return `<b>${esc(c.name)}</b><br>` + (c.agencies ? `${c.agencies} agencies · ${c.docs} documents` : '<span class="muted">no agencies in the library</span>') +
                  (document.getElementById("topic").value ? ` on <i>${esc(topicName)}</i>` : "") +
                  (r ? `<br><span class="rt-dot" style="background:${REGIME[r.v]}"></span>${esc(ratingsData.regimes[r.v])} (V-Dem ${r.year})` : "") +
                  (tags ? `<br><span class="muted">${tags}</span>` : "");
