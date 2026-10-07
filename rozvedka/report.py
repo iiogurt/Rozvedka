@@ -2,7 +2,7 @@
 matched), the actors it names with a passage each, and what changed against the previous edition of its series."""
 import json
 
-from . import actors, collect, dating, db, doctypes, series, topics
+from . import actors, collect, dating, db, doctypes, series, topics, works
 
 ACTORS_SHOWN = 30
 
@@ -20,6 +20,7 @@ def detail(doc_id: int) -> dict | None:
         if d is None:
             return None
         d = dict(d)
+        files = works.members(con, doc_id)        # language versions and summaries grouped into this report
         ix = con.execute("SELECT * FROM doc_index WHERE doc_id=?", (doc_id,)).fetchone()
         ix = dict(ix) if ix else None
         upload = con.execute("SELECT * FROM uploads WHERE doc_id=?", (doc_id,)).fetchone()
@@ -73,4 +74,4 @@ def detail(doc_id: int) -> dict | None:
             "topics": trows, "main": main, "actors": named, "actors_shown": ACTORS_SHOWN, "countries": countries_named,
             "edition": ed, "series": sdetail["series"] if sdetail else None, "this": this, "prev": prev, "next": nxt,
             "other_langs": other_langs, "year_conflict": dating.conflict_of(doc_id), "conflict_kinds": dating.CONFLICT_KINDS,
-            "doc_types": doctypes.TYPES}
+            "doc_types": doctypes.TYPES, "files": files}

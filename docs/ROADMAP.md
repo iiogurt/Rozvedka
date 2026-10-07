@@ -72,7 +72,7 @@ Each item: why · what · done when · version step.
 
 1. **Measure matching precision** – review the top names on *Actors → Review* (5 passages × the 40 most frequent names);
    publish the measured precision on the Actors page; turn names that are mostly wrong into exclusions. · owner + patch
-2. **Editions and translations** (old B7) – group the same report across languages and file variants, so counts and
+2. ✅ (0.33.0) **Editions and translations** (old B7) – group the same report across languages and file variants, so counts and
    trends are per report, not per file; passages can switch language. · minor
 3. ✅ (0.32.0) **Document types** (old B8) – annual report, threat assessment, risk assessment, strategy, guide/leaflet, form,
    statistics – from titles, series and size; filter and weight by type (a 200-page assessment is not a 2-page form). ·

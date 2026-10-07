@@ -2,13 +2,13 @@
 list shows for the same parameters."""
 import re
 
-from . import actors, countries, db, doctypes, series, topics, trends
+from . import actors, countries, db, doctypes, series, topics, trends, works
 
 
 def build(country: str = "", type: str = "", lang: str = "", year="", status: str = "", q: str = "", source: int = 0,
           show_hidden: int = 0, coalition: str = "", topic=(), year_from="", year_to="", indexed: int = 0,
           actor: str = "", main: int = 0, cluster: str = "", series_id: str = "", added_from: str = "",
-          added_to: str = "", undated: int = 0, doc_type: str = "", all_types: int = 0) -> dict:
+          added_to: str = "", undated: int = 0, doc_type: str = "", all_types: int = 0, all_files: int = 0) -> dict:
     """SQL condition (over documents d JOIN sources s) and its arguments for the Documents list's parameters."""
     tax = topics.taxonomy()["topics"]
     topic = [topic] if isinstance(topic, str) else list(topic or [])
@@ -24,6 +24,8 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
         where.append("d.doc_type=?"); args.append(doc_type)
     elif not all_types:                     # by default, as every count: statements, laws, finance tables and forms left out
         where.append(doctypes.COUNTED)
+    if not (all_files or lang or series_id):  # one file per report, as every count – unless a language or series is asked for
+        where.append(works.PRIMARY)
     for col, val in (("s.country", country), ("s.type", type), ("d.lang", lang), ("d.status", status)):
         if val:
             where.append(f"{col}=?"); args.append(val)

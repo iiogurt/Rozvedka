@@ -259,7 +259,8 @@
             <a href="/sources">Sources</a>. Filters: ${f}.</li>
         <li><b>Left out:</b> ${x.undated} undated, ${x.unclassified} not yet text-indexed, ${x.before_min_year} from before 2000
             – of ${x.listed} listed documents in this filter; not counted as reports at all:
-            <a href="/documents?${new URLSearchParams({...p.filters, doc_type: "all"})}">${x.not_reports} statements, laws, finance tables and forms</a>.</li>
+            <a href="/documents?${new URLSearchParams({...p.filters, doc_type: "all"})}">${x.not_reports} statements, laws, finance tables and forms</a>; counted once:
+            <a href="/documents?${new URLSearchParams({...p.filters, all_files: 1})}">${x.other_files} other language versions and summaries</a> of the same reports.</li>
         <li><b>Years:</b> from the title or address; for ${x.estimated || 0} reports found in their first pages – a report
             heading, or a publication date (shown as ≈ on the Documents page, with the evidence on hover).</li>
         <li><b>Topic tags:</b> keyword index <code>${esc(p.taxonomy.file)}</code> (version ${esc(p.taxonomy.hash)}); see

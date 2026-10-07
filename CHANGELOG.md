@@ -27,6 +27,23 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.33.0] – 2026-10-07
+
+### Added
+- **Reports, not files**: language versions, summaries and file variants of one report are grouped and counted once –
+  by series edition, by address without its language marker, or by title without a language / "summary" ending. One
+  file represents the report (the one with most text, English unless another version has 30 % more); Documents lists
+  each report once with its other files beside it ("also de fr …") and a "+ N other language versions and summaries"
+  link; the report page lists every file of the report with the rule that grouped it. Filtering by language or series,
+  or *all files*, lists every file. Corrections in `sources/works.yaml` (`separate`). The library now counts **2,917
+  reports in 3,246 listed files**: 211 reports have several files, 329 files are no longer counted twice (Europol's
+  TE-SAT and SOCTA summaries in 20 languages each were counted 20 times).
+
+### Changed
+- Every count, chart and dashboard counts reports, not files; the Trends notes say how many other language versions and
+  summaries were counted once.
+- English "situation reports" (e.g. Switzerland's Security) are threat assessments like their originals, not bulletins.
+
 ## [0.32.1] – 2026-10-06
 
 ### Changed
@@ -629,7 +646,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.32.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.33.0...HEAD
+[0.33.0]: https://github.com/iiogurt/Rozvedka/compare/v0.32.1...v0.33.0
 [0.32.1]: https://github.com/iiogurt/Rozvedka/compare/v0.32.0...v0.32.1
 [0.32.0]: https://github.com/iiogurt/Rozvedka/compare/v0.31.1...v0.32.0
 [0.31.1]: https://github.com/iiogurt/Rozvedka/compare/v0.31.0...v0.31.1

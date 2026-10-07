@@ -13,7 +13,7 @@ from urllib.parse import urlencode
 
 import yaml
 
-from . import countries, db, doctypes, topics
+from . import countries, db, doctypes, topics, works
 from .config import ROOT
 
 EVENTS = ROOT / "sources" / "events.yaml"
@@ -22,7 +22,8 @@ LOW_SAMPLE = 30      # years with fewer documents in scope are marked as unrelia
 MATRIX_MIN_DOCS = 5  # rows (agencies/countries) with fewer documents in the period are left out of the matrix
 
 # what every count and chart counts: listed reports – not hidden, not statements, finance tables or forms (doctypes)
-LISTED = f"d.hidden=0 AND s.active=1 AND d.status NOT IN ('missing','duplicate','skipped') AND {doctypes.COUNTED}"
+LISTED = (f"d.hidden=0 AND s.active=1 AND d.status NOT IN ('missing','duplicate','skipped') AND {doctypes.COUNTED} "
+          f"AND {works.PRIMARY}")    # … and one file per report: other languages and summaries are not counted again
 CLASSIFIED = "d.id IN (SELECT doc_id FROM doc_index WHERE taxonomy_hash IS NOT NULL AND error IS NULL)"
 
 
@@ -63,11 +64,14 @@ def _excluded(con, where: str, args: list) -> dict:
                         FROM documents d JOIN sources s ON s.id=d.source_id WHERE {where}""",
                     (MIN_YEAR, *args)).fetchone()
     # statements, laws, finance tables and forms: the same filter without the document-type condition, minus the counted ones
-    every = where.replace(f" AND {doctypes.COUNTED}", "", 1)
+    every = where.replace(f" AND {doctypes.COUNTED}", "", 1).replace(f"AND {works.PRIMARY}", "", 1)
     not_reports = con.execute(f"""SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
-                                  WHERE {every} AND NOT {doctypes.COUNTED}""", args).fetchone()[0]
+                                  WHERE {every} AND NOT {doctypes.COUNTED} AND {works.PRIMARY}""", args).fetchone()[0]
+    # other language versions and summaries of counted reports
+    other_files = con.execute(f"""SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
+                                  WHERE {every} AND {doctypes.COUNTED} AND NOT {works.PRIMARY}""", args).fetchone()[0]
     return {"listed": r["listed"], "undated": r["undated"] or 0, "unclassified": r["unclassified"] or 0,
-            "not_reports": not_reports,
+            "not_reports": not_reports, "other_files": other_files,
             "estimated": r["estimated"] or 0,
             "before_min_year": r["before"] or 0}
 

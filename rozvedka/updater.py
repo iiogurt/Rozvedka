@@ -22,7 +22,7 @@ ACTIONS = {"full": "Check for new reports, download and index them", "check": "O
            "download": "Only download the reports waiting for download"}
 # after downloading: extract text, recognise scanned reports, date and match – each in its own process
 INDEX_STEPS = (("Extracting text and matching topics", "index-topics"), ("Recognising scanned reports (OCR)", "ocr"),
-               ("Dating new reports", "date-documents"), ("Typing new reports", "type-documents"),
+               ("Dating new reports", "date-documents"), ("Typing and grouping new reports", "type-documents"),
                ("Matching actors", "index-actors"))
 
 
@@ -123,12 +123,13 @@ def run(action: str = "full", scope: str = "all", country: str = "", sources=(),
 
 
 def _index_here() -> dict:
-    from . import actor_sources, actors, dating, doctypes, ocr, topics
+    from . import actor_sources, actors, dating, doctypes, ocr, topics, works
     res = {"index-topics": topics.index()}
     if ocr.available():
         res["ocr"] = ocr.run()
     res["date-documents"] = dating.date_documents()
     res["type-documents"] = doctypes.type_documents()
+    res["group-works"] = works.group()
     if actor_sources.GAZETTEER.exists():
         res["index-actors"] = actors.index()
     return res
