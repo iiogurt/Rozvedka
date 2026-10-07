@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.38.1-1f4e79)
+![version](https://img.shields.io/badge/version-0.39.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -350,7 +350,9 @@ measures of that year with a trend line, and every colour and count names its so
 <img src="docs/images/mindmap.png" alt="Topic mind map: categories, topics and their most characteristic actors" width="900">
 
 Categories → topics → the actors most characteristic of each topic (counted in the reports that have the topic
-among their three main topics), with a details panel and links to every count.
+among their three main topics), with a details panel and links to every count. Click a category or topic to unfold or
+fold it, or use **Expand all**, **Topics** (the default) and **Collapse all**; each column is as wide as its longest
+label and long names wrap, so labels never overlap. A filled dot has folded branches; dot size shows the reports.
 
 ### 💾 Data exchange – backup and sharing without crawling
 

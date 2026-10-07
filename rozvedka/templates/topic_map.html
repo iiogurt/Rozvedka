@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block title %}Topic mind map · Rozvedka{% endblock %}
-{% block head %}<script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>{% endblock %}
 {% block main %}
 <nav class="subnav" aria-label="Topic views"><a href="/topics">List</a><a href="/topics/map" class="on">Mind map</a></nav>
 <form class="filters trend-filters" id="scope" onsubmit="return false">
@@ -13,10 +12,16 @@
 </form>
 <section class="viz-card">
   <p id="sub" class="muted small viz-sub"></p>
+  <div class="mm-bar">
+    <button type="button" id="expand-all">Expand all</button>
+    <button type="button" id="topics-only">Topics</button>
+    <button type="button" id="collapse-all">Collapse all</button>
+    <span class="muted small" id="mm-count"></span>
+  </div>
   <div class="tree-grid">
-    <div id="tree" class="chart chart-tree" role="img" aria-describedby="sub"></div>
+    <div class="mm-scroll"><svg id="tree" class="mm" role="tree" aria-describedby="sub"></svg></div>
     <aside id="panel" class="tree-panel" aria-live="polite"><p class="muted small">Click a category or a topic to unfold
-      it; the details and the links to the reports appear here. Scroll to zoom, drag to move.</p></aside>
+      or fold it; the details and the links to the reports appear here. ● a filled dot has folded branches.</p></aside>
   </div>
   <details class="viz-table"><summary>Table view</summary><div id="table"></div></details>
 </section>
@@ -25,13 +30,34 @@
   const $ = (s) => document.querySelector(s);
   const form = $("#scope");
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-  const dark = window.rzDark;
-  const url = new URL(location);
-  for (const el of form.elements) { const v = url.searchParams.get(el.name); if (v != null) el.value = v; }
-  const chart = echarts.init($("#tree"), null, { renderer: "canvas" });
-  let data = null;
-  chart.on("click", (p) => { if (p.data) panel(p.data); });
+  const SVG = "http://www.w3.org/2000/svg";
+  const ROW = 20, GAP = 24, PAD = 8;             // row height, space between a label and the next column
+  const svg = $("#tree");
+  let data = null, open = new Set(), maxT = 1;
+  const id = (n, parent) => n.type === "category" ? `c:${n.key}` : n.type === "topic" ? `t:${n.key}` : `a:${parent}:${n.key}`;
+  const measure = (() => {                       // label widths, so each column is as wide as its longest label
+    const c = document.createElement("canvas").getContext("2d");
+    return (text, font) => { c.font = font; return c.measureText(text).width; };
+  })();
+  const FONT = { category: "700 13px system-ui, sans-serif", topic: "12px system-ui, sans-serif", actor: "11.5px system-ui, sans-serif" };
+  const WRAP = { category: 160, topic: 300, actor: 230 };   // long labels wrap to two lines at this width
+  const cache = new Map();
+  function lines(n) {                            // a label's lines: [text, count] pairs; the count goes on the last line
+    const count = n.type === "actor" ? `  ${n.value}/${n.of}` : ` (${n.value})`, k = n.type + n.name + count;
+    if (cache.has(k)) return cache.get(k);
+    let out = [[n.name, count]];
+    const font = FONT[n.type], words = n.name.split(" ");
+    if (measure(n.name + count, font) > WRAP[n.type] && words.length > 1) {
+      let first = "";
+      while (words.length > 1 && measure(`${first} ${words[0]}`.trim(), font) <= WRAP[n.type]) first = `${first} ${words.shift()}`.trim();
+      out = [[first || words.shift(), ""], [words.join(" "), count]];
+    }
+    cache.set(k, out);
+    return out;
+  }
+  const labelWidth = (n) => Math.max(...lines(n).map(([t, c]) => measure(t + c, FONT[n.type])));
+  const radius = (n) => n.type === "category" ? 6 : n.type === "topic" ? 3 + 6 * Math.sqrt(n.value / maxT) : 3.5;
+
   function panel(n) {
     const box = $("#panel");
     if (n.type === "category") {
@@ -49,46 +75,97 @@
         <p class="small"><a href="${esc(n.actor)}">Actor page →</a></p>`;
     }
   }
-  addEventListener("resize", () => chart.resize());
-  dark.addEventListener("change", () => data && draw());
+  function setAll(mode) {                        // "all": every branch open; "topics": categories open; "none": all folded
+    open = new Set();
+    for (const c of data.tree.children) {
+      if (mode !== "none") open.add(id(c));
+      if (mode === "all") for (const t of c.children) if (t.children.length) open.add(id(t));
+    }
+    if (data && render.done) draw();
+  }
+  function el(tag, attrs, parent) {
+    const e = document.createElementNS(SVG, tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    parent.appendChild(e);
+    return e;
+  }
   function draw() {
-    const topicsShown = data.tree.children.reduce((n, c) => n + c.children.length, 0);
-    $("#tree").style.height = Math.max(600, topicsShown * 17 + 40) + "px";
-    chart.resize();
-    const ink = css("--ink"), muted = css("--muted"), line = css("--line"), panel = css("--panel");
-    const blue = dark.matches ? "#3987e5" : "#2a78d6", orange = dark.matches ? "#d95926" : "#eb6834";
-    const maxT = Math.max(1, ...data.tree.children.flatMap((c) => c.children.map((t) => t.value)));
-    const style = (n) => {
-      if (n.type === "category") return { ...n, raw: n.name, symbolSize: 12, itemStyle: { color: ink, borderColor: panel },
-        label: { fontWeight: 700, fontSize: 12, color: ink }, children: n.children.map(style) };
-      if (n.type === "topic") return { ...n, raw: n.name, name: `${n.name} (${n.value})`, symbolSize: 5 + 14 * Math.sqrt(n.value / maxT),
-        itemStyle: { color: blue, borderColor: panel }, children: n.children.map(style) };
-      return { ...n, raw: n.name, name: `${n.name} (${n.value}/${n.of})`, symbolSize: 6, itemStyle: { color: orange, borderColor: panel },
-        label: { color: ink, fontSize: 10 } };
-    };
-    chart.setOption({
-      tooltip: { backgroundColor: panel, borderColor: line, textStyle: { color: ink, fontSize: 12 },
-        formatter: (p) => p.data.type === "category" ? `<b>${esc(p.data.name)}</b>` :
-          p.data.type === "topic" ? `<b>${esc(p.data.name)}</b><br>reports · click to unfold its actors` :
-          `<b>${esc(p.data.raw)}</b><br>${p.data.value} of its ${p.data.of} reports are on this topic` },
-      series: [{ type: "tree", layout: "orthogonal", orient: "LR", roam: true, top: 10, bottom: 10, left: 20, right: 380,
-        data: [{ ...style({ ...data.tree, type: "category" }), label: { show: false }, symbolSize: 6 }],
-        leaves: { label: { position: "right", verticalAlign: "middle", align: "left" } },
-        symbol: "circle", initialTreeDepth: 2, expandAndCollapse: true, animationDuration: 300,
-        lineStyle: { color: line, width: 1, curveness: 0.5 },
-        label: { color: ink, fontSize: 11, position: "right", verticalAlign: "middle", align: "left" } }],
-    }, true);
+    // visible nodes in depth-first order; leaves take one row each, an open parent sits beside its children's middle
+    const cols = [0, 0, 0], nodes = [];
+    let row = 0;
+    function walk(n, depth, parentId) {
+      const nid = id(n, parentId), kids = n.children || [], isOpen = kids.length && open.has(nid);
+      const node = { n, nid, depth, isOpen, folded: kids.length > 0 && !isOpen, kids: [] };
+      cols[depth] = Math.max(cols[depth], labelWidth(n));
+      nodes.push(node);
+      if (isOpen) {
+        node.kids = kids.map((k) => walk(k, depth + 1, n.key));
+        node.y = (node.kids[0].y + node.kids.at(-1).y) / 2;
+      } else { const k = lines(n).length; node.y = PAD + ROW * (row + k / 2); row += k; }
+      return node;
+    }
+    const cats = data.tree.children.map((c) => walk(c, 0, ""));
+    const x = [PAD + 8];
+    for (let d = 1; d < 3; d++) x[d] = x[d - 1] + 14 + cols[d - 1] + GAP;
+    const deepest = Math.max(...nodes.map((v) => v.depth));
+    const width = x[deepest] + 14 + cols[deepest] + PAD;
+    const height = PAD * 2 + ROW * row;
+    svg.replaceChildren();
+    svg.setAttribute("width", width); svg.setAttribute("height", height); svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    const links = el("g", { class: "mm-links" }, svg), gNodes = el("g", {}, svg);
+    for (const v of nodes) {
+      v.x = x[v.depth];
+      for (const k of v.kids) {                   // from the end of the parent's label to the child's dot
+        const x0 = v.x + 10 + labelWidth(v.n) + 6, x1 = x[k.depth] - radius(k.n) - 2, m = (x0 + x1) / 2;
+        el("path", { d: `M${x0},${v.y} C${m},${v.y} ${m},${k.y} ${x1},${k.y}` }, links);
+      }
+    }
+    for (const v of nodes) {
+      const n = v.n, g = el("g", { class: `mm-node mm-${n.type}${v.folded ? " folded" : ""}`, transform: `translate(${v.x},${v.y})`,
+                                   tabindex: 0, role: "treeitem", "aria-expanded": n.children && n.children.length ? String(!!v.isOpen) : null }, gNodes);
+      if (!(n.children && n.children.length)) g.removeAttribute("aria-expanded");
+      el("circle", { r: radius(n) }, g);
+      const ls = lines(n), t = el("text", {}, g);
+      ls.forEach(([text, count], i) => {
+        const line = el("tspan", { x: 10, dy: i ? "1.2em" : `${0.35 - (ls.length - 1) * 0.6}em` }, t);
+        line.textContent = text;
+        if (count) el("tspan", { class: "mm-n" }, t).textContent = count;
+      });
+      el("title", {}, g).textContent = n.type === "actor"
+        ? `${n.name}: ${n.value} of its ${n.of} reports have this topic among their main topics`
+        : `${n.name}: ${n.value} reports${n.children && n.children.length ? (v.isOpen ? " · click to fold" : " · click to unfold") : ""}`;
+      const act = () => {
+        if (n.children && n.children.length) { open.has(v.nid) ? open.delete(v.nid) : open.add(v.nid); draw(); }
+        panel({ ...n, raw: n.name, children: (n.children || []).map((k) => ({ ...k, raw: k.name })) });
+      };
+      g.addEventListener("click", act);
+      g.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); act(); } });
+    }
+    const shown = nodes.filter((v) => v.n.type === "actor").length;
+    $("#mm-count").textContent = `${cats.length} categories · ${nodes.filter((v) => v.n.type === "topic").length} topics shown · ${shown} actors shown`;
+  }
+  function render() {
+    maxT = Math.max(1, ...data.tree.children.flatMap((c) => c.children.map((t) => t.value)));
+    draw();
     $("#sub").textContent = data.how;
     $("#table").innerHTML = '<table class="vt"><tr><th>Category</th><th>Topic</th><th>Reports</th><th>Actors named in most of them</th></tr>' +
       data.tree.children.flatMap((c) => c.children.map((t) => `<tr><td>${esc(c.name)}</td><td>${esc(t.name)}</td>
         <td><a href="${esc(t.link)}">${t.value}</a></td><td>${t.children.map((a) => `<a href="${esc(a.actor)}">${esc(a.name)}</a> <a class="muted" href="${esc(a.link)}">${a.value}/${a.of}</a>`).join(", ")}</td></tr>`)).join("") + "</table>";
   }
+  $("#expand-all").addEventListener("click", () => setAll("all"));
+  $("#topics-only").addEventListener("click", () => setAll("topics"));
+  $("#collapse-all").addEventListener("click", () => setAll("none"));
   async function load() {
     const q = new URLSearchParams();
     for (const el of form.elements) if (el.name && el.value !== "") q.set(el.name, el.value);
     const page = new URL(location); page.search = q.toString(); history.replaceState(null, "", page);
+    svg.classList.add("loading");
     data = await (await fetch(`/api/topics/tree?${q}`)).json();
-    draw();
+    svg.classList.remove("loading");
+    const first = !render.done;
+    render.done = true;
+    if (first) setAll("topics");      // keeps what the viewer unfolded when only the filters change
+    render();
   }
   form.addEventListener("change", load);
   load();

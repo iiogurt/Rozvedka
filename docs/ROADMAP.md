@@ -130,8 +130,8 @@ Each item: why · what · done when · version step.
 2. ✅ (0.31.1) **CI** – GitHub Actions running the tests on every PR. · patch
 3. **Split `app.py`** into route modules (documents, actors, trends, maps, data, update) and a small migration helper. · patch
 4. **Performance** – cache actor and network results per index version (1–3 s pages); the home page takes ~0.7 s;
-   a cross-language search takes ~3 s on the Pi (highlighting ~40 alternatives) against ~1 s as typed; the topic mind
-   map's data (`/api/topics/tree`) takes ~11 s. · patch
+   a cross-language search takes ~3 s on the Pi (highlighting ~40 alternatives) against ~1 s as typed. ✅ (0.39.0) the
+   topic mind map's data: one query instead of one per topic, ~11 s → ~0.8 s. · patch
 5. **Optional remote access** – stays LAN-only; if wanted, through a VPN (WireGuard / Tailscale), never exposed. · docs
 
 ### Done since 0.16.0
