@@ -20,7 +20,7 @@ from . import (__version__, actors, build_version, collect, countries, crawler, 
                paging, registry, series, topics, trends, updates)
 from . import compare as compare_mod
 from . import dating
-from . import dataset, doclist, doctypes, folders, report, review, updater, watch
+from . import dataset, doclist, doctypes, folders, ratings, report, review, updater, watch
 from . import jobs as jobrunner
 from .config import FILES
 
@@ -100,7 +100,8 @@ def pub_mark(source_id) -> Markup:
     return Markup("")
 
 
-tpl.env.globals.update(pub_mark=pub_mark, is_independent=lambda sid: sid in independent_ids())
+tpl.env.globals.update(pub_mark=pub_mark, is_independent=lambda sid: sid in independent_ids(),
+                       rating=ratings.profile, REGIMES=ratings.REGIMES)
 
 
 def asset(path: str) -> str:
@@ -621,6 +622,32 @@ def sources(request: Request):
     return tpl.TemplateResponse(request, "sources.html", {"sources": rows, "groups": ordered, "regions": regions,
                                                          "n_official": len(official), "n_independent": len(independent),
                                                          "pages": pages, "series_by": series.by_source()})
+
+
+@app.get("/ratings")
+def ratings_page(request: Request, sort: str = "ldi"):
+    """Democracy ratings of the library's states over time, with the number of reports from each."""
+    with db.session() as con:
+        n_docs = dict(con.execute(f"""SELECT s.country, COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
+                                      WHERE {trends.LISTED} AND {trends.OFFICIAL} GROUP BY s.country""").fetchall())
+    rows = [p | {"name": COUNTRY_NAMES.get(c, c), "n_docs": n_docs.get(c, 0)}
+            for c in sorted(COUNTRY_NAMES) if (p := ratings.profile(c))]
+    key = {"ldi": lambda r: -(r["measures"].get("vdem_libdem", {}).get("latest") or (0, -9))[1],
+           "change": lambda r: _ldi_change(r), "name": lambda r: r["name"]}.get(sort, lambda r: r["name"])
+    rows.sort(key=key)
+    return tpl.TemplateResponse(request, "ratings.html", {"rows": rows, "sort": sort, "MEASURES": ratings.MEASURES,
+                                                         "meta": ratings.load(), "docs_url": home.docs_url})
+
+
+def _ldi_change(r: dict) -> float:
+    """Change of the Liberal Democracy Index over the last ten years (most negative first)."""
+    ldi = r["measures"].get("vdem_libdem")
+    if not ldi or not ldi["spark"]:
+        return 0.0
+    s = dict(ldi["spark"])
+    last = max(s)
+    before = [y for y in s if y <= last - 10] or [min(s)]      # ten years earlier, or the earliest year known
+    return s[last] - s[max(before)]
 
 
 @app.get("/series")

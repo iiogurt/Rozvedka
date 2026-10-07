@@ -5,7 +5,7 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.35.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.36.0-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -176,6 +176,18 @@ and the Documents summary say how many think-tank reports a count includes.
 One card per agency: flag, logo, official name in the original language and in English, home page, a short
 description of what its reports cover, coalition tags with the year each country joined, the report pages it is
 crawled from (with language and current/archive), and a link to its headquarters on the map.
+
+### 🗳️ Democracy ratings of the reporting states
+
+<img src="docs/images/ratings.png" alt="Democracy ratings: regime type per year since 1990 with the Liberal Democracy Index, Freedom House and World Bank scores, regime changes" width="900">
+
+A report reads differently if its state has since slid from democracy (*Sources → Democracy ratings*, `/ratings`):
+each state's **regime type year by year since 1990** (V-Dem Regimes of the World, colour) with the **V-Dem Liberal
+Democracy Index** as a line, plus the latest **Freedom House** score and the **World Bank Voice and Accountability**
+indicator – three independent measurements, each value linked to its source, with licence and retrieval date. Sort by
+the largest decline in ten years. Country headings on *Sources* carry the same strip, and every **report page shows the
+ratings of the report's own year** – with a warning when the state's regime type has changed since (e.g. Hungary 2010
+electoral democracy, 2018 electoral autocracy). Data: `python -m rozvedka fetch-ratings` (also part of `fetch-actors`).
 
 ### 📅 Report series
 

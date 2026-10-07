@@ -114,6 +114,12 @@ Each item: why · what · done when · version step.
    Council, Five Eyes joint advisories), as dated events on actor pages. · minor
 7. **Positions held** (old D16), **organisation charts** (old D17), **more seeds where reports point** (old D18). · minor / patch
 
+8. ✅ (0.36.0) **Democracy ratings of states over time** – V-Dem, Freedom House, World Bank WGI per country and year; on
+   report pages the ratings of the report's year. Next: map shading by rating and year; filter reports by the regime type
+   of their state in their year.
+9. **Think-tank credibility profiles** – evidence checklist instead of a score, see
+   [`PUBLISHER_PROFILES.md`](PUBLISHER_PROFILES.md); waits for the owner's review of the criteria. · minor
+
 ### E. Engineering and operations
 
 1. **The portal starts after a reboot** – install `deploy/rozvedka-web.service` as a user service with
