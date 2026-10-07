@@ -181,14 +181,16 @@ def suggest(q: str, limit: int = 6) -> dict:
                                    WHERE {LISTED} AND {where}""", args).fetchone()[0]
 
         if op in ("", "actor"):
+            # the matching actors first (names only), then their reports: joining every name with every report
+            # before filtering took seconds per keystroke
             rows = con.execute(
-                f"""SELECT a.key, a.label, a.kind, a.description, COUNT(DISTINCT d.id) n,
-                           MIN(CASE WHEN lower(a.label) LIKE lower(?) THEN NULL ELSE n.name END) alias
-                    FROM actors a JOIN actor_names n ON n.actor_key=a.key AND n.status='used'
-                    JOIN doc_actors da ON da.actor_key=a.key JOIN documents d ON d.id=da.doc_id
-                    JOIN sources s ON s.id=d.source_id
-                    WHERE (a.label LIKE ? OR n.name LIKE ?) AND a.kind != 'country' AND {LISTED}
-                      AND {actors.NOT_BEFORE_FOUNDED}
+                f"""WITH m AS (SELECT a.key, MIN(CASE WHEN lower(a.label) LIKE lower(?) THEN NULL ELSE n.name END) alias
+                               FROM actors a JOIN actor_names n ON n.actor_key=a.key AND n.status='used'
+                               WHERE (a.label LIKE ? OR n.name LIKE ?) AND a.kind != 'country' GROUP BY a.key)
+                    SELECT a.key, a.label, a.kind, a.description, m.alias, COUNT(DISTINCT d.id) n
+                    FROM m JOIN actors a ON a.key=m.key JOIN doc_actors da ON da.actor_key=m.key
+                    JOIN documents d ON d.id=da.doc_id JOIN sources s ON s.id=d.source_id
+                    WHERE {LISTED} AND {actors.NOT_BEFORE_FOUNDED}
                     GROUP BY a.key ORDER BY n DESC LIMIT ?""", (like, like, like, limit)).fetchall()
             out["groups"].append({"name": "Actors", "items": [
                 {"label": r["label"], "sub": (f"also “{r['alias']}” · " if r["alias"] else "") + actors.KINDS.get(r["kind"], r["kind"]),

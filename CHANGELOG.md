@@ -27,6 +27,21 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.37.1] – 2026-10-07
+
+### Added
+- README: a **Database** section – where the data lives and what is rebuilt from what, how to open it read-only (SQLite
+  shell, Python, DB Browser, Datasette, or the database taken out of a catalogue dataset), example queries, the
+  condition the portal counts with, an entity-relationship diagram and a table of every table with its rows and purpose.
+- `tools/screenshots.py` retakes every README screenshot from a running portal; all screenshots refreshed for 0.37.
+
+### Fixed
+- Search suggestions on the home page took about 6.5 s per keystroke (the actor query joined every name with every
+  report before filtering); now about 0.15 s.
+- Home page: the think-tank badge overlapped the report titles in the *Newest editions* and *Recently added* lists –
+  now a compact coloured ◆ with the rating in its tooltip.
+- The Update page's source table and the *To collect* list now mark think tanks too.
+
 ## [0.37.0] – 2026-10-07
 
 ### Added
@@ -711,7 +726,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.37.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.37.1...HEAD
+[0.37.1]: https://github.com/iiogurt/Rozvedka/compare/v0.37.0...v0.37.1
 [0.37.0]: https://github.com/iiogurt/Rozvedka/compare/v0.36.0...v0.37.0
 [0.36.0]: https://github.com/iiogurt/Rozvedka/compare/v0.35.0...v0.36.0
 [0.35.0]: https://github.com/iiogurt/Rozvedka/compare/v0.34.0...v0.35.0

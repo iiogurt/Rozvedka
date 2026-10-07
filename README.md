@@ -5,14 +5,14 @@
 **A self-hosted library of the public reports of intelligence, security and civil-protection agencies –
 collected, searchable, indexed by topic and actor, and traceable back to the page they came from.**
 
-![version](https://img.shields.io/badge/version-0.37.0-1f4e79)
+![version](https://img.shields.io/badge/version-0.37.1-1f4e79)
 ![python](https://img.shields.io/badge/python-3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
 ![platform](https://img.shields.io/badge/runs%20on-Raspberry%20Pi-c51a4a?logo=raspberrypi&logoColor=white)
 
 [Features](#features) · [Quick start](#quick-start) · [Commands](#commands) · [Configuration](#configuration) ·
-[How it works](#how-it-works) · [Development](#development) · [Sources & licences](#data-sources-and-licences)
+[How it works](#how-it-works) · [Database](#database) · [Development](#development) · [Sources & licences](#data-sources-and-licences)
 
 <img src="docs/images/home.png" alt="Home page: ASCII radar and word mark, the search console, and dashboards of the newest reports" width="900">
 
@@ -596,7 +596,140 @@ flowchart LR
 | `rozvedka/compare.py` | Compare agencies: per-agency counts and densest passages on one actor or topic |
 | `rozvedka/updates.py` | What's new by update and the Atom feed, each count with its link |
 | `rozvedka/home.py` | the home page: search-console operators and suggestions, dashboard counts with their links |
+| `rozvedka/report.py` | the report page: provenance, series edition and changes, topics with terms, actors with passages |
+| `rozvedka/doctypes.py`, `works.py`, `dating.py` | document types; language versions and summaries grouped into one report; years from the text and year conflicts |
+| `rozvedka/concepts.py` | cross-language search: concept names in every language from Wikidata |
+| `rozvedka/ratings.py`, `publishers.py` | democracy ratings of states over time; think-tank credibility checks (EU register, FARA, sanctions lists) |
 | `rozvedka/app.py`, `templates/`, `static/` | the server-rendered portal |
+
+## Database
+
+Everything the portal shows comes from one **SQLite** database, `data/rozvedka.db` (about 600 MB; write-ahead log,
+full-text index FTS5). It is a **working copy, not the source of truth**: the hand-written lists in `sources/*.yaml`
+(registry, topics, actors, series, think-tank profiles, reviews) and the downloaded files rebuild it – except the edits
+made in the portal (a corrected title, language or year, a hidden file, an upload), which live only here and travel in
+datasets. Reference data fetched from outside is kept beside it as JSON with its source and date
+(`data/gazetteer/*.json` – actors, concepts, think-tank checks; `data/ratings/ratings.json` – democracy ratings).
+
+<details>
+<summary><b>How to look at the data</b> – read-only, also while the portal runs</summary>
+
+Open the file **read-only** (the portal keeps writing to it; never change it by hand while the portal runs – use the
+portal or the commands):
+
+```bash
+# the SQLite shell (sudo apt install sqlite3)
+sqlite3 -readonly data/rozvedka.db
+sqlite> .tables
+sqlite> SELECT s.agency, COUNT(*) FROM documents d JOIN sources s ON s.id = d.source_id
+   ...> WHERE d.hidden = 0 GROUP BY s.agency ORDER BY 2 DESC LIMIT 10;
+
+# or Python, without installing anything
+.venv/bin/python -c "import sqlite3; c = sqlite3.connect('file:data/rozvedka.db?mode=ro', uri=True); \
+  print(c.execute('SELECT COUNT(*) FROM documents').fetchone())"
+```
+
+On a desktop, **DB Browser for SQLite** (open read-only) or **Datasette** (`datasette data/rozvedka.db`, a browsable web
+view – keep it on your LAN like the portal) work well. To look at the data on another computer, export a *catalogue
+only* dataset on *Data exchange* (about 250 MB) and take the database out of it:
+`cat rozvedka-dataset-*.tar.* | tar x --occurrence=1 db/rozvedka.db.gz && gunzip db/rozvedka.db.gz` (a few seconds;
+the database is the first member).
+
+A few useful queries:
+
+```sql
+-- full text: reports whose text mentions "drone" or "Drohne" (FTS5; doc_text.rowid = documents.id)
+SELECT d.year, s.agency, d.title FROM doc_text t JOIN documents d ON d.id = t.rowid JOIN sources s ON s.id = d.source_id
+WHERE doc_text MATCH '"drone"* OR "drohne"*' ORDER BY d.year DESC LIMIT 20;
+
+-- which agencies name an actor most (actors.key is the Wikidata id or MITRE ATT&CK id)
+SELECT s.agency, COUNT(*) reports, SUM(da.hits) mentions FROM doc_actors da JOIN documents d ON d.id = da.doc_id
+JOIN sources s ON s.id = d.source_id WHERE da.actor_key = (SELECT key FROM actors WHERE label = 'Wagner Group')
+GROUP BY s.agency ORDER BY reports DESC;
+
+-- a report's topics with the terms that matched
+SELECT topic, score, terms FROM doc_topics WHERE doc_id = 2964 ORDER BY score DESC;
+```
+
+The portal's counts leave out hidden files, non-reports (statements, laws, budget tables, forms) and further language
+versions of a report; to count as the portal does, add
+`d.hidden = 0 AND d.status NOT IN ('missing','duplicate','skipped') AND (d.doc_type IS NULL OR d.doc_type NOT IN ('statement','legal','finance','form')) AND (d.work_id IS NULL OR d.work_id = d.id)`.
+</details>
+
+```mermaid
+erDiagram
+    sources ||--o{ pages : "report pages crawled"
+    sources ||--o{ documents : publishes
+    pages ||--o{ documents : "found on"
+    documents ||--o| doc_text : "full text (FTS5)"
+    documents ||--o| doc_index : "extraction, pages, OCR"
+    documents ||--o{ doc_topics : "tagged with"
+    documents ||--o{ doc_actors : "names"
+    documents ||--o{ actor_pairs : "two actors in one passage"
+    documents ||--o| uploads : "added by hand"
+    documents ||--o| year_conflicts : "year contradicted"
+    documents }o--o| documents : "work_id: same report"
+    actors ||--o{ actor_names : "known as"
+    actor_names ||--o{ actor_hits : "raw matches"
+    actors ||--o{ doc_actors : "mentioned in"
+    actors ||--o{ actor_links : "connected to"
+    sources {
+        int id PK
+        text key "country/agency"
+        text type "agency type or think-tank"
+        text publisher "official or independent"
+        real lat "headquarters"
+    }
+    documents {
+        int id PK
+        int source_id FK
+        text url "official address"
+        text title
+        text lang
+        int year
+        text status "new, downloaded, failed"
+        text sha256
+        text doc_type "annual, assessment … form"
+        int work_id "the file counted for its report"
+    }
+    doc_topics {
+        int doc_id FK
+        text topic "key in topics.yaml"
+        real score
+        text terms "terms that matched"
+    }
+    actors {
+        text key PK "Wikidata or ATT&CK id"
+        text kind
+        text label
+        int since_year "founded"
+    }
+    doc_actors {
+        int doc_id FK
+        text actor_key FK
+        int hits
+        text spans "text offsets"
+    }
+```
+
+| Table | Rows (2026-10-07) | What it holds | Why |
+|---|---:|---|---|
+| `sources` | 151 | agencies and think tanks from `sources/registry.yaml`: names, type, publisher, home page, headquarters | who publishes; the Sources page, map, filters |
+| `pages` | 302 | the report pages crawled per source, language, archive or current, last check and result | what the Update page checks |
+| `documents` | 4,196 | every report file found: address, title, language, year (and where it came from), file, SHA-256, type, report it belongs to | the library itself |
+| `doc_text` | 3,801 | full text and title of each downloaded report (FTS5 virtual table, `rowid` = document id) | full-text search and passages |
+| `doc_index` | 3,801 | extraction details: characters, words, page offsets, OCR, index versions | page numbers, re-indexing only what changed |
+| `doc_topics` | 27,714 | topics per report with score, hits and the terms that matched | Topics, Trends, filters |
+| `actors` | 5,125 | actors from Wikidata, Wikipedia and MITRE ATT&CK (kind, label, founded, reference data) | the Actors pages |
+| `actor_names` | 54,636 | every name and alias of an actor, its languages and whether it is used, with the reason | transparent name matching |
+| `actor_hits`, `actor_lower` | 94,611 / 12,704 | raw matches of every name (and of one-word names written in lowercase) | the rules that decide which names count |
+| `doc_actors` | 61,659 | actor mentions per report after those rules, with text offsets | actor counts and passages |
+| `actor_pairs` | 582,116 | two actors named within one passage | Network, “named together” |
+| `actor_links`, `link_entities`, `link_totals` | 7,234 / 4,718 / 945 | connections from Wikipedia infoboxes and Wikidata (leaders, founders, members) with their sources | the Connections section of actor pages |
+| `year_conflicts` | 122 | stored years that strong evidence contradicts | the Year conflicts page |
+| `uploads`, `collect_checks` | 0 / 0 | provenance of reports added by hand; “checked, nothing new” marks | To collect |
+| `runs` | 91 | every crawl, download and update with its summary | the Update page's history and estimates |
+| `actor_meta` | 2 | versions of the actor index | rebuilds only when needed |
 
 ## Development
 
@@ -613,6 +746,8 @@ flowchart LR
   prioritised next steps.
 - **Workflow:** `main` always holds working code. Work on a branch (`feat/…`, `fix/…`, `sources/…`, `docs/…`) and
   merge through a pull request. Registry edits go in their own commits (`sources: add Latvian SAB reports page`).
+- **Screenshots:** `python3 tools/screenshots.py [names]` retakes the README pictures from a second portal on port
+  8091 (dark theme, 1280 px, agency logos removed); the data-exchange pictures need an export or a check in progress.
 - **CI:** GitHub Actions (`.github/workflows/tests.yml`) runs the test suite on every pull request and push to
   `main`; a pull request is merged only when it is green.
 - **Never commit** `data/`, `.env` or credentials – `.gitignore` covers them.

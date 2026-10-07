@@ -79,7 +79,7 @@
 {% for d in items %}
   <li>
     <div class="cl-row"><span class="sg-listed cl-state">↓</span><img class="flag-sm" src="{{ flag_url(d.source.country) }}" alt="">
-      <b>{{ d.source.agency }}</b> {{ d.year or '' }} · {{ d.title }} <span class="ctag">{{ d.lang }}</span>
+      <b>{{ d.source.agency }}</b>{{ pub_mark(d.source.id) }} {{ d.year or '' }} · {{ d.title }} <span class="ctag">{{ d.lang }}</span>
       <span class="muted small">{{ d.status }}</span></div>
     <div class="cl-pages small"><a href="{{ d.url }}" rel="noopener">open the original ↗</a> <span class="muted">{{ d.error or '' }}</span></div>
     <div class="cl-actions">{{ upload(d.source, url=d.url, compact=True) }}</div>
