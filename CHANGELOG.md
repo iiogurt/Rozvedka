@@ -27,6 +27,25 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.42.6] – 2026-10-08
+
+### Added
+
+- 19 Italian intelligence annual reports (DIS *Relazione annuale*, 2007–2025) that were listed as "open in a browser only"
+  are now in the library: the site hands the files to scripts again, so a retry succeeded.
+
+### Changed
+
+- **Download again** (`download --retry-failed`, and the option on the Update page) now also retries reports that were
+  listed as open-in-a-browser-only, since sites change.
+- The Norwegian intelligence service's site (E-tjenesten) is bot-protected with a JavaScript client challenge; it is now
+  a manual source (*To collect*) instead of an automatic one.
+
+### Fixed
+
+- Links to an in-page PDF viewer (`/pdfjs/?file=…pdf`, as on the NATO StratCom CoE site) are read as the PDF itself;
+  twelve such "Read online" entries were duplicates of reports already in the library and are gone.
+
 ## [0.42.5] – 2026-10-08
 
 ### Added
@@ -851,7 +870,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.5...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.6...HEAD
+[0.42.6]: https://github.com/iiogurt/Rozvedka/compare/v0.42.5...v0.42.6
 [0.42.5]: https://github.com/iiogurt/Rozvedka/compare/v0.42.4...v0.42.5
 [0.42.4]: https://github.com/iiogurt/Rozvedka/compare/v0.42.3...v0.42.4
 [0.42.3]: https://github.com/iiogurt/Rozvedka/compare/v0.42.2...v0.42.3

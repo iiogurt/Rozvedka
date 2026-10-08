@@ -151,6 +151,18 @@ def humanize_filename(url: str) -> str:
     return re.sub(r"[-_+]+", " ", stem).strip() or url
 
 
+VIEWER_RE = re.compile(r"/(?:pdfjs|pdf\.js|viewer)[^?#]*/?\?(?:[^#]*&)?file=([^&#]+)", re.I)
+
+
+def unwrap_viewer(url: str) -> str:
+    """A link to an in-page PDF viewer ('/pdfjs/?file=/publications/download/x.pdf?zoom=page-fit') → the PDF itself."""
+    m = VIEWER_RE.search(url)
+    if not m:
+        return url
+    target = unquote(m.group(1)).split("?")[0]
+    return urljoin(url, target) if target.lower().endswith(".pdf") else url
+
+
 def extract(html: str, base: str, follow: str | None = None) -> tuple[list[dict], list[tuple[str, str]]]:
     """Return (documents, candidate sub-pages) found on a page. With `follow` (a regex from the registry), the
     sub-pages are the links matching it – the publication pages of a think tank's list – instead of report words."""
@@ -165,7 +177,7 @@ def extract(html: str, base: str, follow: str | None = None) -> tuple[list[dict]
         href = a["href"].strip()
         if href.startswith(("mailto:", "tel:", "javascript:")):
             continue
-        url = urldefrag(urljoin(base, href))[0]
+        url = unwrap_viewer(urldefrag(urljoin(base, href))[0])
         if url in seen or not url.startswith("http"):
             continue
         seen.add(url)

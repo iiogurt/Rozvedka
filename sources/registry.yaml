@@ -1763,7 +1763,8 @@
   description: "Norway's foreign and military intelligence service. The annual FOKUS assessment covers Russia, the High North, China, terrorism and cyber threats."
   hq: {address: "Lutvann leir, Oslo, Norway", lat: 59.92313, lon: 10.87663, precision: address}
   type: intelligence-military
-  access: auto
+  access: manual
+  notes: "The site answers with a JavaScript client challenge (bot protection) – open the Fokus publications in a browser and add them manually."
   frequency: yearly
   report_types: [FOKUS]
   pages:

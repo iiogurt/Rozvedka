@@ -122,7 +122,7 @@ def download(country: str | None = None, retry_failed: bool = False, limit: int 
     """Download the waiting reports (and the failed ones with retry_failed). Reports progress per file; a cancelled
     download finishes the files in progress and starts no more."""
     started = datetime.now().isoformat(timespec="seconds")
-    statuses = ("new", "failed") if retry_failed else ("new",)
+    statuses = ("new", "failed", "browser-only") if retry_failed else ("new",)
     q = f"""SELECT d.id FROM documents d JOIN sources s ON s.id=d.source_id
             WHERE d.status IN ({','.join('?' * len(statuses))}) AND d.hidden=0 AND s.access!='manual'"""
     args = list(statuses)
