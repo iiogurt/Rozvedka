@@ -58,10 +58,10 @@ Each item: why · what · done when · version step.
    assessments, CERT-IS; Montenegro – national security agency, CIRT.ME; North Macedonia – national security agency,
    MKD-CIRT; Turkey – USOM (national CERT), AFAD (disasters); Malta – Civil Protection Department, CSIRTMalta. Only
    official domains; manual where blocked; record the slots where nothing is published. · patch (sources)
-3. ◐ (0.29.1: NL, BE, PT, HU, HR, SI, IE added; AT, BG, CY, EE, GR, LT, LV, RO, SK still open) **National risk assessments and civil protection gaps** – EU states must report a national risk assessment
+3. ◐ (0.29.1: NL, BE, PT, HU, HR, SI, IE added; AT, BG, CY, GR, RO, SK still open; 0.42.5: EE, LV added, LT by hand) **National risk assessments and civil protection gaps** – EU states must report a national risk assessment
    summary to the Union Civil Protection Mechanism every three years; most publish one (e.g. NL Rijksbrede
    Risicoanalyse, LT, LV, SK, AT). Fill the 17 countries without a civil-protection source. · patch (sources)
-4. ◐ (0.29.1: AT, LV, SE, HR added; LU, BG and the non-EU countries still open) **Cyber gaps** – national CERT / cyber-agency annual reports where they exist; candidates to verify: CERT.at, CERT.LV,
+4. ◐ (0.29.1: AT, LV, SE, HR added; 0.42.5: JP; LU, BG and the other non-EU countries still open – CISA publishes its year in review as web pages only, KISA / TWCERT / CERT.br need a closer look) **Cyber gaps** – national CERT / cyber-agency annual reports where they exist; candidates to verify: CERT.at, CERT.LV,
    CERT-SE / NCSC-SE, CERT.hr, CIRCL (LU), NISC / JPCERT (JP), KISA (KR), TWCERT (TW), CISA (US), CERT.br. · patch (sources)
 5. **Hand-collect the blocked flagships** (Säpo, PET, ASIO, CSIS, VSD/AOTD …) through *To collect*. *Done when* their
    latest three editions are in the library. · owner + data

@@ -27,6 +27,21 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.42.5] – 2026-10-08
+
+### Added
+
+- Civil-protection reports for two more countries: the **Estonian Rescue Board** yearbooks (Päästeamet, 2014–2025) and the
+  **Latvian State Fire and Rescue Service** public reports (VUGD, 2008–2025).
+- Cyber: **JPCERT/CC** (Japan) quarterly incident-handling reports in English and Japanese, 2008–2025.
+- The **Lithuanian Fire and Rescue Department** (PAGD) is listed on *To collect*: its site refuses automatic requests, so
+  its activity reports are added by hand.
+
+### Fixed
+
+- Detached PGP signature files (`….pdf.asc`) next to a report were listed as documents; the crawler no longer takes them.
+- `tools/check_links.py` works again: since 0.42.0 the portal's host check refused its test client.
+
 ## [0.42.4] – 2026-10-07
 
 ### Changed
@@ -836,7 +851,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.4...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.5...HEAD
+[0.42.5]: https://github.com/iiogurt/Rozvedka/compare/v0.42.4...v0.42.5
 [0.42.4]: https://github.com/iiogurt/Rozvedka/compare/v0.42.3...v0.42.4
 [0.42.3]: https://github.com/iiogurt/Rozvedka/compare/v0.42.2...v0.42.3
 [0.42.2]: https://github.com/iiogurt/Rozvedka/compare/v0.42.1...v0.42.2

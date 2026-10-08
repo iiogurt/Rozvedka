@@ -759,7 +759,7 @@ erDiagram
 
 | Table | Rows (2026-10-07) | What it holds | Why |
 |---|---:|---|---|
-| `sources` | 151 | agencies and think tanks from `sources/registry.yaml`: names, type, publisher, home page, headquarters | who publishes; the Sources page, map, filters |
+| `sources` | 155 | agencies and think tanks from `sources/registry.yaml`: names, type, publisher, home page, headquarters | who publishes; the Sources page, map, filters |
 | `pages` | 302 | the report pages crawled per source, language, archive or current, last check and result | what the Update page checks |
 | `documents` | 4,196 | every report file found: address, title, language, year (and where it came from), file, SHA-256, type, report it belongs to | the library itself |
 | `doc_text` | 3,801 | full text and title of each downloaded report (FTS5 virtual table, `rowid` = document id) | full-text search and passages |

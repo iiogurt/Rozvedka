@@ -16,7 +16,7 @@ log = logging.getLogger("rozvedka.crawl")
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)   # some sites serve XHTML as XML
 
 DOC_RE = re.compile(
-    r"(\.pdf($|[?#]))|__blob=publicationFile|/document/download/|/attachments/[^/]+/download|/file\.html$|/doc/[^/]+\.pdf|"
+    r"(\.pdf($|[?#]))|__blob=publicationFile|/document/download/|/attachments/[^/]+/download|/file\.html$|/doc/[^/]+\.pdf($|[?#])|"
     r"/documents/[^?#]*\.pdf/|"   # Liferay document library: /documents/<ids>/<name>.pdf/<uuid>?download=true
     r"/bitstreams?/[^?#]+/download|"  # DSpace repositories: /bitstreams/<uuid>/download
     r"/library/\?itemid=",            # Episerver media libraries (Icelandic government: stjornarradid.is/library/?itemid=…)
