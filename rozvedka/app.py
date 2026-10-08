@@ -1019,7 +1019,7 @@ def actors_page(request: Request, kind: str = "", q: str = "", min_docs: int = 2
     maxdocs = max((r["docs"] for r in rows), default=1)
     return tpl.TemplateResponse(request, "actors.html", {
         "rows": rows[pg["offset"]:pg["offset"] + size], "pg": pg, "kinds": actors.KINDS, "counts": counts, "f": f,
-        "maxdocs": maxdocs, "meta": actors.stamp()})
+        "maxdocs": maxdocs, "meta": actors.stamp(), "precision": review.summary()})
 
 
 @app.get("/api/actors/suggest")

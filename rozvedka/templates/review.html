@@ -19,7 +19,7 @@
   and gives the name a measured precision. A name leaves the queue after {{ q.enough }} verdicts.</p>
 
 <div class="nw-sum">{% if q.right + q.wrong %}<b>{{ q.right + q.wrong }}</b> passages reviewed: <b>{{ q.right }}</b> right,
-  <b>{{ q.wrong }}</b> wrong – measured precision <b>{{ (100 * q.right / (q.right + q.wrong))|round|int }} %</b> on the reviewed sample
+  <b>{{ q.wrong }}</b> wrong – measured precision <b>{{ (100 * q.right / (q.right + q.wrong))|round(1) }} %</b> on the reviewed sample
   (the names reviewed first are the most frequent).{% else %}Nothing reviewed yet.{% endif %}
   <span class="muted small">{{ q.todo }} of {{ q.all }} names still in the queue.</span></div>
 
@@ -46,13 +46,13 @@
 {{ pager(q.pg, "names to review") }}
 
 {% if q.done %}
-<section class="viz-card">
-  <h2 class="viz-title">Reviewed names</h2>
+<section class="viz-card" id="reviewed">
+  <h2 class="viz-title">Reviewed names ({{ q.done|length }})</h2>
   <p class="viz-sub muted small">Most often wrong first. A name that is wrong in most passages is better excluded for its actor in
     <code>sources/actors.yaml</code> (exclude_aliases) or made weak (weak_aliases), so the rule applies to every report.</p>
   <div class="vt-scroll"><table class="vt">
     <thead><tr><th>Name</th><th>Actor</th><th>reports</th><th>✓</th><th>✗</th><th>precision</th></tr></thead>
-    {% for n in q.done %}<tr><td>“{{ n.name }}”</td><td><a href="/actors/{{ n.actor_key }}">{{ n.label }}</a></td><td>{{ n.docs }}</td>
+    {% for n in q.done %}<tr><td>“{{ n.name }}”</td><td><a href="/actors/{{ n.actor_key }}">{{ n.label }}</a></td><td>{{ n.docs }}{% if n.gone %} <span class="muted small" title="{{ n.gone }}">– not matched now: {{ n.gone }}</span>{% endif %}</td>
       <td>{{ n.right }}</td><td>{{ n.wrong }}</td><td><b>{{ (100 * n.right / n.checked)|round|int }} %</b> <span class="muted">of {{ n.checked }}</span></td></tr>{% endfor %}
   </table></div>
 </section>

@@ -25,6 +25,19 @@
   {% endif %}{% endfor %}
 </div>
 
+{% if precision.passages %}
+<p class="nw-sum precision-sum">Measured precision of the name matching:
+  <a href="/actors/review#reviewed"><b>{{ precision.precision }} %</b></a> –
+  <a href="/actors/review#reviewed"><b>{{ precision.passages }}</b> passages</a> of
+  <a href="/actors/review#reviewed"><b>{{ precision.names_reviewed }}</b> names</a> read, <b>{{ precision.right }}</b> right and
+  <b>{{ precision.wrong }}</b> wrong.
+  <span class="muted small">Only reviewed names are measured: they are the most frequent ones, {{ precision.names_covered }} of
+    {{ precision.names_in_use }} names in use, and give {{ precision.share }} % of the actor–report links
+    ({{ precision.links_covered }} of {{ precision.links }}); the other names are not measured. Reports whose passage was
+    wrong no longer count for that actor, and names that were mostly wrong now have a rule, so the figure describes
+    the matching before those fixes. <a href="/actors/review">Review more passages</a>.</span></p>
+{% endif %}
+
 {% if not meta.get('names_hash') %}
 <p class="muted">The actor index is empty. Run <code>python -m rozvedka fetch-actors</code> and then
   <code>python -m rozvedka index-actors</code>.</p>

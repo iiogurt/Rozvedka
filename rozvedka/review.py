@@ -72,6 +72,53 @@ def _passage(con, doc_id: int, spans: list) -> dict:
     return {**actors._snippet(body, s, e), "page": page}
 
 
+def _names(con, kind: str = "") -> list[dict]:
+    """Names in use by impact: the reports a name puts on its actor after all the rules (doc_actors), not raw matches."""
+    where = "AND a.kind = ?" if kind else "AND a.kind != 'country'"
+    return [dict(r) for r in con.execute(
+        f"""SELECT n.id, n.name, c.docs, n.actor_key, a.label, a.kind
+            FROM (SELECT da.actor_key, je.key name, COUNT(*) docs FROM doc_actors da, json_each(da.names) je
+                  GROUP BY da.actor_key, je.key) c
+            JOIN actor_names n ON n.actor_key=c.actor_key AND n.name=c.name JOIN actors a ON a.key=n.actor_key
+            WHERE n.status='used' {where} ORDER BY c.docs DESC, n.id""", ([kind] if kind else []))]
+
+
+def _reviewed(con, reviews: list[dict], names: list[dict]) -> list[dict]:
+    """Every reviewed name with its verdicts – also names no longer matched (excluded or ruled out after review)."""
+    by_name = Counter((r["actor"], r.get("name", ""), r["verdict"]) for r in reviews)
+    now = {(n["actor_key"], n["name"]): n for n in names}
+    out = []
+    for actor, name in dict.fromkeys((r["actor"], r.get("name", "")) for r in reviews):
+        n = now.get((actor, name))
+        if not n:
+            a = con.execute("SELECT label, kind FROM actors WHERE key=?", (actor,)).fetchone()
+            st = con.execute("SELECT status, reason FROM actor_names WHERE actor_key=? AND name=?", (actor, name)).fetchone()
+            n = {"actor_key": actor, "name": name, "docs": 0, "label": a["label"] if a else actor,
+                 "kind": a["kind"] if a else "", "gone": (st["reason"] if st and st["status"] != "used" else None)
+                 or "no report counts it now"}
+        right, wrong = by_name[(actor, name, "right")], by_name[(actor, name, "wrong")]
+        out.append({**n, "right": right, "wrong": wrong, "checked": right + wrong})
+    return out
+
+
+def summary(path: Path | None = None) -> dict:
+    """Measured precision for the Actors page: every verdict, and how much of the index the reviewed names cover."""
+    reviews = load(path)
+    totals = Counter(r["verdict"] for r in reviews)
+    with db.session() as con:
+        actors.init()
+        names = _names(con)
+        reviewed = {(r["actor"], r.get("name", "")) for r in reviews}
+        covered = [n for n in names if (n["actor_key"], n["name"]) in reviewed]
+    links = sum(n["docs"] for n in names)
+    right, wrong = totals["right"], totals["wrong"]
+    return {"passages": right + wrong, "right": right, "wrong": wrong,
+            "precision": round(100 * right / (right + wrong), 1) if right + wrong else None,
+            "names_reviewed": len(reviewed), "names_in_use": len(names), "names_covered": len(covered),
+            "links": links, "links_covered": sum(n["docs"] for n in covered),
+            "share": round(100 * sum(n["docs"] for n in covered) / links, 1) if links else 0.0}
+
+
 def queue(page: int | str = 1, per_page: int = 5, kind: str = "", path: Path | None = None) -> dict:
     """Names by impact (reports they put on their actor), each with up to SAMPLE unreviewed random passages."""
     reviews = load(path)
@@ -79,20 +126,13 @@ def queue(page: int | str = 1, per_page: int = 5, kind: str = "", path: Path | N
     reviewed = {(r["actor"], r["url"]) for r in reviews}
     with db.session() as con:
         actors.init()
-        where = "AND a.kind = ?" if kind else "AND a.kind != 'country'"
-        # impact: the reports a name puts on its actor after all the rules (doc_actors), not its raw matches
-        names = [dict(r) for r in con.execute(
-            f"""SELECT n.id, n.name, c.docs, n.actor_key, a.label, a.kind
-                FROM (SELECT da.actor_key, je.key name, COUNT(*) docs FROM doc_actors da, json_each(da.names) je
-                      GROUP BY da.actor_key, je.key) c
-                JOIN actor_names n ON n.actor_key=c.actor_key AND n.name=c.name JOIN actors a ON a.key=n.actor_key
-                WHERE n.status='used' {where} ORDER BY c.docs DESC, n.id""", ([kind] if kind else []))]
+        names = _names(con, kind)
         for n in names:
             n["right"] = by_name[(n["actor_key"], n["name"], "right")]
             n["wrong"] = by_name[(n["actor_key"], n["name"], "wrong")]
             n["checked"] = n["right"] + n["wrong"]
         todo = [n for n in names if n["checked"] < ENOUGH]
-        done = [n for n in names if n["checked"]]
+        done = [n for n in _reviewed(con, reviews, names) if not kind or n["kind"] == kind]
         pg = paging.paginate(len(todo), page, per_page, "/actors/review", {"kind": kind,
                              "per_page": per_page if per_page != 5 else ""}, default=5)
         for n in todo[pg["offset"]:pg["offset"] + per_page]:

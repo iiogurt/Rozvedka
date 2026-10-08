@@ -214,3 +214,36 @@ def test_context_aliases_need_a_word_of_their_field():
     assert match("the private military company Wagner in Libya") == {"Wagner": 1}
     assert match("Wagner-Gruppe operated in Mali, a group of mercenaries") == {"Wagner": 1}
     assert match("1. Eric Wagner, Submarine Cables and Protections Provided by the Law of the Sea") == {}
+
+
+def test_a_shared_name_belongs_to_the_group_it_is_the_label_of():
+    g = gaz(("Q20", "terror", "seed", ["Atomwaffen Division", "Feuerkrieg Division", "General Intelligence Service"]),
+            ("Q21", "terror", "class", ["Feuerkrieg Division"]),
+            ("Q22", "state", "class", ["General Intelligence Service"]),          # generic words: still shared
+            ("Q23", "person", "class", ["Abu Hamza"]), ("Q24", "person", "class", ["Abu Ali", "Abu Hamza"]))
+    rows = names_by(actors.prepare_names(g, {}))
+    assert rows[("Q21", "Feuerkrieg Division")]["status"] == "used"
+    assert "the name of another actor (Q21)" in rows[("Q20", "Feuerkrieg Division")]["reason"]
+    assert rows[("Q20", "General Intelligence Service")]["status"] == "used"           # the seeded one keeps it, as before
+    assert rows[("Q22", "General Intelligence Service")]["reason"].startswith("shared with")
+    assert rows[("Q23", "Abu Hamza")]["reason"].startswith("shared with")              # people share names
+
+
+def test_an_article_and_an_ordinary_word_is_counted_like_the_word():
+    text = "The Home Secretary decided. The Home Office said that at home and abroad no home is safe. Die Heimat (NPD)."
+    g = gaz(("Q30", "party", "seed", ["Die Heimat", "The Home", "La Patria"]))
+    names = actors.prepare_names(g, {"exclude_aliases": {"Q30": ["La Patria"]}})
+    actors._init_matcher(names)
+    ids = {r["name"]: r["id"] for r in names}
+    hits, lower = actors.match_text(text)
+    assert len(hits[ids["The Home"]]) == 2 and lower[ids["The Home"]] == 2      # "home" also written lowercase
+    assert ids["Die Heimat"] not in lower                                         # "heimat" never: a proper name
+    assert names_by(names)[("Q30", "La Patria")]["reason"] == "excluded for this actor (sources/actors.yaml)"
+
+
+def test_generic_and_cjk_exclusions():
+    assert actors.is_weak(actors.name_tokens("Security Administration"))      # a name made of generic words needs support
+    assert actors.is_weak(actors.name_tokens("la Fédération"))
+    g = gaz(("Q40", "party", "seed", ["Revival", "復興", "Възраждане"]))
+    rows = names_by(actors.prepare_names(g, {"exclude_aliases": {"Q40": ["復興"]}}))
+    assert rows[("Q40", "復興")]["status"] == "ignored" and rows[("Q40", "Възраждане")]["status"] == "used"
