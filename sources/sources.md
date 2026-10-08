@@ -1,6 +1,6 @@
 # Rozvedka – report sources: official agencies and ◆ independent think tanks
 
-Generated from `sources/registry.yaml` — 155 sources, 250 pages.
+Generated from `sources/registry.yaml` — 174 sources, 278 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
@@ -318,6 +318,103 @@ _NATO (1952)_
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **EGM Narkotik** – Turkish National Police – Counter-Narcotics Department<br>_Emniyet Genel Müdürlüğü – Narkotik Suçlarla Mücadele Başkanlığı_<br>[www.narkotik.pol.tr](https://www.narkotik.pol.tr/) | Counter-narcotics department of the Turkish National Police and national focal point (TUBİM) for the EU drugs agency. Yearly Türkiye Drug Report since 2006 (also in English), national drug strategies. | Türkiye Uyuşturucu Raporu, Turkish National Drug Report<br>_robots.txt disallows /kurumlar/, where all report files are stored (checked 2026-10-06): the reports are listed, and collected by hand._ | [tr archive](https://www.narkotik.pol.tr/ulusalyayinlar) |
+
+## Denmark
+
+_EU (1973) · NATO (1949) · Schengen (2001) · JEF (2014)_
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **TET** – Danish Intelligence Oversight Board<br>_Tilsynet med Efterretningstjenesterne_<br>[tet.dk/en](https://tet.dk/en/) | Independent Danish board overseeing PET and FE. Publishes its annual oversight reports and, since 2025, the services' own public assessments and statements on their review work. | oversight report | [en current](https://tet.dk/en/reports/latest-reports/) · [en archive](https://tet.dk/en/reports/previous-reports/) · [da current](https://tet.dk/redegoerelser/) |
+
+## Norway
+
+_NATO (1949) · Schengen (2001) · JEF (2014)_
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **EOS-utvalget** – EOS Committee (Norwegian Parliamentary Oversight Committee on Intelligence, Surveillance and Security Services)<br>_Stortingets kontrollutvalg for etterretnings-, overvåkings- og sikkerhetstjeneste_<br>[eos-utvalget.no/en](https://eos-utvalget.no/en/) | Parliament-appointed Norwegian oversight committee for PST, E-tjenesten, NSM and the military security services. Annual reports to the Storting and special reports on unlawful practice. | annual report, special report | [en archive](https://eos-utvalget.no/en/annual-reports/) · [no current](https://eos-utvalget.no/) |
+
+## United Kingdom
+
+_NATO (1949) · Five Eyes (1946) · G7 (1975) · AUKUS (2021) · JEF (2014)_
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **IPCO** – Investigatory Powers Commissioner's Office<br>[www.ipco.org.uk](https://www.ipco.org.uk/) | Independent UK oversight of the use of investigatory powers by intelligence agencies, police and public authorities. Annual reports to the Prime Minister and special investigations. | annual report, investigation | [en archive](https://www.ipco.org.uk/publications/annual-reports/) · [en archive](https://www.ipco.org.uk/publications/archive/) |
+
+## Switzerland
+
+_Schengen (2008)_
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **AB-ND** – Independent Oversight Authority for Intelligence Activities (OA-IA)<br>_Aufsichtsbehörde über die nachrichtendienstlichen Tätigkeiten_<br>[www.ab-nd.admin.ch/en](https://www.ab-nd.admin.ch/en/) | Swiss independent oversight of the intelligence service NDB and cantonal intelligence activities. Annual activity reports and summaries of its audits. | annual report | [en archive](https://www.ab-nd.admin.ch/en/annual-report) |
+
+## Belgium
+
+_EU (1958) · NATO (1949) · Schengen (1995)_
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **Comité R** – Standing Intelligence Agencies Review Committee (Committee I)<br>_Comité permanent de contrôle des services de renseignement et de sécurité (Comité R)_<br>[www.comiteri.be/index.php/en](https://www.comiteri.be/index.php/en/) | Belgian parliamentary review committee for VSSE, ADIV/SGRS and OCAM/OCAD. Activity reports and oversight investigations. | activity report, oversight investigation | [fr archive](https://www.comiteri.be/publications/rapports-dactivites/) · [fr archive](https://www.comiteri.be/publications/rapports-denquete/) |
+
+## Netherlands
+
+_EU (1958) · NATO (1949) · Schengen (1995) · JEF (2014)_
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **CTIVD** – Review Committee on the Intelligence and Security Services<br>_Commissie van Toezicht op de Inlichtingen- en Veiligheidsdiensten_<br>[www.ctivd.nl](https://www.ctivd.nl/) | Independent Dutch review committee for AIVD and MIVD. Annual reports and review reports on the services' operations. The document list is built by scripts and the links are not plain files; collect by hand. | annual report, review report | [nl archive](https://www.ctivd.nl/documenten) |
+
+## Austria
+
+_EU (1995) · Schengen (1997)_
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **BMI Sicherheitsbericht** – Federal Ministry of the Interior – Security Report<br>_Bundesministerium für Inneres – Sicherheitsbericht_<br>[www.bmi.gv.at/508/start.html](https://www.bmi.gv.at/508/start.html) | Austria's yearly security report on crime, prevention, state protection and asylum and migration, from the Federal Ministry of the Interior (several volumes per year). | security report | [de archive](https://www.bmi.gv.at/508/start.html) |
+
+## Germany
+
+_EU (1958) · NATO (1955) · Schengen (1995) · G7 (1975)_
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **Nationale Sicherheitsstrategie** – National Security Strategy of the Federal Republic of Germany<br>_Nationale Sicherheitsstrategie der Bundesrepublik Deutschland_<br>[www.nationalesicherheitsstrategie.de](https://www.nationalesicherheitsstrategie.de/) | The federal government's own site for the National Security Strategy (2023): strategy, summary and translations. Sets the frame for the work of BfV, BND, BSI and BBK. | strategy | [de current](https://www.nationalesicherheitsstrategie.de/) |
+
+## United States
+
+_NATO (1949) · Five Eyes (1946) · G7 (1975) · AUKUS (2021)_
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **DoD Strategy Documents** – US Department of Defense – strategy documents (Department of War)<br>_Department of Defense – strategies and plans_<br>[www.defense.gov](https://www.defense.gov/) | National Defense Strategy, strategic management plans and posture reviews published by the Pentagon on its publications page. | strategy | [en current](https://www.defense.gov/News/Publications/) |
+
+## NATO
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **NATO Strategic Concepts** – NATO Strategic Concepts<br>[www.nato.int](https://www.nato.int/) | Every NATO Strategic Concept since 1949 (latest 2022) and the Alliance's strategic guidance documents, from NATO's own archive. | strategy | [en archive](https://www.nato.int/cps/en/natohq/topics_56626.htm) |
+
+## International
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **UNODC** – UNODC<br>_United Nations Office on Drugs and Crime_<br>[www.unodc.org](https://www.unodc.org/) | UN office for drugs, crime and terrorism. The World Drug Report (yearly) covers drug markets, trafficking routes and organised crime. | world drug report | [en archive](https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2025.html) · [en archive](https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2024.html) · [en archive](https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2023.html) · [en archive](https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2022.html) · [en archive](https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2021.html) |
+| **Interpol** – INTERPOL<br>[www.interpol.int](https://www.interpol.int/) | International police organisation. Global crime trend summary reports and analysis reports on organised crime, cybercrime and terrorism. | crime trend report, analysis report | [en archive](https://www.interpol.int/How-we-work/Criminal-intelligence-analysis/Our-analysis-reports) |
+| **UNSC 1267 Monitoring Team** – UN Security Council 1267 Monitoring Team<br>_Analytical Support and Sanctions Monitoring Team (ISIL/Da'esh and Al-Qaida)_<br>[main.un.org/securitycouncil/en/sanctions/1267/monitoring-team/reports](https://main.un.org/securitycouncil/en/sanctions/1267/monitoring-team/reports) | Expert team reporting twice a year to the UN Security Council on the threat from ISIL (Da'esh), Al-Qaida and associated groups, and on sanctions implementation. Reports are issued as UN documents (S/…); collect them by hand from the page. | monitoring team report | [en archive](https://main.un.org/securitycouncil/en/sanctions/1267/monitoring-team/reports) |
+| **UNDRR** – UNDRR<br>_United Nations Office for Disaster Risk Reduction_<br>[www.undrr.org](https://www.undrr.org/) | UN office for disaster risk reduction. The Global Assessment Report (GAR) and the Sendai Framework monitoring reports on hazards, risk and resilience. The site delivers the reports through scripted pages; collect them by hand. | global assessment report | [en archive](https://www.undrr.org/gar) |
+| **FATF** – FATF<br>_Financial Action Task Force_<br>[www.fatf-gafi.org](https://www.fatf-gafi.org/) | Intergovernmental body setting anti-money-laundering and counter-terrorist-financing standards. Typology reports, mutual evaluations and lists of high-risk jurisdictions. The site answers automatic requests with an access block (HTTP 403); collect by hand. | typology report, mutual evaluation | [en archive ⚠](https://www.fatf-gafi.org/en/publications.html) |
+| **IAEA** – IAEA<br>_International Atomic Energy Agency_<br>[www.iaea.org](https://www.iaea.org/) | UN nuclear agency. The Nuclear Security Review and Nuclear Security Report cover threats to nuclear material and facilities. The site blocks automatic requests (HTTP 403); collect by hand. | nuclear security review | [en archive ⚠](https://www.iaea.org/publications/search/type/nuclear-security-review) |
+
+## EU bodies
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **EUDA** – EU Drugs Agency<br>_European Union Drugs Agency (formerly EMCDDA)_<br>[www.euda.europa.eu](https://www.euda.europa.eu/) | EU agency for drugs. The European Drug Report (yearly) and the EU Drug Markets Analysis with Europol. The site answers automatic requests with an access block (HTTP 403); collect by hand. | european drug report | [en archive ⚠](https://www.euda.europa.eu/publications/european-drug-report_en) |
+| **CERT-EU** – CERT-EU<br>_Computer Emergency Response Team for the EU institutions_<br>[www.cert.europa.eu](https://www.cert.europa.eu/) | Cyber security service of the EU institutions. The yearly Threat Landscape Report and threat memos. The report PDFs are not linked as plain files; collect by hand. | threat landscape report | [en archive](https://www.cert.europa.eu/publications/threat-intelligence/) |
+| **Eurojust** – Eurojust<br>_European Union Agency for Criminal Justice Cooperation_<br>[www.eurojust.europa.eu](https://www.eurojust.europa.eu/) | EU agency for judicial cooperation in cross-border crime. Annual reports and reports on terrorism convictions, cybercrime and organised crime. The PDFs sit on scripted sub-pages; collect by hand. | annual report | [en archive](https://www.eurojust.europa.eu/about-us/planning-and-reporting/annual-report) |
 
 ## International
 

@@ -1479,6 +1479,285 @@
   pages:
     - {lang: tr, kind: archive, url: "https://www.narkotik.pol.tr/ulusalyayinlar"}
 
+# ════════════════════════ OVERSIGHT BODIES (independent review of the services; they report what the services do not) ════════════════════════
+- country: DK
+  agency: TET
+  name_local: "Tilsynet med Efterretningstjenesterne"
+  name_en: "Danish Intelligence Oversight Board"
+  homepage: "https://tet.dk/en/"
+  hq: {address: "Borgergade 28, 1300 København K, Denmark", lat: 55.68516, lon: 12.58663, precision: address}
+  description: "Independent Danish board overseeing PET and FE. Publishes its annual oversight reports and, since 2025, the services' own public assessments and statements on their review work."
+  type: other
+  access: auto
+  frequency: yearly
+  report_types: [oversight report]
+  pages:
+    - {lang: en, kind: current, url: "https://tet.dk/en/reports/latest-reports/"}
+    - {lang: en, kind: archive, url: "https://tet.dk/en/reports/previous-reports/"}
+    - {lang: da, kind: current, url: "https://tet.dk/redegoerelser/"}
+
+- country: "NO"
+  agency: EOS-utvalget
+  name_local: "Stortingets kontrollutvalg for etterretnings-, overvåkings- og sikkerhetstjeneste"
+  name_en: "EOS Committee (Norwegian Parliamentary Oversight Committee on Intelligence, Surveillance and Security Services)"
+  homepage: "https://eos-utvalget.no/en/"
+  hq: {address: "Oslo, Norway", lat: 59.91333, lon: 10.73897, precision: city}
+  description: "Parliament-appointed Norwegian oversight committee for PST, E-tjenesten, NSM and the military security services. Annual reports to the Storting and special reports on unlawful practice."
+  type: other
+  access: auto
+  frequency: yearly
+  report_types: [annual report, special report]
+  pages:
+    - {lang: en, kind: archive, url: "https://eos-utvalget.no/en/annual-reports/"}
+    - {lang: "no", kind: current, url: "https://eos-utvalget.no/"}
+
+- country: GB
+  agency: IPCO
+  name_local: "Investigatory Powers Commissioner's Office"
+  name_en: "Investigatory Powers Commissioner's Office"
+  homepage: "https://www.ipco.org.uk/"
+  domains: ["amazonaws.com"]   # IPCO's own storage bucket (ipco-wpmedia-prod-s3) holds its PDFs
+  hq: {address: "London, United Kingdom", lat: 51.50745, lon: -0.12777, precision: city}
+  description: "Independent UK oversight of the use of investigatory powers by intelligence agencies, police and public authorities. Annual reports to the Prime Minister and special investigations."
+  type: other
+  access: auto
+  frequency: yearly
+  report_types: [annual report, investigation]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.ipco.org.uk/publications/annual-reports/"}
+    - {lang: en, kind: archive, url: "https://www.ipco.org.uk/publications/archive/"}
+
+- country: CH
+  agency: AB-ND
+  name_local: "Aufsichtsbehörde über die nachrichtendienstlichen Tätigkeiten"
+  name_en: "Independent Oversight Authority for Intelligence Activities (OA-IA)"
+  homepage: "https://www.ab-nd.admin.ch/en/"
+  hq: {address: "Bern, Switzerland", lat: 46.94847, lon: 7.45217, precision: city}
+  description: "Swiss independent oversight of the intelligence service NDB and cantonal intelligence activities. Annual activity reports and summaries of its audits."
+  type: other
+  access: auto
+  frequency: yearly
+  report_types: [annual report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.ab-nd.admin.ch/en/annual-report"}
+
+- country: BE
+  agency: Comité R
+  name_local: "Comité permanent de contrôle des services de renseignement et de sécurité (Comité R)"
+  name_en: "Standing Intelligence Agencies Review Committee (Committee I)"
+  homepage: "https://www.comiteri.be/index.php/en/"
+  hq: {address: "Rue de Louvain 48, 1000 Bruxelles, Belgium", lat: 50.84777, lon: 4.36668, precision: address}
+  description: "Belgian parliamentary review committee for VSSE, ADIV/SGRS and OCAM/OCAD. Activity reports and oversight investigations."
+  type: other
+  access: auto
+  frequency: yearly
+  report_types: [activity report, oversight investigation]
+  pages:
+    - {lang: fr, kind: archive, url: "https://www.comiteri.be/publications/rapports-dactivites/"}
+    - {lang: fr, kind: archive, url: "https://www.comiteri.be/publications/rapports-denquete/"}
+
+- country: NL
+  agency: CTIVD
+  name_local: "Commissie van Toezicht op de Inlichtingen- en Veiligheidsdiensten"
+  name_en: "Review Committee on the Intelligence and Security Services"
+  homepage: "https://www.ctivd.nl/"
+  hq: {address: "The Hague, Netherlands", lat: 52.07495, lon: 4.26968, precision: city}
+  description: "Independent Dutch review committee for AIVD and MIVD. Annual reports and review reports on the services' operations. The document list is built by scripts and the links are not plain files; collect by hand."
+  type: other
+  access: manual
+  frequency: yearly
+  report_types: [annual report, review report]
+  pages:
+    - {lang: nl, kind: archive, url: "https://www.ctivd.nl/documenten"}
+
+- country: AT
+  agency: BMI Sicherheitsbericht
+  name_local: "Bundesministerium für Inneres – Sicherheitsbericht"
+  name_en: "Federal Ministry of the Interior – Security Report"
+  homepage: "https://www.bmi.gv.at/508/start.html"
+  hq: {address: "Herrengasse 7, 1010 Wien, Austria", lat: 48.20895, lon: 16.36569, precision: address}
+  description: "Austria's yearly security report on crime, prevention, state protection and asylum and migration, from the Federal Ministry of the Interior (several volumes per year)."
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [security report]
+  pages:
+    - {lang: de, kind: archive, url: "https://www.bmi.gv.at/508/start.html"}
+
+# ════════════════════════ NATIONAL SECURITY STRATEGIES AND WHITE PAPERS ════════════════════════
+- country: DE
+  agency: Nationale Sicherheitsstrategie
+  name_local: "Nationale Sicherheitsstrategie der Bundesrepublik Deutschland"
+  name_en: "National Security Strategy of the Federal Republic of Germany"
+  homepage: "https://www.nationalesicherheitsstrategie.de/"
+  hq: {address: "Willy-Brandt-Straße 1, 10557 Berlin, Germany", lat: 52.52019, lon: 13.36913, precision: address}
+  description: "The federal government's own site for the National Security Strategy (2023): strategy, summary and translations. Sets the frame for the work of BfV, BND, BSI and BBK."
+  type: other
+  access: auto
+  frequency: periodic
+  report_types: [strategy]
+  pages:
+    - {lang: de, kind: current, url: "https://www.nationalesicherheitsstrategie.de/"}
+
+- country: US
+  agency: DoD Strategy Documents
+  name_local: "Department of Defense – strategies and plans"
+  name_en: "US Department of Defense – strategy documents (Department of War)"
+  homepage: "https://www.defense.gov/"
+  hq: {address: "1400 Defense Pentagon, Washington, DC 20301, United States", lat: 38.89392, lon: -77.04265, precision: city}
+  description: "National Defense Strategy, strategic management plans and posture reviews published by the Pentagon on its publications page."
+  type: intelligence-military
+  access: auto
+  frequency: periodic
+  report_types: [strategy]
+  pages:
+    - {lang: en, kind: current, url: "https://www.defense.gov/News/Publications/"}
+
+- country: NATO
+  agency: NATO Strategic Concepts
+  name_local: "NATO Strategic Concepts"
+  name_en: "NATO Strategic Concepts"
+  homepage: "https://www.nato.int/"
+  hq: {address: "Boulevard Léopold III, 1110 Brussels, Belgium", lat: 50.8673, lon: 4.40301, precision: street}
+  description: "Every NATO Strategic Concept since 1949 (latest 2022) and the Alliance's strategic guidance documents, from NATO's own archive."
+  type: nato
+  access: auto
+  frequency: periodic
+  report_types: [strategy]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.nato.int/cps/en/natohq/topics_56626.htm"}
+
+# ════════════════════════ INTERNATIONAL AND EU BODIES WITH REGULAR REPORTS ════════════════════════
+- country: OTHER
+  agency: UNODC
+  name_local: "United Nations Office on Drugs and Crime"
+  name_en: "UNODC"
+  homepage: "https://www.unodc.org/"
+  hq: {address: "Vienna International Centre, Wagramer Strasse 5, 1400 Vienna, Austria", lat: 48.20835, lon: 16.3725, precision: city}
+  description: "UN office for drugs, crime and terrorism. The World Drug Report (yearly) covers drug markets, trafficking routes and organised crime."
+  type: other
+  access: auto
+  frequency: yearly
+  report_types: [world drug report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2025.html"}
+    - {lang: en, kind: archive, url: "https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2024.html"}
+    - {lang: en, kind: archive, url: "https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2023.html"}
+    - {lang: en, kind: archive, url: "https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2022.html"}
+    - {lang: en, kind: archive, url: "https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2021.html"}
+
+- country: OTHER
+  agency: Interpol
+  name_local: "INTERPOL"
+  name_en: "INTERPOL"
+  homepage: "https://www.interpol.int/"
+  hq: {address: "200 Quai Charles de Gaulle, 69006 Lyon, France", lat: 45.78216, lon: 4.84811, precision: address}
+  description: "International police organisation. Global crime trend summary reports and analysis reports on organised crime, cybercrime and terrorism."
+  type: police-ct
+  access: auto
+  frequency: periodic
+  report_types: [crime trend report, analysis report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.interpol.int/How-we-work/Criminal-intelligence-analysis/Our-analysis-reports"}
+
+- country: OTHER
+  agency: UNSC 1267 Monitoring Team
+  name_local: "Analytical Support and Sanctions Monitoring Team (ISIL/Da'esh and Al-Qaida)"
+  name_en: "UN Security Council 1267 Monitoring Team"
+  homepage: "https://main.un.org/securitycouncil/en/sanctions/1267/monitoring-team/reports"
+  hq: {address: "United Nations Headquarters, New York, United States", lat: 40.74963, lon: -73.96739, precision: address}
+  description: "Expert team reporting twice a year to the UN Security Council on the threat from ISIL (Da'esh), Al-Qaida and associated groups, and on sanctions implementation. Reports are issued as UN documents (S/…); collect them by hand from the page."
+  type: police-ct
+  access: manual
+  frequency: half-yearly
+  report_types: [monitoring team report]
+  pages:
+    - {lang: en, kind: archive, url: "https://main.un.org/securitycouncil/en/sanctions/1267/monitoring-team/reports"}
+
+- country: OTHER
+  agency: UNDRR
+  name_local: "United Nations Office for Disaster Risk Reduction"
+  name_en: "UNDRR"
+  homepage: "https://www.undrr.org/"
+  hq: {address: "7bis Avenue de la Paix, 1211 Geneva, Switzerland", lat: 46.22325, lon: 6.14625, precision: address}
+  description: "UN office for disaster risk reduction. The Global Assessment Report (GAR) and the Sendai Framework monitoring reports on hazards, risk and resilience. The site delivers the reports through scripted pages; collect them by hand."
+  type: civil-protection
+  access: manual
+  frequency: periodic
+  report_types: [global assessment report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.undrr.org/gar"}
+
+- country: OTHER
+  agency: FATF
+  name_local: "Financial Action Task Force"
+  name_en: "FATF"
+  homepage: "https://www.fatf-gafi.org/"
+  hq: {address: "2 rue André Pascal, 75016 Paris, France", lat: 48.86167, lon: 2.26924, precision: address}
+  description: "Intergovernmental body setting anti-money-laundering and counter-terrorist-financing standards. Typology reports, mutual evaluations and lists of high-risk jurisdictions. The site answers automatic requests with an access block (HTTP 403); collect by hand."
+  type: police-ct
+  access: manual
+  frequency: periodic
+  report_types: [typology report, mutual evaluation]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.fatf-gafi.org/en/publications.html", verified: false}
+
+- country: OTHER
+  agency: IAEA
+  name_local: "International Atomic Energy Agency"
+  name_en: "IAEA"
+  homepage: "https://www.iaea.org/"
+  hq: {address: "Vienna International Centre, Wagramer Strasse 5, 1400 Vienna, Austria", lat: 48.20835, lon: 16.3725, precision: city}
+  description: "UN nuclear agency. The Nuclear Security Review and Nuclear Security Report cover threats to nuclear material and facilities. The site blocks automatic requests (HTTP 403); collect by hand."
+  type: other
+  access: manual
+  frequency: yearly
+  report_types: [nuclear security review]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.iaea.org/publications/search/type/nuclear-security-review", verified: false}
+
+- country: EU
+  agency: EUDA
+  name_local: "European Union Drugs Agency (formerly EMCDDA)"
+  name_en: "EU Drugs Agency"
+  homepage: "https://www.euda.europa.eu/"
+  hq: {address: "Praça Europa 1, 1249-289 Lisbon, Portugal", lat: 38.70572, lon: -9.14299, precision: address}
+  description: "EU agency for drugs. The European Drug Report (yearly) and the EU Drug Markets Analysis with Europol. The site answers automatic requests with an access block (HTTP 403); collect by hand."
+  type: eu-body
+  access: manual
+  frequency: yearly
+  report_types: [european drug report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.euda.europa.eu/publications/european-drug-report_en", verified: false}
+
+- country: EU
+  agency: CERT-EU
+  name_local: "Computer Emergency Response Team for the EU institutions"
+  name_en: "CERT-EU"
+  homepage: "https://www.cert.europa.eu/"
+  hq: {address: "Brussels, Belgium", lat: 50.84674, lon: 4.35249, precision: city}
+  description: "Cyber security service of the EU institutions. The yearly Threat Landscape Report and threat memos. The report PDFs are not linked as plain files; collect by hand."
+  type: cyber
+  access: manual
+  frequency: yearly
+  report_types: [threat landscape report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.cert.europa.eu/publications/threat-intelligence/"}
+
+- country: EU
+  agency: Eurojust
+  name_local: "European Union Agency for Criminal Justice Cooperation"
+  name_en: "Eurojust"
+  homepage: "https://www.eurojust.europa.eu/"
+  hq: {address: "Johan de Wittlaan 9, 2517 JR The Hague, Netherlands", lat: 52.0936, lon: 4.28569, precision: address}
+  description: "EU agency for judicial cooperation in cross-border crime. Annual reports and reports on terrorism convictions, cybercrime and organised crime. The PDFs sit on scripted sub-pages; collect by hand."
+  type: eu-body
+  access: manual
+  frequency: yearly
+  report_types: [annual report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.eurojust.europa.eu/about-us/planning-and-reporting/annual-report"}
+
 # ════════════════════════ OTHER (outside EU/NATO scope, from user's collection) ════════════════════════
 - country: OTHER
   agency: IPCC
