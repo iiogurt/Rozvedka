@@ -237,3 +237,14 @@ def test_extract_reads_the_pdf_behind_a_viewer_link():
     html = '<a href="/pdfjs/?file=/publications/download/R.pdf?zoom=page-fit">Read online</a>'
     docs, _ = extract(html, "https://stratcomcoe.org/publications")
     assert [d["url"] for d in docs] == ["https://stratcomcoe.org/publications/download/R.pdf"]
+
+
+@pytest.mark.parametrize("title", ["true true", "EN FR ES AR", "عرب 中文 Español Français Русский"])
+def test_label_only_titles_are_poor(title):
+    from rozvedka.crawler import is_poor_title
+    assert is_poor_title(title, "https://x.org/a.pdf")
+
+
+def test_real_title_not_poor():
+    from rozvedka.crawler import is_poor_title
+    assert not is_poor_title("World Drug Report 2025", "https://x.org/a.pdf")
