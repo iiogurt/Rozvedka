@@ -1,5 +1,1596 @@
 # Actor match reviews – passages checked in the portal (Actors → Review). Each entry: the actor (Wikidata item or
 # MITRE ATT&CK id), the name that matched, the report (official URL), the passage as evidence and the verdict.
 # "wrong" removes that report from the actor (applied by the index on every rebuild); "right" only counts towards the
-# name's measured precision. Written by the portal; editable by hand.
-[]
+# name's measured precision. "reviewer" is set when someone other than the owner read the passage (e.g. an assistant);
+# the owner can overrule any verdict on the review page. Written by the portal; editable by hand.
+- actor: Q7747
+  name: Putin
+  url: https://ccdcoe.org/uploads/2024/05/CyCon_2023_book_print.pdf
+  says: aine]”). See Michael Schwirtz, Anton Troianovski, Yousur Al-Hlou, Masha Froliak, Adam Entous & Thomas Gibbons-Neff,
+    How «Putin» ’s War in Ukraine Became a Catastrophe for Russia, N.Y. Times (Dec. 16, 2022), https://www.nytimes.com/interactive/2022
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: Putin
+  url: https://aspi.s3.ap-southeast-2.amazonaws.com/wp-content/uploads/2026/08/14111105/Russias-Pacific-submarine-fleet-1.pdf
+  says: rth Korea has reached new heights, including through troop deployments and military supply chain integration. In short,
+    «Putin» has tied Russia’s future to the Indo-Pacific. Russia cannot afford China to lose an Indo-Pacific war by failing
+    to take
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q38799
+  name: Hamás
+  url: https://www.bis.cz/public/site/bis.cz/content/vyrocni-zpravy/2009-vz-cz.pdf
+  says: y žijící v Německu, švýcarské referendum o zákazu minaretů nebo izraelskou operaci Lité olovo proti ozbrojencům z
+    hnutí «Hamás» z počátku roku 2009. Vraždu těhotné Egypťanky žijící v SRN, Marwy El Sherbini, kterou ubodal ruský emigrant,
+    muslimská
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q38799
+  name: Hamás
+  url: https://www.sgdsn.gouv.fr/files/files/viginum/SGDSN_VIGINUM_Public-report_Municipal-elections.pdf
+  says: pport for the people of Gaza." Two Facebook pages and the François Allegations of paedophilia, violence and support
+    for «Hamas» website piquemalzero.com PIQUEMAL terrorist acts; impersonation of a child protection organisation Two Facebook
+    pages D
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q38799
+  name: Hamás
+  url: https://ocam.belgium.be/wp-content/uploads/2024/07/rapport-annuel_2023.pdf
+  says: 'rale en Belgique en 2023 4 L‘invasion russe de l‘Ukraine 12 Escalade du conflit israélo-palestinien depuis l‘attaque
+    du «Hamas» du 7 octobre 14 OCAM Highlights 15 Statistiques & Publications 20 Chiffres : documents traités 20 Analyses
+    & autres pub'
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q38799
+  name: Hamás
+  url: https://www.bis.cz/public/site/bis.cz/content/vyrocni-zpravy/2023-vz-cj.pdf
+  says: l v roce 2023 v otázce potenciální radikalizace nejvýrazněji ovlivnit konflikt mezi Izraelem a teroristickou organizací
+    «Hamás» . Zájmové arabské a muslimské komunity ve většině případů podporovaly Palestince, nicméně podporu hnutí Hamás
+    vyjádřilo
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q38799
+  name: Hamás
+  url: https://ocad.belgium.be/wp-content/uploads/2024/07/Jaarverslag_2023.pdf
+  says: 'dreiging in België 4 De Russische invasie van Oekraïne 12 Israëlisch-Palestijns conflict escaleert sinds de aanval
+    van «Hamas» van 7 oktober 14 OCAD Highlights 15 Statistieken & publicaties 20 Cijfers: behandelde documenten 20 Analyses
+    & andere p'
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: Al Qaeda
+  url: https://www.europol.europa.eu/cms/sites/default/files/documents/TE-SAT%202025%20-%20Kokkuv%C3%B5te%20-%20ET.pdf
+  says: lesid veebis, radikaliseerusid ja kavandasid rünnakuid. Gaza konflikti kasutasid jätkuvalt ära sellised rühmitused
+    nagu «Al Qaeda» ja Islamiriik. Toimus mitu koordineeritud džihadistliku propaganda kampaaniat, mis ohustasid suurüritusi.
+    Seoses paremä
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: Al Qaeda
+  url: https://ccdcoe.org/uploads/2018/10/2013ethics-workshop-proceedings.pdf
+  says: the perspective of identifying agents capable of actions subject to international law. The international acceptance
+    of «Al Qaeda» as having launched an armed attack triggering self-defence after 9/11 was a significant turning point on
+    this question,
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: Al Qaeda
+  url: https://ocad.belgium.be/wp-content/uploads/2024/07/Jaarverslag_2023.pdf
+  says: er zich liet inspireren door de ideologie of propaganda van jihadistische terreurgroepen zoals Islamitische Staat
+    (IS), «Al Qaeda» (AQ) of een van hun “filialen” zoals ISK-P. Door de geopolitieke situatie met name in Israël en de Gazastrook,
+    nam de p
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: Al Qaeda
+  url: https://cuta.belgium.be/wp-content/uploads/2026/09/20260909_Annual-Report-2025-English.pdf
+  says: pe, the threat posed by the Islamic State (IS) and IS-inspired actors was the most significant threat in 2025, although
+    «Al Qaeda» (AQ) also remained an active player in the global jihad. However, the direct influence of AQ in Europe (in
+    terms of bot
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: Al Qaeda
+  url: https://vsse.be/sites/default/files/2025-06/vsse_intelligence_report_2024_nl.pdf
+  says: e in de Sahelregio en de Hoorn van Afrika neemt de slagkracht van terroristische organisaties toe. Zowel aan IS als
+    aan «Al Qaeda» gelieerde groepen controleren in die gebieden een belangrijk territorium. Dit maakt dat deze groeperingen
+    zich in deze
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: Vladimir Putin
+  url: https://www.babs.admin.ch/dam/de/sd-web/NPZYO2EXl330/RR-Report-2024-Critical-Infrastructure-Resilience.pdf
+  says: Ukrainian border. With the declared aim of “demilitarizing and denazifying” Ukraine and protecting Russians in Ukraine,
+    «Vladimir Putin» announced a special military operation.33 Following the initial air strikes, ground forces quickly advanced
+    and seized
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: Vladimir Putin
+  url: https://ccdcoe.org/uploads/2025/05/CyCon_2025_The-Proceedings-of-the-17th-International-Conference-on-Cyber-Conflict.pdf
+  says: s led to fuel shortages and widespread inefficiencies along the East Coast. US President Biden handed Russian President
+    «Vladimir Putin» a list of 16 US critical infrastructure sectors that are off-limits to any Russian cyberattack. Despite
+    this, the US ad
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: Vladimir Putin
+  url: https://freedomhouse.org/sites/default/files/2025-11/Freedom_on_the_Net_2025_Digital.pdf
+  says: vel of censorship and isolation. In Russia, which underwent the steepest 15-year decline in internet freedom, President
+    «Vladimir Putin» has attempted to carve out a sanitized domestic internet while crushing dissent. In the aftermath of
+    widespread antigov
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: Vladimir Putin
+  url: https://freedomhouse.org/sites/default/files/2020-02/Full%20Booklet%2C%20NIT_2011_.pdf
+  says: true democratic contest, as with Azerbaijan’s dynastic succession or the ambiguous “tandem” of Russia’s Prime Minister
+    «Vladimir Putin» and President Dmitri Medvedev. The ever-growing tenures of authoritarians in the former Soviet Union—and
+    the consequent
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: Vladimir Putin
+  url: https://freedomhouse.org/sites/default/files/2026-03/FIW2026_final_digital%20%281%29.pdf
+  says: ts on all countries and territories can be found on our website at www.freedomhouse.org. ON THE COVER Russian President
+    «Vladimir Putin» and other foreign leaders, including Chinese President Xi Jinping and Tajikistani President Emomali Rahmon,
+    attend a mi
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q42418
+  name: Talibán
+  url: https://ocad.belgium.be/wp-content/uploads/2024/07/Jaarverslag_2023.pdf
+  says: neer er sprake is van concurrentie tussen beide terreurgroepen. In Afghanistan merken we sinds de machtsovername van
+    de «Taliban» in augustus 2021 een verhoogde activiteit van terreurgroep ISKP. Uit open bronnen blijkt dat de propagandamachine
+    van I
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q42418
+  name: Talibán
+  url: https://www.eeas.europa.eu/sites/default/files/documents/2013_human-rights-annual_report_en.pdf
+  says: e of her fellow Laureates. Malala Yousafzai is a 16-year old girl from Pakistan who in 2012 was shot in the face by
+    the «Taliban» to stop her and other girls from going to school. She recovered from her injuries and went on to take her
+    campaign for
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q42418
+  name: Talibán
+  url: https://isc.independent.gov.uk/wp-content/uploads/2021/01/20180628-HC1113-Report-Detainee-Mistreatment-and-Rendition-2001-10.pdf
+  says: cers 25. After 9/11, SIS reinforced its staffing in Afghanistan and, as part of their wider operations to undermine
+    the «Taliban» and Al Qaida and support the Northern Alliance, SIS personnel occasionally interviewed detainees held by
+    the Afghans.42
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q42418
+  name: Talibán
+  url: https://www.v-dem.net/documents/19/dr_2022_ipyOpLP.pdf
+  says: on that we discuss further below. It reflects a growing number of coups, including Chad, Guinea, Mali, Myanmar, and
+    the «Taliban» takeover in Afghanistan. All of these countries ended the year as closed autocracies. What seems to be emerging
+    is a cl
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q42418
+  name: Talibán
+  url: https://www.dsn.gob.es/sites/default/files/2026-09/Segurtasun%20Nazionalaren%20Urteko%20Txostena%20-%202025.pdf
+  says: indartu dira) eta Taiwango itsasarteko eta Hegoaldeko Txinako itsasoko tentsioak. Afganistani dagokionez, aipagarria
+    da «Taliban» Mugimenduak nazioarteko aitortza aktiboki bilatzen duela, nahiz eta herrialdeak ez duen nazioarteko integrazio
+    zantzuri
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: Islamic State
+  url: https://cuta.belgium.be/wp-content/uploads/2026/09/20260909_Annual-Report-2025-English.pdf
+  says: of anyone they do not regard as “true” Muslims. For the West, and more specifically for Europe, the threat posed by
+    the «Islamic State» (IS) and IS-inspired actors was the most significant threat in 2025, although Al Qaeda (AQ) also remained
+    an active pla
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q20757678
+  name: APT28
+  url: https://www.bacs.admin.ch/dam/en/sd-web/Od9x6VNTQYAJ/bacs-hjb-2024-1_en.pdf
+  says: articularly by Chinese state-sponsored threat actors. However, Chinese APTs are not the only ones to use such networks.
+    «APT28» – also known as Sofacy – which is close to the Russian military intelligence service (GRU), has used similar networks
+    f
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q20757678
+  name: APT28
+  url: https://www.bis.cz/public/site/bis.cz/content/vvz-2019-web-en-k-publikaci.pdf
+  says: linked to the operations of cyberespionage groups supported or directed by foreign governments, such as Turla, Zebrocy,
+    «APT28» or APT15. On top of that, some activities and interests of the Vietnamese government in the Czech Republic were
+    to some
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q20757678
+  name: APT28
+  url: https://www.abw.gov.pl/download/24/4931/ABWraport20242025.pdf
+  says: . Wśród ugrupowań wykazujących szczególną aktywność w zakresie ataków w cyberprzestrzeni możemy wskazać m.in. rosyjskie
+    «APT28» (Fancy Bear), APT29 (Midnight Blizzard) oraz powiązaną z białoruskim aparatem państwowym grupę UNC1151. Są to
+    zespoły s
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q20757678
+  name: APT28
+  url: https://www.bacs.admin.ch/dam/de/sd-web/jZRn1wdSmagy/bacs-hjb-2024-2_de.pdf
+  says: y eine andere, krea­ tive Vorgehensweise, die von «GruesomeLarch», einer mutmasslich russischen APT (auch bekannt
+    als « «APT28» » oder «Sofacy»), verwendet wurde. Die Gruppe operiert vermutlich für den russischen Militärgeheimdienst.
+    Zur Erreichun
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q20757678
+  name: APT28
+  url: https://www.dsn.gob.es/sites/default/files/2025-02/CATAL%C3%81N%20ACCESIBLE%20MAQUETA%20IASN2023.pdf
+  says: ced persistent threats). En relació amb el ciberespionatge s’ha detectat un increment d’activitat vinculada a grups
+    com «APT28» , APT29, Turla i altres grups d’origen xinès amb interès en informació sensible d’organismes públics. En aquest
+    sentit,
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q15031
+  name: Xi Jinping
+  url: https://freedomhouse.org/sites/default/files/2025-11/Freedom_on_the_Net_2025_Digital.pdf
+  says: nd privacy to ensure that any technical innovation leads to improvements for global internet freedom. Chinese President
+    «Xi Jinping» depicted alongside the DeepSeek AI application. Governments around the world are ramping up their development
+    of “sover
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q15031
+  name: Xi Jinping
+  url: https://vsse.be/sites/default/files/2025-06/vsse_intelligence_report_2024_nl.pdf
+  says: nlichtingen. Dit is wat men de Chinese totaalaanpak noemt. In die aanpak, waarbij het begrip nationale veiligheid
+    onder «Xi Jinping» nog werd HET RISICO VAN CHINESE APPS verruimd, werd de rol van de inlichtingendiensten recent uitgebreid.
+    De Chinese in
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q15031
+  name: Xi Jinping
+  url: https://freedomhouse.org/sites/default/files/2026-03/FIW2026_final_digital%20%281%29.pdf
+  says: .freedomhouse.org. ON THE COVER Russian President Vladimir Putin and other foreign leaders, including Chinese President
+    «Xi Jinping» and Tajikistani President Emomali Rahmon, attend a military parade marking the end of World War II in Moscow
+    on May 9,
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q15031
+  name: Xi Jinping
+  url: https://www.hybridcoe.fi/wp-content/uploads/2025/01/web_Hybrid_CoE_Research_Report_29012025.pdf
+  says: na needs to enhance its narrative power to counter Western influence.21 This strategy was elevated to a top priority
+    in «Xi Jinping» ’s speech on national image building on 19 August 2013. 22 Chinese state media discourse often portrays
+    international p
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q15031
+  name: Xi Jinping
+  url: https://www.dsn.gob.es/sites/default/files/2025-02/CATAL%C3%81N%20ACCESIBLE%20MAQUETA%20IASN2023.pdf
+  says: ', Japó i Corea del Sud signat en Camp David el 18 d’agost de 2023. Al mateix temps, el cim entre els presidents Biden
+    i «Xi Jinping» a la fi de 2023 sembla assenyalar un interès mutu per estabilitzar la relació i mantenir línies obertes
+    de comunicació'
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: Al Qaida
+  url: https://soa.hr/UserDocsImages/Dokumenti/Javni dokumenti/Javno-izvjesce-2018.pdf?vel=3724498
+  says: ne. uključenost brojnih globalnih i regionalnih sila poput Irana. države te turska vojna intervencija na napada. ISIL
+    i «Al Qaida» i dalje su dvije najznačajnije terorističke skupine Ovo područje obilježavaju brojni oružani sukobi i napetosti,
+    terori
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: Al Qaida
+  url: https://www.europol.europa.eu/cms/sites/default/files/documents/TE-SAT%202025%20-%20Santrauka%20-%20LT.pdf
+  says: gėsi internetu, kartu radikalizavosi ir planavo išpuolius. Konfliktu Gazoje ir toliau naudojosi tokios grupuotės kaip
+    „ «Al-Qaida» “ ir „Islamo valstybė“. Buvo vykdomos kelios koordinuotos džihadistų propagandos kampanijos, keliančios grėsmę
+    svarbiem
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: Al Qaida
+  url: https://ocam.belgium.be/wp-content/uploads/2024/07/rapport-annuel_2023.pdf
+  says: uteur s’inspirant de l’idéologie ou de la propagande de groupes terroristes djihadistes tels que l’État islamique
+    (EI), «Al-Qaïda» (AQ) ou l’une de leurs « filiales » telles que l’ISKP. En raison de la situation géopolitique, notamment
+    en Israël et d
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: Al Qaida
+  url: https://soa.hr/UserDocsImages/Dokumenti - ENG/Public reports/SOA-Public-Report-2016.pdf?vel=3563143
+  says: nni-Shi'ite conflict. Saudi Arabia leads the Arab countries coalition whose military forces intervened in the conflict.
+    «Al Qaida» and ISIS use the chaos of war in Yemen to strengthen their positions in the Arabian Peninsula. Crisis focal
+    points, alo
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: Al Qaida
+  url: https://www.dsn.gob.es/sites/default/files/documents/Informe_Seguridad_Nacional%202013.pdf
+  says: de sabotaje. Los atentados del 11 de septiembre de 2001 y los hallazgos posteriores en Afganistán so­ bre el interés
+    de «Al Qaida» en tener acceso a materiales nucleares y radioactivos han susci­ tado un análisis de posibles escenarios
+    de ata­ ques t
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: Daesh
+  url: https://www.dsn.gob.es/sites/default/files/2025-08/Informe%20Anual%20de%20Seguridade%20Nacional%202019%20-%20Gallego.pdf
+  says: resivo da propaganda terrorista en español é unha tendencia clara Figura 2-1 Principais grupos xihadistas vinculados
+    ao «Daesh» e a Al-Qaeda 6 OCÉANO ATLÁNTICO 2 LÍBANOSIRIA IRAK TÚNEZ ARGELIA 2 7 4 2 PAKISTÁN EGIPTO INDIA INDIA 5 5 Vinculados
+    a A
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: Daesh
+  url: https://www.dsn.gob.es/sites/default/files/2025-08/Informe%20Anual%20de%20Seguridade%20Nacional%202021%20-%20Gallego.pdf
+  says: o das aplicacións de mensaxería máis populares entre os seus simpatizantes. (Figura 2.1) Figura 2.1 Mapa de presenza
+    de «Daesh» , Al Qaeda e afiliados 40 En Iraq e Siria DAESH continúa centrado en reforzar a súa axenda local, con constantes
+    ataque
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: Daesh
+  url: https://www.dsn.gob.es/sites/default/files/2025-02/CATAL%C3%81N%20ACCESIBLE%20MAQUETA%20IASN2023.pdf
+  says: de l’ONU en el Líban A l’Iraq, les tropes espanyoles, que despleguen en el marc de la Coalició Internacional contra
+    el «Daesh» (Inherent Resolve) i en la NAT Mission Iraq (NMI), s’enfronten a un escenari inestable. Amb la crisi de Gaza,
+    les milíc
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: Daesh
+  url: https://www.dsn.gob.es/sites/default/files/2026-09/Segurtasun%20Nazionalaren%20Urteko%20Txostena%20-%202025.pdf
+  says: egurtasun egoera ziurgabetasunekoa den arren, Siriako egoera hobetu egin da aurreko erregimena erori ondoren, nahiz
+    eta «Daesh» -en eta beste talde matxino batzuen mehatxua garrantzitsua den oraindik. Horrez gain, 2025ean zehar, indarkeria-aldiak
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q160120
+  name: Huawei
+  url: https://ccdcoe.org/uploads/2018/10/CS_organisation_UK_032015_0.pdf
+  says: 'ritical National Infrastructure: The Implications for National Security (London: Stationery Office, 2013). See also
+    the «Huawei» Cyber Security Evaluation Centre: Review by the National Security Adviser, <https://www.gov.uk/government/uploads/syste'
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q160120
+  name: Huawei
+  url: https://cert.pl/en/uploads/docs/Report_CP_2022.pdf
+  says: . The high number of registered attempts of attack on ports 37215 and 5555 may result from the vulnerabilities found
+    on «Huawei» and Android devices. We also conducted a similar analysis for attacks from Polish networks; more details are
+    provided i
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q160120
+  name: Huawei
+  url: https://www.bacs.admin.ch/dam/de/sd-web/LJBEmTtEK5kq/melani_hjb-2019-1-de.pdf
+  says: epartment’s Bureau of Industry and Security (BIS) eine so genannte «Final Rule», welche den chinesischen IKT-Hersteller
+    «Huawei» und damit verbundene Tochterunternehmen auf eine Liste mit Organisationen setzte, welche den Transfer von Gütern
+    und Kn
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q160120
+  name: Huawei
+  url: https://www.ria.ee/sites/default/files/documents/2026-09/Kruptoalgoritmid-ning-nende-tugi-teekides-infosusteemides-2026.pdf
+  says: S3SSE2A-kiibi turvaenklaaviplatvormi53,54 . Teiste mobiiliplatvormide turvaenklaavide (nagu Qualcomm Snapdragoni TEE
+    ja «Huawei» Kirini iTrustee) kohta avalikustatud…
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q160120
+  name: Huawei
+  url: https://isc.independent.gov.uk/wp-content/uploads/2021/12/ISC-Annual-Report-2019–2021.pdf
+  says: 'etwork: at the time there was considerable public and parliamentary debate as to whether the Chinese technology company
+    «Huawei» should be allowed to supply equipment for the UK’s 5G network. Given that a government decision was thought to
+    be immin'
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q113571236
+  name: LockBit
+  url: https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Publikationen/Lageberichte/Lagebericht2025_Achtseiter.pdf?__blob=publicationFile&v=7
+  says: bachten. Im Cybercrime-Bereich führten internationale Strafverfolgungsmaßnahmen zu einer Stabilisierung. Namentlich
+    mit «LockBit» und Alphv konnten zwei vormals sehr aktive Angreifergruppen nahezu ausgeschaltet werden. Bei den Angriffsinfrastrukture
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q113571236
+  name: LockBit
+  url: https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/ANSSI-BSI-joint-releases/Common_Situational_Picture_2021.pdf?__blob=publicationFile&v=3
+  says: 'S seized: DLS rebranded: DLS abandoned: DLS name DLS name DLS name DLS name Ragnarok File Leaks LV Marketo Xing Egregor
+    «LockBit» Mount Locker Ragnarok Maze Darkside Defray777 HelloKitty Pay2Key Cuba Everest Lorenz Netwalker Babuk Locker
+    N3tW0rm Egr'
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q113571236
+  name: LockBit
+  url: https://www.bacs.admin.ch/dam/de/sd-web/iSAe7NzTlekc/NCSC_2022-1_HJB_DE.pdf
+  says: ldungen leicht zurück. Dabei wurden vor allem die Ransomware-Familien «QLocker» und «Deadbolt» gegen NAS-Geräte sowie
+    « «LockBit» 2.0», «Sodinokibi» und «Conti» gemeldet. Zugenommen haben hingegen Hacking-Vorfälle (von 139 auf 184 Meldungen).
+    Hier s
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q113571236
+  name: LockBit
+  url: https://www.bacs.admin.ch/dam/de/sd-web/jZRn1wdSmagy/bacs-hjb-2024-2_de.pdf
+  says: auf internationaler Ebene. Ransomware-Aktivitäten in der Schweiz Nach der Zerschlagung grosser Ransomware-Gruppen
+    wie « «LockBit» » und «ALPHV» im ersten Halbjahr vom Jahr 2024 mussten sich einige der Entwickler und Komplizen von RansomwareGruppen
+    n
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q113571236
+  name: LockBit
+  url: https://www.europol.europa.eu/cms/sites/default/files/documents/EU-SOCTA-2025.pdf
+  says: ASE EXAMPLE — Notorious ransomware group dismantled13 In February 2024, law enforcement from 10 countries disrupted
+    the «LockBit» ransomware, causing billions of euros worth of damage. It first emerged at the end of 2019, and in 2022
+    it became the m
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q100605916
+  name: Sandworm
+  url: https://www.bacs.admin.ch/dam/de/sd-web/LJBEmTtEK5kq/melani_hjb-2019-1-de.pdf
+  says: beobachet werden. So zeigen neuere Kaspersky-Analysen, dass die für separate Angriffe bekannten Gruppen «Sofacy» und
+    « «Sandworm» » zahlreiche Ähnlichkeiten aufweisen und teils von der gleichen Infrastruktur aus arbeiten. 93 Um die Sache
+    noch kompli
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q100605916
+  name: Sandworm
+  url: https://www.bacs.admin.ch/dam/de/sd-web/iSAe7NzTlekc/NCSC_2022-1_HJB_DE.pdf
+  says: 'sabotageaktivitäten konfrontiert. Hier drei prominente Beispiele: • • • 2015 verursachte die dem russischen Cyberakteur
+    «Sandworm» zugeschriebene Malware «BlackEnergy3» Stromausfälle von bis zu sechs Stunden, von denen mehrere Hunderttausend
+    Verbrauc'
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q100605916
+  name: Sandworm
+  url: https://www.hybridcoe.fi/wp-content/uploads/2025/12/Hybrid-CoE-Paper-27-Handbook-on-the-role-of-non-state-actors-in-Russian-hybrid-threats.pdf
+  says: cybersecurity-101/threat-intelligence/advanced-persistent-threat-apt/. 111 For instance, the US-indicted members of
+    the «Sandworm» group have been identified as officers of the GRU Military Unit 74455 or the Main Centre for Special Technologies.
+    See
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q100605916
+  name: Sandworm
+  url: https://www.vbs.admin.ch/dam/en/sd-web/JKMD20MkcV6O/NDB-Lagebericht-2022-en.pdf
+  says: ry 2022. During the retreat of Russian forces in the north of Ukraine in mid-April 2022, hackers – probably part of
+    the «Sandworm» group attributed to Russia’s military intelligence service GRU - attacked Ukrainian electric power supply
+    systems. ▪ No
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q100605916
+  name: Sandworm
+  url: https://samsik.dk/wp-content/uploads/2025/04/Cybertruslen-mod-transportsektoren.pdf
+  says: er 2022 ramt af et ransomwarelignende angreb, som ifølge Microsoft er udført af den russiske statsstøttede hackergruppe
+    «Sandworm» . De krypterede data kunne efterfølgende ikke genskabes, hvorfor angrebet er blevet kategoriseret som et destruktivt
+    cy
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q210175
+  name: MI5
+  url: https://isc.independent.gov.uk/wp-content/uploads/2021/01/20150305_ISC_Press_Release_Women_in_UKIC.pdf
+  says: xamining diversity issues in the UK intelligence community and has today published a Report on the position of women
+    in «MI5» , MI6 and GCHQ. The Report considers recruitment policy and practice; maternity-related issues, childcare and
+    flexible
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q210175
+  name: MI5
+  url: https://ccdcoe.org/uploads/2018/10/CS_organisation_UK_032015_0.pdf
+  says: l Security Council, UK Armed Forces serving abroad, and with partners in the intelligence community, Security Service
+    ( «MI5» ), 58 Secret Intelligence Service (MI6) and other government departments. GCHQ also hosts the MOD’s Joint Cyber
+    Unit (C
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q210175
+  name: MI5
+  url: https://isc.independent.gov.uk/wp-content/uploads/2021/01/20180628-HC1113-Report-Detainee-Mistreatment-and-Rendition-2001-10.pdf
+  says: rity activities of the UK, including the policies, expenditure, administration and operations of the Security Service
+    ( «MI5» ), the Secret Intelligence Service (SIS) and the Government Communications Headquarters (GCHQ).† The Committee
+    also scr
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q210175
+  name: MI5
+  url: https://isc.independent.gov.uk/wp-content/uploads/2021/01/20200721_Russia_Press_Notice.pdf
+  says: iority, with the Office for Security and Counter-Terrorism taking the policy lead and the operational role sitting
+    with «MI5» . “In terms of responsibility, it was noted that – as with so many other issues currently – it is the social
+    media comp
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q210175
+  name: MI5
+  url: https://isc.independent.gov.uk/wp-content/uploads/2021/12/ISC-Annual-Report-2019–2021.pdf
+  says: ligence and security activities of the Agencies,† including the policies, expenditure, administration and operations
+    of «MI5» (the Security Service), MI6 (the Secret Intelligence Service or SIS) and GCHQ (the Government Communications
+    Headquarte
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q36597284
+  name: Wagner
+  url: https://ocam.belgium.be/wp-content/uploads/2024/07/rapport-annuel_2023.pdf
+  says: tuation politique instable au Sahel, mais aussi les errements des armées officielles ainis que la présence de la milice
+    «Wagner» , semble profiter tant à l’EI qu’à AQ. Tensions déclencheur géopolitiques comme Étant donné les émotions vives
+    suscitée
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q36597284
+  name: Wagner
+  url: https://www.ria.ee/sites/default/files/documents/2026-09/Kruptoalgoritmid-ning-nende-tugi-teekides-infosusteemides-2026.pdf
+  says: 'III-etapi-analuus.pdf. Cybernetica report no. D-25-53 (in Estonian). 2026. [197] Kai Mindermann, Philipp Keck ja
+    Stefan «Wagner» . „How Usable Are Rust Cryptography APIs?“ Teoses: 2018 IEEE International Conference on Software Quality,
+    Reliability'
+  verdict: wrong
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q36597284
+  name: Wagner
+  url: https://www.hybridcoe.fi/wp-content/uploads/2025/12/Hybrid-CoE-Paper-27-Handbook-on-the-role-of-non-state-actors-in-Russian-hybrid-threats.pdf
+  says: registered in both Belize and Russia in 2011. were incorporated elsewhere became the Moran created the Slavonic Corps,
+    «Wagner» Kremlin’s useful tool.44 RSB Group, founded Group’s predecessor, which was incorporated in 2005 by former intelligence
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q36597284
+  name: Wagner
+  url: https://ccdcoe.org/uploads/2018/10/binfuzz-ieee-CCDCOE.pdf
+  says: 2002 IEEE/IFIP Network Operations and Management Symposium, pp. 405–419, 2002. [22] D. Brauckhoff, X. Dimitropoulos,
+    A. «Wagner» , and K. Salamatian, “Anomaly Extraction in Backbone Networks using Association Rules,” in 2009 ACM SIGCOMM
+    Internet Me
+  verdict: wrong
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q36597284
+  name: Wagner
+  url: https://icct.nl/sites/default/files/2026-07/2026%2007%20%20Pakhomenko%20-%20Blurring%20Terrorism%20and%20War.pdf
+  says: s of exporting coercive counter-terrorism practices to third countries. In 2024, in the Central African Republic (CAR),
+    «Wagner» , a Russian state-linked armed group, reportedly detained a humanitarian worker, a Belgian-Portuguese national.
+    After b
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q41053
+  name: Hezbollah
+  url: https://vsse.be/sites/default/files/2025-06/vsse_intelligence_report_2024_nl.pdf
+  says: IMPACT OP BELGIË In 2024 escaleerde de oorlog tussen Israël en Hamas in Gaza en flakkerde het conflict tussen Israël
+    en «Hezbollah» in Libanon weer op. De daaropvolgende val van het regime van de Syrische dictator Bashar al-Assad zet de
+    deur open voor
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q41053
+  name: Hezbollah
+  url: https://www.dsn.gob.es/sites/default/files/2025-08/Informe%20Anual%20de%20Seguridade%20Nacional%202021%20-%20Gallego.pdf
+  says: oberno que se formou en setembro de 2021 carece dos suficientes apoios internos para impulsar as reformas necesarias;
+    e «Hezbollah» mantén a súa posición de forza no país. En canto a Siria, tras 10 anos de guerra, a situación está estancada
+    tanto no á
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q41053
+  name: Hezbollah
+  url: https://www.sri.ro/assets/files/rapoarte/2003/raport activitate 2003.pdf
+  says: 'unor organizaţii teroriste străine de diverse orientări, precum cele: - fundamentalist-islamice (“Fraţii Musulmani”,
+    “ «Hezbollah» ”, “Partidul Eliberării Islamice”, grupări islamiste nord-africane); - militante palestiniene, religioase
+    şi laice - “H'
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q41053
+  name: Hezbollah
+  url: https://www.dsn.gob.es/sites/default/files/2025-02/CATAL%C3%81N%20ACCESIBLE%20MAQUETA%20IASN2023.pdf
+  says: a la frontera entre Israel i Líban s’han intensificat. El risc d’escalada en aquesta zona és molt elevat i, encara
+    que «Hezbollah» ha mostrat la seva voluntat de no participar activament en aquest conflicte, es registren atacs recurrents
+    de les seves
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q41053
+  name: Hezbollah
+  url: https://www.hybridcoe.fi/wp-content/uploads/2025/12/Hybrid-CoE-Paper-27-Handbook-on-the-role-of-non-state-actors-in-Russian-hybrid-threats.pdf
+  says: in the conventional sense, but In the Middle East, Russia has aligned operationally with Iran-backed actors, including
+    «Hezbollah» and the Houthis. Russian military forces, including PMCs, fought alongside Hezbollah in Syria, and Russian
+    intelligence
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: al-Qaeda
+  url: https://www.europol.europa.eu/cms/sites/default/files/documents/european_union_terrorism_situation_and_trend_report_te-sat_2020_0.pdf
+  says: towards terrorist engagement. Networks are largely home-grown and without organisational links to terrorist groups
+    like «al-Qaeda» or the so-called Islamic State (IS). In addition, some individuals or small groups have been seen to self-radicalise,
+    p
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: al-Qaeda
+  url: https://assets.gov.ie/static/documents/national-risk-assessment-2017-028d66a8-fbd6-4204-a4ee-6291066770cc.pdf
+  says: rted to the EU, with future attacks possibly involving car bombs, extortion and kidnappings. For example, in July
+    2016, «al-Qaeda» called on fighters to take Western hostages and exchange them for jailed jihadists. In addition, the
+    ongoing campaign a
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: al-Qaeda
+  url: https://www.vbs.admin.ch/dam/en/sd-web/JKMD20MkcV6O/NDB-Lagebericht-2022-en.pdf
+  says: ihadist movement, and in particular from individuals who have been inspired by jihadist propaganda. ‘Islamic Stateʼ
+    and «al-Qaeda» are the major exponents of the jihadist movement in Europe and are thus also central to the terrorist threat
+    in Switzer
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: al-Qaeda
+  url: https://kapo.ee/sites/default/files/content_page_attachments/aastaraamat-2015.pdf
+  says: liikmesriik Türgi tulistas Venemaa sõjaväe provotseerivate liikumismarsruutide järel alla nende sõjalennuki. a selgelt
+    «al-Qaeda» ees Daesh,17 mida võib pidada kõige ohtlikumaks terroriorganisatsiooniks Süürias-Iraagis. Daesh üritab ennast
+    tituleeri
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: al-Qaeda
+  url: https://www.europol.europa.eu/cms/sites/default/files/documents/TE-SAT%202023%20-%20Sommarju%20ez%CC%87ekuttiv.pdf
+  says: rroristi ġiħadisti, u arma tan-nar minn terrorista tal-lemin. Fl-UE, l-affiljazzjoni ma’ gruppi partikolari, bħall-IS
+    u «al-Qaeda» , qed issir inqas prominenti fost is-sostenituri tal-ġiħadiżmu. Fl-2022, bosta Stati Membri rrappurtaw li
+    persuni suspe
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q115793742
+  name: NoName057
+  url: https://www.bacs.admin.ch/dam/de/sd-web/jZRn1wdSmagy/bacs-hjb-2024-2_de.pdf
+  says: ädlich zu machen. So verhaftete die spanische Polizei Personen, die sich am «DDoSia»-Botnet der pro-russischen Gruppe
+    « «NoName057» (16)»85 beteiligt und Geräte für Angriffe zur Verfügung gestellt hatten.86 Weiter konnte die US-amerikanische
+    Justiz zw
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q115793742
+  name: NoName057
+  url: https://www.dsn.gob.es/sites/default/files/2026-09/Segurtasun%20Nazionalaren%20Urteko%20Txostena%20-%202025.pdf
+  says: rren ideiak eta aldartea eragiteko helburuarekin. Horretarako, APTez gain, talde hacktivistez baliatzen dira, hala
+    nola «NoName057» (16) eta ziberkriminalez. Haien DDoS bidezko eraso kanpainak (300 baino gehiago) Ukrainako gerrarekin
+    lotutako gertakar
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q115793742
+  name: NoName057
+  url: https://nukib.gov.cz/download/publikace/zpravy_o_stavu/Zprava-o-cinnosti-NUKIB-2024.pdf
+  says: st incidentů tvořily DDoS útoky a pokračující vlny těchto útoků vedených zejména ruskojazyčnou hacktivistickou skupinou
+    «NoName057» (16). Zaznamenané útoky neměly závažnější dopady na zasažené subjekty nad rámec krátkodobých výpadků napadených
+    webů. N
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q115793742
+  name: NoName057
+  url: https://www.verfassungsschutz.de/SharedDocs/publikationen/DE/verfassungsschutzberichte/2025-06-10-verfassungsschutzbericht-2024.pdf?__blob=publicationFile&v=12
+  says: US Brandanschläge auf Synagogen in Nordrhein-Westfalen in Auftrag gegeben.23 Die prorussische Hacktivistengruppierung24
+    «NoName057» (16) hat im Dezember 2024 mit anderen Gruppierungen aus einer „Holy League“ genannten Allianz Websites von
+    Bundes- und
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q115793742
+  name: NoName057
+  url: https://www.enisa.europa.eu/sites/default/files/2026-01/ENISA%20Public%20Administration%20TL%202024%20-%20v1.2.pdf
+  says: ted ministerial and municipal websites. DDoS attacks were the most common threat type, with pro-Russia hacktivist
+    group «NoName057» (16) responsible for 46% of such attacks. Often linked to geopolitical events, such as EU support for
+    Ukraine, notable
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q152220
+  name: PKK
+  url: https://www.europol.europa.eu/cms/sites/default/files/documents/european_union_terrorism_situation_and_trend_report_te-sat_2020_0.pdf
+  says: issident Republican groups in Northern Ireland increased. Europe continues to be used by the Kurdistan Workers’ Party
+    ( «PKK» ) as a base to support its activities in Turkey. 09 06 08 The number of left-wing and anarchist terrorist attacks
+    in 20
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q152220
+  name: PKK
+  url: https://www.vbs.admin.ch/dam/en/sd-web/JKMD20MkcV6O/NDB-Lagebericht-2022-en.pdf
+  says: -Qaeda worldwide SIT UAT ION R E PORT 2 0 2 2 | FIS 41 JI H AD I S T AN D E T H N O - N AT I ON A L I S T T E RRORI
+    S M «PKK» 's dual strategy The Kurdistan Workers' Party (PKK) has been professionally organised in Europe for decades
+    and pursues
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q152220
+  name: PKK
+  url: https://supo.fi/documents/38197657/40760239/SUPO+Årsbok+2022.pdf/cc4403c4-cf71-98a3-4d23-45116d52cc11/SUPO+Årsbok+2022.pdf?t=1711449337182
+  says: tet från organisationen. Hotet om annan terrorism är lågt Terrorhotet från extremvänstern och Kurdistans arbetarparti
+    ( «PKK» ) är i Finland lågt. PKK och dess uppbackare fokuserar i Finland särskilt på insamling av medel och påverkansarbete.
+    Vä
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q152220
+  name: PKK
+  url: https://www.vbs.admin.ch/dam/de/sd-web/JKMD20MkcV6O/NDB-Lagebericht-2022-de.pdf
+  says: hläge auf westliche Ziele in der Region zu verüben oder Angehörige westlicher Staaten zu entführen. Doppelstrategie
+    der «PKK» Die Arbeiterpartei Kurdistans (PKK) ist in Europa seit Jahrzehnten professionell organisiert und verfolgt mit
+    ihrer Par
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q152220
+  name: PKK
+  url: https://www.verfassungsschutz.de/SharedDocs/publikationen/DE/verfassungsschutzberichte/2025-06-10-verfassungsschutzbericht-2024.pdf?__blob=publicationFile&v=12
+  says: "Straftaten mit auslandsbezogener extremistischer Motivation\b 257 4. Finanzierung\b 258 II. „Arbeiterpartei Kurdistans“\
+    \ ( «PKK» )\b 259 1. Organisationsstruktur\b 261 2. Versammlungsgeschehen\b 262 3. Rekrutierungsmaßnahmen\b 263 4. Medienwesen\b\
+    \ 264 5"
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q489943
+  name: Kaspersky
+  url: https://ccdcoe.org/uploads/2019/03/CyCon_book_2012.pdf
+  says: nations. For example, imagine if there were a repeat of the 2007 attacks against Estonia. Microsoft, McAfee, Symantec,
+    «Kaspersky» and other companies may want to be seen as neutral, providing impartial service to both belligerents. They
+    may not be a
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q489943
+  name: Kaspersky
+  url: https://www.bacs.admin.ch/dam/en/sd-web/jAwGMu7BooTn/melani_hjb-2018-2-en.pdf
+  says: rs. On the basis of accusations of Russian espionage in the USA, in 2017 the US authorities imposed a ban on the use
+    of «Kaspersky» products within US federal authorities. In Switzerland, this topic is also being discussed in business
+    and at the admin
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q489943
+  name: Kaspersky
+  url: https://ccdcoe.org/uploads/2018/10/CyCon_2014.pdf
+  says: nse mechanism, as opposed to paying the salary of a full-time individual. Large computer security firms such as McAfee,
+    «Kaspersky» , Symantec, and others are capable of implementing such an IBCC today, given currently available technology.
+    Major firm
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q489943
+  name: Kaspersky
+  url: https://www.bacs.admin.ch/dam/en/sd-web/OnLhoOTeo5w2/NCSC_2021-2_HJB_EN.pdf
+  says: which the company's administration, such as the commercial relationships with customers and suppliers, is processed.
+    63 «Kaspersky» Q4 2021 DDoS attack report (securelist.com) Page 21 of 37 Fuel supply in Iran restricted after cyberattack
+    Last October
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q489943
+  name: Kaspersky
+  url: https://ccdcoe.org/uploads/2018/10/2014-Technical-Analysis-of-Advanced-Threat-Tactics-Targeting-Critical-Information-Infrastructure.pdf
+  says: shamoonmalware-might-be-flame-copycat/d/d-id/1105917?. Accessed 20/05/2014 19 Shamoon cyberweapon the work of amateurs,
+    «Kaspersky» says. Tech World. http://news.techworld.com/security/3381077/ shamoon-cyberweapon-the-work-of-amateurs-kaspersky-says/.
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q115782
+  name: GRU
+  url: https://www.bacs.admin.ch/dam/de/sd-web/iSAe7NzTlekc/NCSC_2022-1_HJB_DE.pdf
+  says: Announces Court-Authorized Disruption of Botnet Controlled by the Russian Federation’s Main Intelligence Directorate
+    ( «GRU» ) (justice.gov) DDoS attacks becoming larger and more complex, finance most targeted sector (helpnetsecurity.com)
+    DDoS
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q115782
+  name: GRU
+  url: https://www.hybridcoe.fi/wp-content/uploads/2025/12/Hybrid-CoE-Paper-27-Handbook-on-the-role-of-non-state-actors-in-Russian-hybrid-threats.pdf
+  says: n Alliance EU – European Union FCRB – First Czech Russian Bank FSB – Federal Security Service of the Russian Federation
+    «GRU» - Main Directorate of the General Staff of the Armed Forces of the Russian Federation HMF – Historical Memory Foundatio
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q115782
+  name: GRU
+  url: https://kapo.ee/sites/default/files/content_page_attachments/Annual%20Review%202008.pdf
+  says: e again distinctly pointed out that we cannot work without cooperation partners. In 2008 Russian special services
+    (SVR, «GRU» , FSB) continued intense activities aimed against Estonia. As Russia has nearly always considered NATO and
+    its Member S
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q17427
+  name: Chinese Communist Party
+  url: https://www.eeas.europa.eu/sites/default/files/documents/2013_human-rights-annual_report_en.pdf
+  says: et during its mission in July in a meeting with the director for Tibet and Ethnic minorities of the Party School of
+    the «Chinese Communist Party» . Some Members of the Delegation met with the Chinese civil rights activist Mr Chen Guangcheng
+    in late May. The standin
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q17427
+  name: Chinese Communist Party
+  url: https://freedomhouse.org/sites/default/files/2025-11/Freedom_on_the_Net_2025_Digital.pdf
+  says: nate digital environments. 8 @freedomhouse in some of these authoritarian states now approach those in China, where
+    the «Chinese Communist Party» has long set the standard for digital authoritarianism, and in Iran, where the regime has
+    sought to establish a similar
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q17427
+  name: Chinese Communist Party
+  url: https://freedomhouse.org/sites/default/files/2026-03/FIW2026_final_digital%20%281%29.pdf
+  says: ech and activism. In January 2025, two media outlets were designated as terrorist organizations for the first time.
+    The «Chinese Communist Party» (CCP) continued to exert significant control over people’s political rights and civil liberties
+    in China, prosecuting j
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q17427
+  name: Chinese Communist Party
+  url: https://www.hybridcoe.fi/wp-content/uploads/2025/01/web_Hybrid_CoE_Research_Report_29012025.pdf
+  says: iations ANC African National Congress BRI Belt and Road Initiative BRICS Brazil, Russia, India, China, South Africa
+    CCP «Chinese Communist Party» CCTV China Central Television CELAP Central Party School in Beijing and China Executive
+    Leadership Academy in Pudong CG
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q17427
+  name: Chinese Communist Party
+  url: https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1184870/HM_Government_Response_to_the_ISC_Report__China_.pdf
+  says: lowed immediately by the government's reply. The Strategic Context A. China’s national imperative is to ensure that
+    the «Chinese Communist Party» remains in power. Everything else is subservient to that. B. However, it is its ambition
+    at a global level — to become
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q220798
+  name: Government Communications Headquarters
+  url: https://ccdcoe.org/uploads/2018/10/CyCon_2014.pdf
+  says: anticipate, prepare for and disrupt” such threats41. To do this, resources have been provided to the MoD itself and
+    the «Government Communications Headquarters» (GCHQ) to develop a range of techniques – including proactive measures –
+    to disrupt those threats. This strategic appro
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q220798
+  name: Government Communications Headquarters
+  url: https://ccdcoe.org/uploads/2018/10/CS_organisation_UK_032015_0.pdf
+  says: ENCE ........................................................................................................ 11 3.2.1.
+    «Government Communications Headquarters» (GCHQ) ................................................................ 11 3.2.1.1.
+    3.2.1.2. 3.2.1.3. Cyber Security Op
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q220798
+  name: Government Communications Headquarters
+  url: https://isc.independent.gov.uk/wp-content/uploads/2021/01/20180628-HC1113-Report-Detainee-Mistreatment-and-Rendition-2001-10.pdf
+  says: expenditure, administration and operations of the Security Service (MI5), the Secret Intelligence Service (SIS) and
+    the «Government Communications Headquarters» (GCHQ).† The Committee also scrutinises the work of other parts of the UK
+    intelligence community, including the Joint I
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q220798
+  name: Government Communications Headquarters
+  url: https://isc.independent.gov.uk/wp-content/uploads/2021/01/20200721_Russia_Press_Notice.pdf
+  says: g the policies, expenditure, administration and operations of MI5, MI6 (the Secret Intelligence Service or SIS) and
+    the «Government Communications Headquarters» (GCHQ). The Committee also scrutinises the work of the other parts of the
+    Intelligence Community , including the Joint
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q220798
+  name: Government Communications Headquarters
+  url: https://isc.independent.gov.uk/wp-content/uploads/2021/12/ISC-Annual-Report-2019–2021.pdf
+  says: administration and operations of MI5 (the Security Service), MI6 (the Secret Intelligence Service or SIS) and GCHQ
+    (the «Government Communications Headquarters» ),‡ and the work of the Joint Intelligence Organisation (JIO) and the National
+    Security Secretariat (NSS) in the Cabine
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22906448
+  name: APT29
+  url: https://www.bacs.admin.ch/dam/en/sd-web/OnLhoOTeo5w2/NCSC_2021-2_HJB_EN.pdf
+  says: supply chain attack on SolarWinds was nicknamed Nobelium by researchers. Various bodies suspected that Nobelium was
+    the «APT29» group and hence the Russian foreign intelligence service.89 In the second half of 2021, Nobelium remained
+    active and, a
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22906448
+  name: APT29
+  url: https://www.ria.ee/sites/default/files/documents/2022-11/Cyber-Security-in-Estonia-2022.pdf
+  says: lies (including Estonia) attributed the SolarWinds attack to the Russian foreign intelligence service (SVR) cyber
+    group «APT29» (also known as Nobelium). Through compromised software upgrades, they gained access to the systems of authorities
+    and c
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22906448
+  name: APT29
+  url: https://www.bacs.admin.ch/dam/en/sd-web/Od9x6VNTQYAJ/bacs-hjb-2024-1_en.pdf
+  says: he vulnerability and the issue of an update, the vulnerability continued to allow access.140 Activities associated
+    with «APT29» APT29 is a threat actor with a wide range of attack capabilities that has a long history of cyberespionage.
+    Authorities
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22906448
+  name: APT29
+  url: https://www.ria.ee/sites/default/files/documents/2022-11/RIA-kuberturvalisuse-aastaraamat-2022.pdf
+  says: . Aprillis omistasid USA ja liitlased (sh Eesti) SolarWindsi rünnaku Venemaa välisluure teenistuse SVR küberrühmitusele
+    «APT29» (tuntud ka kui Nobelium). Kompromiteeritud tarkvarauuenduste abil said nad ligi SolarWindsi tarkvara kasutavate
+    asutust
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22906448
+  name: APT29
+  url: https://www.abw.gov.pl/download/24/4931/ABWraport20242025.pdf
+  says: kazujących szczególną aktywność w zakresie ataków w cyberprzestrzeni możemy wskazać m.in. rosyjskie APT28 (Fancy Bear),
+    «APT29» (Midnight Blizzard) oraz powiązaną z białoruskim aparatem państwowym grupę UNC1151. Są to zespoły specjalistów
+    działają
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q8333
+  name: Federal Bureau of Investigation
+  url: https://www.ic3.gov/AnnualReport/Reports/2023_IC3Report.pdf
+  says: American public to defeat cyber adversaries and bring criminals to justice. Timothy Langan Executive Assistant Director
+    «Federal Bureau of Investigation» 4 FE DE R A L B U RE A U O F I N VE S TI G A TIO N TH E I C3 Today’s FBI is an intelligence-driven
+    and threat focused n
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q8333
+  name: Federal Bureau of Investigation
+  url: https://ccdcoe.org/uploads/2018/10/CyCon_2014.pdf
+  says: sored, loosely connected group comprised of individual hackers, managed to disrupt and degrade the websites of the
+    U.S. «Federal Bureau of Investigation» , Department of Justice.11 • According to a Pentagon report leaked in early 2014,
+    Edward Snowden, a lone actor and form
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q8333
+  name: Federal Bureau of Investigation
+  url: https://www.ria.ee/sites/default/files/documents/2022-11/Cyber-Security-in-Estonia-2022.pdf
+  says: yber group Darkside, 75 Bitcoins or 4.4 million dollars. Although tracing cryptocurrency is extremely difficult, the
+    US «Federal Bureau of Investigation» (FBI) has managed to recover 2.3 million dollars of the money paid to the criminals.
+    36 Colonial Pipeline was not the o
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q8333
+  name: Federal Bureau of Investigation
+  url: https://www.bacs.admin.ch/dam/en/sd-web/Od9x6VNTQYAJ/bacs-hjb-2024-1_en.pdf
+  says: age 15 of 34 in the event of a system failure increase the pressure for a quick solution. This has been noted by the
+    US «Federal Bureau of Investigation» (FBI), which has seen a general increase in ransomware attacks on critical infrastructure.48
+    While some groups claim to
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q8333
+  name: Federal Bureau of Investigation
+  url: https://www.bacs.admin.ch/dam/de/sd-web/jZRn1wdSmagy/bacs-hjb-2024-2_de.pdf
+  says: e Telekommunikationsanbieter kompromittiert habe.111 Nach diesen ersten Enthüllungen gaben die US-Behörden CISA und
+    das «Federal Bureau of Investigation» (FBI) am 25. Oktober 2024 bekannt, dass sie den unerlaubten Zugriff auf Telekommunikationsinfrastrukturen
+    durch Akteure
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: ISIS
+  url: https://www.abw.gov.pl/download/24/4931/ABWraport20242025.pdf
+  says: cą, w tym masowymi morderstwami zacji radykalnych dżihadystów oraz brutalną aktywnością struktur terPaństwa Islamskiego
+    «ISIS» . rorystycznych. W kwietniu i czerwcu 2025 r. funkcjonariusze ABW zatrzymali trzech 19-latków z Olsztyna, którzy
+    planow
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: ISIS
+  url: https://icct.nl/sites/default/files/2026-07/2026%2007%20%20Pakhomenko%20-%20Blurring%20Terrorism%20and%20War.pdf
+  says: convicted for six years in prison for a production portraying Russian women who travelled to Syria to marry members
+    of «ISIS» , despite the play having previously received a state-supported cultural award.29 In April 2026, Nobel Peace
+    Prize laur
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: ISIS
+  url: https://isc.independent.gov.uk/wp-content/uploads/2025/07/Intelligence-and-Security-Committee-of-Parliament-Iran.pdf
+  says: bed the Iranian regime’s “transactional nature of doing business bilaterally Oral evidence – JIO, *** June 2023. Iran’s
+    «ISIS» Policy, Chatham House, January 2015. 45 Oral evidence – JIO, *** June 2023. 46 Oral evidence – Sir Richard Dalton,
+    9 Ma
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: ISIS
+  url: https://www.odni.gov/wp-content/uploads/First-Responders-Toolbox-Female-Violent-Extremists.pdf
+  says: eness of female violent variety of tactics in the Homeland and abroad. Messaging extremists and the implications for
+    by «ISIS» , al-Qa‘ida, and their affiliates through online public safety. videos, magazines, and social media has most
+    likely pla
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q58792
+  name: FSB
+  url: https://www.eeas.europa.eu/sites/default/files/2026/documents/EEAS%204th%20Threat%20Report_web%20version_1.pdf
+  says: e Ministry of Foreign Affairs (MFA), the Russian Foreign Intelligence service (SVR), and the Federal Security Service
+    ( «FSB» ) regularly publish press releases and official statements, often incorporating multiples of the previous narratives
+    in
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q58792
+  name: FSB
+  url: https://www.bis.cz/public/site/bis.cz/content/vyrocni-zpravy/vyrocni-zprava-2002.pdf
+  says: álních služeb se v posledních letech nemění. K ochraně vnitřní bezpečnosti Ruska slouží Federální bezpečnostní služba
+    ( «FSB» ) a Federální agentura pro vládní komunikaci a informace (FAPSI), ochranu vedoucích představitelů Ruska zajišťují
+    Feder
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q58792
+  name: FSB
+  url: https://ccdcoe.org/uploads/2019/03/CyCon_book_2012.pdf
+  says: targeted for flooding by pre-positioned Twitter bots [41]. There was a formal request by the Federal Security Service
+    ( «FSB» ) to the VKontakte social networking site to block specific pages organising protests, which was politely declined
+    as i
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q58792
+  name: FSB
+  url: https://ccdcoe.org/uploads/2018/10/CyCon_2014.pdf
+  says: miss the point. For example, since mid-2013, Russia has moved to strengthen the role of the Federal Security Service
+    ( «FSB» ) in ensuring domestic cyber security, both institutionally and technically.26 Under a draft order sponsored by
+    the Rus
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q58792
+  name: FSB
+  url: https://www.bis.cz/public/site/bis.cz/content/vyrocni-zpravy/en/ar2012en.pdf
+  says: first sight. This problem is most visible in the activities of the Federal Security Service of the Russian Federation
+    ( «FSB» ). The FSB is effectively the successor of the Soviet KGB. Although it operates primarily as a ‘federal police
+    departme
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22686
+  name: Donald Trump
+  url: https://cert.pl/en/uploads/docs/Report_CP_2020.pdf
+  says: m in the amount of USD 21 million, but they doubled it after discovering that the stolen files included files regarding
+    «Donald Trump» , the US President. On advice of the FBI, GSMS refused to pay the ransom. Private data concerning many
+    show business st
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22686
+  name: Donald Trump
+  url: https://www.v-dem.net/documents/63/V-DemDemocracyReport_portuguese_2025_lowres.pdf
+  says: ércio livre NAFTA e da perda de indústrias transformadoras para o estrangeiro, esta comunidade tem apoiado o presidente
+    «Donald Trump» . É assim com renovado prazer que publicamos a segunda edição do relatório Variedades da Democracia / V-Dem
+    em língua p
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22686
+  name: Donald Trump
+  url: https://www.bacs.admin.ch/dam/de/sd-web/jZRn1wdSmagy/bacs-hjb-2024-2_de.pdf
+  says: g zu den US-Telekommunikationsriesen gezielt Daten von Telefonen abgriff, die vom ehe­ maligen und heutigen Präsidenten
+    «Donald Trump» und vom US-amerikanischen Politiker J.D. Vance sowie von Mitarbeitenden der damaligen Vizepräsidentin Kamala
+    Harris und
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22686
+  name: Donald Trump
+  url: https://www.hybridcoe.fi/wp-content/uploads/2025/12/Hybrid-CoE-Paper-27-Handbook-on-the-role-of-non-state-actors-in-Russian-hybrid-threats.pdf
+  says: Presidential users, including prominent figures such as Elon Administration. They frequently collaborate with Musk
+    and «Donald Trump» Jr.235 other private entities, such as IT companies, IT companies such as TNSecurity, DPKGSoft to build
+    the digital inf
+  verdict: wrong
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: al-Qaida
+  url: https://www.defensie.nl/site/binaries/site-content/collections/documents/2026/04/21/openbaar-jaarverslag-2025-militaire-inlichtingen--en-veiligheidsdienst/mivd-ojv2025.pdf
+  says: l het wereldwijde zwaartepunt van jihadistisch terrorisme. Op verschillende locaties op het continent zijn meerdere
+    aan «al-Qaida» en ISIS gelieerde terroristische groeperingen actief die aanvallen plegen tegen lokale overheden, de lokale
+    bevolking e
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: al-Qaida
+  url: https://supo.fi/documents/38197657/40760239/SUPO+Årsbok+2022.pdf/cc4403c4-cf71-98a3-4d23-45116d52cc11/SUPO+Årsbok+2022.pdf?t=1711449337182
+  says: en, Irak, Afghanistan, Somalia och Sahel. Afrika söder om Sahara får en allt större betydelse som verksamhetsområde
+    för «al-Qaida» och Isil. I Afghanistan har al-Qaidas handlingsutrymme vuxit på grund av de nära förbindelserna mellan
+    terrororganisati
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: al-Qaida
+  url: https://supo.fi/documents/38197657/39761266/Kansallisen+turvallisuuden+katsaus+2021.pdf/dd166757-9394-8d80-8891-39d5a3c4b953?t=1772189087145
+  says: is. Globaalisti merkittävimmät radikaali-islamistiset terroristijärjestöt ovat edelleen ”Islamilainen valtio” (ISIL)
+    ja «al-Qaida» . Ne muodostavat yhä maailmanlaajuisen uhkan, ja on todennäköistä, että ne inspiroivat yksittäisiä toimijoita
+    iskujen s
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: al-Qaida
+  url: https://www.vbs.admin.ch/dam/de/sd-web/JKMD20MkcV6O/NDB-Lagebericht-2022-de.pdf
+  says: ', insbesondere durch Per­ sonen, die von dschihadistischer Propaganda inspiriert werden. Der „Islamische Staat“ und
+    die «al-Qaida» sind die wichtigsten Exponenten der dschihadistischen Bewegung in Europa und damit auch für die Terrorbedrohung
+    der Sch'
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q34490
+  name: al-Qaida
+  url: https://www.valisluureamet.ee/doc/raport/2016-et.pdf
+  says: al-Joulani radikaalsetele islamistlikele veebilehekülgedele postitatud audiosõnumis, et JaN on vandunud truudust hoopis
+    «al-Qaida» liidrile Ayman al-Zawahirile, ning eitas väiteid ühinemisest AQI-ga. JaN-i asutajaks oli küll AQI, kuid kui
+    Süüriast sa
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: Putina
+  url: https://www.bis.cz/public/site/bis.cz/content/vyrocni-zpravy/vyrocni-zprava-2002.pdf
+  says: kých mocenských orgánů, do prezidentské administrativy, vlády i na ministerstva. Z počátku kariéry prezidenta Vladimíra
+    «Putina» byli důstojníci speciálních služeb dosazováni na nižší pozice, takže navenek se personální situace v těchto strukturách
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: Putina
+  url: https://soa.hr/UserDocsImages/Dokumenti/Javni dokumenti/Javno-izvjesce-2018.pdf?vel=3724498
+  says: i utjecaja na demokratske izbore, plasiranje lažnih vijesti i kibernetičkih napada. Rusija nakon reizbora predsjednika
+    «Putina» održava kontinuitet dosadašnje vanjske i unutarnje politike te nastoji ograničiti daljnje širenje i utjecaj NATO-a
+    i EU
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: Putina
+  url: https://portal.indeci.gob.pe/wp-content/uploads/2019/01/acciones_dc_ong457.pdf
+  says: 'raturas en el depar151 920 euros. tamento de Puno. Departamento de Puno: provincia de Juliaca, comunidaes de Huancané
+    y «Putina» . Friaje Gobierno alemán 5 000 192 841 Fortalecimiento instituConstrucción de Alcional de estratégias 2 macén
+    estratégi'
+  verdict: wrong
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: Putina
+  url: https://portal.indeci.gob.pe/wp-content/uploads/2019/01/ayuda_huma149.pdf
+  says: del INDECI. 153 PROVINCIAS TOTAL REGIÓN PUNO AZÁNGARO CARABAYA CHUCUITO EL COLLAO HUANCANÉ LAMPA MELGAR MOHO SAN A.
+    DE «PUTINA» SAN ROMÁN SANDIA YUNGUYO PUNO PESO (kg) 469.047,49 13.063,85 186.295,97 12.735,50 14.586,00 11.118,93 109.089,88
+    14.680
+  verdict: wrong
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: Putina
+  url: https://portal.indeci.gob.pe/wp-content/uploads/2021/02/CAPITULO-III-Estadística-Series-2003-2019.pdf
+  says: ladas en las provincias de Puno, Azángaro, Carabaya, Chucuito, El Collao, Huancané, Lampa, Melgar, Moho, San Antonio
+    de «Putina» , San Ramón, Sandia y Yunguyo, pertenecientes al departamento de Puno, causando pérdidas en la agricultura.
+    Daños mater
+  verdict: wrong
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: President Putin
+  url: https://vdd.gov.lv/uploads/materials/1/en/annual-report-2019.pdf
+  says: digital platforms). Given that these media holdings are either directly owned by the Russian state or persons close
+    to «President Putin» , objective journalism is all but impossible in such pseudo-media. Last year, the multimedia platform
+    “Sputnik”, operat
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: President Putin
+  url: https://ccdcoe.org/uploads/2019/03/CyCon_book_2012.pdf
+  says: ormation space of its citizenry’.19 In light of the Information Security Doctrine of the Russian Federation released
+    by «President Putin» in 2000, it is difficult to escape the impression that Russia’s broader concern is with how it can
+    effectively maintain
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: President Putin
+  url: https://www.v-dem.net/documents/19/dr_2022_ipyOpLP.pdf
+  says: world faces as a consequence of ­autocratization around the world. On the day we finalize this year’s Democracy Report,
+    «President Putin» ordered a full-scale invasion of Ukraine, an independent country led by an elected government. For years,
+    scholars warn
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: President Putin
+  url: https://www.hybridcoe.fi/wp-content/uploads/2025/12/Hybrid-CoE-Paper-27-Handbook-on-the-role-of-non-state-actors-in-Russian-hybrid-threats.pdf
+  says: markets itself as a “military West. At the same time, since at least 2012, consulting company”, resembles the American
+    «President Putin» and Chief of General Staff PMC model (see Table A1). Its personnel include Valery Gerasimov have publicly
+    invoked Weste
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q7747
+  name: President Putin
+  url: https://isc.independent.gov.uk/wp-content/uploads/2025/07/Intelligence-and-Security-Committee-of-Parliament-Iran.pdf
+  says: “the animosity of Russia towards the idea of an Iranian nuclear programme was pretty clear to see. My discussions
+    with «President Putin» made that very clear”.186 However, ***. We also questioned whether Russia and China might collaborate
+    with Iran in term
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q115782
+  name: Russian military intelligence
+  url: https://www.ria.ee/sites/default/files/documents/2024-06/Situation-in-cyberspace-may-2024.pdf
+  says: t phones and other mobile devices of Ukrainian soldiers have become more frequent, initiated by hackers associated
+    with «Russian military intelligence» GRU. The attacks mimicked popular applications, such as Kropyva, but actually contained
+    spyware. Malware was also sent
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q115782
+  name: Russian military intelligence
+  url: https://www.ria.ee/sites/default/files/documents/2025-01/Situation-in-cyberspace-december-2024.pdf
+  says: t reported that no data had been leaked or deleted, based on the initial assessment. A hacker group associated with
+    the «Russian military intelligence» is believed to be behind the attack, which is the biggest recent attack against the
+    critical databases of Ukraine. The
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q115782
+  name: Russian military intelligence
+  url: https://ccdcoe.org/uploads/2021/08/Tallinn_Papers_Attribution_18082021.pdf
+  says: ly in each case.71 For example, in 2018, the US Central Intelligence Agency (CIA) reported with ‘high confidence’,
+    that «Russian military intelligence» (GRU) created Notpetya,72 and the UK claimed that the Russian military was ‘almost
+    certainly’ responsible.73,74 Further
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q115782
+  name: Russian military intelligence
+  url: https://www.moj.go.jp/content/001398997.pdf
+  says: y China was the cause. Cyberattacks against Ukrainian financial institutions (in 2022) The US and the UK announced
+    that «Russian military intelligence» was involved in DDoS attacks on Ukrainian financial institutions and others that
+    reportedly disrupted online payments a
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q115782
+  name: Russian military intelligence
+  url: https://vdd.gov.lv/uploads/materials/30/en/annual-report-2021.pdf
+  says: ian GRU. Second criminal proceedings were also initiated by VDD on suspicion of extensive espionage in the interests
+    of «Russian military intelligence» . The findings of VDD investigation show that the person, on behalf of the Russian
+    intelligence service, has been gathe
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q19284445
+  name: Lazarus
+  url: https://www.ecdc.europa.eu/sites/default/files/documents/From-evidence-to-practice-succesful-models.pdf
+  says: 'lly and linguistically diverse backgrounds in high-income countries: a scoping review. J Immigr Minor Health. 2026.
+    19. «Lazarus» JV, Pericàs JM, Picchio CA, Cernosa J, Hoekstra M, Luhmann N et al. We know DAAs work, so now what? Simplifying
+    models'
+  verdict: wrong
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q19284445
+  name: Lazarus
+  url: https://www.bacs.admin.ch/dam/en/sd-web/OnLhoOTeo5w2/NCSC_2021-2_HJB_EN.pdf
+  says: IT service providers, authorities and educational institutions in Switzerland were also targeted. Using the name Fancy
+    «Lazarus» , DDoS blackmailers attempted to blackmail a number of Swiss companies and cantonal authorities. However, the
+    attacks o
+  verdict: wrong
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q19284445
+  name: Lazarus
+  url: https://www.bacs.admin.ch/dam/de/sd-web/LJBEmTtEK5kq/melani_hjb-2019-1-de.pdf
+  says: mit Makros. • Beobachten Sie die Logfiles Ihrer Antivirus-Lösung auf Unregelmässigkeiten. 4 Lage national 4.1 Spionage
+    «Lazarus» greift Schweizer Banken an Im März 2019 hat der Sicherheits-Software-Hersteller McAfee ein Follow-up des Berichts
+    vom D
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q19284445
+  name: Lazarus
+  url: https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Publikationen/Lageberichte/Lagebericht2021.pdf?__blob=publicationFile&v=4
+  says: nten Remote Templates, die erst beim Öffnen des Dokuments heruntergeladen werden. Dies war insbesondere bei den Gruppen
+    «Lazarus» , APT28 und Gamaredon zu beobachten. Ein klarer Trend ist, dass einzelne Gruppen von mailbasierten Angriffen
+    wieder auf
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q19284445
+  name: Lazarus
+  url: https://www.cert.ssi.gouv.fr/uploads/CERTFR-2026-CTI-001.pdf
+  says: des services d’IA générative afin de générer du contenu d’hameçonnage 5 [5]. Entre 2024 et 2025, les opérateurs du
+    MOA «Lazarus» réputé lié à la Corée du Nord auraient également eu recours à des services d’IA générative afin de créer
+    de faux profil
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: ISIL
+  url: https://isc.independent.gov.uk/wp-content/uploads/2021/12/ISC-Annual-Report-2019–2021.pdf
+  says: a solicitor’s office in September 2020. The primary terrorist threat to the UK continues to be from Islamist terrorism.
+    «ISIL» -Core (Daesh) has continued to operate as a clandestine terrorist organisation despite the death of its leader
+    Abu Bakr
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: ISIL
+  url: https://www.europol.europa.eu/cms/sites/default/files/documents/european_union_terrorism_situation_and_trend_report_te-sat_2020_0.pdf
+  says: scape’ last Syria enclave, 6 March 2019, https://www.bbc.com/news/world-middle-east-47468228 40 Al-Jazeera, Hundreds
+    of «ISIL» prisoners escape Syrian camp, Kurds say, 13 October 2019, https://www.aljazeera.com/news/2019/10/hundreds-isil-prisoner
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: ISIL
+  url: https://assets.gov.ie/static/documents/national-risk-assessment-2017-028d66a8-fbd6-4204-a4ee-6291066770cc.pdf
+  says: se attacks have been mainly inspired by the continuing instability and conflict in the Middle East and the influence
+    of «ISIL» /Da’esh and similar groups. There is a continuing occurrence of 'lone-actor' attacks directed at soft targets,
+    such as
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: ISIL
+  url: https://kapo.ee/sites/default/files/content_page_attachments/aastaraamat-2015.pdf
+  says: õitlus saamaks paremaks moslemiks või võitlus uskmatute ja islami vaenlaste vastu. 17 Eelmises aastaraamatus nimetusega
+    «ISIL» (Islamic State of Iraq and the Levant, eesti keeles Iraagi ja Levanti Islamiriik). Daesh tuleneb araabiakeelsest
+    nimetu
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q2429253
+  name: ISIL
+  url: https://supo.fi/documents/38197657/39761266/Kansallisen+turvallisuuden+katsaus+2021.pdf/dd166757-9394-8d80-8891-39d5a3c4b953?t=1772189087145
+  says: ulkea pois. Globaalisti merkittävimmät radikaali-islamistiset terroristijärjestöt ovat edelleen ”Islamilainen valtio”
+    ( «ISIL» ) ja al-Qaida. Ne muodostavat yhä maailmanlaajuisen uhkan, ja on todennäköistä, että ne inspiroivat yksittäisiä
+    toimijo
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q106833920
+  name: Conti
+  url: https://www.dsn.gob.es/sites/default/files/documents/Informe_Seguridad_Nacional%202013.pdf
+  says: coordinación de los sectores público y privado en materia de continuidad de nego­ cio, el SCN y el Consorcio Español
+    de «Conti» ­ nuidad de Negocio (CECON) han venido co­ laborando desde su creación. Como ejemplo de dicha colaboración,
+    podemos des
+  verdict: wrong
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q106833920
+  name: Conti
+  url: https://www.ria.ee/sites/default/files/documents/2022-11/RIA-kuberturvalisuse-aastaraamat-2022.pdf
+  says: kele. Kuid oli ka neid, kes ei maksnud. Mais sai lunavaraga pihta Iirimaa tervishoiusüsteem, kuhu kurjategijad süstisid
+    «Conti» lunavara. Krüpteeritud süsteemide tõttu oli takistatud juurde- RIA küberturvalisuse aastaraamat 2022 pääs diagnostikale
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q106833920
+  name: Conti
+  url: https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/ANSSI-BSI-joint-releases/Common_Situational_Picture_2021.pdf?__blob=publicationFile&v=3
+  says: es. The presented chronology is an approximation. Active dedicated leak sites analysed by ANSSI and BSI 30 25 20 Avaddo
+    «Conti» Suncryp 15 BitRansomware Mespinoza Ako Netwalker 10 Nemty | Nemty Clop Paymen45 Nefilim Sekhmet DoppelPaymer Ragnar
+    Loc
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q106833920
+  name: Conti
+  url: https://www.bacs.admin.ch/dam/de/sd-web/iSAe7NzTlekc/NCSC_2022-1_HJB_DE.pdf
+  says: den vor allem die Ransomware-Familien «QLocker» und «Deadbolt» gegen NAS-Geräte sowie «LockBit 2.0», «Sodinokibi»
+    und « «Conti» » gemeldet. Zugenommen haben hingegen Hacking-Vorfälle (von 139 auf 184 Meldungen). Hier stehen vor allem
+    Konten von So
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q106833920
+  name: Conti
+  url: https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Publikationen/DVS-Berichte/dvs-bericht_2021.pdf?__blob=publicationFile&v=7
+  says: nes Cyber-Angriffs geworden zu sein. Die zuständigen Stellen identifizierten einen Ransomware-Angriff der Hacker-Gruppe
+    «Conti» . Eine Systemverschlüsselung machte das Unternehmen nahezu geschäftsuntüchtig. Recherchen bestätigten, dass die
+    verdäch
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22686
+  name: President Trump
+  url: https://cuta.belgium.be/wp-content/uploads/2026/09/20260909_Annual-Report-2025-English.pdf
+  says: tries and the NATO, as well as among the EU countries themselves. The rapprochement between Russia and the US following
+    «President Trump» ’s inauguration resulted in a shift in the propaganda and disinformation narratives. Since Trump’s new
+    term, the EU has
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22686
+  name: President Trump
+  url: https://www.v-dem.net/documents/19/dr_2022_ipyOpLP.pdf
+  says: 'n and misinformation culminated in a violent test for U.S. democracy: the storming of the Capitol on January 6th,
+    2021. «President Trump» ’s false claim that he won the 2020 presidential election (the so-called “Big Lie”) also helped
+    to instigate the riots.'
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22686
+  name: President Trump
+  url: https://isc.independent.gov.uk/wp-content/uploads/2025/07/Intelligence-and-Security-Committee-of-Parliament-Iran.pdf
+  says: led to the imposition of sanctions on Iran. 155 156 61 IRAN 2018 US withdrawal from the JCPOA 197. In 2018, the then
+    US «President Trump» announced that the US was leaving the JCPOA and reimposing those US sanctions lifted under the deal.
+    This was on the st
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22686
+  name: President Trump
+  url: https://www.vbs.admin.ch/dam/en/sd-web/JKMD20MkcV6O/NDB-Lagebericht-2022-en.pdf
+  says: administration had to concentrate heavily on domestic issues in 2021, it did succeed in distancing itself clearly
+    from «President Trump» 's America First policy in its foreign and security policies. Traditional allies in Europe and
+    Asia were reassured of A
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q22686
+  name: President Trump
+  url: https://ccdcoe.org/uploads/2020/06/Recent-Cyber-Events-and-Possible-Implications-for-Armed-Forces-3-June-2020_Final.pdf
+  says: ructure. 3. Policy and strategy developments Executive Order on Securing the United States Bulk-Power System ‘This
+    week «President Trump» signed an executive order that prohibits operators of US power grids to buy and install electrical
+    equipment that has b
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q863254
+  name: SVR
+  url: https://vdd.gov.lv/uploads/materials/1/en/annual-report-2019.pdf
+  says: 'an: Главное управление Генерального штаба Вооружённых Сил Российской Федерации), and the Foreign Intelligence Service
+    ( «SVR» , in Russian: Служба внешней разведки). VDD observed both specific intelligence activities by these services as
+    well as'
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q863254
+  name: SVR
+  url: https://www.eeas.europa.eu/sites/default/files/2026/documents/EEAS%204th%20Threat%20Report_web%20version_1.pdf
+  says: udiences. Russian state institutions continue to play a key part in FIMI activities. The Foreign Intelligence Service
+    ( «SVR» ) has taken on a more visible role, issuing official statements containing false or unsubstantiated claims that
+    are lat
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q863254
+  name: SVR
+  url: https://www.bis.cz/public/site/bis.cz/content/vvz-2019-web-en-k-publikaci.pdf
+  says: 'lligence services were active and conducted intelligence activity in the Czech Republic: Foreign Intelligence Service
+    ( «SVR» ), Foreign Military Intelligence (GRU), Federal Security Service (FSB), and Federal Protective Service (FSO).
+    It is no'
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q863254
+  name: SVR
+  url: https://vzcr.gov.cz/uploads/41-Vyrocni-zprava-2012.pdf
+  says: odajských služeb Hlavní správa vojenské rozvědky (GRU - Главное разведывательное управление) a Služba vnější rozvědky
+    ( «SVR» - Служба внешней разведки). Ve srovnání s předchozími roky došlo k dílčímu poklesu aktivit těchto služeb zaměřených
+    na
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q863254
+  name: SVR
+  url: https://www.hybridcoe.fi/wp-content/uploads/2025/12/Hybrid-CoE-Paper-27-Handbook-on-the-role-of-non-state-actors-in-Russian-hybrid-threats.pdf
+  says: d Response Unit SOC – Serbian Orthodox Church SPNSA – Social and Political Non-State Actor SSS – Sewa Security Services
+    «SVR» – Foreign Intelligence Service of the Russian Federation TAC – Legal Protection Centre TCN – Transnational Crime
+    Networ
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q106466338
+  name: Turla
+  url: https://www.bacs.admin.ch/dam/de/sd-web/jZRn1wdSmagy/bacs-hjb-2024-2_de.pdf
+  says: eu­ tige Zuordnung, sieht aber bei den Vorgehensweisen Ähnlichkeiten mit vermeintlich russi­ schen APTs, insbesondere
+    « «Turla» ».121 Im November 2024 beschrieb das Cybersicherheitsunternehmen Volexity eine andere, krea­ tive Vorgehensweise,
+    die v
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q106466338
+  name: Turla
+  url: https://www.dsn.gob.es/sites/default/files/2025-02/CATAL%C3%81N%20ACCESIBLE%20MAQUETA%20IASN2023.pdf
+  says: threats). En relació amb el ciberespionatge s’ha detectat un increment d’activitat vinculada a grups com APT28, APT29,
+    «Turla» i altres grups d’origen xinès amb interès en informació sensible d’organismes públics. En aquest sentit, el Sistema
+    d’A
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q106466338
+  name: Turla
+  url: https://www.hybridcoe.fi/wp-content/uploads/2025/12/Hybrid-CoE-Paper-27-Handbook-on-the-role-of-non-state-actors-in-Russian-hybrid-threats.pdf
+  says: 'h 21st-century investigations, was it discovered that the operation was likely linked to the modern-day, FSB-controlled
+    «Turla» hacking group. 106 M. J. Kari and Katri Pynnöniemi, ‘Theory of Strategic Culture: An Analytical Framework for
+    Russian C'
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q106466338
+  name: Turla
+  url: https://supo.fi/documents/38197657/40760236/2018_Supo_Juhlavuosikirja-70.pdf/d986a8e0-65d5-5bf6-0857-b516d1c8907d/2018_Supo_Juhlavuosikirja-70.pdf?t=1602665751133
+  says: on erityisen tärkeää. Uusi tiedustelulain­ säädäntö auttaa merkittävästi kybervakoilun torjunnassa. VALOKEILASSA TURLA
+    «Turla» on julkisuudessa käytetty nimitys tietylle joukolle verkkovakoilutyökaluja ja verkkoinfrastruktuuria. Julkisessa
+    keskus
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
+- actor: Q106466338
+  name: Turla
+  url: https://cert.ssi.gouv.fr/uploads/CERTFR-2023-CTI-002.pdf
+  says: nd NATO members. Several intrusion sets were operated in such campaigns in 2022, such as Gamaredon (40), APT28 (41)
+    and «Turla» (42). This targeting is likely to continue under the cloak of a particularly tense geopolitical context. CYBER
+    THREAT O
+  verdict: right
+  checked: '2026-10-08'
+  reviewer: Claude
