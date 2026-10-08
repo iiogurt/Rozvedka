@@ -65,8 +65,8 @@ Each item: why · what · done when · version step.
    CERT-SE / NCSC-SE, CERT.hr, CIRCL (LU), NISC / JPCERT (JP), KISA (KR), TWCERT (TW), CISA (US), CERT.br. · patch (sources)
 5. **Hand-collect the blocked flagships** (Säpo, PET, ASIO, CSIS, VSD/AOTD …) through *To collect*. *Done when* their
    latest three editions are in the library. · owner + data
-6. **Browser-only reports** (74) – try per-site download links (DIS Italy's attachment API, E-tjenesten, StratCom CoE
-   pdfjs viewer → the underlying PDF); otherwise keep them as links. · patch
+6. ✅ (0.42.6: 80 → 24) **Browser-only reports** (80) – try per-site download links (DIS Italy's attachment API, E-tjenesten, StratCom CoE
+   pdfjs viewer → the underlying PDF); otherwise keep them as links. 0.42.6: DIS Italy and StratCom CoE solved; the 20 of E-tjenesten (bot challenge) and 4 of Canada (publications.gc.ca archive notice, script-gated) stay links – not circumvented. · patch
 
 ### B. Quality you can measure
 

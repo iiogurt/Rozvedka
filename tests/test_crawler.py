@@ -218,3 +218,22 @@ def test_pgp_signature_files_are_not_documents():
     from rozvedka.crawler import DOC_RE
     assert DOC_RE.search("https://www.jpcert.or.jp/english/doc/IR_Report2024Q4_en.pdf")
     assert not DOC_RE.search("https://www.jpcert.or.jp/english/doc/IR_Report2017Q2_en.pdf.asc")
+
+
+@pytest.mark.parametrize("url,expected", [
+    ("https://stratcomcoe.org/pdfjs/?file=/publications/download/Report_final.pdf?zoom=page-fit",
+     "https://stratcomcoe.org/publications/download/Report_final.pdf"),
+    ("https://example.org/pdf.js/web/viewer.html?file=https%3A%2F%2Fexample.org%2Fa%2Fb.pdf",
+     "https://example.org/a/b.pdf"),
+    ("https://example.org/pdfjs/?file=/page.html", "https://example.org/pdfjs/?file=/page.html"),
+    ("https://example.org/reports/annual.pdf", "https://example.org/reports/annual.pdf"),
+])
+def test_pdf_viewer_links_point_at_the_pdf(url, expected):
+    from rozvedka.crawler import unwrap_viewer
+    assert unwrap_viewer(url) == expected
+
+
+def test_extract_reads_the_pdf_behind_a_viewer_link():
+    html = '<a href="/pdfjs/?file=/publications/download/R.pdf?zoom=page-fit">Read online</a>'
+    docs, _ = extract(html, "https://stratcomcoe.org/publications")
+    assert [d["url"] for d in docs] == ["https://stratcomcoe.org/publications/download/R.pdf"]
