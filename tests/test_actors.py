@@ -185,3 +185,32 @@ def test_suggest_forgives_spelling_and_fills_with_neighbours(library, monkeypatc
     assert actors.suggest("x") == [] and actors.suggest("zzzzqqq") == []
     api = TestClient(app_module.app).get("/api/actors/suggest?q=federal").json()
     assert api["actors"][0]["key"] == "Q3" and api["actors"][0]["picture"] is None
+
+
+def _matcher(names):
+    """Match texts against hand-made names: [(id, name, person, ctx)]."""
+    rows = []
+    for i, (name, person, ctx) in enumerate(names, 1):
+        rows.append({"id": i, "name": name, "tokens": list(actors.name_tokens(name)), "status": "used", "cjk": False,
+                     "manual": True, "person": person, "ctx": ctx})
+    actors._init_matcher(rows)
+    return lambda text: {rows[k - 1]["name"]: len(v) for k, v in actors.match_text(text)[0].items()}
+
+
+def test_a_name_followed_by_jr_is_someone_else():
+    match = _matcher([("Donald Trump", True, [])])
+    assert match("President Donald Trump signed it.") == {"Donald Trump": 1}
+    assert match("Donald Trump Jr. said so.") == {}
+
+
+def test_a_word_broken_at_the_line_end_is_not_a_name():
+    match = _matcher([("Conti", False, [])])
+    assert match("the ransomware Conti attacked") == {"Conti": 1}
+    assert match("Consorcio Español de Conti­ nuidad de Negocio") == {}
+
+
+def test_context_aliases_need_a_word_of_their_field():
+    match = _matcher([("Wagner", False, ["milit", "group", "mercen"])])
+    assert match("the private military company Wagner in Libya") == {"Wagner": 1}
+    assert match("Wagner-Gruppe operated in Mali, a group of mercenaries") == {"Wagner": 1}
+    assert match("1. Eric Wagner, Submarine Cables and Protections Provided by the Law of the Sea") == {}

@@ -70,8 +70,8 @@ Each item: why · what · done when · version step.
 
 ### B. Quality you can measure
 
-1. **Measure matching precision** – review the top names on *Actors → Review* (5 passages × the 40 most frequent names);
-   publish the measured precision on the Actors page; turn names that are mostly wrong into exclusions. · owner + patch
+1. ◐ (0.42.7: top 40 names, 199 passages, 95.5 %) **Measure matching precision** – review the top names on *Actors → Review* (5 passages × the 40 most frequent names);
+   publish the measured precision on the Actors page; turn names that are mostly wrong into exclusions. Next: names 41–200 (the owner's hour), and show the measured precision on the Actors page. · owner + patch
 2. ✅ (0.33.0) **Editions and translations** (old B7) – group the same report across languages and file variants, so counts and
    trends are per report, not per file; passages can switch language. · minor
 3. ✅ (0.32.0) **Document types** (old B8) – annual report, threat assessment, risk assessment, strategy, guide/leaflet, form,

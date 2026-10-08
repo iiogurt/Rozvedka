@@ -43,7 +43,7 @@ from . import db, paging, topics, trends
 from .actor_sources import CONFIG, GAZETTEER
 
 log = logging.getLogger("rozvedka.actors")
-MATCHER_VERSION = "12"
+MATCHER_VERSION = "13"
 MAX_OFFSETS = 300        # positions kept per name and document
 WINDOW = 600             # characters: two actors this close count as mentioned together (one passage)
 SNIPPET = 260            # characters of context on each side of a match
@@ -168,6 +168,8 @@ def prepare_names(gaz: dict, cfg: dict) -> list[dict]:
     ignore = {name_tokens(n) for n in cfg.get("ignore_aliases", [])}
     weak_cfg = {k: {name_tokens(n) for n in v} for k, v in (cfg.get("weak_aliases") or {}).items()}
     excluded = {k: {name_tokens(n) for n in v} for k, v in (cfg.get("exclude_aliases") or {}).items()}
+    context = {k: {name_tokens(n): [s.casefold() for s in stems] for n, stems in v.items()}
+               for k, v in (cfg.get("context_aliases") or {}).items()}
     rows: dict[tuple, dict] = {}
     for a in gaz["actors"]:
         for n in a["names"]:
@@ -228,6 +230,7 @@ def prepare_names(gaz: dict, cfg: dict) -> list[dict]:
         out.append({"actor_key": actor, "name": r["name"], "tokens": r["tokens"], "cjk": r["cjk"], "person": r["person"],
                     "langs": sorted(r["langs"]), "origins": sorted(r["origins"]), "manual": r["manual"],
                     "status": "used" if reason is None else "ignored", "reason": reason,
+                    "ctx": context.get(actor, {}).get(toks, []),
                     "weak": toks in weak_cfg.get(actor, set()) or (r["country"] and len(toks) == 1 and len(toks[0]) == 2)})
     for i, r in enumerate(out, 1):
         r["id"] = i
@@ -254,12 +257,15 @@ medal lecture lectures street strasse avenue boulevard square platz plaza bridge
 museum memorial hall park trust fund society gesellschaft doctrine programme program plan act line stadium arena
 bay island port ring cup trophy scholarship fellowship room barracks kaserne base camp dam canal tunnel highway
 expressway""".split())
+GENERATION = {"jr", "sr", "junior"}
+CONTEXT = 6                # tokens either side of a name that must hold one of its context words
 SHIP_PREFIX = {"uss", "hms", "hmcs", "hmas", "hmnzs", "ss", "mv", "rv", "ins", "usns", "frs", "fgs"}
 
 
 def _init_matcher(names: list[dict]) -> None:
     first, single_long, upper, lower, cjk = {}, {}, {}, {}, []
     _M["people"] = {n["id"] for n in names if n.get("person")}
+    _M["ctx"] = {n["id"]: tuple(fold(s) for s in n["ctx"]) for n in names if n.get("ctx")}
     for n in names:
         if n["status"] != "used":
             continue
@@ -283,6 +289,12 @@ def _inflected(t: str, base: str) -> bool:
     return t.startswith(base) and 0 < len(tail) <= 3 and tail.islower()
 
 
+def _near(folded: list[str], i: int, j: int, stems: tuple[str, ...]) -> bool:
+    """Does a word within CONTEXT tokens of the match (tokens i..j) contain one of the stems?"""
+    around = folded[max(0, i - CONTEXT):i] + folded[j + 1:j + 1 + CONTEXT]
+    return any(s in w.casefold() for w in around for s in stems)
+
+
 def match_text(text: str) -> tuple[dict[int, list], dict[int, int]]:
     """{name_id: [[start, end], …]} for every candidate name, and {name_id: n} of its lowercase uses."""
     hits: dict[int, list] = {}
@@ -293,11 +305,18 @@ def match_text(text: str) -> tuple[dict[int, list], dict[int, int]]:
     n = len(folded)
 
     people = _M.get("people", set())
+    ctx_of = _M.get("ctx", {})
 
     def add(name_id, i, j):
         if name_id in people and ((j + 1 < n and folded[j + 1].casefold() in NAMED_AFTER)
-                                  or (i > 0 and folded[i - 1].casefold() in SHIP_PREFIX)):
-            return        # a building, prize, ship … named after the person
+                                  or (i > 0 and folded[i - 1].casefold() in SHIP_PREFIX)
+                                  or (j + 1 < n and folded[j + 1].casefold() in GENERATION)):
+            return        # a building, prize, ship … named after the person; "Donald Trump Jr." is someone else
+        if spans[j][1] < len(text) and text[spans[j][1]] == "\xad":
+            return        # a soft hyphen: the word goes on in the next line ("Conti-nuidad" is not "Conti")
+        ctx = ctx_of.get(name_id)
+        if ctx and not _near(folded, i, j, ctx):
+            return        # a surname-like name counts only next to words of its field (sources/actors.yaml context_aliases)
         lst = hits.setdefault(name_id, [])
         if len(lst) < MAX_OFFSETS:
             lst.append([spans[i][0], spans[j][1]])
