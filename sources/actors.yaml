@@ -146,6 +146,18 @@ weak_aliases: {}                    # e.g.  Q123: [Name]
 # Per actor: sources (registry key country/agency) whose reports use the actor's name for something else.
 exclude_sources:
   Q36597284: [OTHER/IPCC]                     # Wagner Group: "Wagner" in IPCC reports are authors' surnames
+  Q7747: [PE/INDECI]                          # Vladimir Putin: "Putina" is a district of Puno (Peru) in INDECI reports
+
+# Per actor and name: a name that is also a common surname counts only when a word of its field stands within 6 words
+# of it (stems, case and accents ignored, any language). Author names in reference lists ("Eric Wagner, Submarine
+# Cables …") have none. Added after the precision review of 2026-10-08 (40 most frequent names, 199 passages; a
+# further 20 "Wagner" passages: 8 were authors).
+context_aliases:
+  Q36597284:                                  # Wagner Group
+    Wagner: [milit, mercen, soldner, pmc, smp, chvk, grup, group, gruppe, prigo, forces, force, russ, rusi, ruso,
+             rusa, ukrain, libya, libia, libye, mali, africa, afrika, afriq, syri, sudan, kremlin, contractor]
+  Q19284445:                                  # Lazarus Group
+    Lazarus: [apt, group, grup, hack, cyber, korea, coree, spion, espion, ransom, malware, crypto, krypto, bank]
 
 # Review of the most frequent matches, 2026-10-01: each entry was checked against sample passages.
 exclude_aliases:

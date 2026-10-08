@@ -20,7 +20,8 @@ REVIEWS = ROOT / "sources" / "actor_reviews.yaml"
 HEADER = """# Actor match reviews – passages checked in the portal (Actors → Review). Each entry: the actor (Wikidata item or
 # MITRE ATT&CK id), the name that matched, the report (official URL), the passage as evidence and the verdict.
 # "wrong" removes that report from the actor (applied by the index on every rebuild); "right" only counts towards the
-# name's measured precision. Written by the portal; editable by hand.
+# name's measured precision. "reviewer" is set when someone other than the owner read the passage (e.g. an assistant);
+# the owner can overrule any verdict on the review page. Written by the portal; editable by hand.
 """
 SAMPLE = 3          # passages per name in the queue
 ENOUGH = 5          # a name with this many verdicts has left the queue
@@ -43,7 +44,8 @@ def wrong_pairs(path: Path | None = None) -> set[tuple[str, str]]:
     return {(r["actor"], r["url"]) for r in load(path) if r.get("verdict") == "wrong"}
 
 
-def record(actor: str, doc_id: int, verdict: str, name: str = "", says: str = "", path: Path | None = None) -> dict:
+def record(actor: str, doc_id: int, verdict: str, name: str = "", says: str = "", path: Path | None = None,
+           reviewer: str = "") -> dict:
     """Store a verdict (replacing an earlier one for the same actor and report); "wrong" takes effect at once."""
     if verdict not in ("right", "wrong"):
         return {"error": "verdict must be right or wrong"}
@@ -54,7 +56,7 @@ def record(actor: str, doc_id: int, verdict: str, name: str = "", says: str = ""
             return {"error": "unknown report or actor"}
         rows = [r for r in load(path) if not (r.get("actor") == actor and r.get("url") == row["url"])]
         rows.append({"actor": actor, "name": name, "url": row["url"], "says": " ".join(says.split())[:300],
-                     "verdict": verdict, "checked": dt.date.today().isoformat()})
+                     "verdict": verdict, "checked": dt.date.today().isoformat(), **({"reviewer": reviewer} if reviewer else {})})
         save(rows, path)
         if verdict == "wrong":         # the next rebuild (derive) does the same; do it now for this report
             con.execute("DELETE FROM doc_actors WHERE doc_id=? AND actor_key=?", (doc_id, actor))

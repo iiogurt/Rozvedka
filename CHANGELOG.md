@@ -27,6 +27,27 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.42.7] – 2026-10-08
+
+### Added
+
+- **First measured precision of the actor matching.** 199 passages for the 40 names that put the most reports on actors
+  were read and judged (*Actors → Review*): 190 right, 9 wrong – **95.5 %**. The verdicts are in
+  `sources/actor_reviews.yaml` with the passage as evidence and `reviewer: Claude`; the owner can overrule any of them on
+  the review page. (Names not in the top 40 are not measured yet.)
+- `context_aliases` in `sources/actors.yaml`: a name that is also a common surname counts only when a word of its field
+  stands within six words of it.
+
+### Fixed
+
+- Errors found by the review, fixed by general rules where there was one:
+  - "Wagner" matched authors in reference lists (8 of 20 further passages): it now needs a word like *military*, *group*,
+    *mercenaries* nearby – Wagner Group 110 → 73 reports, all 14 passages checked afterwards are the group. The same for
+    "Lazarus" (87 → 79 reports).
+  - "Donald Trump Jr." (and any person's name followed by Jr., Sr., Junior) is no longer the father.
+  - A name at the end of a line before a soft hyphen is a word's beginning ("Conti-nuidad" is not the Conti group).
+  - "Putina", the district in Peru, no longer counts as Vladimir Putin in the civil-defence reports of INDECI (52 reports).
+
 ## [0.42.6] – 2026-10-08
 
 ### Added
@@ -870,7 +891,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.6...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.7...HEAD
+[0.42.7]: https://github.com/iiogurt/Rozvedka/compare/v0.42.6...v0.42.7
 [0.42.6]: https://github.com/iiogurt/Rozvedka/compare/v0.42.5...v0.42.6
 [0.42.5]: https://github.com/iiogurt/Rozvedka/compare/v0.42.4...v0.42.5
 [0.42.4]: https://github.com/iiogurt/Rozvedka/compare/v0.42.3...v0.42.4
