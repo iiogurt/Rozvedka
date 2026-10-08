@@ -2365,3 +2365,61 @@
   report_types: [Global Terrorism Index, Global Peace Index, Ecological Threat Report]
   pages:
     - {lang: en, kind: archive, url: "https://www.economicsandpeace.org/reports/"}
+
+- country: EE
+  agency: Päästeamet
+  name_local: "Päästeamet"
+  name_en: "Estonian Rescue Board"
+  homepage: "https://www.rescue.ee/"
+  description: "Estonian rescue and civil-protection authority (fire safety, rescue, crisis management, explosive ordnance disposal). The yearbook reports on incidents, prevention, supervision and preparedness."
+  hq: {address: "Raua 2, 10124 Tallinn, Estonia", lat: 59.43513, lon: 24.76382, precision: address}
+  type: civil-protection
+  access: auto
+  frequency: yearly
+  report_types: [yearbook]
+  pages:
+    - {lang: et, kind: archive, url: "https://www.rescue.ee/et/juhend/vaeljaanded/aastaraamatud"}
+
+- country: LV
+  agency: VUGD
+  name_local: "Valsts ugunsdzēsības un glābšanas dienests"
+  name_en: "State Fire and Rescue Service"
+  homepage: "https://www.vugd.gov.lv/"
+  description: "Latvian fire-safety, rescue and civil-protection service under the Ministry of the Interior. Annual public reports on fires, rescues, civil protection, prevention and supervision, 2002 onwards."
+  hq: {address: "Ģenerāļa Radziņa krastmala 5, Rīga, Latvia", lat: 56.94204, lon: 24.11505, precision: address}
+  type: civil-protection
+  access: auto
+  frequency: yearly
+  report_types: [public report]
+  pages:
+    - {lang: lv, kind: archive, url: "https://www.vugd.gov.lv/lv/gada-publiskie-parskati"}
+
+- country: LT
+  agency: PAGD
+  name_local: "Priešgaisrinės apsaugos ir gelbėjimo departamentas"
+  name_en: "Fire and Rescue Department"
+  homepage: "https://pagd.lrv.lt/"
+  description: "Lithuanian fire, rescue and civil-protection authority under the Ministry of the Interior. Annual activity reports on fires, rescues, prevention and the civil-protection system."
+  hq: {address: "Vilniaus g. 33, Vilnius, Lithuania", lat: 54.68351, lon: 25.27882, precision: address}
+  type: civil-protection
+  access: manual
+  frequency: yearly
+  report_types: [activity report]
+  notes: "pagd.lrv.lt answers automatic requests with 403 – open the site in a browser and add the activity reports (veiklos ataskaita) manually."
+  pages:
+    - {lang: lt, kind: archive, url: "https://pagd.lrv.lt/", verified: false}
+
+- country: JP
+  agency: JPCERT/CC
+  name_local: "JPCERT コーディネーションセンター"
+  name_en: "Japan Computer Emergency Response Team Coordination Center"
+  homepage: "https://www.jpcert.or.jp/english/"
+  description: "Japan's national CSIRT (a non-profit body working with the government). Quarterly incident-handling reports on incident counts, phishing, scanning and malware, plus vulnerability coordination reports."
+  hq: {address: "Chuo-ku Nihonbashi-Muromachi, Tokyo, Japan", lat: 35.68447, lon: 139.77442, precision: city}
+  type: cyber
+  access: auto
+  frequency: quarterly
+  report_types: [incident handling report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.jpcert.or.jp/english/ir/report.html"}
+    - {lang: ja, kind: archive, url: "https://www.jpcert.or.jp/ir/report.html"}
