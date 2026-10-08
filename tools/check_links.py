@@ -5,10 +5,12 @@
 For every number on the home page and the latest update on What's new, opens its Documents link and compares the list's total with the number.
 Then follows every internal link on the main pages once and reports any that fail.
 """
+import os
 import re
 import sys
 from pathlib import Path
 
+os.environ.setdefault("ROZVEDKA_ALLOWED_HOSTS", "testserver")   # the host name of FastAPI's test client
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fastapi.testclient import TestClient  # noqa: E402
 

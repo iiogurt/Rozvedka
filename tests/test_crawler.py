@@ -212,3 +212,9 @@ def test_site_name_is_dropped_from_titles():
     assert strip_site_name("Connecting the Ends - International Centre for Defence and Sec", src) == "Connecting the Ends"
     assert strip_site_name("A European Theory of Victory - ICDS", src) == "A European Theory of Victory"
     assert strip_site_name("Russia - the long war", src) == "Russia - the long war"
+
+
+def test_pgp_signature_files_are_not_documents():
+    from rozvedka.crawler import DOC_RE
+    assert DOC_RE.search("https://www.jpcert.or.jp/english/doc/IR_Report2024Q4_en.pdf")
+    assert not DOC_RE.search("https://www.jpcert.or.jp/english/doc/IR_Report2017Q2_en.pdf.asc")

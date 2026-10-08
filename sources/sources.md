@@ -1,6 +1,6 @@
 # Rozvedka – report sources: official agencies and ◆ independent think tanks
 
-Generated from `sources/registry.yaml` — 151 sources, 245 pages.
+Generated from `sources/registry.yaml` — 155 sources, 250 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
@@ -466,6 +466,38 @@ _NATO IP4 (2022)_
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **Ministerio de Seguridad** – Ministry of National Security – National Criminal Information System<br>_Ministerio de Seguridad Nacional – Sistema Nacional de Información Criminal_<br>[www.argentina.gob.ar/seguridad](https://www.argentina.gob.ar/seguridad) | Argentina's security ministry. Annual national and provincial crime reports (SNIC, since 2000): homicides, robbery, drug offences and violence against women. | Informe SNIC / criminal statistics | [es archive](https://www.argentina.gob.ar/seguridad/estadisticascriminales/informes) |
+
+## Estonia
+
+_EU (2004) · NATO (2004) · Schengen (2007) · JEF (2014)_
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **Päästeamet** – Estonian Rescue Board<br>_Päästeamet_<br>[www.rescue.ee](https://www.rescue.ee/) | Estonian rescue and civil-protection authority (fire safety, rescue, crisis management, explosive ordnance disposal). The yearbook reports on incidents, prevention, supervision and preparedness. | yearbook | [et archive](https://www.rescue.ee/et/juhend/vaeljaanded/aastaraamatud) |
+
+## Latvia
+
+_EU (2004) · NATO (2004) · Schengen (2007) · JEF (2014)_
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **VUGD** – State Fire and Rescue Service<br>_Valsts ugunsdzēsības un glābšanas dienests_<br>[www.vugd.gov.lv](https://www.vugd.gov.lv/) | Latvian fire-safety, rescue and civil-protection service under the Ministry of the Interior. Annual public reports on fires, rescues, civil protection, prevention and supervision, 2002 onwards. | public report | [lv archive](https://www.vugd.gov.lv/lv/gada-publiskie-parskati) |
+
+## Lithuania
+
+_EU (2004) · NATO (2004) · Schengen (2007) · JEF (2014)_
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **PAGD** – Fire and Rescue Department<br>_Priešgaisrinės apsaugos ir gelbėjimo departamentas_<br>[pagd.lrv.lt](https://pagd.lrv.lt/) | Lithuanian fire, rescue and civil-protection authority under the Ministry of the Interior. Annual activity reports on fires, rescues, prevention and the civil-protection system. | activity report<br>_pagd.lrv.lt answers automatic requests with 403 – open the site in a browser and add the activity reports (veiklos ataskaita) manually._ | [lt archive ⚠](https://pagd.lrv.lt/) |
+
+## Japan
+
+_G7 (1975) · NATO IP4 (2022)_
+
+| Agency | What they publish | Reports | Links |
+|---|---|---|---|
+| **JPCERT/CC** – Japan Computer Emergency Response Team Coordination Center<br>_JPCERT コーディネーションセンター_<br>[www.jpcert.or.jp/english](https://www.jpcert.or.jp/english/) | Japan's national CSIRT (a non-profit body working with the government). Quarterly incident-handling reports on incident counts, phishing, scanning and malware, plus vulnerability coordination reports. | incident handling report | [en archive](https://www.jpcert.or.jp/english/ir/report.html) · [ja archive](https://www.jpcert.or.jp/ir/report.html) |
 
 ## ◆ Independent publishers – think tanks
 
