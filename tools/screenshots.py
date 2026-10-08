@@ -61,6 +61,7 @@ SHOTS = {
     "matrix": ("/trends/matrix", 1000, [("sleep", 5)], None),
     "actor-search": ("/actors", 760, [("eval", "document.getElementById('ac-q').focus(); 1"), ("type", "prigozin"),
                                       ("sleep", 2)], None),
+    "actor-precision": ("/actors", 470, [], None),                 # the measured precision above the list
     "actor": ("/actors/Q7747", 1200, [("sleep", 3)], None),        # a profile with a photo and facts
     "connections": (f"/actors/{WAGNER}", 900, [("sleep", 3)], "#connections"),
     "review": ("/actors/review", 1100, [], None),

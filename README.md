@@ -308,6 +308,11 @@ no periodic job.
   removes that report from the actor at once and on every rebuild; every verdict is kept with its passage as
   evidence in [`sources/actor_reviews.yaml`](sources/actor_reviews.yaml), gives each name a measured precision, and
   the actor page lists the reports left out this way.
+- **Measured precision on the Actors page**: how many passages were read, how many were right and wrong, and how
+  much of the index the reviewed names cover (as of 0.43.0: 92.7 % on 912 passages of the 197 most frequent names,
+  about 55 % of the actor–report links; the other names are not measured).
+
+<img src="docs/images/actor-precision.png" alt="Actors page: measured precision of the name matching above the list of actors" width="900">
 
 <img src="docs/images/review.png" alt="Review actor matches: names by impact with sample passages to mark right or wrong" width="900">
 

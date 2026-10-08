@@ -75,3 +75,24 @@ def test_pages(library):
     assert r.status_code == 303 and r.headers["location"] == "/actors/review"        # no redirect off the portal
     out = review.of_actor("Q36597284")                                   # what the actor page lists as not counted
     assert [(r["url"], r["says"]) for r in out] == [("https://abin/2.pdf", "Wagner Silva")]
+
+
+def test_measured_precision_on_the_actors_page(library):
+    from rozvedka.app import app
+    assert review.summary()["passages"] == 0
+    assert "Measured precision" not in TestClient(app).get("/actors?min_docs=1").text     # nothing reviewed: no figure
+    review.record("Q36597284", 1, "right", "Wagner", "Wagner fighters in Mali.")
+    review.record("Q36597284", 3, "right", "Wagner", "Wagner again in Libya.")
+    review.record("Q36597284", 2, "wrong", "Wagner", "Diretor Wagner Silva")
+    s = review.summary()
+    assert (s["passages"], s["right"], s["wrong"], s["precision"]) == (3, 2, 1, 66.7)
+    assert (s["names_reviewed"], s["names_covered"], s["names_in_use"], s["links"], s["share"]) == (1, 1, 1, 2, 100.0)
+    html = TestClient(app).get("/actors?min_docs=1").text
+    assert "Measured precision" in html and "<b>66.7 %</b>" in html and 'href="/actors/review#reviewed"' in html
+    assert "Only reviewed names are measured" in html
+    # the reviewed list keeps a name that no longer counts, so its verdicts still add up to the totals
+    review.record("Q36597284", 1, "wrong", "Wagner", "x")
+    review.record("Q36597284", 3, "wrong", "Wagner", "x")
+    done = review.queue()["done"]
+    assert [(n["name"], n["right"], n["wrong"], n["docs"]) for n in done] == [("Wagner", 0, 3, 0)] and done[0]["gone"]
+    assert 'id="reviewed"' in TestClient(app).get("/actors/review").text

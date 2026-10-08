@@ -10,8 +10,11 @@ comes from, and names are dropped – visibly, with the reason – when they are
   - names on the ignore list or excluded for the actor in sources/actors.yaml
   - one-word names that are lowercase, shorter than 3 characters, or 3 characters without being an abbreviation
   - one-word names whose symbol is part of the name ("III %", "Heimat!"): without it the word means something else
-  - names shared by several actors (unless one of them was added by hand)
-  - one-word names that the reports use more often in lowercase than capitalised (ordinary words: "base")
+  - names shared by several actors – unless a name of several words, not only generic ones, is one group's own label
+    ("Feuerkrieg Division" is that group, not the alias of Atomwaffen Division it also is), or only one of them is a
+    key actor of sources/actors.yaml
+  - one-word names that the reports use more often in lowercase than capitalised (ordinary words: "base"); the same
+    for an article and one word ("The Home" – "home", "la Fédération" – "fédération")
   - one-word names that are generic words ("Centro", "Intelligence"), and one-word names of people other than
     the surname ("Donald")
   - weak names – letters-only abbreviations up to 5 characters ("FSB") and names made only of generic words
@@ -43,7 +46,7 @@ from . import db, paging, topics, trends
 from .actor_sources import CONFIG, GAZETTEER
 
 log = logging.getLogger("rozvedka.actors")
-MATCHER_VERSION = "13"
+MATCHER_VERSION = "14"
 MAX_OFFSETS = 300        # positions kept per name and document
 WINDOW = 600             # characters: two actors this close count as mentioned together (one passage)
 SNIPPET = 260            # characters of context on each side of a match
@@ -137,8 +140,11 @@ liberation people peoples popular revolutionary front frente organization organi
 gruppe party partido partei movement movimiento bewegung crime crimen organized organised organizado branch special
 secret unit command staff operations forces force guard republic government gobierno institute executive board
 committee comite commission brigade battalion corps network action company compania empresa firma unternehmen societe
-sociedad enterprise
+sociedad enterprise administration administracion administracao amministrazione verwaltung federation federacion
+federacao federazione foderation
 """.split())
+# articles: "The Home", "la Fédération" are an ordinary word with an article when the word is mostly written lowercase
+ARTICLES = {"the", "der", "die", "das", "la", "le", "les", "el", "los", "las", "il", "lo", "gli", "o", "a", "het", "de"}
 
 
 _NUMBER = re.compile(r"\d+(st|nd|rd|th|e|er|eme|o|a)?", re.I)     # 12, 12th, 2e, 1er, 3o
@@ -180,8 +186,9 @@ def prepare_names(gaz: dict, cfg: dict) -> list[dict]:
             r = rows.setdefault(key, {"actor_key": a["key"], "name": name, "tokens": list(toks), "cjk": cjk,
                                       "langs": set(), "origins": set(), "manual": False, "seed": False,
                                       "person": a["kind"] == "person", "country": a["kind"] == "country",
-                                      "connected": bool(a.get("connected")),
+                                      "connected": bool(a.get("connected")), "label": False,
                                       "surname": (name_tokens(a["label"]) or ("",))[-1]})
+            r["label"] |= (name if cjk else toks) == (a["label"] if cjk else name_tokens(a["label"]))
             if n["lang"]:
                 r["langs"].add(n["lang"])
             r["origins"].add(n["origin"])
@@ -199,6 +206,8 @@ def prepare_names(gaz: dict, cfg: dict) -> list[dict]:
         if r["cjk"]:
             if len(r["name"]) < 2:
                 reason = "too short"
+            elif toks in excluded.get(actor, set()) or toks in ignore:
+                reason = "excluded for this actor (sources/actors.yaml)"
         elif not toks:
             reason = "no letters (or only a qualifier in brackets)"
         elif len(toks) == 1 and _SYMBOL.search(r["name"]):
@@ -224,13 +233,17 @@ def prepare_names(gaz: dict, cfg: dict) -> list[dict]:
             reason = "3 letters without being an abbreviation"
         elif len(owners.get(k, ())) > 1:
             others = owners[k] - {actor}
+            labelled = [o for o in owners[k] if rows[(o, k)]["label"] and not rows[(o, k)]["person"]]   # people share names
             seeded = [o for o in owners[k] if rows[(o, k)]["seed"]]
-            if not (r["seed"] and len(seeded) == 1):
+            if len(labelled) == 1 and len(toks) > 1 and not is_generic(toks):   # one's own name, the others' alias
+                if labelled[0] != actor:
+                    reason = f"the name of another actor ({labelled[0]}), only an alias here"
+            elif not (r["seed"] and len(seeded) == 1):
                 reason = "shared with " + ", ".join(sorted(others)[:5])
         out.append({"actor_key": actor, "name": r["name"], "tokens": r["tokens"], "cjk": r["cjk"], "person": r["person"],
                     "langs": sorted(r["langs"]), "origins": sorted(r["origins"]), "manual": r["manual"],
                     "status": "used" if reason is None else "ignored", "reason": reason,
-                    "ctx": context.get(actor, {}).get(toks, []),
+                    "ctx": context.get(actor, {}).get(toks, []), "country": r["country"],
                     "weak": toks in weak_cfg.get(actor, set()) or (r["country"] and len(toks) == 1 and len(toks[0]) == 2)})
     for i, r in enumerate(out, 1):
         r["id"] = i
@@ -281,6 +294,8 @@ def _init_matcher(names: list[dict]) -> None:
             upper.setdefault(up[0], []).append((up, n["id"]))
         if len(toks) == 1 and not is_abbreviation(toks):
             lower.setdefault(toks[0].lower(), []).append(n["id"])
+        elif len(toks) == 2 and toks[0].casefold() in ARTICLES and not n.get("country") and not is_abbreviation(toks[1:]):
+            lower.setdefault(toks[1].lower(), []).append(n["id"])     # "The Home": how often is "home" lowercase?
     _M.update(first=first, single_long=single_long, upper=upper, lower=lower, cjk=cjk)
 
 
@@ -459,10 +474,12 @@ def derive(con, cfg: dict | None = None) -> dict:
         d, n = totals.get(nid, (0, 0))
         low = lowers.get(nid, 0)
         status, reason = r["status"], r["reason"]
-        if status == "used" or (reason or "").startswith("written in lowercase"):
+        if status == "used" or "written in lowercase more often" in (reason or ""):
             manual = "added by hand" in (r["origins"] or "")
             if low > n and not manual:
-                status, reason = "ignored", f"written in lowercase more often than capitalised ({low} vs {n}) – an ordinary word"
+                toks = json.loads(r["tokens"] or "[]")
+                word = f"“{toks[-1].lower()}” " if len(toks) == 2 else ""
+                status, reason = "ignored", f"{word}written in lowercase more often than capitalised ({low} vs {n}) – an ordinary word"
             else:
                 status, reason = "used", None
         if status != "used":
@@ -506,7 +523,7 @@ def derive(con, cfg: dict | None = None) -> dict:
     if current is not None:
         flush(current, by_actor)
     return {"mentions": written, "names_dropped_as_words": sum(
-        1 for nid in dropped if (name_rows[nid]["reason"] or "").startswith("written in lowercase"))}
+        1 for nid in dropped if "written in lowercase more often" in (name_rows[nid]["reason"] or ""))}
 
 
 def _year(date: str | None) -> int | None:

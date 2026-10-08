@@ -27,6 +27,35 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.43.0] – 2026-10-08
+
+### Added
+
+- **The Actors page shows the measured precision of the name matching**: 92.7 % – 912 passages of 197 names read,
+  845 right and 67 wrong – with what it covers (the reviewed names give about 55 % of the actor–report links; the
+  other names are not measured) and a link to the reviewed names. The review page lists every reviewed name, also those
+  that no longer count, so its rows add up to the totals.
+
+### Changed
+
+- **Names 41–200 reviewed**: 853 more passages were read (787 right, 66 wrong; `reviewer: Claude` in
+  `sources/actor_reviews.yaml`). Names that were mostly wrong now have rules; the index has 267 fewer actor–report links
+  (63,862 → 63,595), after the shared names that now count added about 40 correct ones:
+  - an article and an ordinary word counts like the word: "The Home" (Home Office → Die Heimat), "la Fédération"
+    (de Russie → Sinaloa Cartel), "The Foundation" (→ al-Qaeda), "La Empresa" are dropped because the word is mostly
+    written in lowercase;
+  - "administration" and "federation" are generic words, so "Security Administration" (US agencies → a Yugoslav
+    service) needs another name of its actor in the same report;
+  - a shared name of several words belongs to the group it is the label of: "Feuerkrieg Division" and "Sonnenkrieg
+    Division" are now those groups rather than Atomwaffen Division, and the Romanian "Serviciul de Informații
+    Externe" is Romania's foreign intelligence service, not Russia's SVR;
+  - words of their field are needed next to "Snake" (Turla, not Snake Island or the Snake keylogger), "Antifa" (the
+    German movement), "Potok" (the PMC, not Slovenian place names) and "National Security Council"/"NSC" (India's,
+    not other countries' councils);
+  - hand exclusions for ordinary words: "Ansar" (Ansar al-Sharia, Ansar Allah …), "Renaissance", 復興, 再生 and 复兴
+    (Revival), "Patria" and other translations of "homeland" (Die Heimat); NATO's own reports no longer count for EU
+    INTCEN through NATO HQ's "SITCEN". Exclusions now also apply to names in Chinese or Japanese script.
+
 ## [0.42.7] – 2026-10-08
 
 ### Added
@@ -891,7 +920,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.42.7...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.43.0...HEAD
+[0.43.0]: https://github.com/iiogurt/Rozvedka/compare/v0.42.7...v0.43.0
 [0.42.7]: https://github.com/iiogurt/Rozvedka/compare/v0.42.6...v0.42.7
 [0.42.6]: https://github.com/iiogurt/Rozvedka/compare/v0.42.5...v0.42.6
 [0.42.5]: https://github.com/iiogurt/Rozvedka/compare/v0.42.4...v0.42.5
