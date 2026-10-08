@@ -39,6 +39,7 @@
 
 <section class="viz-card">
   <h2 class="viz-title">Edition by edition</h2>
+  {% if editions|length > 1 %}<p class="small"><a href="/series/{{ id }}/changes?lang={{ lang }}">Compare two editions →</a> <span class="muted">what a newer one names or stresses that an older one did not</span></p>{% endif %}
   <ol class="editions">
   {% for e in editions %}
     <li>

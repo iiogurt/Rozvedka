@@ -16,7 +16,7 @@ from fastapi.templating import Jinja2Templates
 
 from markupsafe import Markup, escape
 
-from . import (__version__, actor_profiles, actors, build_version, collect, countries, crawler, db, downloader, graphs, home, logos,
+from . import (__version__, actor_profiles, actors, build_version, changes, collect, countries, crawler, db, downloader, graphs, home, logos,
                paging, registry, series, topics, trends, updates)
 from . import compare as compare_mod
 from . import dating
@@ -753,6 +753,19 @@ def series_page(request: Request, series_id: str, lang: str = ""):
         raise HTTPException(404, "unknown series")
     return tpl.TemplateResponse(request, "series_detail.html", {**d, "TOPICS": topics.taxonomy()["topics"],
                                                                "kinds": actors.KINDS})
+
+
+@app.get("/series/{series_id}/changes")
+def series_changes(request: Request, series_id: str, old: int = 0, new: int = 0, lang: str = ""):
+    """What one edition of a series says that another did not (default: the two newest with text)."""
+    d = series.detail(series_id, lang)
+    if d is None:
+        raise HTTPException(404, "unknown series")
+    withtext = sorted(e["year"] for e in d["editions"] if e["profile_doc"])
+    if not (old and new) and len(withtext) >= 2:
+        old, new = old or withtext[-2], new or withtext[-1]
+    c = changes.diff(series_id, old, new, lang)
+    return tpl.TemplateResponse(request, "series_changes.html", {**c, "TOPICS": topics.taxonomy()["topics"]})
 
 
 @app.get("/sources/coverage")

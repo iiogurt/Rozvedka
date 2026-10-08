@@ -67,6 +67,7 @@
     {% if this.topics_out %}<li><span class="ed-delta">no longer main: {{ this.topics_out|map(attribute=1)|join(', ') }}</span></li>{% endif %}
     <li>{% if this.new_actors %}<span class="muted">first time in this series:</span> {% for a in this.new_actors %}<a class="mchip linked" href="/actors/{{ a.actor_key }}">{{ a.label }}</a>{% endfor %}{% else %}<span class="muted">no actor named for the first time in the series</span>{% endif %}</li>
   </ul>
+  <p class="small"><a href="/series/{{ edition.id }}/changes?old={{ prev.year }}&new={{ edition.year }}&lang={{ edition.lang }}">All changes against {{ prev.year }}, with passages →</a></p>
   <p class="muted small">Compared edition by edition on the <a href="/series/{{ edition.id }}">series page</a>, using one file per year{% if this.profile_doc and this.profile_doc.id != d.id %} (for {{ edition.year }}: <a href="/report/{{ this.profile_doc.id }}">{{ this.profile_doc.lang }} file</a>){% endif %}.</p>
   {% endif %}
   {% else %}
