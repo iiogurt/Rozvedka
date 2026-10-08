@@ -147,6 +147,7 @@ weak_aliases: {}                    # e.g.  Q123: [Name]
 exclude_sources:
   Q36597284: [OTHER/IPCC]                     # Wagner Group: "Wagner" in IPCC reports are authors' surnames
   Q7747: [PE/INDECI]                          # Vladimir Putin: "Putina" is a district of Puno (Peru) in INDECI reports
+  Q1626724: [NATO/NATO, NATO/StratCom CoE]    # EU INTCEN ("SitCen"): NATO's reports mean NATO HQ's own SITCEN (review 2026-10-08)
 
 # Per actor and name: a name that is also a common surname counts only when a word of its field stands within 6 words
 # of it (stems, case and accents ignored, any language). Author names in reference lists ("Eric Wagner, Submarine
@@ -158,6 +159,17 @@ context_aliases:
              rusa, ukrain, libya, libia, libye, mali, africa, afrika, afriq, syri, sudan, kremlin, contractor]
   Q19284445:                                  # Lazarus Group
     Lazarus: [apt, group, grup, hack, cyber, korea, coree, spion, espion, ransom, malware, crypto, krypto, bank]
+  # Review of names 41–200, 2026-10-08 (860 passages): names that mostly meant something else in their passages.
+  Q106466338:                                 # Turla: "Snake" is also Snake Island, the Snake keylogger, Snake ransomware
+    Snake: [turla, urobur, venomous, fsb, russ, rosj, spion, espion, szpieg, apt, sofacy, dukes]
+  Q61081837:                                  # Antifa in Germany: "Antifa" in the USA, the Netherlands, Bulgaria …
+    Antifa: [deutsch, german, allema, alema, niemie, niemc, nemec, nemeck, bundes, linksextrem, rechtsextrem, autonom,
+             antifasch, verfassungsschutz, bfv]
+  Q118175370:                                 # PMC Potok: "Potok" (stream) in Slovenian and Kosovo place names
+    Potok: [pmc, chvk, gazprom, mercen, militar, private, ukrain, plamya, fakel, redut]
+  Q6978334:                                   # National Security Council of India: the reports mean other countries' councils
+    National Security Council: [india, indien, indisch, delhi, doval, modi]
+    NSC: [india, indien, indisch, delhi, doval, modi]
 
 # Review of the most frequent matches, 2026-10-01: each entry was checked against sample passages.
 exclude_aliases:
@@ -179,6 +191,10 @@ exclude_aliases:
   Q30: [America, América, Amérique, Amerika, Ameryka, États]   # United States: "Latin America", "América Latina"
   Q884: [Korea, Corea, Corée, Korea Południowa]                # South Korea: "Korea" alone may mean either
   Q2940548: [Valencia]                        # Milenio Cartel: a city and a family name
+  # Review of names 41–200, 2026-10-08: every sampled passage (15 or more each) meant something else
+  Q4855267: [Ansar]                           # Bangladesh Ansar: "Ansar" is the first word of Ansar al-Sharia, Ansar Allah …
+  Q28943121: [Renaissance, 復興, 再生, 复兴]    # Revival (Bulgaria): ordinary words (Grand Ethiopian Renaissance Dam; 復興 = reconstruction)
+  Q156019: [Patria, La Patria, La Patrie, A Pátria, Domovina, Het Thuisland]   # Die Heimat: translations of "homeland"
 
 # Countries are actors too (kind "country"), so the portal can show which countries' reports talk about which
 # countries. They come from Wikidata: sovereign states (Q3624078) with an ISO code, with their labels, aliases and
