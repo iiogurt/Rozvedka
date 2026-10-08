@@ -158,9 +158,17 @@ Every report title in the portal opens its own page (`/report/<id>`); the PDF st
   came from OCR; how its year was found;
 - **series and editions** – which edition of which series it is, the previous and next edition, the same edition in
   other languages, and what changed against the previous edition (topics new or no longer among the main ones,
-  actors named for the first time in the series);
+  actors named for the first time in the series), with a link to the full comparison;
 - **topics** with their score and **the terms that matched**, so every topic tag can be checked;
 - **actors named**, each with its first passage and page number, and the countries named.
+
+#### Edition changes
+
+Any two editions of a series can be compared (`/series/<id>/changes`, from the series page or a report's "Against the
+previous edition" box): actors named for the first time or no longer, each with its passage and page, actors named
+clearly more or less often, and topics that are new, gone or now (no longer) among the main ones, with their scores.
+
+<img src="docs/images/edition-changes.png" alt="Edition changes of an annual report series: actors named for the first time, each with the passage and page" width="900">
 
 ### 🏛️ Sources
 

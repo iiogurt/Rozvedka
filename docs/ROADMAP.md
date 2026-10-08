@@ -94,7 +94,7 @@ Each item: why · what · done when · version step.
    connected actors changed. · minor
 4. ✅ (0.35.0) **Cross-language search** – a word typed in one language also finds its translations where the topic taxonomy knows
    them (`Drohne` → `drone`, `dron`, …), shown as an explained expansion. · minor
-5. **Edition diff for a series** – what a new annual report says that the previous one did not (new actors, topics up
+5. ✅ (0.44.0) **Edition diff for a series** – what a new annual report says that the previous one did not (new actors, topics up
    or down, new passages naming watched actors). · minor
 
 ### D. Enrichment from other reliable, official information

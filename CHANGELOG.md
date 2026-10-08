@@ -27,6 +27,14 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.44.0] – 2026-10-08
+
+### Added
+- **What changed between two editions** of a report series (`/series/<id>/changes`, from the series page and from a
+  report's "Against the previous edition" box): topics that are new, gone, or now / no longer main, with scores; actors
+  named for the first time and no longer named, each with the passage and page; actors named clearly more or less often.
+  One file per year in the series language, nothing hidden: counts say how many more actors exist beyond those shown.
+
 ## [0.43.0] – 2026-10-08
 
 ### Added
@@ -920,7 +928,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.43.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.44.0...HEAD
+[0.44.0]: https://github.com/iiogurt/Rozvedka/compare/v0.43.0...v0.44.0
 [0.43.0]: https://github.com/iiogurt/Rozvedka/compare/v0.42.7...v0.43.0
 [0.42.7]: https://github.com/iiogurt/Rozvedka/compare/v0.42.6...v0.42.7
 [0.42.6]: https://github.com/iiogurt/Rozvedka/compare/v0.42.5...v0.42.6

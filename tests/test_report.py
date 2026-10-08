@@ -91,3 +91,22 @@ def test_page_and_links(library):
     assert 'href="/report/1"' in client.get("/documents").text
     sid = series.sid(series.load()["series"][0])
     assert 'href="/report/1"' in client.get(f"/series/{sid}").text
+
+
+def test_edition_changes(library):
+    from rozvedka import changes
+    sid = series.sid(series.load()["series"][0])
+    d = changes.diff(sid, 2023, 2024, "cs")
+    assert {t["topic"]: t["state"] for t in d["topics"]}["drones-and-new-warfare"] == "new"
+    assert {t["topic"]: t["state"] for t in d["topics"]}["ransomware"] == "gone"
+    assert [a["label"] for a in d["added"]] == ["Lazarus Group"] and d["added"][0]["match"] == "Lazarus Group"
+    assert [a["label"] for a in d["dropped"]] == ["Wagner Group"] and d["n_added"] == 1 and d["n_dropped"] == 1
+    assert changes.diff(sid, 2023, 2023, "cs")["docs"] is None
+    from rozvedka.app import app
+    client = TestClient(app)
+    t = client.get(f"/series/{sid}/changes?old=2023&new=2024&lang=cs").text
+    assert "<mark>Lazarus Group</mark>" in t and "Named for the first time" in t and "Wagner Group" in t
+    assert "Compare two editions" in client.get(f"/series/{sid}").text
+    assert client.get(f"/series/{sid}/changes").status_code == 200
+    assert client.get("/series/nope/changes").status_code == 404
+    assert f"/series/{sid}/changes?old=2023" in client.get("/report/5").text

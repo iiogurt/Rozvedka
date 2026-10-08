@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% set s = series %}
+{% block title %}Changes {{ old }} → {{ new }} · {{ s.name }} · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/series/{{ id }}">← {{ s.name }}</a></p>
+<h1 class="page-h">What changed: {{ s.name }} {{ old or '?' }} → {{ new or '?' }}</h1>
+<form class="small" method="get">
+  <input type="hidden" name="lang" value="{{ lang }}">
+  Older <select name="old">{% for y in years %}<option value="{{ y }}" {{ 'selected' if y == old }}>{{ y }}</option>{% endfor %}</select>
+  newer <select name="new">{% for y in years %}<option value="{{ y }}" {{ 'selected' if y == new }}>{{ y }}</option>{% endfor %}</select>
+  <button>Compare</button>
+</form>
+{% if not docs %}
+<p class="muted small">{% if missing %}No text in the library for the {{ missing|join(' and ') }} edition – nothing to compare yet.
+  {% elif old == new or not old or not new %}Pick two different editions.{% else %}Edition not found in this series.{% endif %}</p>
+{% else %}
+{% set a, b = docs %}
+<p class="muted small">Compared by keyword and name matching on one {{ lang }} file per year:
+  <a href="/report/{{ a.id }}">{{ a.title }}</a> ({{ old }}) and <a href="/report/{{ b.id }}">{{ b.title }}</a> ({{ new }}).
+  Agency names the report itself and countries are left out, as on the report page. Not a text diff: it shows subjects and
+  names, each with the passage it comes from.</p>
+
+{% for title, rows, d, total, why in (
+   ('Named for the first time', added, b, n_added, 'in ' ~ new ~ ' but not in ' ~ old),
+   ('No longer named', dropped, a, n_dropped, 'in ' ~ old ~ ' but not in ' ~ new)) %}
+<section class="viz-card">
+  <h2 class="viz-title">{{ title }} <span class="muted small">{{ total }}</span></h2>
+  <p class="muted small viz-sub">Actors named {{ why }}, with a passage from the {{ 'newer' if d.id == b.id else 'older' }} edition (the
+    <a href="/report/{{ d.id }}">report page</a> lists all).{% if total > rows|length %} First {{ rows|length }} by mentions shown of {{ total }}.{% endif %}</p>
+  {% for r in rows %}
+  <div class="small"><i class="kdot kind-{{ r.kind }}"></i><a href="/actors/{{ r.actor_key }}"><b>{{ r.label }}</b></a>
+    <span class="muted">{{ r.hits }} mention{{ 's' if r.hits != 1 }}</span>
+    {% if r.match %}<blockquote class="snippet small">{{ r.before }}<mark>{{ r.match }}</mark>{{ r.after }}
+      <a href="/doc/{{ d.id }}{{ '#page=' ~ r.page if r.page }}" target="_blank">{{ 'p. ' ~ r.page if r.page else 'open' }}</a></blockquote>{% endif %}</div>
+  {% else %}<p class="muted small">None.</p>{% endfor %}
+</section>
+{% endfor %}
+
+<section class="viz-card">
+  <h2 class="viz-title">Named more or less often <span class="muted small">{{ changed|length }}</span></h2>
+  <p class="muted small viz-sub">Actors in both editions whose mentions differ by at least {{ min_rise }}.</p>
+  {% if changed %}<table class="rp-topics small"><thead><tr><th>Actor</th><th class="n">{{ old }}</th><th class="n">{{ new }}</th><th class="n">Change</th></tr></thead>
+    {% for r in changed %}<tr><th><i class="kdot kind-{{ r.kind }}"></i><a href="/actors/{{ r.key }}">{{ r.label }}</a></th>
+      <td class="n">{{ r.old }}</td><td class="n">{{ r.new }}</td><td class="n"><span class="ed-delta {{ 'up' if r.new > r.old }}">{{ '%+d'|format(r.new - r.old) }}</span></td></tr>{% endfor %}</table>
+  {% else %}<p class="muted small">None.</p>{% endif %}
+</section>
+<section class="viz-card">
+  <h2 class="viz-title">Topics</h2>
+  <p class="muted small viz-sub">Keyword score per edition (<a href="/report/{{ a.id }}#topics">{{ old }}</a>, <a href="/report/{{ b.id }}#topics">{{ new }}</a>);
+    “main” = among the {{ 3 }} highest. Sorted by size of change.</p>
+  <table class="rp-topics small">
+    <thead><tr><th>Topic</th><th class="n">{{ old }}</th><th class="n">{{ new }}</th><th>Change</th><th>Terms</th></tr></thead>
+    {% for t in topics %}<tr class="{{ 'rp-main' if t.main_new }}"><th><a href="/documents?topic={{ t.topic }}&series={{ id }}">{{ t.name }}</a></th>
+      <td class="n">{{ t.old|round(1) if t.old else '–' }}{% if t.main_old %} <span class="ctag">main</span>{% endif %}</td>
+      <td class="n">{{ t.new|round(1) if t.new else '–' }}{% if t.main_new %} <span class="ctag">main</span>{% endif %}</td>
+      <td>{% if t.state == 'new' %}<span class="ed-delta up">new</span>{% elif t.state == 'gone' %}<span class="ed-delta">gone</span>
+        {% elif t.state == 'up' %}<span class="ed-delta up">now main</span>{% elif t.state == 'down' %}<span class="ed-delta">no longer main</span>
+        {% else %}<span class="muted">{{ '%+.1f'|format(t.new - t.old) }}</span>{% endif %}</td>
+      <td>{% for term in t.terms %}<span class="term">{{ term }}</span>{% endfor %}</td></tr>
+    {% else %}<tr><td class="muted">No topics found in either edition.</td></tr>{% endfor %}
+  </table>
+</section>
+
+{% endif %}
+{% endblock %}
