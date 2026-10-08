@@ -230,8 +230,13 @@ def clean_link_text(text: str) -> str:
     return text
 
 
+# link text that is markup residue or a row of language labels ("true true", "EN FR ES AR", "中文 Español Français")
+LABEL_ONLY = re.compile(r"(?:(?:true|false|null|en|fr|es|sp|ar|de|ru|zh|english|español|français|русский|中文|عرب|عربي)\s*)+", re.I)
+
+
 def is_poor_title(title: str | None, url: str) -> bool:
     return (not title or bool(GENERIC_TITLES.match(title)) or bool(CALL_TO_ACTION.match(title))
+            or bool(LABEL_ONLY.fullmatch(title.strip()))
             or title == humanize_filename(url) or bool(re.fullmatch(r"[\w .%()-]+\.pdf", title, re.I)))
 
 

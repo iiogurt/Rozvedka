@@ -27,6 +27,25 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.44.1] – 2026-10-08
+
+### Added
+- **Oversight bodies** (reports on what the services do, from the bodies that review them): Denmark TET, Norway
+  EOS-utvalget, UK IPCO, Switzerland AB-ND, Belgium Comité R (activity and investigation reports), Netherlands CTIVD
+  (manual: its list is script-built).
+- **International and EU bodies:** UNODC (World Drug Report 2021–2025), INTERPOL (crime trend reports); by hand because
+  the sites block or script their files: UN Security Council 1267 Monitoring Team, UNDRR (GAR), FATF, IAEA, EUDA,
+  CERT-EU, Eurojust.
+- **National security strategies:** Germany's National Security Strategy (all translations), NATO Strategic Concepts
+  1949–2022, US Department of Defense strategy documents; Austria's BMI Security Report (several volumes a year).
+- Not found, so not added: regular national risk assessment or civil-protection reports of Bulgaria, Cyprus, Greece,
+  Romania and Slovakia (published only as one-off plans or on script-built pages); CIRCL (conference slides, no regular
+  report), KISA, TWCERT/CC.
+
+### Fixed
+- Link text that is only markup residue or a row of language labels ("true true", "EN FR ES AR") is no longer used as
+  a report title.
+
 ## [0.44.0] – 2026-10-08
 
 ### Added
@@ -928,7 +947,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.44.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.44.1...HEAD
+[0.44.1]: https://github.com/iiogurt/Rozvedka/compare/v0.44.0...v0.44.1
 [0.44.0]: https://github.com/iiogurt/Rozvedka/compare/v0.43.0...v0.44.0
 [0.43.0]: https://github.com/iiogurt/Rozvedka/compare/v0.42.7...v0.43.0
 [0.42.7]: https://github.com/iiogurt/Rozvedka/compare/v0.42.6...v0.42.7
