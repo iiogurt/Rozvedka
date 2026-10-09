@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.45.0] – 2026-10-09
+
+### Added
+- **Sanctions and designations** (roadmap D1): `fetch-sanctions` downloads the consolidated lists of the EU, the UK, the UN
+  Security Council and the US (OFAC SDN) and matches their entries with the actors by name. Actor pages get a section
+  with every entry – list, reference, matched name, date, programme and legal basis, source and retrieval date – and
+  `/actors/sanctions` lists all designated actors, filtered by list, kind and match. Matching is deliberately strict
+  and stated on the page; entries listed under the actor's own name (38 of 40 sampled right) are kept apart from
+  alias-only matches (23 of 30). `match-sanctions` re-matches without downloading; `index-actors` and the update job do it too.
+
 ## [0.44.1] – 2026-10-08
 
 ### Added
@@ -947,7 +957,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.44.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.45.0...HEAD
+[0.45.0]: https://github.com/iiogurt/Rozvedka/compare/v0.44.1...v0.45.0
 [0.44.1]: https://github.com/iiogurt/Rozvedka/compare/v0.44.0...v0.44.1
 [0.44.0]: https://github.com/iiogurt/Rozvedka/compare/v0.43.0...v0.44.0
 [0.43.0]: https://github.com/iiogurt/Rozvedka/compare/v0.42.7...v0.43.0

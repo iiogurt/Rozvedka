@@ -126,6 +126,22 @@
 </div>
 
 {% macro src_links(sources) %}{% set wp = sources|selectattr('type', 'equalto', 'wikipedia')|list %}{% set wd = sources|selectattr('type', 'equalto', 'wikidata')|list %}{% if wp %}<a class="src-tag" href="{{ wp[0].revision_url or wp[0].url }}" title="English Wikipedia: {{ wp[0].article }}, infobox field “{{ wp|map(attribute='field')|unique|join('”, “') }}”, revision {{ wp[0].revision }}, retrieved {{ wp[0].retrieved }}">WP</a>{% endif %}{% if wd %}<a class="src-tag" href="{{ wd[0].url }}" title="Wikidata statement{{ 's' if wd|length > 1 }} {{ wd|map(attribute='property')|unique|join(', ') }}, retrieved {{ wd[0].retrieved }}">WD</a>{% set refs = wd|selectattr('ref')|list %}{% if refs %}<a class="src-tag" href="{{ refs[0].ref }}" rel="noopener" title="Reference cited by Wikidata{{ ' (' ~ refs|length ~ ')' if refs|length > 1 }}">ref{{ refs|length if refs|length > 1 }}</a>{% endif %}{% endif %}{% endmacro %}
+{% if sanctions %}
+<section class="viz-card" id="sanctions">
+  <h2 class="viz-title">Sanctions and designations <span class="muted small">{{ sanctions|length }}</span></h2>
+  <p class="muted small viz-sub">Entries of the official consolidated lists whose name matches this actor's name – a name match, not an
+    identification: read the entry before relying on it. <b>Name</b> = the list's own name for the entry; <b>alias</b> = the
+    name is an alias on another entry (less certain). All actors: <a href="/actors/sanctions">sanctions overview</a>, with the rules.</p>
+  <table class="rp-topics small">
+    <thead><tr><th>List</th><th>Entry</th><th>Matched name</th><th>Designated</th><th>Programme / legal basis</th><th>Source</th></tr></thead>
+    {% for s in sanctions %}<tr class="{{ '' if s.via == 'name' else 'muted' }}">
+      <th><span class="ctag">{{ s.list }}</span> <span class="muted">{{ s.ref }}</span></th><td>{{ s.entry }} <span class="muted">({{ 'person' if s.type == 'person' else 'group' }})</span></td>
+      <td>{{ s.matched }} <span class="ctag">{{ s.via }}</span></td><td>{{ s.date or 'not stated in the file' }}</td>
+      <td>{{ s.programme or '–' }}{% for l in s.legal %}<br>{% if l.url %}<a href="{{ l.url }}" rel="noopener">{{ l.text }}</a>{% else %}{{ l.text }}{% endif %}{% endfor %}</td>
+      <td><a href="{{ s.url }}" rel="noopener">{{ sanction_lists[s.list].name }}</a><br><span class="muted">{{ sanction_lists[s.list].issuer }}, retrieved {{ sanction_dates.get(s.list) or '?' }}</span></td></tr>{% endfor %}
+  </table>
+</section>
+{% endif %}
 {% if connections %}
 <section class="viz-card" id="connections">
   <h2 class="viz-title">Connections</h2>

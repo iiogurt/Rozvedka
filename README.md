@@ -288,6 +288,16 @@ no periodic job.
 - Each actor page: reference data with its source and revision, the Wikipedia lead, mentions per year, which
   agencies report on it, the topics of those reports, actors named in the same passage, and **the passages
   themselves with a link to the cited page of the PDF**.
+<img src="docs/images/sanctions-actor.png" alt="Sanctions and designations section of an actor page: list, entry, matched name, date, legal basis and source" width="900">
+
+- **Sanctions and designations** – the official consolidated lists of the **EU**, the **UK**, the **UN Security Council** and
+  the **US (OFAC SDN)**, fetched with `fetch-sanctions` (public XML files; the portal itself makes no outside calls),
+  matched with the actors by name. Each actor page lists its entries with the list, reference, name that matched,
+  date, programme and legal basis (EU: the Official Journal text) and the source with its retrieval date; the
+  overview (`/actors/sanctions`) filters by list, actor kind and how the name matched. A match is a *name* match, not
+  an identification: the rules are stated on the page (one-word names need five letters, people need two words, a name
+  two actors share is skipped, weak aliases and bare noms de guerre are not used), and the two tiers – **listed
+  under this name** (38 of 40 sampled right) and **only as an alias** (23 of 30) – are shown apart.
 <img src="docs/images/connections.png" alt="Connections of an actor: leadership, founders, members with sources and reports naming both" width="900">
 
 - **Connections** – the people and organisations around each actor: members, leaders, founders, key people,
@@ -494,6 +504,7 @@ the commands to install it from the project folder are at its top (they fill in 
 | `ocr [--limit N] [--workers 3]` | recognise the text of scanned reports (no text layer) with Tesseract via OCRmyPDF, in the report's language + English; stores the text with page breaks, marks it as OCR, leaves the PDF unchanged (part of `update` when installed) |
 | `date-documents [--check]` | give undated reports a year from their first pages – a report heading, else a publication date – with the evidence; `--check` measures accuracy on reports whose year is known (part of `update`) |
 | `fetch-actors [--refresh]` | download the actor gazetteer and connections from Wikidata, Wikipedia and MITRE ATT&CK (network; Wikipedia infoboxes are cached in `data/gazetteer/` – `--refresh` reads them again) |
+| `fetch-sanctions` | download the EU, UK, UN Security Council and US (OFAC) consolidated sanctions lists into `data/sanctions/` and match them with the actors (network; `match-sanctions` matches again without downloading, `index-actors` does it too) |
 | `fetch-actor-profiles [--refresh]` | pictures (flag, logo or photo, with author and licence), key facts and Wikipedia leads of every actor the reports name, from Wikipedia, Wikidata and Wikimedia Commons (network; part of `fetch-actors`; `--refresh` downloads the pictures again) |
 | `index-actors [--rematch]` | find the actors in the report texts (offline) |
 | `fetch-logos [--refresh]` | download agency logos from their home pages |

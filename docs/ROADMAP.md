@@ -58,7 +58,7 @@ Each item: why · what · done when · version step.
    assessments, CERT-IS; Montenegro – national security agency, CIRT.ME; North Macedonia – national security agency,
    MKD-CIRT; Turkey – USOM (national CERT), AFAD (disasters); Malta – Civil Protection Department, CSIRTMalta. Only
    official domains; manual where blocked; record the slots where nothing is published. · patch (sources)
-3. ◐ (0.29.1: NL, BE, PT, HU, HR, SI, IE added; AT, BG, CY, GR, RO, SK still open; 0.42.5: EE, LV added, LT by hand) **National risk assessments and civil protection gaps** – EU states must report a national risk assessment
+3. ◐ (0.44.1: no regular reports found for BG, CY, GR, RO, SK; AT BMI Sicherheitsbericht added; 0.29.1: NL, BE, PT, HU, HR, SI, IE added; AT, BG, CY, GR, RO, SK still open; 0.42.5: EE, LV added, LT by hand) **National risk assessments and civil protection gaps** – EU states must report a national risk assessment
    summary to the Union Civil Protection Mechanism every three years; most publish one (e.g. NL Rijksbrede
    Risicoanalyse, LT, LV, SK, AT). Fill the 17 countries without a civil-protection source. · patch (sources)
 4. ◐ (0.29.1: AT, LV, SE, HR added; 0.42.5: JP; LU, BG and the other non-EU countries still open – CISA publishes its year in review as web pages only, KISA / TWCERT / CERT.br need a closer look) **Cyber gaps** – national CERT / cyber-agency annual reports where they exist; candidates to verify: CERT.at, CERT.LV,
@@ -99,17 +99,17 @@ Each item: why · what · done when · version step.
 
 ### D. Enrichment from other reliable, official information
 
-1. **Sanctions and designations** (old D15) – EU consolidated list, UK, UN Security Council consolidated list, US
+1. ✅ (0.45.0) **Sanctions and designations** (old D15) – EU consolidated list, UK, UN Security Council consolidated list, US
    OFAC SDN (official XML/CSV): designations with legal reference and date on actor pages. · minor
-2. **UN Security Council monitoring reports** – the Analytical Support and Sanctions Monitoring Team reports on ISIL
+2. ◐ (0.44.1: listed as a manual source – the reports are UN documents on other domains) **UN Security Council monitoring reports** – the Analytical Support and Sanctions Monitoring Team reports on ISIL
    and Al-Qaida (twice a year) and the panels of experts (DPRK, Libya, Yemen …): official, regular, high value for
    terrorism and sanctions evasion. · patch (sources: `OTHER`)
-3. **Other international bodies with regular reports** – UNODC (World Drug Report), UNDRR (Global Assessment Report),
+3. ◐ (0.44.1: UNODC, INTERPOL; FATF, IAEA, EUDA, CERT-EU, Eurojust, UNDRR by hand; OSCE, WHO not added) **Other international bodies with regular reports** – UNODC (World Drug Report), UNDRR (Global Assessment Report),
    FATF (typologies, mutual evaluations), OSCE, Interpol (global crime trend summaries), WHO (health emergencies),
    IAEA (nuclear security), EUDA/EMCDDA (European Drug Report), Eurojust, CERT-EU (threat landscape). · patch (sources)
-4. **Oversight bodies** – parliamentary and independent oversight reports on the services (NL CTIVD, BE Comité R,
+4. ◐ (0.44.1: DK, NO, UK IPCO, CH, BE; NL CTIVD by hand; DE PKGr, AU IGIS, CA NSIRA not reachable or not reports) **Oversight bodies** – parliamentary and independent oversight reports on the services (NL CTIVD, BE Comité R,
    DE PKGr, NO EOS-utvalget, DK TET, UK IPCO): official, and they report what the services do not. · patch (sources)
-5. **National security strategies and white papers** – the governments' own strategy documents, linked to their
+5. ◐ (0.44.1: DE, NATO, US DoD; more countries to add) **National security strategies and white papers** – the governments' own strategy documents, linked to their
    agencies; a natural "document type" (B3). · patch (sources)
 6. **Official attributions** – government statements attributing cyber attacks or sabotage to a state or group (EU
    Council, Five Eyes joint advisories), as dated events on actor pages. · minor

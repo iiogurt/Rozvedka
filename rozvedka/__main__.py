@@ -49,6 +49,8 @@ def main():
     im.add_argument("--no-index", action="store_true", help="skip matching topics, dates and actors afterwards")
     sub.add_parser("fetch-publishers", help="checks of the think tanks: EU register, FARA, sanctions lists, Wikidata")
     sub.add_parser("fetch-ratings", help="democracy ratings of states over time (V-Dem, Freedom House, World Bank WGI)")
+    sub.add_parser("fetch-sanctions", help="download the EU, UK, UN and US sanctions lists and match them with the actors")
+    sub.add_parser("match-sanctions", help="match the downloaded sanctions lists with the actors again (no download)")
     fp = sub.add_parser("fetch-actor-profiles", help="pictures, key facts and Wikipedia summaries of the actors the reports name")
     fp.add_argument("--refresh", action="store_true", help="download every picture again")
     sub.add_parser("fetch-concepts", help="names of the search concepts in every language, from Wikidata (cross-language search)")
@@ -108,6 +110,12 @@ def main():
         print(publishers.fetch())   # and the think tanks' checks
         from . import actor_profiles
         print(actor_profiles.fetch(refresh=a.refresh))   # and the actors' pictures and facts
+    elif a.cmd == "fetch-sanctions":
+        from . import sanctions
+        print(sanctions.fetch_all())
+    elif a.cmd == "match-sanctions":
+        from . import sanctions
+        print(sanctions.match())
     elif a.cmd == "fetch-actor-profiles":
         from . import actor_profiles
         print(actor_profiles.fetch(refresh=a.refresh))
@@ -135,6 +143,9 @@ def main():
     elif a.cmd == "index-actors":
         from . import actors
         print(actors.index(a.workers, rematch=a.rematch))
+        from . import sanctions
+        if (sanctions.DIR / "meta.json").exists():          # the actors' names may have changed: match the lists again
+            print(sanctions.match())
     elif a.cmd == "index-topics":
         from . import topics
         print(topics.index(a.reextract, a.limit, a.workers))
