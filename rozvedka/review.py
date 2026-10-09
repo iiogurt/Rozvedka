@@ -47,21 +47,33 @@ def wrong_pairs(path: Path | None = None) -> set[tuple[str, str]]:
 def record(actor: str, doc_id: int, verdict: str, name: str = "", says: str = "", path: Path | None = None,
            reviewer: str = "") -> dict:
     """Store a verdict (replacing an earlier one for the same actor and report); "wrong" takes effect at once."""
-    if verdict not in ("right", "wrong"):
-        return {"error": "verdict must be right or wrong"}
+    r = record_many([(actor, doc_id, verdict, name, says)], path, reviewer)
+    return r if "error" in r else {"recorded": verdict}
+
+
+def record_many(items: list[tuple], path: Path | None = None, reviewer: str = "") -> dict:
+    """Store several verdicts (actor, doc_id, verdict, name, says) with one read and one write of the review file."""
+    rows = load(path)
+    wrong = []
     with db.session() as con:
         actors.init()
-        row = con.execute("SELECT url FROM documents WHERE id=?", (doc_id,)).fetchone()
-        if not row or not con.execute("SELECT 1 FROM actors WHERE key=?", (actor,)).fetchone():
-            return {"error": "unknown report or actor"}
-        rows = [r for r in load(path) if not (r.get("actor") == actor and r.get("url") == row["url"])]
-        rows.append({"actor": actor, "name": name, "url": row["url"], "says": " ".join(says.split())[:300],
-                     "verdict": verdict, "checked": dt.date.today().isoformat(), **({"reviewer": reviewer} if reviewer else {})})
+        for actor, doc_id, verdict, name, says in items:
+            if verdict not in ("right", "wrong"):
+                return {"error": "verdict must be right or wrong"}
+            row = con.execute("SELECT url FROM documents WHERE id=?", (doc_id,)).fetchone()
+            if not row or not con.execute("SELECT 1 FROM actors WHERE key=?", (actor,)).fetchone():
+                return {"error": "unknown report or actor"}
+            rows = [r for r in rows if not (r.get("actor") == actor and r.get("url") == row["url"])]
+            rows.append({"actor": actor, "name": name, "url": row["url"], "says": " ".join(says.split())[:300],
+                         "verdict": verdict, "checked": dt.date.today().isoformat(),
+                         **({"reviewer": reviewer} if reviewer else {})})
+            if verdict == "wrong":
+                wrong.append((actor, doc_id))
         save(rows, path)
-        if verdict == "wrong":         # the next rebuild (derive) does the same; do it now for this report
+        for actor, doc_id in wrong:    # the next rebuild (derive) does the same; do it now for these reports
             con.execute("DELETE FROM doc_actors WHERE doc_id=? AND actor_key=?", (doc_id, actor))
             con.execute("DELETE FROM actor_pairs WHERE doc_id=? AND (a=? OR b=?)", (doc_id, actor, actor))
-    return {"recorded": verdict}
+    return {"recorded": len(items)}
 
 
 def _passage(con, doc_id: int, spans: list) -> dict:
