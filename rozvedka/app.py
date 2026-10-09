@@ -16,7 +16,7 @@ from fastapi.templating import Jinja2Templates
 
 from markupsafe import Markup, escape
 
-from . import (__version__, actor_profiles, actors, build_version, changes, collect, countries, crawler, db, downloader, graphs, home, logos,
+from . import (__version__, actor_profiles, actors, attributions, build_version, changes, collect, countries, crawler, db, downloader, graphs, home, logos,
                paging, registry, sanctions, series, timeline, topics, trends, updates)
 from . import compare as compare_mod
 from . import dating
@@ -1158,6 +1158,12 @@ def actors_sanctions(request: Request, list_: str = Query("", alias="list"), via
     return tpl.TemplateResponse(request, "sanctions.html", {**d, "kinds": actors.KINDS})
 
 
+@app.get("/actors/attributions")
+def actors_attributions(request: Request):
+    """Government statements that name a threat group, each with its quote and when it was last checked on the page."""
+    return tpl.TemplateResponse(request, "attributions.html", attributions.overview())
+
+
 @app.get("/actors/{key}/timeline")
 def actor_timeline(request: Request, key: str):
     d = timeline.detail(key)
@@ -1177,6 +1183,7 @@ def actor_page(request: Request, key: str, page: str = "1", per_page: str = ""):
     return tpl.TemplateResponse(request, "actor.html", {**d, "pg": pg, "kinds": actors.KINDS, "meta": actors.stamp(),
                                                        "reviewed_out": review.of_actor(key),
                                                        "sanctions": sanctions.of_actor(key),
+                                                       "attributions": attributions.of_actor(key),
                                                        "sanction_lists": sanctions.LISTS,
                                                        "sanction_dates": sanctions.overview()["retrieved"],
                                                        "TOPICS": topics.taxonomy()["topics"],

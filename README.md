@@ -295,6 +295,12 @@ no periodic job.
 
 <img src="docs/images/actor-timeline.png" alt="Actor timeline: reports per year by reporting country and the actors named beside it" width="900">
 
+- **Official attributions** – government statements that name a cyber threat group and the state body behind it (UK NCSC,
+  US CISA; 21 so far, hand-listed in `sources/attributions.yaml`). Every entry carries a verbatim quote that
+  `fetch-attributions` re-checks on the published page; actor pages show them with issuer, date and the date of the last check.
+
+<img src="docs/images/attributions.png" alt="Official attributions section of an actor page: statements of the UK NCSC with quotes and check dates" width="900">
+
 <img src="docs/images/sanctions-actor.png" alt="Sanctions and designations section of an actor page: list, entry, matched name, date, legal basis and source" width="900">
 
 - **Sanctions and designations** – the official consolidated lists of the **EU**, the **UK**, the **UN Security Council** and
@@ -511,6 +517,7 @@ the commands to install it from the project folder are at its top (they fill in 
 | `ocr [--limit N] [--workers 3]` | recognise the text of scanned reports (no text layer) with Tesseract via OCRmyPDF, in the report's language + English; stores the text with page breaks, marks it as OCR, leaves the PDF unchanged (part of `update` when installed) |
 | `date-documents [--check]` | give undated reports a year from their first pages – a report heading, else a publication date – with the evidence; `--check` measures accuracy on reports whose year is known (part of `update`) |
 | `fetch-actors [--refresh]` | download the actor gazetteer and connections from Wikidata, Wikipedia and MITRE ATT&CK (network; Wikipedia infoboxes are cached in `data/gazetteer/` – `--refresh` reads them again) |
+| `fetch-attributions` | check the official attribution statements in `sources/attributions.yaml` against their pages (network); the result with the check date is stored in `data/gazetteer/attributions.json` |
 | `fetch-sanctions` | download the EU, UK, UN Security Council and US (OFAC) consolidated sanctions lists into `data/sanctions/` and match them with the actors (network; `match-sanctions` matches again without downloading, `index-actors` does it too) |
 | `fetch-actor-profiles [--refresh]` | pictures (flag, logo or photo, with author and licence), key facts and Wikipedia leads of every actor the reports name, from Wikipedia, Wikidata and Wikimedia Commons (network; part of `fetch-actors`; `--refresh` downloads the pictures again) |
 | `index-actors [--rematch]` | find the actors in the report texts (offline) |
