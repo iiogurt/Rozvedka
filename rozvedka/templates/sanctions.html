@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Sanctions and designations · Actors · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/actors">← Actors</a></p>
+<h1 class="page-h">Sanctions and designations</h1>
+{% if not have_data %}
+<p class="muted small">The sanctions lists have not been fetched yet: run <code>python -m rozvedka fetch-sanctions</code>.</p>
+{% else %}
+<p class="muted small">Actors that appear on an official consolidated sanctions list. The portal fetches the public XML files of
+  the four issuers ({% for k, l in lists.items() %}<a href="{{ l.page }}">{{ k }}</a>{{ ', ' if not loop.last }}{% endfor %}) when
+  <code>fetch-sanctions</code> is run – retrieved
+  {% for k, l in lists.items() %}{{ k }} {{ retrieved.get(k) or 'never' }} ({{ entries.get(k, 0) }} entries){{ '; ' if not loop.last }}{% endfor %}.
+  <b>A match is a name match, not an identification.</b> Rules (<code>rozvedka/sanctions.py</code>): the name must equal one of the
+  actor's names the index uses, after removing case, accents and punctuation; people need two words, one-word names five letters;
+  groups are compared with groups, people with people; a name two actors share is skipped; weak aliases of the lists and
+  bare nom-de-guerre aliases are not used. <b>Listed under this name</b> = the list's own name for the entry (measured on a
+  random sample of 40: 38 right); <b>only as an alias</b> = the name is an alias on a different entry – check it
+  (sample of 30: 23 right, about three in four).</p>
+<form class="small" method="get">
+  List <select name="list"><option value="">all</option>{% for k in lists %}<option {{ 'selected' if k == list_ }}>{{ k }}</option>{% endfor %}</select>
+  match <select name="via"><option value="">all</option><option value="name" {{ 'selected' if via == 'name' }}>listed under this name</option><option value="alias" {{ 'selected' if via == 'alias' }}>only as an alias</option></select>
+  kind <select name="kind"><option value="">all</option>{% for k in kinds_present %}<option value="{{ k }}" {{ 'selected' if k == kind }}>{{ kinds.get(k, k) }}</option>{% endfor %}</select>
+  <button>Filter</button> <span class="muted">{{ rows|length }} of {{ total }} actors</span>
+</form>
+<table class="rp-topics small">
+  <thead><tr><th>Actor</th><th>Kind</th><th>Lists</th><th class="n">Entries</th><th>Earliest designation</th><th>Match</th></tr></thead>
+  {% for r in rows %}<tr><th><a href="/actors/{{ r.key }}#sanctions">{{ r.label }}</a></th><td class="muted">{{ r.kind_name }}</td>
+    <td>{% for l in r.lists %}<span class="ctag">{{ l }}</span> {% endfor %}</td><td class="n"><a href="/actors/{{ r.key }}#sanctions">{{ r.n }}</a></td>
+    <td>{{ r.first or '–' }}</td><td class="muted">{{ 'name' if r.via == ['name'] else 'alias only' if r.via == ['alias'] else 'name and alias' }}</td></tr>
+  {% else %}<tr><td class="muted">No actor matches this filter.</td></tr>{% endfor %}
+</table>
+{% endif %}
+{% endblock %}

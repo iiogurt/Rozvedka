@@ -17,7 +17,7 @@ from fastapi.templating import Jinja2Templates
 from markupsafe import Markup, escape
 
 from . import (__version__, actor_profiles, actors, build_version, changes, collect, countries, crawler, db, downloader, graphs, home, logos,
-               paging, registry, series, topics, trends, updates)
+               paging, registry, sanctions, series, topics, trends, updates)
 from . import compare as compare_mod
 from . import dating
 from . import dataset, doclist, doctypes, folders, guard, publishers, ratings, report, review, updater, watch
@@ -1151,6 +1151,13 @@ def api_topic_tree(coalition: str = "", year_from: int = 0, year_to: int = 0, pe
     return graphs.topic_tree(max(0, min(per_topic, 12)), coalition, year_from or None, year_to or None)
 
 
+@app.get("/actors/sanctions")
+def actors_sanctions(request: Request, list_: str = Query("", alias="list"), via: str = "", kind: str = ""):
+    """Every actor found on an official sanctions list, with the list, entry and how the name matched."""
+    d = sanctions.table(list_, via, kind)
+    return tpl.TemplateResponse(request, "sanctions.html", {**d, "kinds": actors.KINDS})
+
+
 @app.get("/actors/{key}")
 def actor_page(request: Request, key: str, page: str = "1", per_page: str = ""):
     size = paging.per_page_of(per_page, 25)
@@ -1161,6 +1168,9 @@ def actor_page(request: Request, key: str, page: str = "1", per_page: str = ""):
                          anchor="#passages", default=25)
     return tpl.TemplateResponse(request, "actor.html", {**d, "pg": pg, "kinds": actors.KINDS, "meta": actors.stamp(),
                                                        "reviewed_out": review.of_actor(key),
+                                                       "sanctions": sanctions.of_actor(key),
+                                                       "sanction_lists": sanctions.LISTS,
+                                                       "sanction_dates": sanctions.overview()["retrieved"],
                                                        "TOPICS": topics.taxonomy()["topics"],
                                                        "profile": actor_profiles.profile(key)})
 

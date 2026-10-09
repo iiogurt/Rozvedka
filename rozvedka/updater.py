@@ -13,7 +13,7 @@ import datetime as dt
 import json
 import logging
 
-from . import crawler, db, downloader, progress
+from . import crawler, db, downloader, progress, sanctions
 
 log = logging.getLogger("rozvedka.updater")
 SECONDS_PER_PAGE = 10.0          # without history: polite fetching (2 s per host), report pages often link sub-pages
@@ -132,6 +132,8 @@ def _index_here() -> dict:
     res["group-works"] = works.group()
     if actor_sources.GAZETTEER.exists():
         res["index-actors"] = actors.index()
+        if (sanctions.DIR / "meta.json").exists():
+            res["match-sanctions"] = sanctions.match()
     return res
 
 
