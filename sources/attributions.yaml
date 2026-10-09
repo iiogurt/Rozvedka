@@ -1,0 +1,121 @@
+# Official attributions – statements in which a government body names a cyber threat group and, where it says so, the
+# state body behind it (roadmap D6). Hand-written; every entry is checked against the published page by
+# `python -m rozvedka fetch-attributions`: the `quote` and every word in `names` must be on the page, else the entry
+# is shown as not confirmed. Only pages the crawler may fetch are listed (the Council of the EU blocks it).
+#   date      – publication date on the page (not the date of the events)
+#   by        – the body that published it; country – its ISO code
+#   url       – the official page; title – its title as published
+#   actors    – actor keys named in the statement (groups first, then the state bodies it attributes them to)
+#   quote     – a verbatim passage of the page (quotes and dashes are compared loosely); says – plain-language summary
+#   names     – other names the page must contain (aliases that tie the statement to the actor)
+attributions:
+  - {date: 2019-10-21, by: NCSC, country: GB, kind: cyber, actors: [Q106466338],
+     title: "Advisory: Turla group exploits Iranian APT to expand coverage of victims",
+     url: https://www.ncsc.gov.uk/news/turla-group-exploits-iran-apt-to-expand-coverage-of-victims,
+     quote: "The Turla group, also known as Waterbug or VENOMOUS BEAR, is suspected to be Russia-based.",
+     says: "UK and US agencies describe how Turla used Iranian tools and infrastructure against its victims; the group is only 'suspected' to be Russia-based."}
+  - {date: 2020-07-16, by: NCSC, country: GB, kind: cyber, actors: [Q22906448],
+     title: "Advisory: APT29 targets COVID-19 vaccine development",
+     url: https://www.ncsc.gov.uk/news/advisory-apt29-targets-covid-19-vaccine-development,
+     quote: "is a cyber espionage group, almost certainly part of the Russian intelligence services",
+     says: "APT29 targeted organisations developing COVID-19 vaccines; assessed as almost certainly part of the Russian intelligence services."}
+  - {date: 2021-04-15, by: NCSC, country: GB, kind: cyber, actors: [Q863254],
+     title: "UK and US call out Russia for SolarWinds compromise",
+     url: https://www.ncsc.gov.uk/news/uk-and-us-call-out-russia-for-solarwinds-compromise,
+     quote: "it is highly likely the SVR was responsible for gaining unauthorised access to SolarWinds Orion software",
+     says: "The UK and US attribute the SolarWinds supply-chain compromise to Russia's Foreign Intelligence Service (SVR)."}
+  - {date: 2021-07-19, by: NCSC, country: GB, kind: cyber, actors: [Q104417057, Q104416682, Q1068951],
+     title: "UK and allies hold Chinese state responsible for pervasive pattern of hacking",
+     url: https://www.ncsc.gov.uk/news/uk-allies-hold-chinese-state-responsible-for-pervasive-pattern-of-hacking,
+     quote: "The UK is also attributing the Chinese Ministry of State Security as being behind activity known in open source",
+     names: [APT40, APT31],
+     says: "The UK attributes the activity known as APT40 and APT31 to China's Ministry of State Security."}
+  - {date: 2022-02-23, by: NCSC, country: GB, kind: cyber, actors: [Q100605916, Q115782],
+     title: "New Sandworm malware Cyclops Blink replaces VPNFilter",
+     url: https://www.ncsc.gov.uk/news/new-sandworm-malware-cyclops-blink-replaces-vpnfilter,
+     quote: "Sandworm, also known as Voodoo Bear, has previously been attributed to Russia's GRU.",
+     says: "Joint advisory on the Cyclops Blink botnet; Sandworm is stated to be attributed to Russia's GRU."}
+  - {date: 2022-02-24, by: CISA, country: US, kind: cyber, actors: [Q100710432, Q1365657],
+     title: "Iranian Government-Sponsored Actors Conduct Cyber Operations Against Global Government and Commercial Networks",
+     url: https://www.cisa.gov/news-events/cybersecurity-advisories/aa22-055a,
+     quote: "MuddyWater is a subordinate element within the Iranian Ministry of Intelligence and Security (MOIS).",
+     says: "Joint advisory on MuddyWater's operations; the group is an element of Iran's Ministry of Intelligence and Security."}
+  - {date: 2022-09-07, by: NCSC, country: GB, kind: cyber, actors: [Q794, Q222],
+     title: "UK condemns Iranian state-linked actors for cyber attack against Albania",
+     url: https://www.ncsc.gov.uk/news/uk-condemns-cyber-attack,
+     quote: "The UK has attributed a series of cyber attacks on Albanian government infrastructure to Iranian state-linked actors.",
+     says: "The UK attributes the 2022 cyber attacks on Albanian government infrastructure to Iranian state-linked actors."}
+  - {date: 2020-10-27, by: CISA, country: US, kind: cyber, actors: [Q106281604],
+     title: "North Korean Advanced Persistent Threat Focus: Kimsuky",
+     url: https://www.cisa.gov/news-events/cybersecurity-advisories/aa20-301a,
+     quote: "Kimsuky is most likely tasked by the North Korean regime with a global intelligence gathering mission.",
+     says: "Joint advisory on Kimsuky's tactics; the group is tasked by the North Korean regime with intelligence gathering."}
+  - {date: 2023-08-31, by: NCSC, country: GB, kind: cyber, actors: [Q100605916, Q115782],
+     title: "UK and allies support Ukraine calling out Russia's GRU for new malware campaign",
+     url: https://www.ncsc.gov.uk/news/uk-allies-support-ukraine-calling-out-russia-gru-malware-campaign,
+     quote: "The NCSC has previously attributed the Sandworm actor to the Russian GRU's Main Centre for Special Technologies GTsST.",
+     says: "Analysis of Infamous Chisel, Android malware used against Ukrainian military; Sandworm is attributed to the GRU's GTsST."}
+  - {date: 2023-12-01, by: CISA, country: US, kind: cyber, actors: [Q271110],
+     title: "IRGC-Affiliated Cyber Actors Exploit PLCs in Multiple Sectors, Including US Water and Wastewater Systems Facilities",
+     url: https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-335a,
+     quote: "IRGC-affiliated cyber actors using the persona",
+     names: [CyberAv3ngers],
+     says: "Joint advisory: IRGC-affiliated actors using the persona 'CyberAv3ngers' compromised Israeli-made PLCs, including in US water facilities."}
+  - {date: 2023-12-07, by: NCSC, country: GB, kind: cyber, actors: [G1033, Q58792],
+     title: "UK and allies expose Russian intelligence services for cyber campaign of attempted political interference",
+     url: https://www.ncsc.gov.uk/news/uk-and-allies-expose-cyber-campaign-attempted-political-interference,
+     quote: "is almost certainly subordinate to Centre 18 of Russia's Federal Security Service (FSB)",
+     names: [Star Blizzard],
+     says: "The UK, US and partners attribute Star Blizzard's spear-phishing campaigns to the FSB's Centre 18."}
+  - {date: 2024-02-07, by: CISA, country: US, kind: cyber, actors: [Q118773279],
+     title: "PRC State-Sponsored Actors Compromise and Maintain Persistent Access to U.S. Critical Infrastructure",
+     url: https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-038a,
+     quote: "compromised by the PRC state-sponsored cyber group known as Volt Typhoon",
+     says: "Joint advisory: Volt Typhoon, a PRC state-sponsored group, has compromised networks of critical-infrastructure organisations."}
+  - {date: 2024-02-26, by: NCSC, country: GB, kind: cyber, actors: [Q22906448, Q863254],
+     title: "UK and allies expose evolving tactics of Russian cyber actors",
+     url: https://www.ncsc.gov.uk/news/uk-allies-expose-evolving-tactics-of-russian-cyber-actors,
+     quote: "The NCSC assesses that APT29, also known as Midnight Blizzard, the Dukes, or Cozy Bear, is a cyber espionage group",
+     names: [SVR],
+     says: "Advisory on how APT29 adapts its tactics to reach cloud services; the group is assessed to operate as part of Russia's Foreign Intelligence Service (SVR)."}
+  - {date: 2024-03-25, by: NCSC, country: GB, kind: cyber, actors: [Q104416682, Q1068951],
+     title: "UK calls out China state-affiliated actors for malicious cyber targeting of UK democratic institutions and parliamentarians",
+     url: https://www.ncsc.gov.uk/news/china-state-affiliated-actors-target-uk-democratic-institutions-parliamentarians,
+     quote: "APT31 which was previously linked to the Chinese Ministry of State Security in 2021",
+     says: "The UK attributes the 2021 targeting of parliamentarians' accounts to APT31, a China state-affiliated actor."}
+  - {date: 2024-07-09, by: NCSC, country: GB, kind: cyber, actors: [Q104417057, Q1068951],
+     title: "The NCSC and partners issue alert about evolving techniques used by China state-sponsored cyber attackers",
+     url: https://www.ncsc.gov.uk/news/ncsc-and-partners-issue-alert-about-evolving-techniques-used-by-china-state-sponsored-cyber-attacks,
+     quote: "The UK has previously attributed APT40 as being part of the Chinese Ministry of State Security.",
+     says: "Joint alert on APT40's evolving techniques; the UK has attributed APT40 as part of China's Ministry of State Security."}
+  - {date: 2024-07-25, by: CISA, country: US, kind: cyber, actors: [G0138, Q12613368],
+     title: "North Korea Cyber Group Conducts Global Espionage Campaign to Advance Regime's Military and Nuclear Programs",
+     url: https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-207a,
+     quote: "includes a DPRK (aka North Korean) state-sponsored cyber group known publicly as Andariel",
+     names: [Reconnaissance General Bureau],
+     says: "Joint advisory: Andariel is a state-sponsored group within the North Korean Reconnaissance General Bureau's 3rd Bureau."}
+  - {date: 2024-09-05, by: NCSC, country: GB, kind: cyber, actors: [Q20757678, Q100605916, Q115782],
+     title: "UK and allies uncover Russian military unit carrying out cyber attacks and digital sabotage for the first time",
+     url: https://www.ncsc.gov.uk/news/uk-allies-uncover-russian-military-carrying-out-cyber-attacks-digital-sabotage,
+     quote: "The group differs to more established GRU-related cyber groups Unit 26165 (Fancy Bear) and Unit 74455 (Sandworm).",
+     says: "Joint advisory on GRU Unit 29155 (cyber attacks and sabotage); names Unit 26165 as Fancy Bear and Unit 74455 as Sandworm."}
+  - {date: 2025-05-21, by: NCSC, country: GB, kind: cyber, actors: [Q20757678, Q115782],
+     title: "UK and allies expose Russian intelligence campaign targeting western logistics and technology organisations",
+     url: https://www.ncsc.gov.uk/news/uk-partners-expose-russian-intelligence-campaign,
+     quote: "Unit 26165 – also known as APT 28 – was able to gain initial access to victim networks",
+     says: "Eleven countries attribute a campaign against Western logistics and technology firms to GRU unit 26165 (APT28)."}
+  - {date: 2025-07-18, by: NCSC, country: GB, kind: cyber, actors: [Q20757678, Q115782],
+     title: "UK calls out Russian military intelligence for use of espionage tool",
+     url: https://www.ncsc.gov.uk/news/uk-call-out-russian-military-intelligence-use-espionage-tool,
+     quote: "The UK has previously said APT 28 is part of Russia's GRU 85th Main Special Service Centre, Military Unit 26165.",
+     says: "The UK attributes the AUTHENTIC ANTICS malware used against email accounts to APT28, part of the GRU."}
+  - {date: 2025-08-27, by: CISA, country: US, kind: cyber, actors: [Q130534523],
+     title: "Countering Chinese State-Sponsored Actors Compromise of Networks Worldwide to Feed Global Espionage System",
+     url: https://www.cisa.gov/news-events/cybersecurity-advisories/aa25-239a,
+     quote: "commonly referred to as Salt Typhoon, OPERATOR PANDA, RedMike, UNC5807, and GhostEmperor",
+     says: "Joint advisory on Chinese state-sponsored actors compromising networks worldwide; the activity overlaps with industry reporting on Salt Typhoon."}
+  - {date: 2026-04-07, by: NCSC, country: GB, kind: cyber, actors: [Q20757678, Q115782],
+     title: "UK exposes Russian military intelligence hijacking vulnerable routers for cyber attacks",
+     url: https://www.ncsc.gov.uk/news/uk-exposes-russian-military-intelligence-hijacking-vulnerable-routers-for-cyber-attacks,
+     quote: "APT28 has previously been linked by the UK to Russia’s GRU 85th Main Special Service Centre (GTsSS), Military Unit 26165.",
+     says: "The UK exposes APT28's hijacking of vulnerable routers; the group is linked to GRU Military Unit 26165."}
