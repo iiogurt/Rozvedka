@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% set a = actor %}
+{% block title %}Timeline · {{ a.label }} · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/actors/{{ a.key }}">← {{ a.label }}</a></p>
+<h1 class="page-h">Timeline: {{ a.label }}</h1>
+{% if not years %}
+<p class="muted small">No dated reports in scope name this actor.</p>
+{% else %}
+<p class="muted small">{{ docs }} dated reports, {{ years[0] }}–{{ years[-1] }}, counted as on the actor page (one file per report, the
+  Trends scope{% if actor.since_year %}, nothing dated before the actor existed ({{ actor.since_year }}){% endif %}).
+  {% if undated %}{{ undated }} more name{{ 's' if undated == 1 }} it but {{ 'is' if undated == 1 else 'are' }} undated or older than the chart and {{ 'is' if undated == 1 else 'are' }} left out. {% endif %}
+  Every number links to the reports it counts.</p>
+
+<section class="viz-card">
+  <h2 class="viz-title">Reports per year by reporting country <span class="muted small">{{ countries|length }} of {{ n_countries }}</span></h2>
+  <p class="muted small viz-sub">Reports naming the actor, by the country of the agency that published them. Shade is relative to the
+    busiest cell ({{ peak }}).{% if n_countries > countries|length %} Showing the {{ countries|length }} countries with most reports; the others are in the <a href="/documents?actor={{ a.key }}&indexed=1">full list</a>.{% endif %}</p>
+  <div class="tl-scroll"><table class="tl">
+    <tr><th></th>{% for y in years %}<th>{{ y }}</th>{% endfor %}<th>Σ</th></tr>
+    {% for c in countries %}<tr><th class="tl-row"><img class="flag-sm" src="{{ flag_url(c.country) }}" alt=""> {{ c.country }}</th>
+      {% for x in c.cells %}<td {% if x.n %}style="--v: {{ (x.n / peak * 100)|round|int }}%"{% endif %}>{% if x.n %}<a href="{{ x.link }}">{{ x.n }}</a>{% endif %}</td>{% endfor %}
+      <td class="tl-sum">{{ c.total }}</td></tr>{% endfor %}
+  </table></div>
+</section>
+
+<section class="viz-card">
+  <h2 class="viz-title">Actors named beside it <span class="muted small">{{ partners|length }}</span></h2>
+  <p class="muted small viz-sub">Actors named within {{ 'a passage' }} of {{ a.label }} (same rule as the actor page), reports per year.
+    <b>new</b>: first named beside it in the last {{ recent }} years; <b>gone</b>: not named beside it in the last {{ recent }} years.
+    Countries are left out.</p>
+  {% if partners %}
+  <div class="tl-scroll"><table class="tl">
+    <tr><th></th>{% for y in years %}<th>{{ y }}</th>{% endfor %}<th>Σ</th><th></th></tr>
+    {% for p in partners %}<tr><th class="tl-row"><i class="kdot kind-{{ p.kind }}"></i><a href="/actors/{{ p.key }}">{{ p.label }}</a></th>
+      {% for x in p.cells %}<td {% if x.n %}style="--v: {{ (x.n / pmax * 100)|round|int }}%"{% endif %}>{% if x.n %}<a href="{{ x.link }}">{{ x.n }}</a>{% endif %}</td>{% endfor %}
+      <td class="tl-sum">{{ p.total }}</td><td class="small">{% if p.status %}<b>{{ p.status }}</b>{% endif %}</td></tr>{% endfor %}
+  </table></div>
+  {% else %}<p class="muted small">No other actor is named in the same passage.</p>{% endif %}
+</section>
+<section class="viz-card">
+  <h2 class="viz-title">First and last report per agency <span class="muted small">{{ agencies|length }}</span></h2>
+  <p class="muted small viz-sub">Earliest and latest dated report of each agency that names {{ a.label }}, ordered by first mention.</p>
+  <table class="vt"><tr><th>Agency</th><th>First</th><th>Last</th><th>Years with a mention</th><th>Reports</th></tr>
+  {% for g in agencies %}<tr>
+    <td><img class="flag-sm" src="{{ flag_url(g.country) }}" alt=""> {{ g.agency }}{{ pub_mark(g.source_id) }}</td>
+    <td>{{ g.first.year }} <a href="/report/{{ g.first.doc_id }}" title="{{ g.first.title }}">report</a></td>
+    <td>{{ g.last.year }} <a href="/report/{{ g.last.doc_id }}" title="{{ g.last.title }}">report</a></td>
+    <td>{{ g.n_years }}</td><td><a href="{{ g.link }}">{{ g.docs }}</a></td></tr>{% endfor %}
+  </table>
+</section>
+{% endif %}
+{% endblock %}

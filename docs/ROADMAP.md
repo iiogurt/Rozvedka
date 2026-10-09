@@ -90,7 +90,7 @@ Each item: why · what · done when · version step.
 2. **Research notes and citations** (old C13, adapted to *no user-based features*: one shared notebook) – mark
    passages into named notebooks, export as Markdown / PDF with formatted citations (agency, title, year, page,
    official URL). · minor
-3. **Actor timeline** (old C14) – first and last mention per agency, mentions per year by reporting country, how the
+3. ✅ (0.46.0) **Actor timeline** (old C14) – first and last mention per agency, mentions per year by reporting country, how the
    connected actors changed. · minor
 4. ✅ (0.35.0) **Cross-language search** – a word typed in one language also finds its translations where the topic taxonomy knows
    them (`Drohne` → `drone`, `dron`, …), shown as an explained expansion. · minor

@@ -39,6 +39,7 @@
   <h2 class="viz-title">In the reports</h2>
   <p class="viz-sub muted small"><b>{{ docs }}</b> reports by <b>{{ agencies|length }}</b> agencies mention {{ a.label }}
     · <a href="/documents?actor={{ a.key }}">list them</a> · <a href="/compare?actor={{ a.key }}">compare what agencies say</a>
+    · <a href="/actors/{{ a.key }}/timeline">timeline by agency, country and neighbour</a>
     <form method="post" action="/watch/add" class="inline"><input type="hidden" name="query" value='actor:"{{ a.label }}"'>
       <button class="watch-btn" title="Follow this actor update by update on the Watchlist">☆ Watch</button></form></p>
   {% if timeline %}

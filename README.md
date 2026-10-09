@@ -288,6 +288,13 @@ no periodic job.
 - Each actor page: reference data with its source and revision, the Wikipedia lead, mentions per year, which
   agencies report on it, the topics of those reports, actors named in the same passage, and **the passages
   themselves with a link to the cited page of the PDF**.
+- **Actor timeline** (`/actors/<key>/timeline`, linked from every actor page) – a year × reporting-country grid of the
+  reports that name the actor, a year grid of the actors named in the same passage (marked **new** or **gone** when they
+  appeared or vanished in the last three years), and the first and last report of each agency. Every cell links to the
+  reports it counts.
+
+<img src="docs/images/actor-timeline.png" alt="Actor timeline: reports per year by reporting country and the actors named beside it" width="900">
+
 <img src="docs/images/sanctions-actor.png" alt="Sanctions and designations section of an actor page: list, entry, matched name, date, legal basis and source" width="900">
 
 - **Sanctions and designations** – the official consolidated lists of the **EU**, the **UK**, the **UN Security Council** and
