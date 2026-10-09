@@ -143,6 +143,24 @@
   </table>
 </section>
 {% endif %}
+{% if attributions %}
+<section class="viz-card" id="attributions">
+  <h2 class="viz-title">Official attributions <span class="muted small">{{ attributions|length }}</span></h2>
+  <p class="muted small viz-sub">Statements of government bodies that name {{ a.label }} – with the passage quoted from the published
+    page, and when the page was last checked for it. Hand-listed (<code>sources/attributions.yaml</code>), not every statement
+    there is; an attribution is the issuing government's assessment, not a finding of fact. All statements:
+    <a href="/actors/attributions">attributions overview</a>.</p>
+  <table class="rp-topics small">
+    <thead><tr><th>Date</th><th>Issued by</th><th>Statement</th><th>Also names</th></tr></thead>
+    {% for t in attributions %}<tr>
+      <th>{{ t.date }}</th><td><span class="ctag">{{ t.by }}</span> <img class="flag-sm" src="{{ flag_url(t.country) }}" alt="{{ t.country }}"></td>
+      <td><a href="{{ t.url }}" rel="noopener">{{ t.title }}</a><br>{{ t.says }}
+        <blockquote class="snippet small">“{{ t.quote }}”</blockquote>
+        <span class="muted">{% if t.confirmed %}quote confirmed on the page, checked {{ t.checked }}{% elif t.checked %}<b>quote not confirmed</b> when checked {{ t.checked }}{% else %}not checked yet (<code>fetch-attributions</code>){% endif %}</span></td>
+      <td>{% for o in t.actor_info if o.key != a.key %}<a href="/actors/{{ o.key }}">{{ o.label }}</a>{{ ', ' if not loop.last }}{% endfor %}</td></tr>{% endfor %}
+  </table>
+</section>
+{% endif %}
 {% if connections %}
 <section class="viz-card" id="connections">
   <h2 class="viz-title">Connections</h2>

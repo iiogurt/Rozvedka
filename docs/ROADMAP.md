@@ -111,7 +111,7 @@ Each item: why · what · done when · version step.
    DE PKGr, NO EOS-utvalget, DK TET, UK IPCO): official, and they report what the services do not. · patch (sources)
 5. ◐ (0.44.1: DE, NATO, US DoD; more countries to add) **National security strategies and white papers** – the governments' own strategy documents, linked to their
    agencies; a natural "document type" (B3). · patch (sources)
-6. **Official attributions** – government statements attributing cyber attacks or sabotage to a state or group (EU
+6. ◐ (0.47.0: UK NCSC and US CISA, 21 statements; the Council of the EU, Germany and others block or are not yet listed) **Official attributions** – government statements attributing cyber attacks or sabotage to a state or group (EU
    Council, Five Eyes joint advisories), as dated events on actor pages. · minor
 7. **Positions held** (old D16), **organisation charts** (old D17), **more seeds where reports point** (old D18). · minor / patch
 

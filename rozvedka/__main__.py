@@ -49,6 +49,7 @@ def main():
     im.add_argument("--no-index", action="store_true", help="skip matching topics, dates and actors afterwards")
     sub.add_parser("fetch-publishers", help="checks of the think tanks: EU register, FARA, sanctions lists, Wikidata")
     sub.add_parser("fetch-ratings", help="democracy ratings of states over time (V-Dem, Freedom House, World Bank WGI)")
+    sub.add_parser("fetch-attributions", help="check the official attribution statements (sources/attributions.yaml) against their pages")
     sub.add_parser("fetch-sanctions", help="download the EU, UK, UN and US sanctions lists and match them with the actors")
     sub.add_parser("match-sanctions", help="match the downloaded sanctions lists with the actors again (no download)")
     fp = sub.add_parser("fetch-actor-profiles", help="pictures, key facts and Wikipedia summaries of the actors the reports name")
@@ -110,6 +111,9 @@ def main():
         print(publishers.fetch())   # and the think tanks' checks
         from . import actor_profiles
         print(actor_profiles.fetch(refresh=a.refresh))   # and the actors' pictures and facts
+    elif a.cmd == "fetch-attributions":
+        from . import attributions
+        print(attributions.fetch_all())
     elif a.cmd == "fetch-sanctions":
         from . import sanctions
         print(sanctions.fetch_all())

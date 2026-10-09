@@ -1014,3 +1014,5 @@ table.tl td { min-width: 26px; height: 20px; text-align: center; border: 1px sol
   background: color-mix(in srgb, var(--accent) var(--v, 0%), transparent); }
 table.tl td a { display: block; color: inherit; font-weight: 600; }
 table.tl td.tl-sum { background: none; border: 0; padding-left: 8px; color: var(--muted); }
+
+#attributions th, .rp-topics th.nw { white-space: nowrap; vertical-align: top; }

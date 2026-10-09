@@ -27,6 +27,15 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.47.0] – 2026-10-09
+
+### Added
+- **Official attributions** (roadmap D6): `sources/attributions.yaml` lists 21 statements of the UK NCSC and US CISA that
+  name a cyber threat group and, where the page says so, the state body behind it (GRU, SVR, FSB, China's MSS, Iran's
+  MOIS and IRGC, North Korea's RGB) – each with a verbatim quote. `fetch-attributions` downloads the pages and checks that
+  the quote is on them; actor pages get an "Official attributions" section (statement, quote, issuer, date, last check) and
+  `/actors/attributions` lists all. The Council of the EU blocks automatic access, so its statements are not included.
+
 ## [0.46.1] – 2026-10-09
 
 ### Changed
@@ -980,7 +989,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.46.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.47.0...HEAD
+[0.47.0]: https://github.com/iiogurt/Rozvedka/compare/v0.46.1...v0.47.0
 [0.46.1]: https://github.com/iiogurt/Rozvedka/compare/v0.46.0...v0.46.1
 [0.46.0]: https://github.com/iiogurt/Rozvedka/compare/v0.45.0...v0.46.0
 [0.45.0]: https://github.com/iiogurt/Rozvedka/compare/v0.44.1...v0.45.0

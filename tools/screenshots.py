@@ -65,6 +65,7 @@ SHOTS = {
     "actor": ("/actors/Q7747", 1200, [("sleep", 3)], None),        # a profile with a photo and facts
     "connections": (f"/actors/{WAGNER}", 900, [("sleep", 3)], "#connections"),
     "actor-timeline": ("/actors/Q38799/timeline", 1300, [], None),   # Hamas: agencies, countries, neighbours
+    "attributions": ("/actors/Q20757678", 900, [("sleep", 3)], "#attributions"),   # APT28: statements of the UK NCSC
     "review": ("/actors/review", 1100, [], None),
     "network": ("/network", 1100, [("sleep", 6)], None),
     "map": ("/map", 800, [("sleep", 5)], None),
