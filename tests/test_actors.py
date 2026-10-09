@@ -247,3 +247,22 @@ def test_generic_and_cjk_exclusions():
     g = gaz(("Q40", "party", "seed", ["Revival", "復興", "Възраждане"]))
     rows = names_by(actors.prepare_names(g, {"exclude_aliases": {"Q40": ["復興"]}}))
     assert rows[("Q40", "復興")]["status"] == "ignored" and rows[("Q40", "Възраждане")]["status"] == "used"
+
+
+def test_actor_timeline(library):
+    from fastapi.testclient import TestClient
+
+    from rozvedka import timeline
+    from rozvedka.app import app
+    actors.index(workers=1)
+    d = timeline.detail("Q3")
+    assert d["years"] == [2024] and d["docs"] == 1
+    assert d["agencies"][0]["first"]["doc_id"] == 2 and d["agencies"][0]["last"]["year"] == 2024
+    assert d["countries"][0]["country"] == "CZ" and d["countries"][0]["cells"][0]["n"] == 1
+    assert [p["key"] for p in d["partners"]] == ["Q5"] and d["partners"][0]["cells"][0]["link"].startswith("/documents?")
+    assert timeline.detail("nope") is None
+    client = TestClient(app)
+    t = client.get("/actors/Q3/timeline").text
+    assert "First and last report per agency" in t and "cluster=Q3%2CQ5" in t
+    assert client.get("/actors/nope/timeline").status_code == 404
+    assert "/actors/Q3/timeline" in client.get("/actors/Q3").text

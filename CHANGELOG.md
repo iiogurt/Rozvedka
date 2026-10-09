@@ -27,6 +27,14 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.46.0] – 2026-10-09
+
+### Added
+- **Actor timeline** (roadmap C3): `/actors/<key>/timeline`, linked from every actor page. It shows the first and last
+  report of each agency that names the actor, a year × reporting-country grid of reports, and a year grid of the
+  actors named in the same passage, with the ones that appeared (**new**) or vanished (**gone**) in the last three years
+  marked. Every cell links to the exact reports it counts.
+
 ## [0.45.0] – 2026-10-09
 
 ### Added
@@ -957,7 +965,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.45.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.46.0...HEAD
+[0.46.0]: https://github.com/iiogurt/Rozvedka/compare/v0.45.0...v0.46.0
 [0.45.0]: https://github.com/iiogurt/Rozvedka/compare/v0.44.1...v0.45.0
 [0.44.1]: https://github.com/iiogurt/Rozvedka/compare/v0.44.0...v0.44.1
 [0.44.0]: https://github.com/iiogurt/Rozvedka/compare/v0.43.0...v0.44.0

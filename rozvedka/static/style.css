@@ -1004,3 +1004,13 @@ a.pub-ind { text-decoration: none; }
 .ac-n { font-variant-numeric: tabular-nums; font-size: 12px; color: var(--muted); }
 .ac-sep, .ac-none { padding: 6px 8px 2px; border-top: 1px solid var(--line); margin-top: 4px; }
 .ac-none { border-top: 0; }
+
+/* ── Actor timeline ── */
+.tl-scroll { overflow-x: auto; }
+table.tl { border-collapse: collapse; font-size: 11px; font-variant-numeric: tabular-nums; }
+table.tl th { font-weight: 600; padding: 2px 4px; text-align: center; color: var(--muted); }
+table.tl th.tl-row { text-align: left; white-space: nowrap; color: var(--ink); padding-right: 8px; }
+table.tl td { min-width: 26px; height: 20px; text-align: center; border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--accent) var(--v, 0%), transparent); }
+table.tl td a { display: block; color: inherit; font-weight: 600; }
+table.tl td.tl-sum { background: none; border: 0; padding-left: 8px; color: var(--muted); }
