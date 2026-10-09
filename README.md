@@ -334,8 +334,8 @@ no periodic job.
   evidence in [`sources/actor_reviews.yaml`](sources/actor_reviews.yaml), gives each name a measured precision, and
   the actor page lists the reports left out this way.
 - **Measured precision on the Actors page**: how many passages were read, how many were right and wrong, and how
-  much of the index the reviewed names cover (as of 0.43.0: 92.7 % on 912 passages of the 197 most frequent names,
-  about 55 % of the actor–report links; the other names are not measured).
+  much of the index the reviewed names cover (as of 0.46.1: 91.6 % on 1,802 passages of the 456 most frequent names,
+  about 75 % of the actor–report links; the other names are not measured).
 
 <img src="docs/images/actor-precision.png" alt="Actors page: measured precision of the name matching above the list of actors" width="900">
 

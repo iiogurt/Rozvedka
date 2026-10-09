@@ -96,3 +96,14 @@ def test_measured_precision_on_the_actors_page(library):
     done = review.queue()["done"]
     assert [(n["name"], n["right"], n["wrong"], n["docs"]) for n in done] == [("Wagner", 0, 3, 0)] and done[0]["gone"]
     assert 'id="reviewed"' in TestClient(app).get("/actors/review").text
+
+
+def test_several_verdicts_at_once(library):
+    r = review.record_many([("Q36597284", 1, "right", "Wagner", "Wagner fighters in Mali."),
+                            ("Q36597284", 2, "wrong", "Wagner", "Diretor Wagner Silva de Araújo")], reviewer="Claude")
+    assert r == {"recorded": 2}
+    rows = review.load()
+    assert {(x["url"], x["verdict"], x.get("reviewer")) for x in rows} == {("https://abin/1.pdf", "right", "Claude"), ("https://abin/2.pdf", "wrong", "Claude")}
+    assert ("Q36597284", "https://abin/2.pdf") in review.wrong_pairs()
+    assert "error" in review.record_many([("Q36597284", 1, "maybe", "Wagner", "x")])
+    assert len(review.load()) == 2          # nothing is written when one verdict is invalid

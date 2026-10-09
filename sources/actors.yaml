@@ -147,6 +147,9 @@ weak_aliases: {}                    # e.g.  Q123: [Name]
 exclude_sources:
   Q36597284: [OTHER/IPCC]                     # Wagner Group: "Wagner" in IPCC reports are authors' surnames
   Q7747: [PE/INDECI]                          # Vladimir Putin: "Putina" is a district of Puno (Peru) in INDECI reports
+  Q3156381: [CO/UNGRD]                        # Iván Márquez (FARC): UNGRD's director general is Carlos Iván Márquez Pérez
+  Q1331110: [PE/INDECI]                       # Säpo: "Sapo" is a river in Peru in INDECI's flood reports (review 2026-10-09)
+  Q622899: [GB/IPCO]                          # DEA: IPCO's reports mean the Scottish Crime and Drug Enforcement Agency (SCDEA)
   Q1626724: [NATO/NATO, NATO/StratCom CoE]    # EU INTCEN ("SitCen"): NATO's reports mean NATO HQ's own SITCEN (review 2026-10-08)
 
 # Per actor and name: a name that is also a common surname counts only when a word of its field stands within 6 words
@@ -169,6 +172,27 @@ context_aliases:
     Potok: [pmc, chvk, gazprom, mercen, militar, private, ukrain, plamya, fakel, redut]
   Q6978334:                                   # National Security Council of India: the reports mean other countries' councils
     National Security Council: [india, indien, indisch, delhi, doval, modi]
+  # Review of names beyond the top 200, 2026-10-09
+  Q104417057:                                 # Leviathan (APT40): Hobbes's book and many titles
+    Leviathan: [apt, hack, cyber, china, chin, espion, spion, periscope, mss, fireeye, mandiant]
+  G0142:                                      # Confucius (APT): Confucius Institutes
+    Confucius: [apt, group, hack, cyber, spion, espion, india, pakistan, malware, backdoor]
+  Q311381:                                    # Quds Force: "Quds" alone is also Jerusalem and al-Quds Day
+    Quds: [force, forza, fuerza, kraft, soleimani, irgc, guard, guardia, revolution, indar, elite, sepah]
+  Q2821724:                                   # al-Baghdadi: "Abu Bakr" is also the first caliph
+    Abu Bakr: [baghdad, bagdad, kalif, calif, califa, isis, daesh, daech, islamic, islamsk, islamisch, islamist, leader, anführer, ibrahim]
+  Q118733663:                                 # Foxtrot (Swedish criminal network): NATO phonetic alphabet, "Steadfast Foxtrot"
+    Foxtrot: [network, nätverk, gang, criminal, kriminell, swed, svensk, sverige, iran, rawa, majid, hitman, murder]
+  Q597935:                                    # Communications Security Establishment: "CSE" is also a computer-science department
+    CSE: [canad, communications, signals, intelligence, cyber, csis, gchq, nsa, five eyes, caf, dnd, ottawa]
+  Q100701786:                                 # Ricochet Chollima: "Reaper" is the MQ-9 drone and an IoT botnet
+    Reaper: [apt37, scarcruft, group, korea, dprk, ricochet, kospy, nord]
+  Q3032398:                                   # Intelligence Division (Finland): other countries' intelligence divisions
+    Intelligence Division: [finn, suomi, puolustusvoim, defence command, tiedustelu]
+  Q3511607:                                   # Belgian State Security: "Staatssicherheit" is also the East German Stasi
+    Staatssicherheit: [vsse, belg, belgi, brüssel, bruxel, zcb, ccb]
+  Q97183292:                                  # Berserk Bear: "Havex" is also the name of the malware it used
+    Havex: [group, actor, adversar, energetic, dragonfly, berserk, crouching, apt]
     NSC: [india, indien, indisch, delhi, doval, modi]
 
 # Review of the most frequent matches, 2026-10-01: each entry was checked against sample passages.
@@ -195,6 +219,18 @@ exclude_aliases:
   Q4855267: [Ansar]                           # Bangladesh Ansar: "Ansar" is the first word of Ansar al-Sharia, Ansar Allah …
   Q28943121: [Renaissance, 復興, 再生, 复兴]    # Revival (Bulgaria): ordinary words (Grand Ethiopian Renaissance Dam; 復興 = reconstruction)
   Q156019: [Patria, La Patria, La Patrie, A Pátria, Domovina, Het Thuisland]   # Die Heimat: translations of "homeland"
+  # Review of names beyond the top 200, 2026-10-09
+  Q3302652: ["Service de renseignement de l'État", "Service de renseignement de l’État"]   # SHISH (Albania): Luxembourg's SRE
+  Q10920: [Anonim]                            # Anonymous: Turkish "Anonim Şirketi" (joint-stock company)
+  Q16850775: [JIC, Joint Intelligence Center] # US JIC: the reports mean the UK Joint Intelligence Committee and Belgium's JIC
+  Q49238017: [Syrian opposition]             # Syrian Liberation Front: "Syrian opposition" means the opposition as a whole
+  Q7565740: [Intelligence Academy]            # South Africa's: the reports mean Romania's and Belgium's academies
+  Q23505: [President Bush]                    # George H. W. Bush: the reports mean George W. Bush
+  Q310214: [Islamic Jihad]                    # Egyptian Islamic Jihad: Palestinian Islamic Jihad and Islamic Jihad Union
+  Q689764: [Guardia Nacional, Guàrdia Nacional]   # Army National Guard (US): the Spanish, Mexican, Portuguese, Ukrainian guards
+  Q210175: [Box 500]                          # MI5: "P.O. Box 500" is UNODC's postal address
+  Q21090563: [Stephen Murphy]                 # Steve Murphy (DEA agent): a common name in UNODC's expert lists
+  Q108146857: [Cobra]                         # Cobra: Austrian police unit "Cobra", the exercise "Cobra Gold", a Galician word
 
 # Countries are actors too (kind "country"), so the portal can show which countries' reports talk about which
 # countries. They come from Wikidata: sovereign states (Q3624078) with an ISO code, with their labels, aliases and

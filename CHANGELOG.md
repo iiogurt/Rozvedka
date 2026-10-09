@@ -27,6 +27,21 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.46.1] – 2026-10-09
+
+### Changed
+- **Actor matching reviewed beyond the top 200 names** (roadmap B1): 890 more passages of 259 more names were read, so
+  the review now covers 456 names, 1,802 passages and 75 % of the actor–report links (before: 197 names, 55 %).
+  Measured precision of the whole sample is 91.6 %; 96.1 % on the 1,716 passages of the names still in use after the
+  fixes below (the fixes come from the same samples, so this figure is optimistic until names are read again).
+- **Names that meant something else are fixed** (`sources/actors.yaml`, each with its reason): "Box 500" (a PO box, not
+  MI5), "Stephen Murphy", "Cobra", "Guardia Nacional", "Anonim" (Turkish "joint-stock"), "Syrian opposition",
+  "Intelligence Academy", "JIC" and "Joint Intelligence Center", "President Bush", "Islamic Jihad" are not matched; "Leviathan",
+  "Confucius", "Havex", "Reaper", "Quds", "Abu Bakr", "Foxtrot", "CSE", "Staatssicherheit" and "Intelligence Division"
+  count only with a word of their field nearby; Säpo, the DEA and Iván Márquez skip the report series that use the name
+  for a Peruvian river, a Scottish agency and a Colombian director.
+- The review file is written once per batch of verdicts (`review.record_many`) instead of once per verdict.
+
 ## [0.46.0] – 2026-10-09
 
 ### Added
@@ -965,7 +980,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.46.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.46.1...HEAD
+[0.46.1]: https://github.com/iiogurt/Rozvedka/compare/v0.46.0...v0.46.1
 [0.46.0]: https://github.com/iiogurt/Rozvedka/compare/v0.45.0...v0.46.0
 [0.45.0]: https://github.com/iiogurt/Rozvedka/compare/v0.44.1...v0.45.0
 [0.44.1]: https://github.com/iiogurt/Rozvedka/compare/v0.44.0...v0.44.1

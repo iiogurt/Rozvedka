@@ -29,7 +29,7 @@ on the library that day.
 | Downloaded reports without any topic | 383 of 2,932 (13 %) | taxonomy gaps or non-report files (forms, leaflets) |
 | Reports with too little text | 83 | mostly image-only pages OCR could not read |
 | Undated reports | 90 | mostly undated leaflets and forms |
-| Matching precision | 92.7 % measured on 912 passages of the 197 most frequent names (0.43.0), shown on the Actors page | names beyond the top 200 are not measured |
+| Matching precision | 91.6 % measured on 1,802 passages of the 456 most frequent names (0.46.1; 75 % of the links), shown on the Actors page | names beyond the top 450 are not measured |
 | Wrong years from titles | known cases (UK ISC press releases dated 2021) | date stamps in file names disagree with stored years |
 | Per-file counting | translations and editions count as separate reports | item B2 |
 | Portal start after a reboot | **not automatic** – runs from a shell | `deploy/rozvedka-web.service` needs `loginctl enable-linger` (sudo, owner's approval); `deploy/` still ships a weekly update timer the owner declined |
@@ -71,8 +71,8 @@ Each item: why · what · done when · version step.
 ### B. Quality you can measure
 
 1. ✅ (0.42.7: top 40 names, 199 passages, 95.5 %; 0.43.0: names 41–200, 853 more passages, 92.7 % overall, shown on
-   the Actors page; rules for the names that were mostly wrong) **Measure matching precision**. Later: review names
-   beyond the top 200, and re-review the corrected names. · owner + patch
+   the Actors page; rules for the names that were mostly wrong; 0.46.1: names 201–456, 75 % of the links) **Measure matching precision**.
+   Later: the remaining ~1,700 names (each under 8 reports) and a re-review of the corrected names. · owner + patch
 2. ✅ (0.33.0) **Editions and translations** (old B7) – group the same report across languages and file variants, so counts and
    trends are per report, not per file; passages can switch language. · minor
 3. ✅ (0.32.0) **Document types** (old B8) – annual report, threat assessment, risk assessment, strategy, guide/leaflet, form,
@@ -150,7 +150,7 @@ backups and exchange (0.27–0.28), home page and search console (0.22), Update 
 1. **E1** – the portal survives a reboot (needs the owner's yes for `sudo loginctl enable-linger`).
 2. **A1 + A2** – the six silent sources and the six missing member states (sources work, no new code).
 3. **A3 + A4** – civil-protection (national risk assessments) and cyber gaps.
-4. ✅ **B1** – precision measured (0.43.0: 92.7 % on 912 passages of the 197 most frequent names).
+4. ✅ **B1** – precision measured (0.46.1: 91.6 % on 1,802 passages of the 456 most frequent names).
 5. Then **B2 / B3** (count per report, by document type) and **C1** (a page per report).
 
 ## 5. Scope questions for the owner
