@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.51.0] – 2026-10-12
+
+### Added
+- **Who cites whom** (`/citations`): `index-citations` reads the web addresses in the report texts (41,858 links in 1,877
+  reports) and resolves them: a report of the library (117 links, 92 distinct targets in the usual scope), the site of another
+  agency (home-page host, or a path inside a shared portal like gov.uk; ambiguous hosts are not guessed at) or an outside
+  source. The page ranks the agencies other agencies link to (e.g. ENISA, DHS, Europol, BSI, NCSC-UK), the reports most
+  cited by reports, and the most linked outside hosts with a hand label for well-known ones (news, academic, law …). Report pages
+  show what a report links to and which library reports link to it; the Documents page filters `cite=` (reports citing a report,
+  cited by one, linking to an agency's site or to a host), so every count links to the reports it counts (checked for the top
+  entries). Addresses broken across lines in a PDF are not recovered – every count is a minimum. `update` runs the indexing.
+
 ## [0.50.0] – 2026-10-12
 
 ### Added
@@ -1043,7 +1055,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.50.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.51.0...HEAD
+[0.51.0]: https://github.com/iiogurt/Rozvedka/compare/v0.50.0...v0.51.0
 [0.50.0]: https://github.com/iiogurt/Rozvedka/compare/v0.49.0...v0.50.0
 [0.49.0]: https://github.com/iiogurt/Rozvedka/compare/v0.48.0...v0.49.0
 [0.48.0]: https://github.com/iiogurt/Rozvedka/compare/v0.47.2...v0.48.0

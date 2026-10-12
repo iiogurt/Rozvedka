@@ -77,6 +77,21 @@
 </section>
 </div>
 
+{% if cites.links %}
+<section class="viz-card" id="citations">
+  <h2 class="viz-title">Links to other sources <span class="muted small">{{ cites.links }}</span></h2>
+  <p class="muted small viz-sub">Web addresses in the text, tied to the library where they point into it (a minimum: addresses broken across lines are not recovered). <a href="/citations">Who cites whom</a>.</p>
+  {% if cites.cited %}<p class="small"><b>Library reports it links to</b> (<a href="/documents?cite=by:{{ d.id }}&indexed=1">{{ cites.cited|length }}</a>): {% for c in cites.cited %}<a href="/report/{{ c.id }}">{{ c.title }}</a> <span class="muted">{{ c.agency }} {{ c.year or '' }}</span>{{ '; ' if not loop.last }}{% endfor %}</p>{% endif %}
+  {% if cites.agencies %}<p class="small"><b>Other agencies' sites</b>: {% for a in cites.agencies %}<a href="/documents?cite=src:{{ a.id }}&indexed=1">{{ a.agency }}</a> <span class="muted">{{ a.links }}</span>{{ ', ' if not loop.last }}{% endfor %}</p>{% endif %}
+  {% if cites.hosts %}<p class="small"><b>Outside</b> ({{ cites.n_hosts }} hosts): {% for h, n in cites.hosts %}{{ h }} <span class="muted">{{ n }}</span>{{ ', ' if not loop.last }}{% endfor %}{{ ' …' if cites.n_hosts > cites.hosts|length }}</p>{% endif %}
+</section>
+{% endif %}
+{% if cites.cited_by %}
+<section class="viz-card" id="cited-by">
+  <h2 class="viz-title">Cited by <span class="muted small">{{ cites.cited_by|length }}</span></h2>
+  <p class="small">Library reports whose text links to this one (<a href="/documents?cite=doc:{{ d.id }}&indexed=1">list</a>): {% for c in cites.cited_by %}<a href="/report/{{ c.id }}">{{ c.title }}</a> <span class="muted">{{ c.agency }} {{ c.year or '' }}</span>{{ '; ' if not loop.last }}{% endfor %}</p>
+</section>
+{% endif %}
 {% if cves %}
 <section class="viz-card" id="cves">
   <h2 class="viz-title">CVE numbers named <span class="muted small">{{ cves|length }}</span></h2>
