@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.49.0] – 2026-10-12
+
+### Added
+- **CVE numbers in the reports, tied to CISA's Known Exploited Vulnerabilities list**: `index-cves` finds every
+  CVE-YYYY-NNNN in the report texts (351 reports, 1,203 different numbers) and `fetch-kev` downloads CISA's catalog
+  (CC0; 1,739 entries) with its version and retrieval date. `/cves` lists the numbers with reports, agencies, years, and
+  whether and since when CISA lists them (ransomware use shown); a CVE page gives CISA's entry, the reports naming it with
+  passage and page, and the actors named in the same passage. Actor pages get "Vulnerabilities named near it", report
+  pages the CVEs they name, and the Documents page filters `cve=` (also `cve=kev` and `cve_near=<actor>`), so every count
+  links to exactly the reports it counts. The catalog says what is exploited, never by whom – the actor link is a nearness
+  in the text and is labelled so. `update` runs `index-cves`.
+
 ## [0.48.0] – 2026-10-12
 
 ### Added
@@ -1021,7 +1033,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.48.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.49.0...HEAD
+[0.49.0]: https://github.com/iiogurt/Rozvedka/compare/v0.48.0...v0.49.0
 [0.48.0]: https://github.com/iiogurt/Rozvedka/compare/v0.47.2...v0.48.0
 [0.47.2]: https://github.com/iiogurt/Rozvedka/compare/v0.47.1...v0.47.2
 [0.47.1]: https://github.com/iiogurt/Rozvedka/compare/v0.47.0...v0.47.1

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}CVE numbers in the reports · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/actors">← Actors</a></p>
+<h1 class="page-h">CVE numbers in the reports</h1>
+<p class="muted small">Every software vulnerability (CVE) number the reports name – {{ total }} different ones, found by pattern in the report
+  texts (<a href="/documents?cve=kev">{{ n_kev }} of them</a> are on CISA's list of vulnerabilities known to be exploited).
+  {% if meta %}The list is CISA's <a href="{{ meta.page }}" rel="noopener">Known Exploited Vulnerabilities catalog</a>
+  (version {{ meta.version }}, {{ meta.license }}), retrieved {{ meta.retrieved }} with <code>fetch-kev</code>.
+  {% else %}The Known Exploited Vulnerabilities list has not been fetched yet: run <code>python -m rozvedka fetch-kev</code>.{% endif %}
+  The catalog says <b>what</b> is exploited, never <b>by whom</b>; the actors on a CVE's page are only named in the same passage of a report.
+  Counts are reports of the usual scope (one file per report); each number links to exactly those reports.</p>
+<form class="small" method="get">
+  Search <input name="q" value="{{ f.q }}" placeholder="CVE, vendor, product" size="20">
+  on CISA's list <select name="kev"><option value="">any</option><option value="yes" {{ 'selected' if f.kev == 'yes' }}>yes</option><option value="no" {{ 'selected' if f.kev == 'no' }}>no</option></select>
+  <label class="chk"><input type="checkbox" name="ransomware" value="1" {{ 'checked' if f.ransomware }}> used by ransomware (known)</label>
+  sort <select name="sort">{% for k, n in (('reports', 'reports'), ('agencies', 'agencies'), ('added', 'added to CISA list'), ('cve', 'CVE number')) %}<option value="{{ k }}" {{ 'selected' if f.sort == k }}>{{ n }}</option>{% endfor %}</select>
+  <button>Filter</button> <span class="muted">{{ pg.total }} of {{ total }} CVEs</span>
+</form>
+{{ pager(pg, "CVEs") }}
+<table class="rp-topics small">
+  <thead><tr><th>CVE</th><th class="n">Reports</th><th class="n">Agencies</th><th>Years</th><th>On CISA's list</th><th>Product</th></tr></thead>
+  {% for r in rows %}<tr>
+    <th><a href="/cves/{{ r.cve }}">{{ r.cve }}</a></th>
+    <td class="n"><a href="/documents?cve={{ r.cve }}">{{ r.docs }}</a></td><td class="n">{{ r.agencies }}</td>
+    <td>{{ r.y0 }}{{ '–' ~ r.y1 if r.y1 != r.y0 }}</td>
+    <td>{% if r.on_kev %}added {{ r.kev.dateAdded }}{% if r.kev.knownRansomwareCampaignUse == 'Known' %} · <b>ransomware</b>{% endif %}{% else %}<span class="muted">–</span>{% endif %}</td>
+    <td class="muted">{% if r.kev %}{{ r.kev.vendorProject }} {{ r.kev.product }}{% endif %}</td></tr>
+  {% else %}<tr><td class="muted">No CVE matches this filter.</td></tr>{% endfor %}
+</table>
+{{ pager(pg, "CVEs") }}
+{% endblock %}

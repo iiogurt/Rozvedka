@@ -299,6 +299,14 @@ no periodic job.
   US CISA; 21 so far, hand-listed in `sources/attributions.yaml`). Every entry carries a verbatim quote that
   `fetch-attributions` re-checks on the published page; actor pages show them with issuer, date and the date of the last check.
 
+- **CVE numbers and CISA's Known Exploited list** – every CVE the reports name, found by pattern (`index-cves`), tied to CISA's
+  catalog of vulnerabilities known to be exploited (`fetch-kev`, CC0, version and retrieval date shown). `/cves` lists them
+  with reports, agencies, years and the CISA entry; a CVE page shows the reports naming it with the passage and page and the
+  actors named in the same passage (a nearness in the text, not a claim that the actor used it); actor and report pages show
+  their CVEs. Every number links to the reports it counts.
+
+<img src="docs/images/cve.png" alt="A CVE page: CISA's Known Exploited entry, the reports naming it with passages, and the actors named nearby" width="900">
+
 <img src="docs/images/attributions.png" alt="Official attributions section of an actor page: statements of the UK NCSC with quotes and check dates" width="900">
 
 <img src="docs/images/sanctions-actor.png" alt="Sanctions and designations section of an actor page: list, entry, matched name, date, legal basis and source" width="900">
@@ -529,6 +537,7 @@ failure. Starting it after a reboot with nobody logged in needs `loginctl enable
 | `date-documents [--check]` | give undated reports a year from their first pages – a report heading, else a publication date – with the evidence; `--check` measures accuracy on reports whose year is known (part of `update`) |
 | `fetch-actors [--refresh]` | download the actor gazetteer and connections from Wikidata, Wikipedia and MITRE ATT&CK (network; Wikipedia infoboxes are cached in `data/gazetteer/` – `--refresh` reads them again) |
 | `service show\|install\|status\|verify\|uninstall` | the optional systemd user service for the portal (see Quick start): `install` only writes the unit file, it never enables or starts it |
+| `fetch-kev` · `index-cves` | download CISA's Known Exploited Vulnerabilities catalog (CC0; network) · find CVE numbers in the report texts and the actors named near them (`update` runs the second) |
 | `fetch-attributions` | check the official attribution statements in `sources/attributions.yaml` against their pages (network); the result with the check date is stored in `data/gazetteer/attributions.json` |
 | `fetch-sanctions` | download the EU, UK, UN Security Council and US (OFAC) consolidated sanctions lists into `data/sanctions/` and match them with the actors (network; `match-sanctions` matches again without downloading, `index-actors` does it too) |
 | `fetch-actor-profiles [--refresh]` | pictures (flag, logo or photo, with author and licence), key facts and Wikipedia leads of every actor the reports name, from Wikipedia, Wikidata and Wikimedia Commons (network; part of `fetch-actors`; `--refresh` downloads the pictures again) |
