@@ -1,0 +1,287 @@
+# Terrorism threat levels of states – what the official sources say, with the passage. Hand-curated; each entry is checked:
+#   kind: report        – a level an agency's report in this library states; the quote must be in the stored text of that
+#                         report (checked every time against the library, no network), and the page is found from it.
+#   kind: announcement  – an official announcement of a change, on a page the crawler may fetch; `fetch-threat-levels`
+#                         downloads the page and confirms the quote.
+# country  – ISO code of the state;  system – the name of the scale;  scale – its steps;  rank – the step (None if qualitative)
+# label    – the step's name in the source;  as_of – the date of a change, or the year (month) of the report stating the level
+# change   – for announcements: what it changed;  url – the report (as in the library) or the announcement page
+# `quote` is verbatim (quotes and dashes compared loosely); `says` is a plain-language summary. A report stating a level only
+# shows the level at that time; it is not a complete history and does not say when the level started.
+threat_levels:
+  - country: NL
+    system: National terrorism threat level (NCTV)
+    scale: 1–5
+    rank: 4
+    label: substantial
+    as_of: 2026-06
+    kind: report
+    url: https://english.nctv.nl/site/binaries/site-content/collections/documents/2026/09/21/terrorist-threat-assessment-for-the-netherlands-june-2026/terrorist-threat-assessment-for-the-netherlands-june-2026.pdf
+    agency: NCTV
+    quote: The threat level therefore remains at 4 on a scale of 1 to 5.
+    says: 'The June 2026 threat assessment: the level remains at 4, ''substantial''.'
+  - country: NL
+    system: National terrorism threat level (NCTV)
+    scale: 1–5
+    rank: 4
+    label: substantial
+    as_of: 2025-12
+    kind: report
+    url: https://english.nctv.nl/site/binaries/site-content/collections/documents/2026/04/03/terrorist-threat-assessment-for-the-netherlands-december-2025/terrorist-threat-assessment-for-the-netherlands-december-2025.pdf
+    agency: NCTV
+    quote: Terrorist threat level for the Netherlands remains at level 4
+    says: 'The December 2025 assessment: level 4 of 5.'
+  - country: NL
+    system: National terrorism threat level (NCTV)
+    scale: 1–5
+    rank: 4
+    label: substantial
+    as_of: '2026'
+    kind: report
+    url: https://www.aivd.nl/site/binaries/site-content/collections/documents/2026/09/18/infographic-wbnv/infographic-wet-bescherming-nationale-veiligheid.pdf
+    agency: AIVD
+    quote: het dreigingsniveau staat op 4 (substantieel)
+    says: The Dutch general intelligence service's annual report names the level as 4 (substantial).
+  - country: BE
+    system: General threat level (OCAM/OCAD)
+    scale: 1–4
+    rank: 2
+    label: medium
+    as_of: '2019'
+    kind: report
+    url: https://ocad.belgium.be/wp-content/uploads/2021/01/rapport-annuel2019_web.pdf
+    agency: OCAD/OCAM/CUTA
+    quote: l’OCAM a diminué le niveau de la menace en Belgique du niveau 3 (grave) au niveau 2 (moyen)
+    says: The OCAM lowered the general level from 3 (serious) to 2 (medium).
+  - country: BE
+    system: General threat level (OCAM/OCAD)
+    scale: 1–4
+    rank: 2
+    label: medium
+    as_of: '2022'
+    kind: report
+    url: https://ocad.belgium.be/wp-content/uploads/2023/07/jaarverslag_2022.pdf
+    agency: OCAD/OCAM/CUTA
+    quote: bleef het algemene dreigingsniveau voor België behouden op niveau 2 op een schaal van 4
+    says: In 2022 the general level stayed at 2 on a scale of 4.
+  - country: BE
+    system: General threat level (OCAM/OCAD)
+    scale: 1–4
+    rank: 3
+    label: serious
+    as_of: '2023'
+    kind: report
+    url: https://cuta.belgium.be/wp-content/uploads/2024/09/Annual-report_2023.pdf
+    agency: OCAD/OCAM/CUTA
+    quote: forcing us to raise the general threat level to 3 for Belgium
+    says: After the attack of 16 October 2023 the general level was raised to 3.
+  - country: BE
+    system: General threat level (OCAM/OCAD)
+    scale: 1–4
+    rank: 3
+    label: serious
+    as_of: '2024'
+    kind: report
+    url: https://cuta.belgium.be/wp-content/uploads/2025/11/Annual-report-2024.pdf
+    agency: OCAD/OCAM/CUTA
+    quote: Throughout the year 2024, the general threat level 3 (serious) was in effect in Belgium.
+    says: Level 3 (serious) all of 2024.
+  - country: BE
+    system: General threat level (OCAM/OCAD)
+    scale: 1–4
+    rank: 3
+    label: serious
+    as_of: '2025'
+    kind: report
+    url: https://cuta.belgium.be/wp-content/uploads/2026/09/20260909_Annual-Report-2025-English.pdf
+    agency: OCAD/OCAM/CUTA
+    quote: In 2025, Belgium’s general threat level was set at level 3 (serious) for extremist and terrorist activity.
+    says: Level 3 (serious) all of 2025.
+  - country: ES
+    system: Anti-terrorist alert level (Spain)
+    scale: 1–5
+    rank: 4
+    label: high
+    as_of: '2019'
+    kind: report
+    url: https://www.dsn.gob.es/sites/default/files/documents/MASTER%20IASN2019%20WEB_0.pdf
+    agency: DSN
+    quote: El Nivel de Alerta Antiterrorista en España durante todo el 2019 se ha situado en un Nivel 4 (riesgo ALTO) sobre 5
+    says: Spain's anti-terrorist alert level was 4 of 5 (high risk) throughout 2019.
+  - country: ES
+    system: Anti-terrorist alert level (Spain)
+    scale: 1–5
+    rank: 4
+    label: high
+    as_of: '2023'
+    kind: report
+    url: https://www.dsn.gob.es/sites/default/files/documents/ACCESIBLE%20MAQUETA%20IASN2023.pdf
+    agency: DSN
+    quote: El nivel 4 de alerta antiterrorista ha permanecido activado durante todo el
+    says: Level 4 of the anti-terrorist alert stayed active throughout 2023.
+  - country: AT
+    system: Terror warning level (Austria)
+    scale: 1–5
+    rank: 4
+    label: high
+    as_of: 2023-10
+    kind: report
+    url: https://www.dsn.gv.at/501/files/vsb/180_2024_vsb_2023_v20240531.pdf
+    agency: DSN
+    quote: Die Erhöhung der „Terrorwarnstufe“ auf „hoch“ (Stufe 4/5) im Oktober 2023
+    says: Austria raised its terror warning level to 'high' (4 of 5) in October 2023.
+  - country: AT
+    system: Terror warning level (Austria)
+    scale: 1–5
+    rank: 4
+    label: high
+    as_of: '2024'
+    kind: report
+    url: https://www.dsn.gv.at/501/files/vsb/205_2025_vsb_2024_v20250929_webbf.pdf
+    agency: DSN
+    quote: die geltende Terrorwarnstufe auf der zweithöchsten Stufe zu halten
+    says: In 2024 the warning level was kept at the second-highest step.
+  - country: SE
+    system: Terrorist threat level (Säpo)
+    scale: 1–5
+    rank: 3
+    label: elevated
+    as_of: '2025-05-23'
+    kind: report
+    url: https://www.forsvarsmakten.se/globalassets/02-om-forsvarsmakten/myndighetsinformation/dokument/aktuellt/nyheter/must-arsoversikt-2025.pdf
+    agency: MUST
+    quote: Den 23 maj 2025 beslutade Säkerhetspolisen att sänka terrorhotnivån, från ett högt hot (4) till ett förhöjt hot (3).
+    says: On 23 May 2025 the Swedish Security Service lowered the level from 'high' (4) to 'elevated' (3).
+  - country: LV
+    system: Terrorism threat level (VDD)
+    scale: qualitative
+    rank: null
+    label: low
+    as_of: '2025'
+    kind: report
+    url: https://vdd.gov.lv/uploads/materials/42/en/annual-report-2025.pdf
+    agency: VDD
+    quote: the terrorism threat level in Latvia remained low
+    says: 'The Latvian State Security Service: the level in Latvia remained low.'
+  - country: GB
+    system: UK national terrorism threat level (JTAC)
+    scale: 1–5 (low, moderate, substantial, severe, critical)
+    rank: 4
+    label: severe
+    as_of: '2014-08-29'
+    kind: announcement
+    change: from substantial
+    url: https://www.mi5.gov.uk/news-categories/threat-level
+    agency: MI5
+    quote: has changed the UK threat level from international terrorism from SUBSTANTIAL to SEVERE
+    says: JTAC raised the UK level for international terrorism from substantial to severe.
+  - country: GB
+    system: UK national terrorism threat level (JTAC)
+    scale: 1–5 (low, moderate, substantial, severe, critical)
+    rank: 5
+    label: critical
+    as_of: '2017-05-23'
+    kind: announcement
+    change: from severe
+    url: https://www.mi5.gov.uk/news-categories/threat-level
+    agency: MI5
+    quote: it is a possibility we cannot ignore
+    says: Raised to critical after the Manchester attack (announced by the Prime Minister).
+  - country: GB
+    system: UK national terrorism threat level (JTAC)
+    scale: 1–5 (low, moderate, substantial, severe, critical)
+    rank: 4
+    label: severe
+    as_of: '2017-05-27'
+    kind: announcement
+    change: from critical
+    url: https://www.mi5.gov.uk/news-categories/threat-level
+    agency: MI5
+    quote: The threat level had been raised to CRITICAL on Tuesday in the aftermath of the terrorist attack in Manchester
+    says: Lowered to severe four days later.
+  - country: GB
+    system: UK national terrorism threat level (JTAC)
+    scale: 1–5 (low, moderate, substantial, severe, critical)
+    rank: 5
+    label: critical
+    as_of: '2017-09-15'
+    kind: announcement
+    change: from severe
+    url: https://www.mi5.gov.uk/news-categories/threat-level
+    agency: MI5
+    quote: I have just been updated on the investigation into this morning's cowardly terrorist attack in London
+    says: Raised to critical after the Parsons Green attack.
+  - country: GB
+    system: UK national terrorism threat level (JTAC)
+    scale: 1–5 (low, moderate, substantial, severe, critical)
+    rank: 4
+    label: severe
+    as_of: '2017-09-17'
+    kind: announcement
+    change: from critical
+    url: https://www.mi5.gov.uk/news-categories/threat-level
+    agency: MI5
+    quote: Following the terrorist attack in Parsons Green last Friday
+    says: Lowered to severe two days later.
+  - country: GB
+    system: Northern Ireland-related terrorism in Great Britain (MI5)
+    scale: 1–5 (low, moderate, substantial, severe, critical)
+    rank: 2
+    label: moderate
+    as_of: '2018-03-01'
+    kind: announcement
+    change: from substantial
+    url: https://www.mi5.gov.uk/news-categories/threat-level
+    agency: MI5
+    quote: from Northern Ireland-related terrorism from SUBSTANTIAL to MODERATE
+    says: 'The level for Great Britain from Northern Ireland-related terrorism was lowered from substantial to moderate (a different scale position than the
+      national level: ''moderate'' is the middle of five).'
+  - country: GB
+    system: Northern Ireland-related terrorism in Northern Ireland (MI5)
+    scale: 1–5 (low, moderate, substantial, severe, critical)
+    rank: 3
+    label: substantial
+    as_of: '2022-03-22'
+    kind: announcement
+    change: from severe
+    url: https://www.mi5.gov.uk/news-categories/threat-level
+    agency: MI5
+    quote: This is the first time that this threat level has been lowered since it was initially published in 2010.
+    says: Lowered from severe to substantial.
+  - country: GB
+    system: Northern Ireland-related terrorism in Northern Ireland (MI5)
+    scale: 1–5 (low, moderate, substantial, severe, critical)
+    rank: 4
+    label: severe
+    as_of: '2023-03-28'
+    kind: announcement
+    change: from substantial
+    url: https://www.mi5.gov.uk/news-categories/threat-level
+    agency: MI5
+    quote: has raised the terrorism threat level in Northern Ireland from Northern Ireland-related terrorism to SEVERE
+    says: Raised from substantial to severe.
+  - country: GB
+    system: Northern Ireland-related terrorism in Northern Ireland (MI5)
+    scale: 1–5 (low, moderate, substantial, severe, critical)
+    rank: 3
+    label: substantial
+    as_of: '2024-03-06'
+    kind: announcement
+    change: from severe
+    url: https://www.mi5.gov.uk/news-categories/threat-level
+    agency: MI5
+    quote: MI5 has lowered the terrorism threat level for Northern Ireland related terrorism in Northern Ireland from 'SEVERE' to 'SUBSTANTIAL'
+    says: Lowered from severe to substantial.
+  - country: GB
+    system: UK national terrorism threat level (JTAC)
+    scale: 1–5 (low, moderate, substantial, severe, critical)
+    rank: 4
+    label: severe
+    as_of: '2026-05-01'
+    kind: announcement
+    change: from substantial
+    url: https://www.mi5.gov.uk/news-categories/threat-level
+    agency: MI5
+    quote: raised the UK National Threat Level from SUBSTANTIAL
+    says: JTAC raised the UK national level from substantial to severe after the Golders Green stabbings of 29 April, not solely because of that attack.
+
