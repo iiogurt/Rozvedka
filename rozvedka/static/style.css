@@ -1016,3 +1016,9 @@ table.tl td a { display: block; color: inherit; font-weight: 600; }
 table.tl td.tl-sum { background: none; border: 0; padding-left: 8px; color: var(--muted); }
 
 #attributions th, .rp-topics th.nw { white-space: nowrap; vertical-align: top; }
+
+/* ── threat levels ── */
+.lv-ladder i { display: inline-block; width: 9px; height: 12px; margin-right: 2px; border: 1px solid var(--muted); vertical-align: -1px; }
+.lv-ladder i.on { background: var(--accent); border-color: var(--accent); }
+th.nw { white-space: nowrap; vertical-align: top; }
+td.nw { white-space: nowrap; vertical-align: top; }

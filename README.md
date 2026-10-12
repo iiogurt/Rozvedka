@@ -305,6 +305,13 @@ no periodic job.
   actors named in the same passage (a nearness in the text, not a claim that the actor used it); actor and report pages show
   their CVEs. Every number links to the reports it counts.
 
+- **Terrorism threat levels** (`/threat-levels`) – the levels states' services publish, as dated statements with the quote: the
+  UK's official announcements of changes (MI5) and the levels that agencies' reports in the library state (Netherlands, Belgium,
+  Spain, Austria, Sweden, Latvia), each on the state's own scale and with the page it comes from. Hand-curated; every quote is
+  checked (`fetch-threat-levels` for the announcement pages, the library's stored text for the reports).
+
+<img src="docs/images/threat-levels.png" alt="Terrorism threat levels per state: each level with the quote from the official source and the report page" width="900">
+
 <img src="docs/images/cve.png" alt="A CVE page: CISA's Known Exploited entry, the reports naming it with passages, and the actors named nearby" width="900">
 
 <img src="docs/images/attributions.png" alt="Official attributions section of an actor page: statements of the UK NCSC with quotes and check dates" width="900">
@@ -537,6 +544,7 @@ failure. Starting it after a reboot with nobody logged in needs `loginctl enable
 | `date-documents [--check]` | give undated reports a year from their first pages – a report heading, else a publication date – with the evidence; `--check` measures accuracy on reports whose year is known (part of `update`) |
 | `fetch-actors [--refresh]` | download the actor gazetteer and connections from Wikidata, Wikipedia and MITRE ATT&CK (network; Wikipedia infoboxes are cached in `data/gazetteer/` – `--refresh` reads them again) |
 | `service show\|install\|status\|verify\|uninstall` | the optional systemd user service for the portal (see Quick start): `install` only writes the unit file, it never enables or starts it |
+| `fetch-threat-levels` | check the official threat-level announcements in `sources/threat_levels.yaml` against their pages (network); the reports' quotes are checked against the library when the page is shown |
 | `fetch-kev` · `index-cves` | download CISA's Known Exploited Vulnerabilities catalog (CC0; network) · find CVE numbers in the report texts and the actors named near them (`update` runs the second) |
 | `fetch-attributions` | check the official attribution statements in `sources/attributions.yaml` against their pages (network); the result with the check date is stored in `data/gazetteer/attributions.json` |
 | `fetch-sanctions` | download the EU, UK, UN Security Council and US (OFAC) consolidated sanctions lists into `data/sanctions/` and match them with the actors (network; `match-sanctions` matches again without downloading, `index-actors` does it too) |

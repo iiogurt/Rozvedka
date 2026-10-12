@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.50.0] – 2026-10-12
+
+### Added
+- **Terrorism threat levels of states, with the passage behind each** (`/threat-levels`): 24 hand-curated statements for the
+  UK, the Netherlands, Belgium, Spain, Austria, Sweden and Latvia, each with a verbatim quote and its check. Two kinds –
+  the UK's official change announcements (MI5, 10 changes from 2014 to May 2026; `fetch-threat-levels` re-checks the page) and
+  levels that agencies' reports in the library state (quote checked against the library's text every time, with the page,
+  linked to the report). Each state is shown on its own scale (a "3" in Belgium's four steps is not a "3" in the Netherlands' five;
+  levels are never ranked across states). A report shows the level at that time, not when it began.
+
 ## [0.49.0] – 2026-10-12
 
 ### Added
@@ -1033,7 +1043,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.49.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.50.0...HEAD
+[0.50.0]: https://github.com/iiogurt/Rozvedka/compare/v0.49.0...v0.50.0
 [0.49.0]: https://github.com/iiogurt/Rozvedka/compare/v0.48.0...v0.49.0
 [0.48.0]: https://github.com/iiogurt/Rozvedka/compare/v0.47.2...v0.48.0
 [0.47.2]: https://github.com/iiogurt/Rozvedka/compare/v0.47.1...v0.47.2
