@@ -9,6 +9,7 @@ index applies it on every rebuild (actors.derive). The verdicts give each name a
 import datetime as dt
 import json
 from collections import Counter
+from functools import lru_cache
 from pathlib import Path
 
 import yaml
@@ -27,11 +28,22 @@ SAMPLE = 3          # passages per name in the queue
 ENOUGH = 5          # a name with this many verdicts has left the queue
 
 
+_LOADER = getattr(yaml, "CSafeLoader", yaml.SafeLoader)      # the C parser is ~10× faster where libyaml is installed
+
+
+@lru_cache(maxsize=4)
+def _parsed(path: Path, mtime: float, size: int) -> tuple:
+    return tuple(r for r in (yaml.load(path.read_text(encoding="utf-8"), Loader=_LOADER) or []) if isinstance(r, dict))
+
+
 def load(path: Path | None = None) -> list[dict]:
+    """The verdicts. The file has thousands of entries and parsing it took seconds on the Pi, so the parse is kept
+    until the file changes (every page that shows the review figures reads it)."""
     path = path or REVIEWS
     if not path.exists():
         return []
-    return [r for r in (yaml.safe_load(path.read_text(encoding="utf-8")) or []) if isinstance(r, dict)]
+    st = path.stat()
+    return [dict(r) for r in _parsed(path, st.st_mtime, st.st_size)]
 
 
 def save(rows: list[dict], path: Path | None = None) -> None:
@@ -95,6 +107,13 @@ def _names(con, kind: str = "") -> list[dict]:
             WHERE n.status='used' {where} ORDER BY c.docs DESC, n.id""", ([kind] if kind else []))]
 
 
+@db.cached
+def _names_in_use(kind: str = "") -> list[dict]:
+    with db.session() as con:
+        actors.init()
+        return _names(con, kind)
+
+
 def _reviewed(con, reviews: list[dict], names: list[dict]) -> list[dict]:
     """Every reviewed name with its verdicts – also names no longer matched (excluded or ruled out after review)."""
     by_name = Counter((r["actor"], r.get("name", ""), r["verdict"]) for r in reviews)
@@ -117,9 +136,9 @@ def summary(path: Path | None = None) -> dict:
     """Measured precision for the Actors page: every verdict, and how much of the index the reviewed names cover."""
     reviews = load(path)
     totals = Counter(r["verdict"] for r in reviews)
+    names = _names_in_use()
     with db.session() as con:
         actors.init()
-        names = _names(con)
         reviewed = {(r["actor"], r.get("name", "")) for r in reviews}
         covered = [n for n in names if (n["actor_key"], n["name"]) in reviewed]
     links = sum(n["docs"] for n in names)
@@ -138,7 +157,7 @@ def queue(page: int | str = 1, per_page: int = 5, kind: str = "", path: Path | N
     reviewed = {(r["actor"], r["url"]) for r in reviews}
     with db.session() as con:
         actors.init()
-        names = _names(con, kind)
+        names = _names_in_use(kind)
         for n in names:
             n["right"] = by_name[(n["actor_key"], n["name"], "right")]
             n["wrong"] = by_name[(n["actor_key"], n["name"], "wrong")]

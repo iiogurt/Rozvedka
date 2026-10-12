@@ -27,6 +27,15 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.47.1] – 2026-10-12
+
+### Changed
+- **Faster pages on the Pi**: the Actors page 5.3 s → 0.1 s, an actor page 4.0 s → 0.3 s, the home page 1.1 s → 0.2 s
+  (measured on the Pi, repeat visits). The review file (1,800 verdicts) was parsed on every request, now only when it
+  changes and with the C parser where libyaml is present; the Actors list, the review figures and the home dashboard are
+  kept until the database, a `sources/*.yaml` file or the day changes (`db.cached`). The first visit after a change is as
+  slow as before.
+
 ## [0.47.0] – 2026-10-09
 
 ### Added
@@ -989,7 +998,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.47.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.47.1...HEAD
+[0.47.1]: https://github.com/iiogurt/Rozvedka/compare/v0.47.0...v0.47.1
 [0.47.0]: https://github.com/iiogurt/Rozvedka/compare/v0.46.1...v0.47.0
 [0.46.1]: https://github.com/iiogurt/Rozvedka/compare/v0.46.0...v0.46.1
 [0.46.0]: https://github.com/iiogurt/Rozvedka/compare/v0.45.0...v0.46.0
