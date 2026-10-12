@@ -33,7 +33,7 @@ on the library that day.
 | Wrong years from titles | known cases (UK ISC press releases dated 2021) | date stamps in file names disagree with stored years |
 | Per-file counting | translations and editions count as separate reports | item B2 |
 | Portal start after a reboot | **not automatic** – runs from a shell | `deploy/rozvedka-web.service` needs `loginctl enable-linger` (sudo, owner's approval); `deploy/` still ships a weekly update timer the owner declined |
-| Code size | `app.py` 1,102 lines, 9,700 lines in total | routes not yet split by area |
+| Code size | `app.py` 28 lines; 13 route modules of 30–150 lines (0.47.2) | – |
 | CI | none | tests run only on the Pi |
 
 ## 2. Strategy
@@ -133,7 +133,7 @@ Each item: why · what · done when · version step.
    `loginctl enable-linger <user>` (needs sudo – owner's approval); **remove the weekly update timer from
    `deploy/`** (the owner declined periodic jobs). · patch
 2. ✅ (0.31.1) **CI** – GitHub Actions running the tests on every PR. · patch
-3. **Split `app.py`** into route modules (documents, actors, trends, maps, data, update) and a small migration helper. · patch
+3. ✅ (0.47.2) **Split `app.py`** into route modules – `rozvedka/routes/` (13 areas) and `rozvedka/web.py` (shared); a migration helper is still open. · patch
 4. **Performance** – cache actor and network results per index version (1–3 s pages); the home page takes ~0.7 s;
    (0.47.1: Actors page, actor pages and home page now 0.1–0.3 s on repeat visits) a cross-language search takes ~3 s on the Pi (highlighting ~40 alternatives) against ~1 s as typed. ✅ (0.39.0) the
    topic mind map's data: one query instead of one per topic, ~11 s → ~0.8 s. · patch

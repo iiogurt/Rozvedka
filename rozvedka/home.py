@@ -108,7 +108,7 @@ def parse(query: str) -> dict:
                                      "options": [(c["short"], f"coalition:{c['short']}") for c in countries.coalitions().values()]})
             elif op == "type":
                 v = value.lower()
-                from .app import TYPE_NAMES
+                from .web import TYPE_NAMES
                 key = v if v in TYPE_NAMES else TYPE_ALIASES.get(v)
                 if key:
                     params["type"] = key
@@ -225,7 +225,7 @@ def suggest(q: str, limit: int = 6) -> dict:
                 {"label": names.get(c, c), "sub": c, "n": n_docs("s.country=?", (c,)), "url": docs_url(country=c),
                  "country": c, "token": f"country:{c}"} for c in codes]})
         if op == "type":
-            from .app import TYPE_NAMES
+            from .web import TYPE_NAMES
             out["groups"].append({"name": "Agency types", "items": [
                 {"label": name, "sub": key, "n": n_docs("s.type=?", (key,)), "url": docs_url(type=key), "token": f"type:{key}"}
                 for key, name in TYPE_NAMES.items() if not term or term.lower() in (key + " " + name).lower()]})
@@ -321,7 +321,7 @@ def dashboard(today: dt.date | None = None) -> dict:
         later = one(f"SELECT COUNT(*) {base} AND d.year > ?", (year_now,))[0]     # misdated into the future
         undated = {"n": one(f"SELECT COUNT(*) {base} AND d.year IS NULL")[0], "url": docs_url(undated=1)}
         # by agency type
-        from .app import TYPE_NAMES
+        from .web import TYPE_NAMES
         by_type = [{"key": r[0], "name": TYPE_NAMES.get(r[0], r[0]), "n": r[1], "url": docs_url(type=r[0])}
                    for r in con.execute(f"SELECT s.type, COUNT(*) n {base} GROUP BY s.type ORDER BY n DESC")]
         # actors named in the last complete year's reports (countries left out – they are named everywhere)
