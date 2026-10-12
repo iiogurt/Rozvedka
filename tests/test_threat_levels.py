@@ -43,7 +43,7 @@ def library(tmp_path, monkeypatch):
      url: "https://x/missing.pdf", agency: OCAM, quote: "never said", says: "Level 2."}
   - {country: GB, system: National, scale: "1–5", rank: 4, label: severe, as_of: "2026-05-01", kind: announcement, change: from substantial,
      url: "https://x/page", agency: MI5, quote: "raised the level", says: "Raised."}
-''')
+''', encoding="utf-8")
     monkeypatch.setattr(tl, "FILE", f)
     db.init()
     from rozvedka import collect, series
