@@ -27,6 +27,15 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.52.0] – 2026-10-12
+
+### Added
+- **Dated events on the actor timeline**: the page `/actors/<key>/timeline` opens with everything dated that the library's data says
+  about the actor, oldest first, each with its source – founding and dissolution and designations as a terrorist group
+  (Wikidata, with the designating state), entries of the EU, UK, UN and US sanctions lists, the official attributions,
+  for a country the official changes of its terrorism threat level, and the first and last year a report names the actor.
+  Only dated facts; nothing is estimated (undated Wikidata designations are left out).
+
 ## [0.51.0] – 2026-10-12
 
 ### Added
@@ -1055,7 +1064,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.51.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.52.0...HEAD
+[0.52.0]: https://github.com/iiogurt/Rozvedka/compare/v0.51.0...v0.52.0
 [0.51.0]: https://github.com/iiogurt/Rozvedka/compare/v0.50.0...v0.51.0
 [0.50.0]: https://github.com/iiogurt/Rozvedka/compare/v0.49.0...v0.50.0
 [0.49.0]: https://github.com/iiogurt/Rozvedka/compare/v0.48.0...v0.49.0

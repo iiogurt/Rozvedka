@@ -288,7 +288,9 @@ no periodic job.
 - Each actor page: reference data with its source and revision, the Wikipedia lead, mentions per year, which
   agencies report on it, the topics of those reports, actors named in the same passage, and **the passages
   themselves with a link to the cited page of the PDF**.
-- **Actor timeline** (`/actors/<key>/timeline`, linked from every actor page) – a year × reporting-country grid of the
+- **Actor timeline** (`/actors/<key>/timeline`, linked from every actor page) – first the **dated events** (founding, designations
+  as a terrorist group, sanctions-list entries, official attributions, for a country its threat-level changes, first and last year
+  in the reports – each with its source), then a year × reporting-country grid of the
   reports that name the actor, a year grid of the actors named in the same passage (marked **new** or **gone** when they
   appeared or vanished in the last three years), and the first and last report of each agency. Every cell links to the
   reports it counts.

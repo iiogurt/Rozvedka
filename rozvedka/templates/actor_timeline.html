@@ -12,6 +12,22 @@
   {% if undated %}{{ undated }} more name{{ 's' if undated == 1 }} it but {{ 'is' if undated == 1 else 'are' }} undated or older than the chart and {{ 'is' if undated == 1 else 'are' }} left out. {% endif %}
   Every number links to the reports it counts.</p>
 
+{% if events %}
+<section class="viz-card" id="events">
+  <h2 class="viz-title">Dated events <span class="muted small">{{ events|length }}</span></h2>
+  <p class="muted small viz-sub">Everything dated that the library's data says about {{ a.label }}, oldest first, each with its source: Wikidata (founding, dissolution,
+    designations as a terrorist group), the sanctions lists, the official attributions, for a country its terrorism threat level, and the first
+    and last year a report names it. Only dated facts; nothing is estimated.</p>
+  <table class="rp-topics small">
+    <thead><tr><th>Date</th><th>What</th><th>Source</th></tr></thead>
+    {% for e in events %}<tr><th class="nw">{{ e.date }}</th>
+      <td><span class="ctag">{{ {'founded': 'founded', 'dissolved': 'dissolved', 'designated': 'designated', 'listed': 'sanctions list', 'attributed': 'attribution', 'threat-level': 'threat level', 'first': 'in reports', 'last': 'in reports'}[e.kind] }}</span>
+        <b>{{ e.title }}</b>{% if e.detail %}<br><span class="muted">{{ e.detail }}</span>{% endif %}
+        {% if e.quote %}<blockquote class="snippet small">“{{ e.quote }}”</blockquote>{% endif %}</td>
+      <td>{% if e.source_url %}<a href="{{ e.source_url }}"{% if e.source != 'this library' %} rel="noopener"{% endif %}>{{ e.source }}</a>{% else %}{{ e.source }}{% endif %}</td></tr>{% endfor %}
+  </table>
+</section>
+{% endif %}
 <section class="viz-card">
   <h2 class="viz-title">Reports per year by reporting country <span class="muted small">{{ countries|length }} of {{ n_countries }}</span></h2>
   <p class="muted small viz-sub">Reports naming the actor, by the country of the agency that published them. Shade is relative to the

@@ -1,7 +1,7 @@
 """Actors: list, review, pairs, sanctions, attributions, timeline and actor pages."""
 from fastapi import APIRouter, Form, HTTPException, Query, Request
 from fastapi.responses import FileResponse, RedirectResponse
-from .. import actor_profiles, actors, attributions, cves, db, graphs, paging, review, sanctions, timeline, topics, trends
+from .. import actor_events, actor_profiles, actors, attributions, cves, db, graphs, paging, review, sanctions, timeline, topics, trends
 from ..web import _years_desc, tpl
 
 router = APIRouter()
@@ -105,7 +105,7 @@ def actor_timeline(request: Request, key: str):
     d = timeline.detail(key)
     if d is None:
         raise HTTPException(404, "unknown actor")
-    return tpl.TemplateResponse(request, "actor_timeline.html", d)
+    return tpl.TemplateResponse(request, "actor_timeline.html", {**d, "events": actor_events.of_actor(key)})
 
 
 @router.get("/actors/{key}")
