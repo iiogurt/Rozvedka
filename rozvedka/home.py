@@ -268,6 +268,7 @@ def examples() -> list[dict]:
 
 # ---------------------------------------------------------------- dashboards
 
+@db.cached
 def dashboard(today: dt.date | None = None) -> dict:
     """Numbers and lists for the home page. Each count has the Documents link that lists exactly those reports."""
     today = today or dt.date.today()

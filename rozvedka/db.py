@@ -1,7 +1,10 @@
+import copy
+import datetime as dt
+import functools
 import sqlite3
 from contextlib import contextmanager
 
-from .config import DB_PATH, DATA
+from .config import DB_PATH, DATA, ROOT
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS sources (
@@ -87,6 +90,41 @@ def session():
         con.commit()
     finally:
         con.close()
+
+
+def version() -> tuple:
+    """Changes whenever anything is written to the database (file and write-ahead log: time, size) – the key of cached results."""
+    out = [str(DB_PATH), dt.date.today().isoformat()]       # the day too: pages show ages and "this year"
+    for suffix in ("", "-wal"):
+        try:
+            st = DB_PATH.with_name(DB_PATH.name + suffix).stat()
+            out += [st.st_mtime_ns, st.st_size]
+        except OSError:
+            out += [0, 0]
+    try:        # hand-edited data files (series, registry, taxonomy …) count as part of the data
+        out += [f.stat().st_mtime_ns for f in sorted((ROOT / "sources").glob("*.yaml"))]
+    except OSError:
+        pass
+    return tuple(out)
+
+
+def cached(fn):
+    """Keep the result of a read-only query function until the database changes (arguments must be hashable).
+    Callers get their own copy, so they may modify what they receive."""
+    store: dict = {}
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kw):
+        key = (args, tuple(sorted(kw.items())))
+        v = version()
+        hit = store.get(key)
+        if hit is None or hit[0] != v:
+            if len(store) > 64:
+                store.clear()
+            hit = store[key] = (v, fn(*args, **kw))
+        return copy.deepcopy(hit[1])
+    wrapper.cache_clear = store.clear
+    return wrapper
 
 
 # columns added after the first release; ALTER TABLE brings older databases up to date

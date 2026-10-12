@@ -570,6 +570,7 @@ def kind_name(kind: str) -> str:
     return KINDS.get(kind, kind)
 
 
+@db.cached
 def actor_list(kind: str = "", q: str = "", min_docs: int = 1, include_countries: bool = False) -> list[dict]:
     where, args, _ = trends.scope()
     sql = f"""SELECT a.key, a.qid, a.kind, a.label, a.description, COUNT(DISTINCT da.doc_id) docs,

@@ -266,3 +266,21 @@ def test_actor_timeline(library):
     assert "First and last report per agency" in t and "cluster=Q3%2CQ5" in t
     assert client.get("/actors/nope/timeline").status_code == 404
     assert "/actors/Q3/timeline" in client.get("/actors/Q3").text
+
+
+def test_cached_results_follow_the_database(library):
+    from rozvedka import db as dbm
+    calls = []
+
+    @dbm.cached
+    def count(x):
+        calls.append(x)
+        with dbm.session() as con:
+            return [con.execute("SELECT COUNT(*) FROM documents").fetchone()[0]]
+
+    first = count(1)
+    first.append("changed by the caller")
+    assert count(1) == [6] and calls == [1]            # served from the cache, and the caller's edit did not leak into it
+    with dbm.session() as con:
+        con.execute("INSERT INTO documents(id,source_id,url,year,status) VALUES(99,1,'u99',2024,'downloaded')")
+    assert count(1) == [7] and calls == [1, 1]         # a write to the database drops the cache
