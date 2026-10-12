@@ -32,7 +32,7 @@ on the library that day.
 | Matching precision | 91.6 % measured on 1,802 passages of the 456 most frequent names (0.46.1; 75 % of the links), shown on the Actors page | names beyond the top 450 are not measured |
 | Wrong years from titles | known cases (UK ISC press releases dated 2021) | date stamps in file names disagree with stored years |
 | Per-file counting | translations and editions count as separate reports | item B2 |
-| Portal start after a reboot | **not automatic** – runs from a shell | `deploy/rozvedka-web.service` needs `loginctl enable-linger` (sudo, owner's approval); `deploy/` still ships a weekly update timer the owner declined |
+| Portal start after a reboot | **not automatic** – runs from a shell, by the owner's choice | an optional systemd user service exists and is tested (0.48.0, `python -m rozvedka service install`); the owner keeps it off; starting at boot would need `loginctl enable-linger` (sudo) |
 | Code size | `app.py` 28 lines; 13 route modules of 30–150 lines (0.47.2) | – |
 | CI | none | tests run only on the Pi |
 
@@ -129,7 +129,7 @@ Each item: why · what · done when · version step.
 
 ### E. Engineering and operations
 
-1. **The portal starts after a reboot** – install `deploy/rozvedka-web.service` as a user service with
+1. ✅ (0.48.0: optional, tested, **not activated** – the owner does not want it) **The portal starts after a reboot** – install `deploy/rozvedka-web.service` as a user service with
    `loginctl enable-linger <user>` (needs sudo – owner's approval); **remove the weekly update timer from
    `deploy/`** (the owner declined periodic jobs). · patch
 2. ✅ (0.31.1) **CI** – GitHub Actions running the tests on every PR. · patch
@@ -147,7 +147,7 @@ backups and exchange (0.27–0.28), home page and search console (0.22), Update 
 
 ## 4. Suggested next steps
 
-1. **E1** – the portal survives a reboot (needs the owner's yes for `sudo loginctl enable-linger`).
+1. ✅ **E1** – optional systemd service built and tested (0.48.0); stays off by the owner's decision.
 2. **A1 + A2** – the six silent sources and the six missing member states (sources work, no new code).
 3. **A3 + A4** – civil-protection (national risk assessments) and cyber gaps.
 4. ✅ **B1** – precision measured (0.46.1: 91.6 % on 1,802 passages of the 456 most frequent names).

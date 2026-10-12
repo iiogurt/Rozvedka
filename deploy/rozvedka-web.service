@@ -1,22 +1,25 @@
-# systemd user unit for the portal – a template: @ROZVEDKA_DIR@ is the project folder. Install from that folder with
-#   mkdir -p ~/.config/systemd/user
-#   sed "s|@ROZVEDKA_DIR@|$PWD|g" deploy/rozvedka-web.service > ~/.config/systemd/user/rozvedka-web.service
-#   systemctl --user daemon-reload && systemctl --user start rozvedka-web
-# It listens on the home network (0.0.0.0) – the portal has no login: never forward its port to the internet.
-# For this computer only, set ROZVEDKA_HOST=127.0.0.1 below.
+# systemd USER unit for the portal – an optional template, nothing installs or starts it by itself. Fill it in and put it
+# in place with the CLI (it writes the file and reloads systemd, but never enables or starts it):
+#   .venv/bin/python -m rozvedka service install            # then: systemctl --user start rozvedka-web
+#   .venv/bin/python -m rozvedka service show               # print the finished unit without writing anything
+# @ROZVEDKA_DIR@ is the project folder, @HOST@ and @PORT@ the address (default 0.0.0.0:8080 = the home network; the
+# portal has no login: never forward its port to the internet. Use --host 127.0.0.1 for this computer only).
+# Starting it automatically after a reboot, with nobody logged in, needs `loginctl enable-linger <user>` (sudo) – not part
+# of this project's setup; without it the service runs only while that user is logged in.
 [Unit]
 Description=Rozvedka security reports portal
-After=network-online.target
 
 [Service]
 WorkingDirectory=@ROZVEDKA_DIR@
-Environment=ROZVEDKA_HOST=0.0.0.0
+Environment=ROZVEDKA_HOST=@HOST@ ROZVEDKA_PORT=@PORT@
 ExecStart=@ROZVEDKA_DIR@/.venv/bin/python -m rozvedka serve
 Restart=on-failure
+RestartSec=5
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
-ReadWritePaths=-/media -/mnt -/run/media
+# the system is read-only for the portal except its own folder (database, reports, review files) and removable media
+ReadWritePaths=@ROZVEDKA_DIR@ @DATA_DIR@ -/media -/mnt -/run/media
 
 [Install]
 WantedBy=default.target
