@@ -27,6 +27,14 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.47.2] – 2026-10-12
+
+### Changed
+- **`rozvedka/app.py` is split into route modules** (roadmap E3): the 88 routes now live in `rozvedka/routes/` (one module
+  per area: actors, documents, trends, maps, data, update, …), what they share in `rozvedka/web.py`; `app.py` keeps the
+  app, its middleware and start-up. No change for users: the route list is identical (checked against the old one) and
+  all tests pass unchanged.
+
 ## [0.47.1] – 2026-10-12
 
 ### Changed
@@ -998,7 +1006,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.47.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.47.2...HEAD
+[0.47.2]: https://github.com/iiogurt/Rozvedka/compare/v0.47.1...v0.47.2
 [0.47.1]: https://github.com/iiogurt/Rozvedka/compare/v0.47.0...v0.47.1
 [0.47.0]: https://github.com/iiogurt/Rozvedka/compare/v0.46.1...v0.47.0
 [0.46.1]: https://github.com/iiogurt/Rozvedka/compare/v0.46.0...v0.46.1

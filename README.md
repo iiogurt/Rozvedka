@@ -683,7 +683,7 @@ flowchart LR
 | `rozvedka/doctypes.py`, `works.py`, `dating.py` | document types; language versions and summaries grouped into one report; years from the text and year conflicts |
 | `rozvedka/concepts.py` | cross-language search: concept names in every language from Wikidata |
 | `rozvedka/ratings.py`, `publishers.py` | democracy ratings of states over time; think-tank credibility checks (EU register, FARA, sanctions lists) |
-| `rozvedka/app.py`, `templates/`, `static/` | the server-rendered portal |
+| `rozvedka/app.py`, `web.py`, `routes/`, `templates/`, `static/` | the server-rendered portal: the app and its middleware, what the pages share (templates, helpers, request guard), one route module per area (actors, documents, trends, maps, data, update, …) |
 
 ## Database
 
