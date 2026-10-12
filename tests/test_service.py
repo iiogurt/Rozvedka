@@ -7,16 +7,17 @@ from rozvedka import service
 def test_unit_is_filled_in(tmp_path):
     text = service.render("127.0.0.1", 8099, root=tmp_path / "proj", data=tmp_path / "proj" / "data")
     assert not any(k in text for k in ("@ROZVEDKA_DIR@", "@HOST@", "@PORT@", "@DATA_DIR@"))
-    assert f"WorkingDirectory={tmp_path}/proj\n" in text
-    assert f"ExecStart={tmp_path}/proj/.venv/bin/python -m rozvedka serve\n" in text
+    proj = str(tmp_path / "proj")            # str(Path): the platform's own separators
+    assert f"WorkingDirectory={proj}\n" in text
+    assert f"ExecStart={proj}/.venv/bin/python -m rozvedka serve\n" in text
     assert "ROZVEDKA_HOST=127.0.0.1 ROZVEDKA_PORT=8099" in text
     # with ProtectSystem=strict the portal must be allowed to write in its own folder (database, reports, review files)
-    assert f"ReadWritePaths={tmp_path}/proj -/media" in text and "  " not in text.split("ReadWritePaths=")[1].split("\n")[0]
+    assert f"ReadWritePaths={proj} -/media" in text and "  " not in text.split("ReadWritePaths=")[1].split("\n")[0]
 
 
 def test_data_folder_outside_the_project_is_writable_too(tmp_path):
     text = service.render(root=tmp_path / "proj", data=tmp_path / "elsewhere" / "data")
-    assert f"ReadWritePaths={tmp_path}/proj {tmp_path}/elsewhere/data -/media" in text
+    assert f"ReadWritePaths={tmp_path / 'proj'} {tmp_path / 'elsewhere' / 'data'} -/media" in text
 
 
 def test_install_writes_the_file_and_nothing_else(tmp_path, monkeypatch):
