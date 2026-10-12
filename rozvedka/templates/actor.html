@@ -161,6 +161,21 @@
   </table>
 </section>
 {% endif %}
+{% if cve_rows %}
+<section class="viz-card" id="cves">
+  <h2 class="viz-title">Vulnerabilities named near it <span class="muted small">{{ cve_rows|length }}{{ '+' if cve_rows|length >= 25 }}</span></h2>
+  <p class="muted small viz-sub">CVE numbers that reports name within one passage of {{ a.label }} (the same nearness as "actors named together") –
+    <b>a nearness in the text, not a statement that the actor used the vulnerability</b>. KEV = on CISA's list of vulnerabilities known to
+    be exploited. All CVE numbers: <a href="/cves">overview</a>.</p>
+  <table class="rp-topics small">
+    <thead><tr><th>CVE</th><th class="n">Reports</th><th>CISA list</th><th>Product</th></tr></thead>
+    {% for c in cve_rows %}<tr><th><a href="/cves/{{ c.cve }}">{{ c.cve }}</a></th>
+      <td class="n"><a href="/documents?cve={{ c.cve }}&cve_near={{ row.key }}">{{ c.docs }}</a></td>
+      <td>{% if c.on_kev %}added {{ c.kev.dateAdded }}{% if c.kev.knownRansomwareCampaignUse == 'Known' %} · <b>ransomware</b>{% endif %}{% else %}<span class="muted">–</span>{% endif %}</td>
+      <td class="muted">{% if c.kev %}{{ c.kev.vendorProject }} {{ c.kev.product }}{% endif %}</td></tr>{% endfor %}
+  </table>
+</section>
+{% endif %}
 {% if connections %}
 <section class="viz-card" id="connections">
   <h2 class="viz-title">Connections</h2>

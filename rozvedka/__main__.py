@@ -55,6 +55,8 @@ def main():
     sub.add_parser("fetch-publishers", help="checks of the think tanks: EU register, FARA, sanctions lists, Wikidata")
     sub.add_parser("fetch-ratings", help="democracy ratings of states over time (V-Dem, Freedom House, World Bank WGI)")
     sub.add_parser("fetch-attributions", help="check the official attribution statements (sources/attributions.yaml) against their pages")
+    sub.add_parser("fetch-kev", help="download CISA's Known Exploited Vulnerabilities catalog (CC0) for the CVE pages")
+    sub.add_parser("index-cves", help="find CVE numbers in the report texts and near which actors they are named")
     sub.add_parser("fetch-sanctions", help="download the EU, UK, UN and US sanctions lists and match them with the actors")
     sub.add_parser("match-sanctions", help="match the downloaded sanctions lists with the actors again (no download)")
     fp = sub.add_parser("fetch-actor-profiles", help="pictures, key facts and Wikipedia summaries of the actors the reports name")
@@ -119,6 +121,12 @@ def main():
     elif a.cmd == "fetch-attributions":
         from . import attributions
         print(attributions.fetch_all())
+    elif a.cmd == "fetch-kev":
+        from . import cves
+        print(cves.fetch_kev())
+    elif a.cmd == "index-cves":
+        from . import cves
+        print(cves.index())
     elif a.cmd == "fetch-sanctions":
         from . import sanctions
         print(sanctions.fetch_all())

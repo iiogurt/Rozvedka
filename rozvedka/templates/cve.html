@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}{{ cve }} · CVE numbers · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/cves">← CVE numbers</a></p>
+<h1 class="page-h">{{ cve }}</h1>
+<section class="viz-card">
+  <h2 class="viz-title">Known to be exploited?</h2>
+  {% if kev %}
+  <p class="small"><b>Yes – on CISA's Known Exploited Vulnerabilities list</b>, added {{ kev.dateAdded }}.
+    {{ kev.vendorProject }} {{ kev.product }}: {{ kev.vulnerabilityName|trim }}. {{ kev.shortDescription }}</p>
+  <p class="small muted">Ransomware campaign use: {{ kev.knownRansomwareCampaignUse }}{% if kev.cwes %} · weakness: {{ kev.cwes|join(', ') }}{% endif %}
+    · remediation due date for US federal agencies: {{ kev.dueDate }}. Source: <a href="{{ meta.page }}" rel="noopener">CISA catalog</a>
+    version {{ meta.version }} ({{ meta.license }}), retrieved {{ meta.retrieved }}. Details of the vulnerability itself:
+    <a href="https://nvd.nist.gov/vuln/detail/{{ cve }}" rel="noopener">NVD</a> (external link; the portal does not fetch it).</p>
+  {% else %}
+  <p class="small muted">Not on CISA's list{% if not meta %} (the list has not been fetched yet: <code>fetch-kev</code>){% else %} (version {{ meta.version }}, retrieved {{ meta.retrieved }}){% endif %}. That does not mean it was never exploited.
+    <a href="https://nvd.nist.gov/vuln/detail/{{ cve }}" rel="noopener">NVD</a> (external link).</p>
+  {% endif %}
+</section>
+<section class="viz-card">
+  <h2 class="viz-title">In the reports <span class="muted small">{{ reports }}</span></h2>
+  <p class="muted small viz-sub"><a href="/documents?cve={{ cve }}">{{ reports }} report{{ 's' if reports != 1 }}</a> by {{ agencies }} agenc{{ 'ies' if agencies != 1 else 'y' }}{% if years %}, {{ years[0] }}{{ '–' ~ years[-1] if years[-1] != years[0] }}{% endif %}.</p>
+  {% if actors %}<p class="small">Named within one passage of a report: {% for a in actors %}<a href="/documents?cve={{ cve }}&cve_near={{ a.key }}"><i class="kdot kind-{{ a.kind }}"></i>{{ a.label }}</a> <span class="muted">({{ a.docs }}, <a href="/actors/{{ a.key }}#cves">actor page</a>)</span>{{ ' · ' if not loop.last }}{% endfor %}
+    <span class="muted">– a nearness in the text, not a statement that the actor used it.</span></p>{% endif %}
+  <div id="reports"></div>
+  {% for r in shown %}
+  <div class="small"><img class="flag-sm" src="{{ flag_url(r.country) }}" alt=""> <b>{{ r.agency }}</b>{{ pub_mark(r.source_id) }}
+    · <a href="/report/{{ r.doc_id }}">{{ r.title }}</a> <span class="muted">{{ r.year or '' }} · {{ r.lang }} · named {{ r.n }}×</span>
+    <blockquote class="snippet small">{{ r.before }}<mark>{{ r.match }}</mark>{{ r.after }}
+      <a href="{{ r.open }}" target="_blank">{{ 'p. ' ~ r.page if r.page else 'open' }}</a></blockquote></div>
+  {% endfor %}
+  {{ pager(pg, "reports") }}
+</section>
+{% endblock %}

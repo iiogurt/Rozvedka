@@ -77,6 +77,15 @@
 </section>
 </div>
 
+{% if cves %}
+<section class="viz-card" id="cves">
+  <h2 class="viz-title">CVE numbers named <span class="muted small">{{ cves|length }}</span></h2>
+  <p class="muted small viz-sub">Software vulnerabilities this report names, found by pattern. <b>KEV</b> = on CISA's list of vulnerabilities known to be exploited.
+    <a href="/cves">All CVE numbers in the reports</a>.</p>
+  <p class="small">{% for c in cves %}<a href="/cves/{{ c.cve }}">{{ c.cve }}</a>{% if c.n > 1 %}<span class="muted"> ×{{ c.n }}</span>{% endif %}{% if c.on_kev %} <span class="ctag" title="Added to CISA's list {{ c.kev.dateAdded }}">KEV</span>{% endif %}{{ ' · ' if not loop.last }}{% endfor %}</p>
+</section>
+{% endif %}
+
 {% if files %}
 <section class="viz-card" id="files">
   <h2 class="viz-title">Files of this report <span class="muted small">{{ files|length }}</span></h2>
