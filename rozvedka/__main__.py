@@ -17,13 +17,18 @@ def main():
     d = sub.add_parser("download", help="download discovered documents")
     d.add_argument("--country"); d.add_argument("--retry-failed", action="store_true")
     d.add_argument("--limit", type=int); d.add_argument("--workers", type=int, default=4)
-    u = sub.add_parser("update", help="crawl + download new documents (for the timer)")
+    u = sub.add_parser("update", help="crawl + download new documents (run by hand or from the Update page)")
     u.add_argument("--country")
     s = sub.add_parser("serve", help="run the web portal")
     s.add_argument("--host", default=os.environ.get("ROZVEDKA_HOST", "127.0.0.1"),
                    help="address to listen on: 127.0.0.1 (default) = this computer only; 0.0.0.0 = the whole network "
                         "(no login – only on a trusted home network)")
     s.add_argument("--port", type=int, default=int(os.environ.get("ROZVEDKA_PORT", 8080)))
+    sv = sub.add_parser("service", help="optional systemd user service for the portal (never enabled or started by this command)")
+    sv.add_argument("action", choices=["show", "install", "uninstall", "status", "verify"])
+    sv.add_argument("--name", default="rozvedka-web")
+    sv.add_argument("--host", default="0.0.0.0", help="address the service listens on (default 0.0.0.0 = home network)")
+    sv.add_argument("--port", type=int, default=8080)
     sub.add_parser("stats", help="print document counts")
     sub.add_parser("improve-titles", help="replace poor document titles with the title stored in the PDF")
     ix = sub.add_parser("index-topics", help="extract report text (full-text search) and tag documents with topics")
@@ -155,6 +160,18 @@ def main():
         print(topics.index(a.reextract, a.limit, a.workers))
     elif a.cmd == "improve-titles":
         print({"titles_improved": downloader.improve_titles()})
+    elif a.cmd == "service":
+        from . import service
+        if a.action == "show":
+            print(service.render(a.host, a.port))
+        elif a.action == "install":
+            print(service.install(a.name, a.host, a.port))
+        elif a.action == "uninstall":
+            print(service.uninstall(a.name))
+        elif a.action == "status":
+            print(service.status(a.name))
+        else:
+            print(service.verify(a.name) or "no complaints")
     elif a.cmd == "serve":
         import uvicorn
         uvicorn.run("rozvedka.app:app", host=a.host, port=a.port)

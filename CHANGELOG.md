@@ -27,6 +27,21 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.48.0] – 2026-10-12
+
+### Added
+- **Optional systemd user service for the portal** (roadmap E1): `python -m rozvedka service install` writes the unit
+  file and reloads systemd – it never enables or starts the service, and nothing in the project calls it; `show`,
+  `status`, `verify` and `uninstall` complete the command. Tested on the Pi with a service of another name and port:
+  `systemd-analyze` found nothing to complain about, the sandboxed portal started, served pages and wrote to the
+  database, came back 5 s after being killed and stopped cleanly; the test service was then removed. Starting after a
+  reboot without a login would need `loginctl enable-linger` (sudo), which is not part of the setup.
+
+### Fixed
+- The unit template put the system in read-only mode (`ProtectSystem=strict`) without allowing the project folder, so the
+  portal could not have written its database; it now allows the project folder and the data folder. Its `After=network-online.target`
+  (a system target a user service cannot wait for) is gone, and the `update` command's help no longer mentions a timer.
+
 ## [0.47.2] – 2026-10-12
 
 ### Changed
@@ -1006,7 +1021,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.47.2...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.48.0...HEAD
+[0.48.0]: https://github.com/iiogurt/Rozvedka/compare/v0.47.2...v0.48.0
 [0.47.2]: https://github.com/iiogurt/Rozvedka/compare/v0.47.1...v0.47.2
 [0.47.1]: https://github.com/iiogurt/Rozvedka/compare/v0.47.0...v0.47.1
 [0.47.0]: https://github.com/iiogurt/Rozvedka/compare/v0.46.1...v0.47.0

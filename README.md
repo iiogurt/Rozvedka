@@ -499,9 +499,20 @@ cd Rozvedka                                   # the project folder
 nohup .venv/bin/python -m rozvedka serve --host 0.0.0.0 > data/logs/portal.log 2>&1 &
 ```
 
-`deploy/rozvedka-web.service` is a template of a systemd user unit for whoever wants the portal managed by systemd;
-the commands to install it from the project folder are at its top (they fill in the folder's path). Without
-`loginctl enable-linger` it runs only while that user is logged in.
+**Optional: run the portal as a systemd user service.** Off by default and never started by the project; for whoever wants
+the portal restarted if it stops, and started at login:
+
+```bash
+.venv/bin/python -m rozvedka service show        # the finished unit, nothing written
+.venv/bin/python -m rozvedka service install     # writes ~/.config/systemd/user/rozvedka-web.service, reloads systemd
+systemctl --user start rozvedka-web              # your decision: start it …
+systemctl --user enable rozvedka-web             # … and/or start it at every login
+```
+
+`install` never enables or starts the service (`--host 127.0.0.1` keeps it to this computer, `--port` changes the port);
+`service status`, `service verify` (systemd-analyze) and `service uninstall` (refuses while it runs) complete the set. The unit is sandboxed
+(`ProtectSystem=strict`; it may write only in the project folder, the data folder and removable media) and restarts on
+failure. Starting it after a reboot with nobody logged in needs `loginctl enable-linger <user>` (sudo) – not part of the project's setup.
 
 ## Commands
 
@@ -517,6 +528,7 @@ the commands to install it from the project folder are at its top (they fill in 
 | `ocr [--limit N] [--workers 3]` | recognise the text of scanned reports (no text layer) with Tesseract via OCRmyPDF, in the report's language + English; stores the text with page breaks, marks it as OCR, leaves the PDF unchanged (part of `update` when installed) |
 | `date-documents [--check]` | give undated reports a year from their first pages – a report heading, else a publication date – with the evidence; `--check` measures accuracy on reports whose year is known (part of `update`) |
 | `fetch-actors [--refresh]` | download the actor gazetteer and connections from Wikidata, Wikipedia and MITRE ATT&CK (network; Wikipedia infoboxes are cached in `data/gazetteer/` – `--refresh` reads them again) |
+| `service show\|install\|status\|verify\|uninstall` | the optional systemd user service for the portal (see Quick start): `install` only writes the unit file, it never enables or starts it |
 | `fetch-attributions` | check the official attribution statements in `sources/attributions.yaml` against their pages (network); the result with the check date is stored in `data/gazetteer/attributions.json` |
 | `fetch-sanctions` | download the EU, UK, UN Security Council and US (OFAC) consolidated sanctions lists into `data/sanctions/` and match them with the actors (network; `match-sanctions` matches again without downloading, `index-actors` does it too) |
 | `fetch-actor-profiles [--refresh]` | pictures (flag, logo or photo, with author and licence), key facts and Wikipedia leads of every actor the reports name, from Wikipedia, Wikidata and Wikimedia Commons (network; part of `fetch-actors`; `--refresh` downloads the pictures again) |
