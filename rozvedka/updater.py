@@ -13,7 +13,7 @@ import datetime as dt
 import json
 import logging
 
-from . import crawler, cves, db, downloader, progress, sanctions
+from . import citations, crawler, cves, db, downloader, progress, sanctions
 
 log = logging.getLogger("rozvedka.updater")
 SECONDS_PER_PAGE = 10.0          # without history: polite fetching (2 s per host), report pages often link sub-pages
@@ -135,6 +135,7 @@ def _index_here() -> dict:
         if (sanctions.DIR / "meta.json").exists():
             res["match-sanctions"] = sanctions.match()
     res["index-cves"] = cves.index()
+    res["index-citations"] = citations.index()
     return res
 
 

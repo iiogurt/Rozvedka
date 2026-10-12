@@ -69,6 +69,7 @@ SHOTS = {
     "cves": ("/cves", 900, [], None),                                  # CVE numbers named in reports, with CISA's list
     "cve": ("/cves/CVE-2021-26855", 1000, [], None),                   # one CVE: CISA entry, reports with passages, actors nearby
     "threat-levels": ("/threat-levels", 1300, [], None),               # official levels with the passage behind each
+    "citations": ("/citations", 1100, [], None),                      # who cites whom: agencies, reports, outside hosts
     "review": ("/actors/review", 1100, [], None),
     "network": ("/network", 1100, [("sleep", 6)], None),
     "map": ("/map", 800, [("sleep", 5)], None),

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Citations · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/actors">← Actors</a></p>
+<h1 class="page-h">Who cites whom</h1>
+<p class="muted small">The web addresses in the report texts, tied to the library where they point into it.
+  {{ totals.reports }} of {{ n_reports }} reports contain addresses ({{ "{:,}".format(totals.links) }} different ones in all, on {{ "{:,}".format(totals.hosts) }} hosts).
+  An address counts once per report. It points to <b>a report of the library</b> when it is that report's address (case, "www." and a trailing slash
+  ignored), to <b>another agency</b> when it lies on the site of one other source of the library (the host of its home page; where the home page is deeper in a shared
+  portal like gov.uk, only that path; a host two sources share is not guessed at; a report linking to its own agency's site is left out), and otherwise to an <b>outside source</b>. Addresses broken across
+  lines in a PDF are not recovered, so every count is a minimum. Each number links to the reports it counts.</p>
+
+<section class="viz-card">
+  <h2 class="viz-title">Agencies cited by others <span class="muted small">{{ cited_sources|length }}</span></h2>
+  <p class="muted small viz-sub">Reports of other sources that link to the agency's own site – {{ "{:,}".format(totals.to_agencies or 0) }} links in all.</p>
+  <table class="rp-topics small">
+    <thead><tr><th>Agency</th><th class="n">Reports linking to it</th><th class="n">By how many agencies</th></tr></thead>
+    {% for s in cited_sources %}<tr><th><img class="flag-sm" src="{{ flag_url(s.country) }}" alt=""> {{ s.agency }}{{ pub_mark(s.id) }}</th>
+      <td class="n"><a href="/documents?cite=src:{{ s.id }}&indexed=1">{{ s.reports }}</a></td><td class="n">{{ s.agencies }}</td></tr>{% endfor %}
+  </table>
+</section>
+
+<section class="viz-card">
+  <h2 class="viz-title">Reports cited by reports <span class="muted small">{{ cited_docs|length }}</span></h2>
+  <p class="muted small viz-sub">Library reports that other library reports link to ({{ "{:,}".format(totals.to_reports or 0) }} links; reports of the same agency count – an annual report citing last year's).</p>
+  <table class="rp-topics small">
+    <thead><tr><th>Report</th><th>Agency</th><th class="n">Cited by</th></tr></thead>
+    {% for d in cited_docs %}<tr><th><a href="/report/{{ d.id }}">{{ d.title }}</a> <span class="muted">{{ d.year or '' }}</span></th>
+      <td>{{ d.agency }}</td><td class="n"><a href="/documents?cite=doc:{{ d.id }}&indexed=1">{{ d.reports }}</a></td></tr>{% endfor %}
+  </table>
+</section>
+
+<section class="viz-card">
+  <h2 class="viz-title">Outside sources the reports link to <span class="muted small">{{ hosts|length }} most linked</span></h2>
+  <p class="muted small viz-sub">Hosts that are no source of the library. The kind (news, academic, law …) is a hand label for well-known hosts, not a measurement; a host without one is unlabelled.
+    Many links to one host may come from a few reports with long reference lists – the second column counts reports, the third the agencies they come from.</p>
+  <table class="rp-topics small">
+    <thead><tr><th>Host</th><th>Kind</th><th class="n">Reports</th><th class="n">Agencies</th></tr></thead>
+    {% for h in hosts %}<tr><th>{{ h.host }}</th><td class="muted">{{ h.kind }}</td>
+      <td class="n"><a href="/documents?cite=host:{{ h.host }}&indexed=1">{{ h.reports }}</a></td><td class="n">{{ h.agencies }}</td></tr>{% endfor %}
+  </table>
+</section>
+{% endblock %}

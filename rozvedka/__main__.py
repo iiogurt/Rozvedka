@@ -58,6 +58,7 @@ def main():
     sub.add_parser("fetch-kev", help="download CISA's Known Exploited Vulnerabilities catalog (CC0) for the CVE pages")
     sub.add_parser("index-cves", help="find CVE numbers in the report texts and near which actors they are named")
     sub.add_parser("fetch-threat-levels", help="check the official threat-level announcements (sources/threat_levels.yaml) against their pages")
+    sub.add_parser("index-citations", help="resolve the web addresses in the report texts: other reports, other agencies, outside sources")
     sub.add_parser("fetch-sanctions", help="download the EU, UK, UN and US sanctions lists and match them with the actors")
     sub.add_parser("match-sanctions", help="match the downloaded sanctions lists with the actors again (no download)")
     fp = sub.add_parser("fetch-actor-profiles", help="pictures, key facts and Wikipedia summaries of the actors the reports name")
@@ -131,6 +132,9 @@ def main():
     elif a.cmd == "fetch-threat-levels":
         from . import threat_levels
         print(threat_levels.fetch_all())
+    elif a.cmd == "index-citations":
+        from . import citations
+        print(citations.index())
     elif a.cmd == "fetch-sanctions":
         from . import sanctions
         print(sanctions.fetch_all())
