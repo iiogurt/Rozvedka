@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.58.1] – 2026-10-13
+
+### Changed
+- **Every page in the console style**: panel titles in small capitals with their counts in green mono, table headers in small
+  capitals, numbers in IBM Plex Mono, rows lit on hover. In the dark theme the agency-type badges are outlined in the type's colour
+  (the map's colours) instead of pale boxes.
+
+### Fixed
+- The bars of the actor list start at the same place in every row (the count has a fixed-width column).
+
 ## [0.58.0] – 2026-10-13
 
 ### Changed
@@ -1160,7 +1170,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.58.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.58.1...HEAD
+[0.58.1]: https://github.com/iiogurt/Rozvedka/compare/v0.58.0...v0.58.1
 [0.58.0]: https://github.com/iiogurt/Rozvedka/compare/v0.57.0...v0.58.0
 [0.57.0]: https://github.com/iiogurt/Rozvedka/compare/v0.56.0...v0.57.0
 [0.56.0]: https://github.com/iiogurt/Rozvedka/compare/v0.55.0...v0.56.0

@@ -136,11 +136,11 @@ Each item: why · what · done when · version step.
 
 The owner chose the "Console" redesign (dark, dense, green/yellow accents) from three mockups on 2026-10-13. Its steps:
 C1 ✅ (0.56.0) theme, fonts, side rail, command bar · C2 ✅ (0.57.0) overview as a panel grid with a key-number strip · C3 ✅ (0.58.0) actor page with the
-combined timeline · C4 the other pages in the panel style.
+combined timeline · C4 ✅ (0.58.1) the other pages in the panel style.
 
 
 1. ✅ (0.54.0) **Menu in six groups, section tabs, phone menu, `/views`, header search** (`rozvedka/nav.py`, test that no page is missing). · minor
-2. ◐ (0.54.0: map pages follow the theme, matrix legend, network mark, phone overflow) **Visual fixes** – still open: aligned bars on `/actors`, stable bar columns. · patch
+2. ◐ (0.54.0: map pages follow the theme, matrix legend, network mark, phone overflow) **Visual fixes** – aligned bars on `/actors` done in 0.58.1. · patch
 3. **Page header component** – `<h1>` and breadcrumb on every list page, the long method notes folded into "How this is counted". · patch
 4. **Design tokens** – spacing/type scale, one categorical palette in CSS read by the charts, an SVG icon sprite (Lucide or Tabler, about 8 KB). · patch
 5. **Overview dashboard** – sparkline tiles instead of the 30/90-day tiles, official/think-tank stacked years, dumbbell for rising topics. · minor

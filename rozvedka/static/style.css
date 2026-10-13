@@ -136,7 +136,14 @@ h2 { margin: 28px 0 8px; font-size: 16px; border-bottom: 1px solid var(--line); 
 .type-eu-body { background: #e0e9fa; color: #1b3f8f; }
 .type-nato { background: #dfe8f1; color: #004990; }
 [data-theme="dark"] .logo { background: #f4f4f2; }
-[data-theme="dark"] [class*="type-"] { filter: brightness(.85) saturate(.9); }
+/* dark theme: agency-type badges outlined in the type's colour (the same colours as the map's dots) */
+[data-theme="dark"] .type-intelligence-civil { background: transparent; color: #5aa9ff; box-shadow: inset 0 0 0 1px currentColor; }
+[data-theme="dark"] .type-intelligence-military { background: transparent; color: #9ccc65; box-shadow: inset 0 0 0 1px currentColor; }
+[data-theme="dark"] .type-cyber { background: transparent; color: #c792ea; box-shadow: inset 0 0 0 1px currentColor; }
+[data-theme="dark"] .type-civil-protection { background: transparent; color: #ffab40; box-shadow: inset 0 0 0 1px currentColor; }
+[data-theme="dark"] .type-police-ct { background: transparent; color: #ff6b6b; box-shadow: inset 0 0 0 1px currentColor; }
+[data-theme="dark"] .type-eu-body { background: transparent; color: #82b1ff; box-shadow: inset 0 0 0 1px currentColor; }
+[data-theme="dark"] .type-nato { background: transparent; color: #4dd0e1; box-shadow: inset 0 0 0 1px currentColor; }
 /* documents table: flag + small logo next to the agency */
 td.src a { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .logo-sm { width: 18px; height: 18px; object-fit: contain; background: #fff; border-radius: 3px; }
@@ -1235,3 +1242,18 @@ table.spark-rows, table.gantt { width: 100%; border-collapse: collapse; font-siz
 .tl.tlc .tlc-bars td a .tlc-n { display: block; }
 .tl.tlc .tlc-bars td a i { display: block; margin: 0 auto; }
 .tl.tlc { width: 100%; }
+
+/* ── Console style on every page: small uppercase panel titles, counts and numbers in mono, table headers, row hover ── */
+.viz-card { border-radius: 8px; }
+.viz-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); }
+.viz-title > .muted { font: 500 12px var(--mono); letter-spacing: 0; text-transform: none; color: var(--accent); }
+.viz-title a { text-transform: none; letter-spacing: 0; }
+.page-h { font-size: 24px; letter-spacing: -.01em; }
+.rp-topics thead th, table.vt th, .docs th { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.rp-topics tbody th { text-transform: none; letter-spacing: 0; }
+.rp-topics .n, td.n, td.num, .tl-sum, .pg-info b, .pg-links a, .pg-cur { font-family: var(--mono); }
+.rp-topics tr:hover > td, .rp-topics tr:hover > th, table.vt tr:hover > td, .docs tbody tr:hover > td { background: var(--chip); }
+.topic-chip { border-radius: 4px; }
+/* actor list: the number in a fixed-width column so every bar starts at the same place */
+td.a-docs { white-space: nowrap; }
+td.a-docs > a { display: inline-block; min-width: 3.2em; font-family: var(--mono); }
