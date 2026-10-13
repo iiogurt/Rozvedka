@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.53.0] – 2026-10-13
+
+### Added
+- **ATT&CK technique numbers** (`/techniques`): the technique numbers the reports name (T1566, T1059.001 …), found by pattern
+  (`index-techniques`) and tied to MITRE's catalog (`fetch-attack`: Enterprise, Mobile and ICS, with versions and the retrieval
+  date; MITRE's terms of use linked). The list shows each technique's name, tactics, reports, agencies and years; a technique
+  page shows the reports naming it with the passage and page, and the groups MITRE lists as using it (linked where the group is
+  in the actor index). Report pages list their techniques; the Documents page filters by `technique=`. Numbers MITRE has retired
+  stay (marked), since reports still cite them; numbers that are in no matrix are left out and counted on the page.
+
 ## [0.52.0] – 2026-10-12
 
 ### Added
@@ -1064,7 +1074,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.52.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.53.0...HEAD
+[0.53.0]: https://github.com/iiogurt/Rozvedka/compare/v0.52.0...v0.53.0
 [0.52.0]: https://github.com/iiogurt/Rozvedka/compare/v0.51.0...v0.52.0
 [0.51.0]: https://github.com/iiogurt/Rozvedka/compare/v0.50.0...v0.51.0
 [0.50.0]: https://github.com/iiogurt/Rozvedka/compare/v0.49.0...v0.50.0

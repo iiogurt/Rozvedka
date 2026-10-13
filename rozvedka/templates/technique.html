@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}{{ technique }} · ATT&amp;CK techniques · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/techniques">← ATT&amp;CK techniques</a></p>
+<h1 class="page-h">{{ technique }}{% if title %} · {{ title }}{% endif %}</h1>
+{% if info %}
+<section class="viz-card">
+  <h2 class="viz-title">In MITRE's catalog</h2>
+  <p class="small">Tactic{{ 's' if info.tactics|length != 1 }}: <b>{{ info.tactics|join(', ') }}</b>{% if info.retired %} · <b>MITRE has retired this number</b> (merged or replaced; the page at MITRE says by what){% endif %}.
+    <a href="{{ info.url }}" rel="noopener">{{ technique }} at attack.mitre.org</a> (external link; description, mitigations and detection are there).
+    Source: {{ {'enterprise-attack': 'Enterprise', 'mobile-attack': 'Mobile', 'ics-attack': 'ICS'}[info.matrix] }} ATT&amp;CK {{ meta.versions[info.matrix] }}, retrieved {{ meta.retrieved }} (<a href="{{ meta.terms }}" rel="noopener">terms of use</a>).</p>
+  {% if groups %}<p class="small">MITRE lists {{ groups|length }} group{{ 's' if groups|length != 1 }} as using it:
+    {% for g in groups %}{% if g.actor %}<a href="/actors/{{ g.actor.key }}">{{ g.actor.label }}</a>{% else %}<span class="muted">{{ g.name }}</span>{% endif %}{{ ', ' if not loop.last }}{% endfor %}.
+    <span class="muted">Linked: groups that are in the actor index. This is MITRE's list of what groups have been seen using, not a statement of the reports.</span></p>{% endif %}
+</section>
+{% elif not meta %}
+<section class="viz-card"><p class="small muted">MITRE's technique list has not been fetched yet: <code>python -m rozvedka fetch-attack</code>.</p></section>
+{% endif %}
+<section class="viz-card">
+  <h2 class="viz-title">In the reports <span class="muted small">{{ reports }}</span></h2>
+  <p class="muted small viz-sub"><a href="/documents?technique={{ technique }}">{{ reports }} report{{ 's' if reports != 1 }}</a> by {{ agencies }} agenc{{ 'ies' if agencies != 1 else 'y' }}{% if years %}, {{ years[0] }}{{ '–' ~ years[-1] if years[-1] != years[0] }}{% endif %}.</p>
+  <div id="reports"></div>
+  {% for r in shown %}
+  <div class="small"><img class="flag-sm" src="{{ flag_url(r.country) }}" alt=""> <b>{{ r.agency }}</b>{{ pub_mark(r.source_id) }}
+    · <a href="/report/{{ r.doc_id }}">{{ r.title }}</a> <span class="muted">{{ r.year or '' }} · {{ r.lang }} · named {{ r.n }}×</span>
+    <blockquote class="snippet small">{{ r.before }}<mark>{{ r.match }}</mark>{{ r.after }}
+      <a href="{{ r.open }}" target="_blank">{{ 'p. ' ~ r.page if r.page else 'open' }}</a></blockquote></div>
+  {% endfor %}
+  {{ pager(pg, "reports") }}
+</section>
+{% endblock %}

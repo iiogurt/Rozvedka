@@ -92,6 +92,14 @@
   <p class="small">Library reports whose text links to this one (<a href="/documents?cite=doc:{{ d.id }}&indexed=1">list</a>): {% for c in cites.cited_by %}<a href="/report/{{ c.id }}">{{ c.title }}</a> <span class="muted">{{ c.agency }} {{ c.year or '' }}</span>{{ '; ' if not loop.last }}{% endfor %}</p>
 </section>
 {% endif %}
+{% if techniques %}
+<section class="viz-card" id="techniques">
+  <h2 class="viz-title">ATT&amp;CK techniques named <span class="muted small">{{ techniques|length }}</span></h2>
+  <p class="muted small viz-sub">Attacker techniques of MITRE's ATT&amp;CK catalog this report names by number, found by pattern.
+    <a href="/techniques">All techniques in the reports</a>.</p>
+  <p class="small">{% for t in techniques %}<a href="/techniques/{{ t.technique }}" title="{{ t.title }}">{{ t.technique }}</a> <span class="muted">{{ t.title }}{% if t.n > 1 %} ×{{ t.n }}{% endif %}</span>{{ ' · ' if not loop.last }}{% endfor %}</p>
+</section>
+{% endif %}
 {% if cves %}
 <section class="viz-card" id="cves">
   <h2 class="viz-title">CVE numbers named <span class="muted small">{{ cves|length }}</span></h2>

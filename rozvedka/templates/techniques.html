@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}ATT&amp;CK techniques in the reports · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/actors">← Actors</a></p>
+<h1 class="page-h">ATT&amp;CK techniques in the reports</h1>
+<p class="muted small">Every attacker technique of MITRE's <a href="https://attack.mitre.org/" rel="noopener">ATT&amp;CK</a> catalog that the
+  reports name by its number (T1566, T1059.001 …) – {{ total }} different ones, found by pattern in the report texts.
+  {% if meta %}Names, tactics and groups are MITRE's (ATT&amp;CK {% for m, v in meta.versions.items() %}{{ {'enterprise-attack': 'Enterprise', 'mobile-attack': 'Mobile', 'ics-attack': 'ICS'}[m] }} {{ v }}{{ ', ' if not loop.last }}{% endfor %}, retrieved {{ meta.retrieved }} with
+  <code>fetch-attack</code>; <a href="{{ meta.terms }}" rel="noopener">terms of use</a>). Only numbers that exist in the catalog are counted{% if unknown %};
+  {{ unknown }} other T-number{{ 's' if unknown != 1 }} in the texts {{ 'are' if unknown != 1 else 'is' }} left out{% endif %}.
+  {% else %}MITRE's technique list has not been fetched yet: run <code>python -m rozvedka fetch-attack</code> for names and tactics.{% endif %}
+  A report that names a technique by its number is one that describes it; reports that describe the behaviour without the number are not counted.
+  Each count links to exactly those reports (one file per report, the usual scope).</p>
+<form class="small" method="get">
+  Search <input name="q" value="{{ f.q }}" placeholder="number or name" size="20">
+  tactic <select name="tactic"><option value="">any</option>{% for t in tactics %}<option {{ 'selected' if f.tactic == t }}>{{ t }}</option>{% endfor %}</select>
+  sort <select name="sort">{% for k, n in (('reports', 'reports'), ('agencies', 'agencies'), ('id', 'number'), ('name', 'name')) %}<option value="{{ k }}" {{ 'selected' if f.sort == k }}>{{ n }}</option>{% endfor %}</select>
+  <button>Filter</button> <span class="muted">{{ pg.total }} of {{ total }} techniques</span>
+</form>
+{{ pager(pg, "techniques") }}
+<table class="rp-topics small">
+  <thead><tr><th>Technique</th><th>Name</th><th class="n">Reports</th><th class="n">Agencies</th><th>Years</th><th>Tactics</th></tr></thead>
+  {% for r in rows %}<tr>
+    <th><a href="/techniques/{{ r.technique }}">{{ r.technique }}</a></th>
+    <td>{{ r.title }}{% if r.info and r.info.retired %} <span class="ctag" title="MITRE has retired this number">retired</span>{% endif %}</td>
+    <td class="n"><a href="/documents?technique={{ r.technique }}">{{ r.docs }}</a></td><td class="n">{{ r.agencies }}</td>
+    <td>{{ r.y0 }}{{ '–' ~ r.y1 if r.y1 != r.y0 }}</td>
+    <td class="muted">{% if r.info %}{{ r.info.tactics|join(', ') }}{% endif %}</td></tr>
+  {% else %}<tr><td class="muted">No technique matches this filter.</td></tr>{% endfor %}
+</table>
+{{ pager(pg, "techniques") }}
+{% endblock %}
