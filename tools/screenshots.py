@@ -59,6 +59,7 @@ SHOTS = {
     "topics": ("/topics", 1100, [], None),
     "terms": ("/trends/terms?term=drone&term=ransomware&term=disinformation", 1000, [("sleep", 4)], None),
     "matrix": ("/trends/matrix", 1000, [("sleep", 5)], None),
+    "matrix-lift": ("/trends/matrix?mx=lift", 1000, [("sleep", 5)], None),   # over-emphasis against all reports
     "actor-search": ("/actors", 760, [("eval", "document.getElementById('ac-q').focus(); 1"), ("type", "prigozin"),
                                       ("sleep", 2)], None),
     "actor-precision": ("/actors", 470, [], None),                 # the measured precision above the list

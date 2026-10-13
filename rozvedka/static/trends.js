@@ -56,7 +56,7 @@
   function query(forApi) {
     const q = new URLSearchParams();
     for (const k of ["country", "coalition", "type", "year_from", "year_to"]) if (val(k)) q.set(k, val(k));
-    if (VIEW === "matrix") q.set("by", radio("by"));
+    if (VIEW === "matrix") { q.set("by", radio("by")); if (!forApi && radio("mx") === "lift") q.set("mx", "lift"); }
     else {
       items.forEach((i) => q.append(MULTI, i));
       if (!forApi) {
@@ -200,35 +200,53 @@
 
   function renderMatrix() {
     const c = ink();
-    const rows = data.rows, tops = data.topics;
+    const lift = radio("mx") === "lift";
+    // the first column is the reference: every report of the period in scope (in "over-emphasis" it is 1× by definition)
+    const ALL = "__all__";
+    const rows = [{ key: ALL, label: "All reports", docs: data.docs_all, link: data.link_all }, ...data.rows];
+    const tops = data.topics;
     const rowIdx = new Map(rows.map((r, i) => [r.key, i]));
     const topIdx = new Map(tops.map((t, i) => [t.key, i]));
+    const cells = [...tops.filter((t) => t.n_all).map((t) => ({ row: ALL, topic: t.key, n: t.n_all, share: t.share_all, lift: 1, link: t.link_all })),
+                   ...data.cells];
     const max = Math.max(0.05, ...data.cells.map((x) => x.share));
+    const L = 2;   // over-emphasis colours run from ¼× to 4× (log2 −2 … +2); beyond that the ends
+    const val = (x) => lift ? Math.max(-L, Math.min(L, Math.log2(x.lift || 1e-9))) : x.share;
     const el = $("#chart");
     el.style.width = Math.max(el.parentElement.clientWidth - 2, 290 + rows.length * 26) + "px";
     el.style.height = 150 + tops.length * 18 + "px";
     chart.resize();
     chart.setOption({
-      animation: false, textStyle: { fontFamily: "system-ui, sans-serif" },
+      animation: false, textStyle: { fontFamily: "IBM Plex Sans, system-ui, sans-serif" },
       grid: { left: 280, right: 16, top: 130, bottom: 10 },
       tooltip: { backgroundColor: c.panel, borderColor: c.line, textStyle: { color: c.text, fontSize: 12 },
         formatter: (p) => {
           const r = rows[p.data.value[0]], t = tops[p.data.value[1]];
+          const ref = r.key === ALL ? "" : `<br>all reports: ${pct(t.share_all)} · <b>${p.data.lift == null ? "–" : p.data.lift.toFixed(2) + "×"}</b> as often`;
           return `<b>${esc(r.label)}</b><br>${esc(t.name)} <span class="tt-n">(${esc(t.category)})</span><br>
-                  <b>${p.data.n}</b> of ${r.docs} reports · <b>${pct(p.data.value[2])}</b><br><span class="tt-n">click for the list</span>`;
+                  <b>${p.data.n}</b> of ${r.docs} reports · <b>${pct(p.data.share)}</b>${ref}<br><span class="tt-n">click for the list</span>`;
         } },
       xAxis: { type: "category", position: "top", data: rows.map((r) => `${r.label} (${r.docs})`), ...axisCommon(c),
-               axisLabel: { color: c.muted, fontSize: 11, rotate: 50, interval: 0 }, splitLine: { show: false } },
+               axisLabel: { color: c.muted, fontSize: 11, rotate: 50, interval: 0,
+                            fontWeight: (v) => (v.startsWith("All reports") ? "bold" : "normal") }, splitLine: { show: false } },
       yAxis: { type: "category", inverse: true, data: tops.map((t) => t.name), ...axisCommon(c),
                axisLabel: { color: c.text, fontSize: 11, interval: 0, width: 260, overflow: "truncate" }, splitLine: { show: false } },
-      visualMap: { show: false, min: 0, max, inRange: { color: rzTokens.seq() } },
+      visualMap: lift ? { show: false, min: -L, max: L, inRange: { color: rzTokens.div() } }
+                      : { show: false, min: 0, max, inRange: { color: rzTokens.seq() } },
       series: [{ type: "heatmap", itemStyle: { borderColor: c.panel, borderWidth: 2, borderRadius: 2 },
-                 data: data.cells.map((x) => ({ value: [rowIdx.get(x.row), topIdx.get(x.topic), x.share], n: x.n, link: x.link })) }],
+                 data: cells.map((x) => ({ value: [rowIdx.get(x.row), topIdx.get(x.topic), val(x)], n: x.n, share: x.share,
+                                           lift: x.lift, link: x.link,
+                                           itemStyle: x.row === ALL ? { borderColor: c.muted, borderWidth: 1 } : undefined })) }],
     }, true);
-    $("#viz-sub").innerHTML = `Share of each ${data.by === "country" ? "country's" : "agency's"} reports from ${data.year_from}–${data.year_to}
-      tagged with each topic · further right on the ramp = larger share (0 – ${pct(max)}) · empty cell = no report tagged ·
-      ${rows.length} ${data.by === "country" ? "countries" : "agencies"} with at least 5 reports
-      <span class="legend-ramp" aria-hidden="true">${rzTokens.seq().map((col) => `<i style="background:${col}"></i>`).join("")}</span>`;
+    const ramp = (lift ? rzTokens.div() : rzTokens.seq()).map((col) => `<i style="background:${col}"></i>`).join("");
+    $("#viz-sub").innerHTML = lift
+      ? `How much more (or less) often each ${data.by === "country" ? "country's" : "agency's"} reports from ${data.year_from}–${data.year_to}
+         carry each topic than all ${data.docs_all} reports of the period (first column) · ¼× <span class="legend-ramp" aria-hidden="true">${ramp}</span> 4×
+         (1× in the middle) · a row's emphasis, not the size of the threat · empty cell = no report tagged`
+      : `Share of each ${data.by === "country" ? "country's" : "agency's"} reports from ${data.year_from}–${data.year_to}
+         tagged with each topic; the first column is all ${data.docs_all} reports of the period · further right on the ramp = larger share (0 – ${pct(max)})
+         <span class="legend-ramp" aria-hidden="true">${ramp}</span> · empty cell = no report tagged ·
+         ${rows.length - 1} ${data.by === "country" ? "countries" : "agencies"} with at least 5 reports`;
     const cell = new Map(data.cells.map((x) => [x.row + "|" + x.topic, x]));
     const head = `<tr><th>Topic</th>${rows.map((r) => `<th><a href="${r.link}">${esc(r.label)}</a> (${r.docs})</th>`).join("")}</tr>`;
     $("#table-wrap").ontoggle = () => {
@@ -326,7 +344,7 @@
     });
   }
   form.addEventListener("change", (e) => {
-    if (["measure", "events", "since"].includes(e.target.name)) { syncUrl(); data && render(); return; }
+    if (["measure", "events", "since", "mx"].includes(e.target.name)) { syncUrl(); data && render(); return; }
     load(); if (VIEW === "topics") loadRising();
   });
 

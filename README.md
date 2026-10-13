@@ -274,9 +274,12 @@ no periodic job.
 </tr>
 <tr>
 <td><b>Term trends</b> – any words over time, one line per term, with translations joined by <code>OR</code>.</td>
-<td><b>Who reports on what</b> – countries or agencies × topics for a period.</td>
+<td><b>Who reports on what</b> – countries or agencies × topics for a period, with all reports of the period as the first
+column; <i>over-emphasis</i> shows how much more or less often a row carries a topic than all reports (¼× blue … 4× yellow).</td>
 </tr>
 </table>
+
+<img src="docs/images/matrix-lift.png" alt="Who reports on what in the over-emphasis mode: each country's share against all reports, blue below, yellow above" width="900">
 
 - **Topics over time** – share of reports (or of reporting agencies) per year for up to 8 topics, with the number
   of reports per year beneath, plus the topics that rose and fell most in the last two years.

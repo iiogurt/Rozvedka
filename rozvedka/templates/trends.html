@@ -23,6 +23,10 @@
     <label><input type="radio" name="by" value="country" checked> countries</label>
     <label><input type="radio" name="by" value="agency"> agencies</label>
   </span>
+  <span class="seg" role="group" aria-label="Measure">
+    <label title="Reports of the row tagged with the topic ÷ all its reports"><input type="radio" name="mx" value="share" checked> share of reports</label>
+    <label title="The row's share ÷ the share in all reports of the period: above 1 = the topic is more prominent there than elsewhere"><input type="radio" name="mx" value="lift"> over-emphasis</label>
+  </span>
   {% else %}
   <span class="seg" role="group" aria-label="Measure">
     <label title="Documents tagged ÷ all documents in scope that year"><input type="radio" name="measure" value="docs" checked> share of reports</label>

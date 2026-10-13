@@ -27,6 +27,14 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.59.0] – 2026-10-13
+
+### Added
+- **Topic matrix: a reference column and over-emphasis.** "Who reports on what" starts with a column for all reports of the period
+  (also of countries or agencies too small to get their own column), each cell linking to its reports. A new *over-emphasis* switch
+  colours every cell by the row's share against that reference – from ¼× (blue) through 1× (neutral) to 4× (yellow) – so a country's
+  or agency's emphasis shows rather than its size; the tooltip gives both shares and the factor. The CSV and table views are unchanged.
+
 ## [0.58.1] – 2026-10-13
 
 ### Changed
@@ -1170,7 +1178,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.58.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.59.0...HEAD
+[0.59.0]: https://github.com/iiogurt/Rozvedka/compare/v0.58.1...v0.59.0
 [0.58.1]: https://github.com/iiogurt/Rozvedka/compare/v0.58.0...v0.58.1
 [0.58.0]: https://github.com/iiogurt/Rozvedka/compare/v0.57.0...v0.58.0
 [0.57.0]: https://github.com/iiogurt/Rozvedka/compare/v0.56.0...v0.57.0
