@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.57.0] – 2026-10-13
+
+### Added
+- **Threat watch** on the overview: the five CVE numbers and the five ATT&CK techniques the reports name most, each count opening its reports.
+
+### Changed
+- **Overview in the console style**: a compact banner (smaller word mark and radar), a strip of key numbers (reports, official agencies,
+  ◆ think tanks, countries, languages, editions to collect – each a link), and the dashboards as one grid of panels joined by thin lines.
+  The banner and prompt take the theme's green.
+
 ## [0.56.0] – 2026-10-13
 
 ### Changed
@@ -1140,7 +1150,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.56.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.57.0...HEAD
+[0.57.0]: https://github.com/iiogurt/Rozvedka/compare/v0.56.0...v0.57.0
 [0.56.0]: https://github.com/iiogurt/Rozvedka/compare/v0.55.0...v0.56.0
 [0.55.0]: https://github.com/iiogurt/Rozvedka/compare/v0.54.2...v0.55.0
 [0.54.2]: https://github.com/iiogurt/Rozvedka/compare/v0.54.1...v0.54.2

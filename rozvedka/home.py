@@ -351,6 +351,15 @@ def dashboard(today: dt.date | None = None) -> dict:
         health = [{"key": k, "label": label, "n": status.get(k, 0), "url": docs_url(status=k)}
                   for k, label in (("downloaded", "downloaded"), ("new", "waiting for download"),
                                    ("browser-only", "open in a browser only"), ("failed", "download failed"))]
+    # threat watch: the CVE and ATT&CK numbers most named, each with the list of reports naming it
+    from . import cves, techniques
+    cv, tq = cves.overview(), techniques.overview()
+    threats = {"cves": [{"id": r["cve"], "n": r["docs"], "url": docs_url(cve=r["cve"]), "page": f"/cves/{r['cve']}",
+                         "what": f"{r['kev']['vendorProject']} {r['kev']['product']}" if r["kev"] else "", "kev": r["on_kev"]}
+                        for r in cv["rows"][:5]],
+               "techs": [{"id": r["technique"], "n": r["docs"], "url": docs_url(technique=r["technique"]),
+                          "page": f"/techniques/{r['technique']}", "what": r["title"]} for r in tq["rows"][:5]],
+               "n_cves": cv["total"], "n_kev": cv["n_kev"], "n_techs": tq["total"]}
     rise = trends.rising(limit=6)
     rise["axis"] = max([r[k] for r in rise["rising"] for k in ("earlier", "recent")] + [0.01])
     return {"today": today.isoformat(), "totals": totals,
@@ -360,7 +369,7 @@ def dashboard(today: dt.date | None = None) -> dict:
             "later": later, "by_type": by_type, "type_max": max([t["n"] for t in by_type] + [1]),
             "top_actors": top_actors, "actor_year": actor_year, "actor_year_docs": actor_year_docs,
             "actor_max": max([a["n"] for a in top_actors] + [1]),
-            "health": health, "collect": collect.status_counts(), "fresh": collect.freshness(), "rising": rise}
+            "health": health, "threats": threats, "collect": collect.status_counts(), "fresh": collect.freshness(), "rising": rise}
 
 
 def figures(d: dict) -> list[tuple[str, int, str]]:
@@ -378,5 +387,6 @@ def figures(d: dict) -> list[tuple[str, int, str]]:
     out += [(f"type {t['key']}", t["n"], t["url"]) for t in d["by_type"]]
     out += [(f"actor {a['label']}", a["n"], a["url"]) for a in d["top_actors"]]
     out += [(f"status {h['key']}", h["n"], h["url"]) for h in d["health"]]
+    out += [(f"threat {t['id']}", t["n"], t["url"]) for k in ("cves", "techs") for t in d["threats"][k]]
     out += [(f"rising {r['key']} {p}", r[f"n_{p}"], r[f"link_{p}"]) for r in d["rising"]["rising"] for p in ("earlier", "recent")]
     return out
