@@ -263,7 +263,9 @@ def test_actor_timeline(library):
     assert timeline.detail("nope") is None
     client = TestClient(app)
     t = client.get("/actors/Q3/timeline").text
-    assert "First and last report per agency" in t and "cluster=Q3%2CQ5" in t
+    assert "Who reports, first to latest" in t and "cluster=Q3%2CQ5" in t
+    assert d["per_year"] == [{"year": 2024, "n": 1, "link": d["per_year"][0]["link"]}] and "actor=Q3" in d["per_year"][0]["link"]
+    assert 'class="tlc-bars"' in t and "Reports naming it" in t
     assert client.get("/actors/nope/timeline").status_code == 404
     assert "/actors/Q3/timeline" in client.get("/actors/Q3").text
 

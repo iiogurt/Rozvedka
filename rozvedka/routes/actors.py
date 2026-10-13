@@ -105,7 +105,20 @@ def actor_timeline(request: Request, key: str):
     d = timeline.detail(key)
     if d is None:
         raise HTTPException(404, "unknown actor")
-    return tpl.TemplateResponse(request, "actor_timeline.html", {**d, "events": actor_events.of_actor(key)})
+    events = actor_events.of_actor(key)
+    marks = {"founded": "●", "dissolved": "○", "designated": "■", "listed": "◆", "attributed": "▲", "threat-level": "▴"}
+    lane = {y: [] for y in d["years"]}
+    outside = 0
+    for e in events:
+        if e["kind"] not in marks:
+            continue
+        y = int(str(e["date"])[:4])
+        if y in lane:
+            lane[y].append({"mark": marks[e["kind"]], "kind": e["kind"], "title": f"{e['date']}: {e['title']}"})
+        else:
+            outside += 1
+    return tpl.TemplateResponse(request, "actor_timeline.html", {**d, "events": events, "lane": lane, "lane_outside": outside,
+                                                                "marks": marks})
 
 
 @router.get("/actors/{key}")

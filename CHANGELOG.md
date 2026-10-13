@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.58.0] – 2026-10-13
+
+### Changed
+- **Actor timeline in the console style**: one year axis carries the dated events (◆ sanctions list, ▲ attribution, ■ designation,
+  ● founding – hover for the date), the reports naming the actor each year as bars, and the reporting countries as a heat grid.
+  Below, in panels: the dated events with sources, the actors named beside it with small yearly bars, and each agency's first-to-latest
+  span (dots open the first and the latest report).
+- **Actor page**: a strip of key numbers (reports, agencies, first named, most named year, attributions, sanctions entries) with the
+  timeline as its last card; the yearly chart takes the theme's accent.
+
 ## [0.57.0] – 2026-10-13
 
 ### Added
@@ -1150,7 +1160,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.57.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.58.0...HEAD
+[0.58.0]: https://github.com/iiogurt/Rozvedka/compare/v0.57.0...v0.58.0
 [0.57.0]: https://github.com/iiogurt/Rozvedka/compare/v0.56.0...v0.57.0
 [0.56.0]: https://github.com/iiogurt/Rozvedka/compare/v0.55.0...v0.56.0
 [0.55.0]: https://github.com/iiogurt/Rozvedka/compare/v0.54.2...v0.55.0

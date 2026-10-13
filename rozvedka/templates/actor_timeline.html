@@ -12,15 +12,34 @@
   {% if undated %}{{ undated }} more name{{ 's' if undated == 1 }} it but {{ 'is' if undated == 1 else 'are' }} undated or older than the chart and {{ 'is' if undated == 1 else 'are' }} left out. {% endif %}
   Every number links to the reports it counts.</p>
 
+<section class="viz-card tlc-card">
+  <h2 class="viz-title">Events, reports and who reports, year by year</h2>
+  <p class="muted small viz-sub">One year axis: the dated events
+    (<span class="ev ev-founded">●</span> founded, <span class="ev ev-designated">■</span> designated as terrorist, <span class="ev ev-listed">◆</span> sanctions list,
+    <span class="ev ev-attributed">▲</span> official attribution, <span class="ev ev-threat-level">▴</span> threat level – hover for the date),
+    the reports naming {{ a.label }} each year, and below them the reporting countries. Every number opens its reports.
+    {% if lane_outside %}{{ lane_outside }} event{{ 's' if lane_outside != 1 }} fall{{ 's' if lane_outside == 1 }} outside these years – see the list below.{% endif %}</p>
+  <div class="tl-scroll"><table class="tl tlc">
+    <tr class="tlc-ev"><th class="tl-row">Events</th>{% for y in years %}<td>{% for m in lane[y] %}<span class="ev ev-{{ m.kind }}" title="{{ m.title }}">{{ m.mark }}</span>{% endfor %}</td>{% endfor %}<td></td></tr>
+    <tr class="tlc-bars"><th class="tl-row">Reports naming it</th>{% for p in per_year %}<td><a href="{{ p.link }}" title="{{ p.year }}: {{ p.n }} reports"><span class="tlc-n">{{ p.n or '' }}</span><i style="height: {{ (54 * p.n / year_max)|round(1) }}px"></i></a></td>{% endfor %}<td class="tl-sum"><a href="/documents?actor={{ a.key }}&indexed=1">{{ docs }}</a></td></tr>
+    {% for c in countries %}<tr><th class="tl-row"><img class="flag-sm" src="{{ flag_url(c.country) }}" alt=""> {{ COUNTRY_NAMES.get(c.country, c.country) }}</th>
+      {% for x in c.cells %}<td {% if x.n %}style="--v: {{ (x.n / peak * 100)|round|int }}%"{% endif %}>{% if x.n %}<a href="{{ x.link }}">{{ x.n }}</a>{% endif %}</td>{% endfor %}
+      <td class="tl-sum">{{ c.total }}</td></tr>{% endfor %}
+    <tr class="tlc-years"><th></th>{% for y in years %}<th>{{ y }}</th>{% endfor %}<th>Σ</th></tr>
+  </table></div>
+  <p class="muted small">Country shade is relative to the busiest cell ({{ peak }}).{% if n_countries > countries|length %} Showing the {{ countries|length }} countries with most reports of {{ n_countries }}.{% endif %}</p>
+</section>
+
+<div class="panels">
 {% if events %}
 <section class="viz-card" id="events">
   <h2 class="viz-title">Dated events <span class="muted small">{{ events|length }}</span></h2>
-  <p class="muted small viz-sub">Everything dated that the library's data says about {{ a.label }}, oldest first, each with its source: Wikidata (founding, dissolution,
+  <p class="muted small viz-sub">Everything dated the library's data says about {{ a.label }}, oldest first, each with its source: Wikidata (founding, dissolution,
     designations as a terrorist group), the sanctions lists, the official attributions, for a country its terrorism threat level, and the first
     and last year a report names it. Only dated facts; nothing is estimated.</p>
   <table class="rp-topics small">
     <thead><tr><th>Date</th><th>What</th><th>Source</th></tr></thead>
-    {% for e in events %}<tr><th class="nw">{{ e.date }}</th>
+    {% for e in events %}<tr><th class="nw">{% if e.kind in marks %}<span class="ev ev-{{ e.kind }}">{{ marks[e.kind] }}</span> {% endif %}{{ e.date }}</th>
       <td><span class="ctag">{{ {'founded': 'founded', 'dissolved': 'dissolved', 'designated': 'designated', 'listed': 'sanctions list', 'attributed': 'attribution', 'threat-level': 'threat level', 'first': 'in reports', 'last': 'in reports'}[e.kind] }}</span>
         <b>{{ e.title }}</b>{% if e.detail %}<br><span class="muted">{{ e.detail }}</span>{% endif %}
         {% if e.quote %}<blockquote class="snippet small">“{{ e.quote }}”</blockquote>{% endif %}</td>
@@ -28,43 +47,35 @@
   </table>
 </section>
 {% endif %}
+
 <section class="viz-card">
-  <h2 class="viz-title">Reports per year by reporting country <span class="muted small">{{ countries|length }} of {{ n_countries }}</span></h2>
-  <p class="muted small viz-sub">Reports naming the actor, by the country of the agency that published them. Shade is relative to the
-    busiest cell ({{ peak }}).{% if n_countries > countries|length %} Showing the {{ countries|length }} countries with most reports; the others are in the <a href="/documents?actor={{ a.key }}&indexed=1">full list</a>.{% endif %}</p>
-  <div class="tl-scroll"><table class="tl">
-    <tr><th></th>{% for y in years %}<th>{{ y }}</th>{% endfor %}<th>Σ</th></tr>
-    {% for c in countries %}<tr><th class="tl-row"><img class="flag-sm" src="{{ flag_url(c.country) }}" alt=""> {{ c.country }}</th>
-      {% for x in c.cells %}<td {% if x.n %}style="--v: {{ (x.n / peak * 100)|round|int }}%"{% endif %}>{% if x.n %}<a href="{{ x.link }}">{{ x.n }}</a>{% endif %}</td>{% endfor %}
-      <td class="tl-sum">{{ c.total }}</td></tr>{% endfor %}
-  </table></div>
+  <h2 class="viz-title">Named beside it <span class="muted small">{{ partners|length }}</span></h2>
+  <p class="muted small viz-sub">Actors named within a passage of {{ a.label }}, reports per year (bars, same scale), as on the actor page.
+    <b>new</b>: first named beside it in the last {{ recent }} years; <b>gone</b>: not in the last {{ recent }} years. Countries are left out.</p>
+  {% if partners %}
+  <table class="spark-rows">
+    {% for p in partners %}<tr><th><i class="kdot kind-{{ p.kind }}"></i><a href="/actors/{{ p.key }}">{{ p.label }}</a>{% if p.status %} <span class="ctag">{{ p.status }}</span>{% endif %}</th>
+      <td class="spark-td"><span class="spark-cells">{% for x in p.cells %}<a href="{{ x.link }}" title="{{ x.year }}: {{ x.n }}"{% if not x.n %} class="z"{% endif %}><i style="height: {{ (100 * x.n / pmax)|round(1) if x.n else 0 }}%"></i></a>{% endfor %}</span></td>
+      <td class="n">{{ p.total }}</td></tr>{% endfor %}
+  </table>
+  <p class="muted small">Bars from {{ years[0] }} to {{ years[-1] }}; each opens the reports naming both that year.</p>
+  {% else %}<p class="muted small">No other actor is named in the same passage.</p>{% endif %}
 </section>
 
 <section class="viz-card">
-  <h2 class="viz-title">Actors named beside it <span class="muted small">{{ partners|length }}</span></h2>
-  <p class="muted small viz-sub">Actors named within {{ 'a passage' }} of {{ a.label }} (same rule as the actor page), reports per year.
-    <b>new</b>: first named beside it in the last {{ recent }} years; <b>gone</b>: not named beside it in the last {{ recent }} years.
-    Countries are left out.</p>
-  {% if partners %}
-  <div class="tl-scroll"><table class="tl">
-    <tr><th></th>{% for y in years %}<th>{{ y }}</th>{% endfor %}<th>Σ</th><th></th></tr>
-    {% for p in partners %}<tr><th class="tl-row"><i class="kdot kind-{{ p.kind }}"></i><a href="/actors/{{ p.key }}">{{ p.label }}</a></th>
-      {% for x in p.cells %}<td {% if x.n %}style="--v: {{ (x.n / pmax * 100)|round|int }}%"{% endif %}>{% if x.n %}<a href="{{ x.link }}">{{ x.n }}</a>{% endif %}</td>{% endfor %}
-      <td class="tl-sum">{{ p.total }}</td><td class="small">{% if p.status %}<b>{{ p.status }}</b>{% endif %}</td></tr>{% endfor %}
-  </table></div>
-  {% else %}<p class="muted small">No other actor is named in the same passage.</p>{% endif %}
-</section>
-<section class="viz-card">
-  <h2 class="viz-title">First and last report per agency <span class="muted small">{{ agencies|length }}</span></h2>
-  <p class="muted small viz-sub">Earliest and latest dated report of each agency that names {{ a.label }}, ordered by first mention.</p>
-  <table class="vt"><tr><th>Agency</th><th>First</th><th>Last</th><th>Years with a mention</th><th>Reports</th></tr>
-  {% for g in agencies %}<tr>
-    <td><img class="flag-sm" src="{{ flag_url(g.country) }}" alt=""> {{ g.agency }}{{ pub_mark(g.source_id) }}</td>
-    <td>{{ g.first.year }} <a href="/report/{{ g.first.doc_id }}" title="{{ g.first.title }}">report</a></td>
-    <td>{{ g.last.year }} <a href="/report/{{ g.last.doc_id }}" title="{{ g.last.title }}">report</a></td>
-    <td>{{ g.n_years }}</td><td><a href="{{ g.link }}">{{ g.docs }}</a></td></tr>{% endfor %}
+  <h2 class="viz-title">Who reports, first to latest <span class="muted small">{{ agencies|length }}</span></h2>
+  <p class="muted small viz-sub">Each agency's first and latest dated report naming {{ a.label }} (the dots open them), ordered by the first mention.</p>
+  <table class="gantt">
+    {% set span = years[-1] - years[0] + 1 %}
+    {% for g in agencies %}<tr><th><img class="flag-sm" src="{{ flag_url(g.country) }}" alt=""> {{ g.agency }}{{ pub_mark(g.source_id, compact=True) }}</th>
+      <td class="g-track"><span class="g-bar" style="left: {{ (100 * (g.first.year - years[0]) / span)|round(2) }}%; width: {{ (100 * (g.last.year - g.first.year + 1) / span)|round(2) }}%"></span>
+        <a class="g-dot" style="left: {{ (100 * (g.first.year - years[0] + 0.5) / span)|round(2) }}%" href="/report/{{ g.first.doc_id }}" title="First: {{ g.first.year }} – {{ g.first.title }}"></a>
+        {% if g.last.doc_id != g.first.doc_id %}<a class="g-dot" style="left: {{ (100 * (g.last.year - years[0] + 0.5) / span)|round(2) }}%" href="/report/{{ g.last.doc_id }}" title="Latest: {{ g.last.year }} – {{ g.last.title }}"></a>{% endif %}</td>
+      <td class="n"><a href="{{ g.link }}">{{ g.docs }}</a></td></tr>{% endfor %}
+    <tr><th></th><td class="g-axis"><span>{{ years[0] }}</span><span>{{ years[-1] }}</span></td><td></td></tr>
   </table>
 </section>
+</div>
 {% endif %}
 {% endblock %}
  
