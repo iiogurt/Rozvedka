@@ -34,6 +34,16 @@
   </div>
 </header>
 
+{% set dated = timeline|selectattr('docs')|list if timeline else [] %}
+<section class="kpis" aria-label="{{ a.label }} in numbers">
+  <a href="/documents?actor={{ a.key }}"><span>Reports</span><b>{{ docs|num }}</b><em>name it at least once</em></a>
+  <a href="#reporting-agencies"><span>Agencies</span><b>{{ agencies|length }}</b><em>that name it</em></a>
+  {% if dated %}<a href="{{ dated[0].link }}"><span>First named</span><b>{{ dated[0].year }}</b><em>in a dated report</em></a>
+  {% set peak = dated|sort(attribute='docs')|last %}<a href="{{ peak.link }}"><span>Most named</span><b>{{ peak.year }}</b><em>{{ peak.docs }} reports</em></a>{% endif %}
+  <a href="{{ '#attributions' if attributions else '/actors/attributions' }}"><span>Official attributions</span><b>{{ attributions|length }}</b><em>government statements</em></a>
+  <a href="{{ '#sanctions' if sanctions else '/actors/sanctions' }}"><span>Sanctions entries</span><b>{{ sanctions|length }}</b><em>EU, UK, UN, US lists</em></a>
+  <a class="kpi-go" href="/actors/{{ a.key }}/timeline"><span>Timeline</span><b>→</b><em>events, reports, who reports</em></a>
+</section>
 <div class="actor-grid">
 <section class="viz-card">
   <h2 class="viz-title">In the reports</h2>
@@ -53,7 +63,7 @@
   {% endif %}
 
   {% if agencies %}
-  <h3 class="viz-mini">Reporting agencies</h3>
+  <h3 class="viz-mini" id="reporting-agencies">Reporting agencies</h3>
   <ul class="actor-list">
     {% for g in agencies[:20] %}<li><img class="flag-sm" src="{{ flag_url(g.country) }}" alt="">
       <a href="/documents?actor={{ a.key }}&source={{ g.source_id }}">{{ g.agency }}</a>{{ pub_mark(g.source_id) }}
@@ -284,7 +294,7 @@
   const chart = echarts.init(document.getElementById("timeline"), null, { renderer: "svg" });
   function draw() {
     const ink = css("--ink"), muted = css("--muted"), line = css("--line"), panel = css("--panel");
-    const color = dark.matches ? "#3987e5" : "#2a78d6";
+    const color = rzTokens.get("--accent");   // the theme's accent (style.css)
     chart.setOption({
       animation: false, grid: { left: 44, right: 12, top: 10, bottom: 24 },
       tooltip: { trigger: "item", backgroundColor: panel, borderColor: line, textStyle: { color: ink, fontSize: 12 },

@@ -1194,3 +1194,44 @@ table.h-tlist { width: 100%; border-collapse: collapse; font-size: 13px; }
 .h-grid .h-rise { font-size: 12px; }
 .h-grid .h-rise th { max-width: 10em; }
 .h-daily-ax span:nth-child(2) { white-space: normal; text-align: center; overflow: hidden; }
+
+/* ── Panels: sections joined by 1 px lines (overview, actor timeline) ── */
+.panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr)); gap: 1px; margin: 0 0 14px;
+          background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.panels > .viz-card { margin: 0; border: 0; border-radius: 0; box-shadow: 0 0 0 1px var(--line); padding: 14px 18px; min-width: 0; }
+.panels .viz-title, .tlc-card .viz-title { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); }
+.kpis .kpi-go b { color: var(--accent); }
+/* the combined timeline: events lane, report bars and country rows on one year axis */
+.ev { font-size: 12px; } .ev-listed, .ev-attributed { color: var(--warn); } .ev-designated { color: var(--err); }
+.ev-founded, .ev-dissolved { color: var(--muted); } .ev-threat-level { color: var(--accent-2); }
+.tlc td, .tlc th { font-family: var(--mono); }
+.tlc .tl-row { font-family: var(--sans); }
+.tlc-ev td { text-align: center; letter-spacing: 1px; white-space: nowrap; }
+.tlc-bars td { height: 74px; vertical-align: bottom; padding: 0 2px; }
+.tlc-bars td a { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 70px; text-decoration: none; }
+.tlc-bars td a i { max-height: 56px; }
+.tlc-bars td a i { display: block; width: 70%; min-height: 0; flex: none; background: var(--accent); border-radius: 2px 2px 0 0; }
+.tlc-bars td a:hover i { background: var(--accent-2); }
+.tlc-n { font-size: 10px; color: var(--muted); }
+.tlc-years th { font-size: 10.5px; color: var(--muted); font-weight: 400; }
+/* sparkline rows (actors named beside it) and the first-to-latest bars */
+table.spark-rows, table.gantt { width: 100%; border-collapse: collapse; font-size: 13px; }
+.spark-rows th, .gantt th { text-align: left; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 14em; padding: 4px 10px 4px 0; border-top: 1px solid var(--line); }
+.spark-rows td, .gantt td { border-top: 1px solid var(--line); padding: 4px 0; }
+.spark-rows td.n, .gantt td.n { text-align: right; font-family: var(--mono); width: 3em; }
+.spark-td { width: 58%; }
+.spark-cells { display: flex; align-items: flex-end; gap: 2px; height: 24px; }
+.spark-cells a { flex: 1; height: 100%; display: flex; align-items: flex-end; border-bottom: 1px solid var(--line); }
+.spark-cells a i { display: block; width: 100%; background: var(--accent-2); border-radius: 1px; }
+.spark-cells a:hover { background: var(--chip); }
+.g-track { position: relative; height: 18px; width: 60%; }
+.g-bar { position: absolute; top: 8px; height: 3px; border-radius: 2px; background: color-mix(in srgb, var(--accent) 45%, transparent); }
+.g-dot { position: absolute; top: 5px; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%; background: var(--accent); }
+.g-dot:hover { background: var(--accent-2); transform: scale(1.3); }
+.g-axis { display: flex; justify-content: space-between; font: 10.5px var(--mono); color: var(--muted); border-top: 0 !important; }
+.gantt tr:last-child th { border-top: 0; }
+.tl.tlc .tlc-bars td { height: 76px; vertical-align: bottom; background: none; }
+.tl.tlc .tlc-bars td a { display: block; height: auto; text-align: center; }
+.tl.tlc .tlc-bars td a .tlc-n { display: block; }
+.tl.tlc .tlc-bars td a i { display: block; margin: 0 auto; }
+.tl.tlc { width: 100%; }

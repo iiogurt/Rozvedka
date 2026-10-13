@@ -48,6 +48,8 @@ def detail(key: str) -> dict | None:
                                  "link": trends.docs_url({"actor": key, "country": c}, year=y)} for y in years]}
                      for c in ranked[:COUNTRIES]]
         peak = max((x["n"] for c in countries for x in c["cells"]), default=0)
+        per_year = [{"year": y, "n": sum(1 for d in dated if d["year"] == y),
+                     "link": trends.docs_url({"actor": key}, year=y)} for y in years]
 
         # actors named in the same passage, per year
         ids = [d["doc_id"] for d in dated]
@@ -81,5 +83,6 @@ def detail(key: str) -> dict | None:
                                "link": trends.docs_url({"cluster": f"{key},{k}"}, year=y)} for y in years]})
         pmax = max((c["n"] for p in partners for c in p["cells"]), default=0)
     return {"actor": dict(row), "years": years, "docs": len(dated), "agencies": agencies, "countries": countries,
-            "n_countries": len(ranked), "peak": peak, "partners": partners, "pmax": pmax, "recent": RECENT,
+            "n_countries": len(ranked), "peak": peak,
+            "per_year": per_year, "year_max": max([p["n"] for p in per_year] + [1]), "partners": partners, "pmax": pmax, "recent": RECENT,
             "undated": len(docs) - len(dated)}
