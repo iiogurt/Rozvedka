@@ -126,6 +126,10 @@ def index() -> dict:
 
 
 # ── queries ──
+# the agency a link points to: the site it lies on, or the publisher of the library report it is the address of
+CITED = "COALESCE(l.target_source, (SELECT source_id FROM documents WHERE id=l.target_doc))"
+
+
 def _scoped(extra: str = "") -> tuple[str, list]:
     where, args, _ = trends.scope()
     return f"{where}{' AND ' + extra if extra else ''}", args
@@ -156,8 +160,17 @@ def overview() -> dict:
         totals = dict(con.execute(
             f"""SELECT COUNT(DISTINCT l.doc_id) reports, COUNT(*) links, COUNT(DISTINCT l.host) hosts,
                        SUM(l.target_doc IS NOT NULL) to_reports, SUM(l.target_source IS NOT NULL) to_agencies {base}""", args).fetchone())
+        # flows between kinds of publisher: reports of one agency type that link to agencies (sites or reports) of another type;
+        # a report counts once per pair of types, and links to its own agency are left out
+        flows = [dict(r) for r in con.execute(
+            f"""SELECT s.type src, t.type dst, COUNT(DISTINCT l.doc_id) reports
+                {base.replace("FROM doc_links l", f"FROM doc_links l JOIN sources t ON t.id={CITED}", 1)} AND t.id != s.id
+                GROUP BY s.type, t.type ORDER BY reports DESC""", args)]
+        for f in flows:
+            f["link"] = f"/documents?type={f['src']}&cite=stype:{f['dst']}&indexed=1"
         n_reports = con.execute(f"SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id JOIN doc_index i ON i.doc_id=d.id WHERE {where}", args).fetchone()[0]
-    return {"cited_sources": cited_sources, "hosts": hosts, "cited_docs": cited_docs, "totals": totals, "n_reports": n_reports}
+    return {"cited_sources": cited_sources, "hosts": hosts, "cited_docs": cited_docs, "totals": totals, "n_reports": n_reports,
+            "flows": flows}
 
 
 @db.cached
@@ -187,7 +200,8 @@ def of_doc(doc_id: int) -> dict:
 
 def clause(cite: str) -> tuple[str, list] | None:
     """Documents-page filter `cite=`: doc:ID reports citing report ID · by:ID reports cited by ID · src:ID reports linking to
-    source ID's site · host:HOST reports linking to that outside host."""
+    source ID's site · host:HOST reports linking to that outside host · stype:TYPE reports linking to an agency of that type
+    (its site or one of its reports in the library), not their own."""
     kind, _, val = (cite or "").partition(":")
     if kind == "doc" and val.isdigit():
         return "d.id IN (SELECT doc_id FROM doc_links WHERE target_doc=?)", [int(val)]
@@ -195,6 +209,9 @@ def clause(cite: str) -> tuple[str, list] | None:
         return "d.id IN (SELECT target_doc FROM doc_links WHERE doc_id=? AND target_doc IS NOT NULL)", [int(val)]
     if kind == "src" and val.isdigit():
         return "d.id IN (SELECT doc_id FROM doc_links WHERE target_source=?)", [int(val)]
+    if kind == "stype" and re.fullmatch(r"[a-z-]+", val):
+        return (f"""d.id IN (SELECT l.doc_id FROM doc_links l JOIN documents dd ON dd.id=l.doc_id JOIN sources t ON t.id={CITED}
+                    WHERE t.type=? AND t.id != dd.source_id)""", [val])
     if kind == "host" and val:
         return "d.id IN (SELECT doc_id FROM doc_links WHERE host=? AND target_source IS NULL AND target_doc IS NULL)", [val.lower()]
     return None

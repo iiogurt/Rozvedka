@@ -147,7 +147,7 @@ combined timeline · C4 ✅ (0.58.1) the other pages in the panel style.
 6. ✅ (0.59.0) **Topic matrix** – a reference column of all reports and an over-emphasis (lift) mode. · minor
 7. **Annotated actor timeline** – dated events and the country grid on one year axis. · minor
 8. ✅ (0.60.0) **Threat-level small multiples** – one step chart per state on its own scale. · minor
-9. **Citations** – agency × agency matrix; a chord diagram for agency types only. · minor
+9. ◐ (0.61.0: chord diagram between agency types) **Citations** – still open: an agency × agency matrix. · minor
 10. **ATT&CK tactic grid and CVE lag plot.** · minor
 11. **Coverage overview grid and a country × agency-type gap matrix.** · minor
 12. **Topic and country briefing pages** (`/topics/{key}`: trend, top agencies and actors, newest passages). · minor / large

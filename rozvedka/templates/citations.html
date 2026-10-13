@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Citations · Rozvedka{% endblock %}
+{% block head %}<script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>{% endblock %}
 {% block main %}
 <h1 class="page-h">Who cites whom</h1>
 <p class="lede">Which agencies and reports cite which – the web addresses in the report texts, tied to the library.</p>
@@ -10,6 +11,47 @@
   ignored), to <b>another agency</b> when it lies on the site of one other source of the library (the host of its home page; where the home page is deeper in a shared
   portal like gov.uk, only that path; a host two sources share is not guessed at; a report linking to its own agency's site is left out), and otherwise to an <b>outside source</b>. Addresses broken across
   lines in a PDF are not recovered, so every count is a minimum. Each number links to the reports it counts.</p></details>
+
+{% if flows %}
+<section class="viz-card" id="flows">
+  <h2 class="viz-title">Between kinds of publisher</h2>
+  <p class="muted small viz-sub">Reports of each agency type that link to agencies of another (or the same) type – their sites or their reports
+    in the library; a report counts once per pair, links to its own agency are left out. A ribbon's width at each end is the number of reports
+    citing in that direction; click a ribbon for those reports. The table beside it has every number, each a link.</p>
+  <div class="chord-wrap"><div id="chord" class="chart" role="img" aria-label="Chord diagram of citations between agency types"></div>
+    <table class="rp-topics small chord-table">
+      <thead><tr><th>Reports of</th><th>link to</th><th class="n">Reports</th></tr></thead>
+      {% for f in flows %}<tr><th><i class="dot solid type-dot-{{ f.src }}"></i> {{ TYPE_NAMES.get(f.src, f.src) }}</th>
+        <td><i class="dot solid type-dot-{{ f.dst }}"></i> {{ TYPE_NAMES.get(f.dst, f.dst) }}</td><td class="n"><a href="{{ f.link }}">{{ f.reports }}</a></td></tr>{% endfor %}
+    </table></div>
+</section>
+<script>
+(() => {
+  const flows = {{ flows|tojson }}, names = {{ TYPE_NAMES|tojson }};
+  const types = [...new Set(flows.flatMap((f) => [f.src, f.dst]))];
+  const colour = (t) => { const i = document.createElement("i"); i.className = "type-dot-" + t; document.body.appendChild(i);
+                          const c = getComputedStyle(i).getPropertyValue("--c").trim(); i.remove(); return c || rzTokens.get("--muted"); };
+  const css = (n) => rzTokens.get(n);
+  const el = document.getElementById("chord"), chart = echarts.init(el, null, { renderer: "svg" });
+  function draw() {
+    chart.setOption({
+      animation: false, textStyle: { fontFamily: "IBM Plex Sans, system-ui, sans-serif" },
+      tooltip: { backgroundColor: css("--panel"), borderColor: css("--line"), textStyle: { color: css("--ink"), fontSize: 12 },
+        formatter: (p) => p.dataType === "edge" ? `${names[p.data.source] || p.data.source} → ${names[p.data.target] || p.data.target}<br><b>${p.data.value}</b> reports · click for the list`
+                                                : `<b>${names[p.name] || p.name}</b>` },
+      series: [{ type: "chord", radius: ["60%", "66%"], center: ["50%", "50%"], padAngle: 2, minAngle: 2, clockwise: true,
+        label: { show: true, color: css("--ink"), fontSize: 11, formatter: (p) => names[p.name] || p.name },
+        lineStyle: { color: "source", opacity: 0.45 }, emphasis: { focus: "adjacency", lineStyle: { opacity: 0.85 } },
+        data: types.map((t) => ({ name: t, itemStyle: { color: colour(t) } })),
+        links: flows.map((f) => ({ source: f.src, target: f.dst, value: f.reports, link: f.link })) }] }, true);
+  }
+  draw();
+  chart.on("click", (p) => { if (p.dataType === "edge" && p.data.link) window.location = p.data.link; });
+  window.rzDark.addEventListener("change", draw);
+  window.addEventListener("resize", () => chart.resize());
+})();
+</script>
+{% endif %}
 
 <section class="viz-card">
   <h2 class="viz-title">Agencies cited by others <span class="muted small">{{ cited_sources|length }}</span></h2>
