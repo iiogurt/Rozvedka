@@ -134,6 +134,11 @@ Each item: why · what · done when · version step.
 
 ### F. Menu, design and visualisation (from the Opus 5.5 review of 0.53.0)
 
+The owner chose the "Console" redesign (dark, dense, green/yellow accents) from three mockups on 2026-10-13. Its steps:
+C1 ✅ (0.56.0) theme, fonts, side rail, command bar · C2 overview as a panel grid with a key-number strip · C3 actor page with the
+combined timeline · C4 the other pages in the panel style.
+
+
 1. ✅ (0.54.0) **Menu in six groups, section tabs, phone menu, `/views`, header search** (`rozvedka/nav.py`, test that no page is missing). · minor
 2. ◐ (0.54.0: map pages follow the theme, matrix legend, network mark, phone overflow) **Visual fixes** – still open: aligned bars on `/actors`, stable bar columns. · patch
 3. **Page header component** – `<h1>` and breadcrumb on every list page, the long method notes folded into "How this is counted". · patch

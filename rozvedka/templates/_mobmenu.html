@@ -1,0 +1,11 @@
+{# phones: the rail is hidden; one Menu button opens every group with its pages #}
+<details class="mobmenu">
+  <summary>Menu</summary>
+  <div class="mob-panel">
+    <form method="get" action="/search" role="search"><input type="search" name="q" placeholder="Search reports…" aria-label="Search the reports"></form>
+    {% for g in nav.groups %}
+    <p class="mob-h{{ ' on' if g.on }}"><a href="{{ g.hub }}">{{ g.label }}</a></p>
+    {% if g.pages|length > 1 %}<p class="mob-items">{% for i in g.pages %}<a href="{{ i.href }}" class="{{ 'on' if i.on }}">{{ i.label }}</a>{% endfor %}</p>{% endif %}
+    {% endfor %}
+  </div>
+</details>

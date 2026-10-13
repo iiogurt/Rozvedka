@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.56.0] – 2026-10-13
+
+### Changed
+- **New look: the "console" design** chosen from the redesign mockups. A dark, dense theme with green and yellow accents (orange is kept
+  for warnings such as old data or CISA's exploited list); official agencies are green, think tanks amber with ◆, so the two stay apart.
+  The light theme uses the same greens on white.
+- **Side rail** instead of the top menu: the six groups as icons with names on the left; hovering (or keyboard focus) opens a group's
+  pages. The top bar is a command-line search (`rz>`) on every page but the home page, with the data age and the Update button.
+  Phones keep the Menu button.
+- **IBM Plex Sans and Mono** for text and numbers, stored with the portal (`static/vendor/plex`, SIL Open Font License) – nothing loads
+  from the internet.
+- Sequential colour scales (topic matrix, network, maps) run from dark green to yellow in the dark theme and from pale to deep green in the light one.
+
 ## [0.55.0] – 2026-10-13
 
 ### Changed
@@ -1127,7 +1140,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.55.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.56.0...HEAD
+[0.56.0]: https://github.com/iiogurt/Rozvedka/compare/v0.55.0...v0.56.0
 [0.55.0]: https://github.com/iiogurt/Rozvedka/compare/v0.54.2...v0.55.0
 [0.54.2]: https://github.com/iiogurt/Rozvedka/compare/v0.54.1...v0.54.2
 [0.54.1]: https://github.com/iiogurt/Rozvedka/compare/v0.54.0...v0.54.1
