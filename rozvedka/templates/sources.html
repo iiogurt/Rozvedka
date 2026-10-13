@@ -8,7 +8,7 @@
   <span><b>{{ n_official }}</b> official agencies and institutions in <b>{{ groups|length }}</b> countries and bodies
     {% if n_independent %}· <a class="pub-count" href="#independent"><b>{{ n_independent }}</b> independent think tanks ◆</a>{% endif %}</span>
   <form method="post" action="/jobs/sync" class="inline"><button title="Reload sources/registry.yaml">Reload registry</button></form>
-  <a class="dx-primary upd-link" href="/update">⟳ Check for new reports…</a>
+  <a class="dx-primary upd-link" href="/update">{{ ico("refresh") }} Check for new reports…</a>
 </div>
 
 <div class="coalition-filter" role="group" aria-label="Show countries in coalition">

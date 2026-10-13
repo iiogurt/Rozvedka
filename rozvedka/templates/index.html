@@ -131,11 +131,11 @@
       <td><span class="st st-{{ d.status }}">{{ d.status }}</span></td>
       <td class="actions">
         {% if d.status != 'downloaded' %}
-        <form method="post" action="/doc/{{ d.id }}/download"><button title="Download now">⬇</button></form>
+        <form method="post" action="/doc/{{ d.id }}/download"><button title="Download now" aria-label="Download now">{{ ico("download") }}</button></form>
         {% endif %}
         <form method="post" action="/doc/{{ d.id }}/hide"><input type="hidden" name="hidden" value="{{ 0 if d.hidden else 1 }}">
           <button title="{{ 'Unhide' if d.hidden else 'Hide (not relevant)' }}">{{ '↺' if d.hidden else '✕' }}</button></form>
-        <details><summary title="Edit">✎</summary>
+        <details><summary title="Edit" aria-label="Edit">{{ ico("pencil") }}</summary>
           <form method="post" action="/doc/{{ d.id }}/edit" class="edit">
             <input name="title" value="{{ d.title }}"><input name="lang" value="{{ d.lang or '' }}" size="3" placeholder="lang">
             <input name="year" value="{{ d.year or '' }}" size="5" placeholder="year"><button>Save</button>

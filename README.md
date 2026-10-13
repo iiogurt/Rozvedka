@@ -953,6 +953,7 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | Reports | the agencies' official websites, listed in [`sources/sources.md`](sources/sources.md) | the publishers' terms; downloaded for personal reference, not redistributed |
 | Agency logos | the agencies' home pages (`data/logos/`, not committed) | the agencies' marks |
 | Flags | [flag-icons](https://github.com/lipis/flag-icons) | MIT ([`LICENSE.flag-icons`](rozvedka/static/flags/LICENSE.flag-icons)); `nato.svg`, `other.svg` drawn for this project |
+| Icons | [Lucide](https://lucide.dev) (a few, in `static/icons.svg`) | ISC ([`LICENSE.lucide`](rozvedka/static/LICENSE.lucide)) |
 | Actor reference data | [Wikidata](https://www.wikidata.org) | CC0 |
 | Actor summaries | [English Wikipedia](https://en.wikipedia.org) | CC BY-SA 4.0, attributed with article and revision on each page (also in the actor screenshot above) |
 | Actor pictures | [Wikimedia Commons](https://commons.wikimedia.org) – the Wikipedia article image or the Wikidata flag / logo / image (`data/gazetteer/actor_images/`, not committed) | free licences only (CC BY, CC BY-SA, public domain …); author, licence and file page shown with each picture |

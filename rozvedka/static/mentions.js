@@ -7,11 +7,7 @@
   const form = $("#scope");
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const pct = (v) => (v == null ? "–" : (v * 100 >= 10 ? (v * 100).toFixed(0) : (v * 100).toFixed(1)) + "%");
-  // sequential blue for a dark surface: near zero recedes toward the background
-  const RAMP = ["#1b2a3d", "#184f95", "#256abf", "#3987e5", "#6da7ec", "#9ec5f4", "#cde2fb"];
-  const NODATA = "#161b22";
   const FEW = 10;     // fewer reports than this: a share of 4 out of 4 says little – drawn grey, off the colour scale
-  const THIN = "#4a515b";
 
   const url = new URL(window.location);
   for (const el of form.elements) {
@@ -26,9 +22,9 @@
   let geo = null, layer = null, data = null, max = 0.05;
 
   function colour(v) {
-    if (v == null) return NODATA;
-    const i = Math.min(RAMP.length - 1, Math.floor((v / max) * (RAMP.length - 1) + 0.0001));
-    return RAMP[Math.max(0, i)];
+    if (v == null) return rzTokens.get("--nodata");
+    const i = Math.min(rzTokens.seq().length - 1, Math.floor((v / max) * (rzTokens.seq().length - 1) + 0.0001));
+    return rzTokens.seq()[Math.max(0, i)];
   }
 
   function draw() {
@@ -40,7 +36,7 @@
       style: (f) => {
         const r = rows[f.properties.iso];
         return { color: "#30363d", weight: 0.6, fillOpacity: r ? 0.9 : 0.6,
-                 fillColor: r ? (r.of < FEW ? THIN : colour(r.share)) : NODATA };
+                 fillColor: r ? (r.of < FEW ? rzTokens.get("--thin") : colour(r.share)) : rzTokens.get("--nodata") };
       },
       onEachFeature: (f, l) => {
         const r = rows[f.properties.iso];
@@ -57,7 +53,7 @@
     $("#how").textContent = data.how || "";
     $("#list").innerHTML = data.rows.slice(0, 120).map((r) => `<li class="ml-row">
         <span class="ml-name">${r.actor ? `<a href="${esc(r.actor)}" title="Actor page">${esc(r.name)}</a>` : esc(r.name)}${r.own ? ' <span class="muted small">(member)</span>' : ""}${r.of < FEW ? ` <span class="muted small" title="fewer than ${FEW} reports">(${r.of} reports)</span>` : ""}</span>
-        <span class="bar"><i style="width:${Math.min(100, ((r.share || 0) / max) * 100).toFixed(1)}%;background:${r.of < FEW ? THIN : colour(r.share)}"></i></span>
+        <span class="bar"><i style="width:${Math.min(100, ((r.share || 0) / max) * 100).toFixed(1)}%;background:${r.of < FEW ? rzTokens.get("--thin") : colour(r.share)}"></i></span>
         <a class="ml-n" href="${esc(r.link)}" title="${r.docs} of ${r.of} reports">${pct(r.share)}</a></li>`).join("")
       || '<li class="muted">Nothing in this selection.</li>';
   }
@@ -86,6 +82,7 @@
   (async () => {
     geo = await fetch("/static/geo/countries.geojson").then((r) => r.json());
     form.addEventListener("change", load);
+    window.rzDark.addEventListener("change", () => load());   // the colour ramp follows the theme
     load();
   })();
 })();

@@ -14,6 +14,10 @@
     get matches() { return root.dataset.theme === "dark"; },
     addEventListener(type, fn) { if (type === "change") listeners.push(fn); },
   };
+  // chart colours live in style.css (--cat-1…8, --seq-1…7, --nodata, --thin) – one place, both themes; read at draw time
+  const tok = (name) => getComputedStyle(root).getPropertyValue(name).trim();
+  const run = (prefix, n) => Array.from({ length: n }, (_, i) => tok(prefix + (i + 1)));
+  window.rzTokens = { cat: () => run("--cat-", 8), seq: () => run("--seq-", 7), get: tok };
   window.rzSetTheme = function (theme) {
     root.dataset.theme = theme;
     try { localStorage.setItem(KEY, theme); } catch (e) { /* not remembered, still applied */ }

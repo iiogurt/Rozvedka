@@ -8,16 +8,7 @@
   const form = $("#scope");
   const url = new URL(window.location);
 
-  // Categorical palette (validated light/dark, see dataviz reference), assigned to series by stable slot.
-  const PALETTE = {
-    light: ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948"],
-    dark: ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#008300", "#9085e9", "#e66767"],
-  };
-  // Sequential blue for the matrix: near zero recedes toward the surface in both modes.
-  const SEQ = {
-    light: ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"],
-    dark: ["#1b2a3d", "#184f95", "#256abf", "#3987e5", "#6da7ec", "#9ec5f4", "#cde2fb"],
-  };
+  // colours come from style.css through rzTokens (theme.js): categorical series by stable slot, sequential blue for the matrix
   const darkQuery = window.rzDark;
   const mode = () => (darkQuery.matches ? "dark" : "light");
   const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -126,7 +117,7 @@
   }
 
   function renderSeries() {
-    const c = ink(), pal = PALETTE[mode()];
+    const c = ink(), pal = rzTokens.cat();
     const s0 = startIndex();
     const cut = (arr) => (arr || []).slice(s0);
     const measure = radio("measure") || "docs";
@@ -230,14 +221,14 @@
                axisLabel: { color: c.muted, fontSize: 11, rotate: 50, interval: 0 }, splitLine: { show: false } },
       yAxis: { type: "category", inverse: true, data: tops.map((t) => t.name), ...axisCommon(c),
                axisLabel: { color: c.text, fontSize: 11, interval: 0, width: 260, overflow: "truncate" }, splitLine: { show: false } },
-      visualMap: { show: false, min: 0, max, inRange: { color: SEQ[mode()] } },
+      visualMap: { show: false, min: 0, max, inRange: { color: rzTokens.seq() } },
       series: [{ type: "heatmap", itemStyle: { borderColor: c.panel, borderWidth: 2, borderRadius: 2 },
                  data: data.cells.map((x) => ({ value: [rowIdx.get(x.row), topIdx.get(x.topic), x.share], n: x.n, link: x.link })) }],
     }, true);
     $("#viz-sub").innerHTML = `Share of each ${data.by === "country" ? "country's" : "agency's"} reports from ${data.year_from}–${data.year_to}
       tagged with each topic · further right on the ramp = larger share (0 – ${pct(max)}) · empty cell = no report tagged ·
       ${rows.length} ${data.by === "country" ? "countries" : "agencies"} with at least 5 reports
-      <span class="legend-ramp" aria-hidden="true">${SEQ[mode()].map((col) => `<i style="background:${col}"></i>`).join("")}</span>`;
+      <span class="legend-ramp" aria-hidden="true">${rzTokens.seq().map((col) => `<i style="background:${col}"></i>`).join("")}</span>`;
     const cell = new Map(data.cells.map((x) => [x.row + "|" + x.topic, x]));
     const head = `<tr><th>Topic</th>${rows.map((r) => `<th><a href="${r.link}">${esc(r.label)}</a> (${r.docs})</th>`).join("")}</tr>`;
     $("#table-wrap").ontoggle = () => {
@@ -307,7 +298,7 @@
   // ── controls ──
   function renderChips() {
     const box = $("#chips"); if (!box) return;
-    const pal = PALETTE[mode()];
+    const pal = rzTokens.cat();
     box.innerHTML = items.map((k) => `<button type="button" class="topic-chip on" data-del="${esc(k)}" title="Remove">
       <span class="tt-dot" style="background:${pal[slots.get(k)]}"></span>${esc(NAMES[k] || k)} ✕</button>`).join("");
   }
