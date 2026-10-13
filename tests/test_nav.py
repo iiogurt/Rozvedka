@@ -1,9 +1,22 @@
 """The menu table covers every page, highlights the right section, and /views lists it."""
+import pytest
 from fastapi.testclient import TestClient
 
-from rozvedka import nav
+from rozvedka import collect, db, nav, series
 
 NOT_PAGES = ("/api/", "/feed.atom", "/actor-image", "/logo", "/doc/{doc_id}/download", "/data/logs")
+
+
+@pytest.fixture
+def empty_library(tmp_path, monkeypatch):
+    monkeypatch.setattr(db, "DB_PATH", tmp_path / "t.db")
+    monkeypatch.setattr(series, "SERIES_FILE", tmp_path / "series.yaml")
+    monkeypatch.setattr(collect, "INBOX", tmp_path / "inbox")
+    db.init()
+    collect.init()
+    from rozvedka import actors, citations, cves, techniques, topics
+    for m in (topics, actors, cves, techniques, citations):
+        m.init()
 
 
 def test_every_page_belongs_to_a_menu_entry():
@@ -26,7 +39,7 @@ def test_locate_picks_the_longest_match():
     assert nav.locate("/nowhere") == (None, None)
 
 
-def test_every_menu_link_is_unique_and_answers():
+def test_every_menu_link_is_unique_and_answers(empty_library):
     links = [i[1] for _k, _l, _h, items in nav.GROUPS for i in items]
     assert len(links) == len(set(links))
     from rozvedka.app import app
@@ -35,7 +48,7 @@ def test_every_menu_link_is_unique_and_answers():
         assert c.get(link).status_code == 200, link
 
 
-def test_header_and_section_tabs():
+def test_header_and_section_tabs(empty_library):
     from rozvedka.app import app
     c = TestClient(app)
     t = c.get("/cves").text
