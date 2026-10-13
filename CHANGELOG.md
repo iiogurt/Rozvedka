@@ -27,6 +27,13 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.60.0] – 2026-10-13
+
+### Added
+- **Threat levels as small multiples**: above the statements, one small chart per state and scale on a shared time axis, each on
+  its own scale with the steps named. An announced change is a step line (the level holds until the next announcement); a level
+  stated in a report is an open dot, never joined – a reading at that time, not a history. Every mark opens its statement.
+
 ## [0.59.0] – 2026-10-13
 
 ### Added
@@ -1178,7 +1185,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.59.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.60.0...HEAD
+[0.60.0]: https://github.com/iiogurt/Rozvedka/compare/v0.59.0...v0.60.0
 [0.59.0]: https://github.com/iiogurt/Rozvedka/compare/v0.58.1...v0.59.0
 [0.58.1]: https://github.com/iiogurt/Rozvedka/compare/v0.58.0...v0.58.1
 [0.58.0]: https://github.com/iiogurt/Rozvedka/compare/v0.57.0...v0.58.0

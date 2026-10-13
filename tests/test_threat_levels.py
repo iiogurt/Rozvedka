@@ -80,3 +80,19 @@ def test_overview_and_page(library):
     t = TestClient(app).get("/threat-levels").text
     assert "level 3" in t and "quote not found" in t and "quote confirmed on the page, checked 2026-10-12" in t
     assert "3/4" in t and "4/5" in t
+
+
+def test_small_multiples_place_marks_on_a_shared_axis():
+    import datetime as dt
+    from rozvedka import threat_levels
+    assert threat_levels.when("2024") == 2024.5 and round(threat_levels.when("2023-10-17"), 2) == 2023.79
+    entries = [{"as_of": "2017-05-23", "rank": 5, "label": "critical", "kind": "announcement"},
+               {"as_of": "2014-08-29", "rank": 4, "label": "severe", "kind": "announcement"},
+               {"as_of": "2024", "rank": 3, "label": "substantial", "kind": "report"}]
+    countries = [{"country": "GB", "systems": [{"system": "x", "max": 5, "entries": entries}]}]
+    axis = threat_levels.charts(countries, today=dt.date(2026, 1, 1))
+    s = countries[0]["systems"][0]
+    assert axis["y0"] == 2014 and axis["y1"] == 2027
+    assert [m["y"] for m in s["marks"]] == [0, 25, 50] and all(0 <= m["x"] <= 100 for m in s["marks"])
+    assert s["path"].count("M") == 1 and s["path"].count("L") == 3      # two announced changes: steps; the report is only a dot
+    assert [st["rank"] for st in s["steps"]] == [5, 4, 3, 2, 1]
