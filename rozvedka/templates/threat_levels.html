@@ -11,6 +11,30 @@
   A report shows the level <em>at that time</em>: not when it began, and not a complete history. The scales differ between states (a
   "3" in Belgium's four steps is not a "3" in the Netherlands' five), so levels are shown on each state's own scale and never ranked
   across states. The list is hand-curated and short; the states that do not publish a level are not here.</p></details>
+{% if axis.y0 %}
+<section class="tl-multi" aria-label="Threat levels over time, one chart per state">
+  {% for c in countries %}{% for s in c.systems %}
+  <article class="tlm">
+    <h2 class="tlm-h"><img class="flag-sm" src="{{ flag_url(c.country) }}" alt=""> {{ COUNTRY_NAMES.get(c.country, c.country) }}
+      <span class="muted">{{ s.system }}</span></h2>
+    <p class="tlm-now">{{ s.latest.label }} <span class="muted">{{ s.latest.rank ~ '/' ~ s.max if s.latest.rank and s.max else '' }} · {{ s.latest.as_of }}</span></p>
+    {% if s.marks %}<div class="tlm-plot">
+      <div class="tlm-steps">{% for st in s.steps %}<span style="top: {{ st.y }}%">{{ st.rank }}{% if st.label %} {{ st.label }}{% endif %}</span>{% endfor %}</div>
+      <div class="tlm-area">
+        {% for st in s.steps %}<i class="tlm-grid" style="top: {{ st.y }}%"></i>{% endfor %}
+        {% if s.path %}<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="{{ s.path }}"/></svg>{% endif %}
+        {% for m in s.marks %}<a class="tlm-dot tlm-{{ m.kind }}" style="left: {{ m.x }}%; top: {{ m.y }}%" href="{{ m.link }}" title="{{ m.as_of }}: {{ m.label }} ({{ m.kind }})"></a>{% endfor %}
+      </div>
+    </div>
+    <div class="tlm-axis">{% for t in axis.ticks %}<span style="left: {{ t.x }}%">{{ t.year }}</span>{% endfor %}</div>
+    {% else %}<p class="muted small">A scale without numbered steps – the levels are listed below with their sources.</p>{% endif %}
+  </article>
+  {% endfor %}{% endfor %}
+  <p class="muted small tlm-key">Each state on its own scale, one time axis {{ axis.y0 }}–{{ axis.y1 }}. <span class="tlm-dot tlm-announcement tlm-key-dot"></span> announced change –
+    the line holds the level until the next one; <span class="tlm-dot tlm-report tlm-key-dot"></span> level stated in a report – a reading at that time, never joined.
+    Every mark opens its statement below.</p>
+</section>
+{% endif %}
 {% for c in countries %}
 <section class="viz-card">
   <h2 class="viz-title"><img class="flag-sm" src="{{ flag_url(c.country) }}" alt=""> {{ COUNTRY_NAMES.get(c.country, c.country) }}</h2>
@@ -18,7 +42,7 @@
   <h3 class="viz-mini">{{ s.system }} <span class="muted small">scale {{ s.scale }}</span></h3>
   <table class="rp-topics small">
     <thead><tr><th>When</th><th>Level</th><th>Source</th></tr></thead>
-    {% for e in s.entries %}<tr>
+    {% set si = loop.index0 %}{% for e in s.entries %}<tr id="tl-{{ c.country }}-{{ loop.index0 }}-{{ si }}">
       <th class="nw">{{ e.as_of }}{% if e.kind == 'announcement' %}<br><span class="ctag">announcement</span>{% endif %}</th>
       <td class="nw">{% if e.rank and s.max %}<span class="lv-ladder" aria-label="step {{ e.rank }} of {{ s.max }}">{% for i in range(1, s.max + 1) %}<i class="{{ 'on' if i <= e.rank }}"></i>{% endfor %}</span> {% endif %}<b>{{ e.label }}</b>{% if e.rank %} <span class="muted">{{ e.rank }}/{{ s.max }}</span>{% endif %}{% if e.change %}<br><span class="muted">{{ e.change }}</span>{% endif %}</td>
       <td>{{ e.says }}

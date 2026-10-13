@@ -329,7 +329,8 @@ column; <i>over-emphasis</i> shows how much more or less often a row carries a t
   catalog (`fetch-attack`, `index-techniques`): name, tactics, reports and agencies per technique, the passages, and the groups
   MITRE lists as using it (linked to the actor index). Report pages list the techniques they name; every count links to its reports.
 
-- **Terrorism threat levels** (`/threat-levels`) – the levels states' services publish, as dated statements with the quote: the
+- **Terrorism threat levels** (`/threat-levels`) – small charts, one per state on its own scale and one shared time axis
+  (announced changes as steps, levels read in reports as dots), then the levels states' services publish, as dated statements with the quote: the
   UK's official announcements of changes (MI5) and the levels that agencies' reports in the library state (Netherlands, Belgium,
   Spain, Austria, Sweden, Latvia), each on the state's own scale and with the page it comes from. Hand-curated; every quote is
   checked (`fetch-threat-levels` for the announcement pages, the library's stored text for the reports).

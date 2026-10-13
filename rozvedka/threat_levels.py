@@ -124,6 +124,43 @@ def _normalised_with_map(text: str) -> tuple[str, list[int]]:
 
 
 # ── for the portal ──
+def when(as_of: str) -> float:
+    """A statement's date as a fractional year: '2023-10-17' → 2023.79, '2026-06' → 2026.46, '2024' → 2024.5 (the middle)."""
+    parts = [int(p) for p in str(as_of).split("-")]
+    if len(parts) == 1:
+        return parts[0] + 0.5
+    day = parts[2] if len(parts) > 2 else 15
+    return parts[0] + (parts[1] - 1 + (day - 0.5) / 31) / 12
+
+
+def charts(countries: list[dict], today: dt.date | None = None) -> dict:
+    """Small multiples: one chart per state and scale on a shared time axis. An announcement is a change, so the level
+    holds until the next one (a step line); a level stated in a report is a reading at that time (a dot, never joined)."""
+    today = today or dt.date.today()
+    xs = [when(e["as_of"]) for c in countries for s in c["systems"] for e in s["entries"]]
+    if not xs:
+        return {"y0": None, "y1": None, "ticks": []}
+    y0, y1 = int(min(xs)), today.year + 1
+    pos = lambda x: round(100 * (x - y0) / (y1 - y0), 2)   # noqa: E731
+    for c in countries:
+        for s in c["systems"]:
+            top = s["max"] or max((e["rank"] or 1) for e in s["entries"])
+            ypos = lambda r: round(100 * (top - r) / (top - 1), 2) if top > 1 else 50   # noqa: E731
+            s["steps"] = [{"rank": r, "y": ypos(r), "label": next((e["label"] for e in s["entries"] if e["rank"] == r), "")}
+                          for r in range(top, 0, -1)]
+            s["marks"] = [{"x": pos(when(e["as_of"])), "y": ypos(e["rank"]), "kind": e["kind"], "as_of": e["as_of"],
+                           "label": e["label"], "rank": e["rank"],
+                           "link": f"#tl-{c['country']}-{s['entries'].index(e)}-{c['systems'].index(s)}"}
+                          for e in s["entries"] if e["rank"]]
+            changes = sorted((when(e["as_of"]), e["rank"]) for e in s["entries"] if e["kind"] == "announcement" and e["rank"])
+            path = []
+            for i, (x, r) in enumerate(changes):
+                end = changes[i + 1][0] if i + 1 < len(changes) else (today.year + today.timetuple().tm_yday / 366)
+                path.append(f"{'M' if not path else 'L'}{pos(x)},{ypos(r)} L{pos(end)},{ypos(r)}")
+            s["path"] = " ".join(path)
+    return {"y0": y0, "y1": y1, "ticks": [{"year": y, "x": pos(y)} for y in range(y0, y1 + 1, 2 if y1 - y0 > 8 else 1)]}
+
+
 def overview() -> dict:
     checks, located = _checks(), _located()
     by_country: dict[str, dict] = {}
@@ -145,5 +182,5 @@ def overview() -> dict:
         c["systems"] = list(c["systems"].values())
     countries = sorted(by_country.values(), key=lambda c: c["country"])
     n = [x for c in countries for s in c["systems"] for x in s["entries"]]
-    return {"countries": countries, "n": len(n), "confirmed": sum(x["evidence"]["confirmed"] for x in n),
+    return {"countries": countries, "axis": charts(countries), "n": len(n), "confirmed": sum(x["evidence"]["confirmed"] for x in n),
             "checked": max((v["checked"] for v in checks.values()), default=None)}
