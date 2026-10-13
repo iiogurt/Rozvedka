@@ -88,16 +88,19 @@
     <h2 class="viz-title">Recently added</h2>
     <p class="viz-sub muted small">Found by the crawler or added by hand{% if d.last_added %}; the last on {{ d.last_added }}{% endif %}{% if d.first_added %} (the library was started on {{ d.first_added }}){% endif %}.</p>
     <div class="h-counters">{% for a in d.added %}<a href="{{ a.url }}"><b>{{ a.n|num }}</b><span>last {{ a.days }} days</span></a>{% endfor %}</div>
+    <div class="h-daily" role="img" aria-label="Reports added per day, last 30 days">{% for x in d.daily %}<a href="{{ x.url }}" title="{{ x.day }}: {{ x.n }} added" class="{{ 'zero' if not x.n }}"><i style="height: {{ [(100 * x.n / d.daily_max)|round(1), 3 if x.n else 0.0]|max }}%"></i></a>{% endfor %}</div>
+    <p class="h-daily-ax muted small"><span>{{ d.daily[0].day[5:] }}</span><span>added per day – each column opens that day's additions · max {{ d.daily_max|num }}</span><span>{{ d.daily[-1].day[5:] }}</span></p>
     <ol class="h-docs">{% for r in d.recent %}{{ doc_row(r, r.discovered_at[5:10]) }}{% endfor %}</ol>
     <p class="small"><a href="/new">What's new, update by update →</a> · <a href="{{ d.recent_url }}">all reports, newest additions first</a></p>
   </article>
 
   <article class="viz-card h-card">
     <h2 class="viz-title">Reports by publication year</h2>
-    <p class="viz-sub muted small">The last 15 years; every listed report is in one row below.</p>
+    <p class="viz-sub muted small">The last 15 years; every listed report is in one row below. Bars are split into reports of
+      <span class="key-off">official agencies</span> and of <span class="key-ind">◆ think tanks</span>; each part opens its list.</p>
     <table class="h-bars">
       {% for y in d.years %}<tr><th>{{ y.year }}{% if y.partial %}<span class="muted" title="The year is not over"> so far</span>{% endif %}</th>
-        <td class="bar"><i style="width: {{ (100 * y.n / d.years_max)|round(1) }}%"></i></td>
+        <td class="bar"><span class="stack" style="width: {{ (100 * y.n / d.years_max)|round(1) }}%">{% if y.n_off %}<a class="seg off" style="flex: {{ y.n_off }}" href="{{ y.url_off }}" title="{{ y.n_off|num }} from official agencies"></a>{% endif %}{% if y.n_ind %}<a class="seg ind" style="flex: {{ y.n_ind }}" href="{{ y.url_ind }}" title="{{ y.n_ind|num }} from think tanks"></a>{% endif %}</span></td>
         <td class="n"><a href="{{ y.url }}">{{ y.n|num }}</a></td></tr>{% endfor %}
       <tr class="h-rest"><th>before {{ d.older.before }}</th><td></td><td class="n"><a href="{{ d.older.url }}">{{ d.older.n|num }}</a></td></tr>
       <tr class="h-rest"><th>no year</th><td class="muted small">year not found in title, URL or first pages</td><td class="n"><a href="{{ d.undated.url }}">{{ d.undated.n|num }}</a></td></tr>
@@ -107,12 +110,15 @@
 
   <article class="viz-card h-card">
     <h2 class="viz-title">Rising topics</h2>
-    <p class="viz-sub muted small">{{ d.rising.how }} Numbers are reports; <a href="/trends">Trends</a> has the full series.</p>
+    <p class="viz-sub muted small">{{ d.rising.how }} <span class="dk e"></span> {{ d.rising.earlier[0] }}–{{ d.rising.earlier[1] % 100 }} <span class="dk r"></span> {{ d.rising.recent[0] }}–{{ d.rising.recent[1] % 100 }}; each dot opens its reports. <a href="/trends">Trends</a> has the full series.</p>
     {% if d.rising.rising %}<table class="h-rise">
-      <thead><tr><th>Topic</th><th>{{ d.rising.earlier[0] }}–{{ d.rising.earlier[1] % 100 }}</th><th>{{ d.rising.recent[0] }}–{{ d.rising.recent[1] % 100 }}</th><th>change</th></tr></thead>
-      {% for r in d.rising.rising %}<tr><th><a href="/documents?topic={{ r.key }}">{{ r.name }}</a></th>
-        <td><a href="{{ r.link_earlier }}" title="{{ r.n_earlier }} of {{ d.rising.docs_earlier }} reports">{{ (100 * r.earlier)|round|int }}%</a> <span class="muted small">{{ r.n_earlier }}</span></td>
-        <td><a href="{{ r.link_recent }}" title="{{ r.n_recent }} of {{ d.rising.docs_recent }} reports">{{ (100 * r.recent)|round|int }}%</a> <span class="muted small">{{ r.n_recent }}</span></td>
+      <thead><tr><th>Topic</th><th class="dumb-h">0 – {{ (100 * d.rising.axis)|round|int }}% of reports</th><th>share</th><th>change</th></tr></thead>
+      {% for r in d.rising.rising %}{% set e = (100 * r.earlier / d.rising.axis) %}{% set n = (100 * r.recent / d.rising.axis) %}<tr><th><a href="/documents?topic={{ r.key }}">{{ r.name }}</a></th>
+        <td class="dumb"><span class="dtrack"><span class="dline" style="left: {{ [e, n]|min|round(1) }}%; width: {{ (n - e)|abs|round(1) }}%"></span>
+          <a class="dot e" style="left: {{ e|round(1) }}%" href="{{ r.link_earlier }}" title="{{ d.rising.earlier[0] }}–{{ d.rising.earlier[1] }}: {{ r.n_earlier }} of {{ d.rising.docs_earlier }} reports ({{ (100 * r.earlier)|round|int }}%)"></a>
+          <a class="dot r" style="left: {{ n|round(1) }}%" href="{{ r.link_recent }}" title="{{ d.rising.recent[0] }}–{{ d.rising.recent[1] }}: {{ r.n_recent }} of {{ d.rising.docs_recent }} reports ({{ (100 * r.recent)|round|int }}%)"></a></span>
+</td>
+        <td class="muted small dnum">{{ (100 * r.earlier)|round|int }}% → {{ (100 * r.recent)|round|int }}%</td>
         <td class="{{ 'up' if r.change_pp > 0 else 'down' }}">{{ '+' if r.change_pp > 0 }}{{ r.change_pp }} pp</td></tr>{% endfor %}
     </table>{% else %}<p class="muted">Not enough classified reports in the two periods yet.</p>{% endif %}
   </article>
@@ -132,7 +138,7 @@
     <h2 class="viz-title">Library</h2>
     <p class="viz-sub muted small">Listed reports by agency type and download state.</p>
     <table class="h-bars">
-      {% for t in d.by_type %}<tr><th>{{ t.name }}</th><td class="bar"><i style="width: {{ (100 * t.n / d.type_max)|round(1) }}%"></i></td>
+      {% for t in d.by_type %}<tr><th>{{ t.name }}</th><td class="bar"><i class="tc type-dot-{{ t.key }}" style="width: {{ (100 * t.n / d.type_max)|round(1) }}%"></i></td>
         <td class="n"><a href="{{ t.url }}">{{ t.n|num }}</a></td></tr>{% endfor %}
     </table>
     <ul class="h-health">

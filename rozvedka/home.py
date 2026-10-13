@@ -306,6 +306,13 @@ def dashboard(today: dt.date | None = None) -> dict:
             since = (today - dt.timedelta(days=days)).isoformat()
             added.append({"days": days, "since": since, "url": docs_url(added_from=since, sort="added"),
                           "n": one(f"SELECT COUNT(*) {base} AND date(d.discovered_at) >= ?", (since,))[0]})
+        added = [a for i, a in enumerate(added) if i == 0 or a["n"] != added[i - 1]["n"]]   # a longer span adding nothing says nothing
+        daily_n = dict(con.execute(f"SELECT date(d.discovered_at), COUNT(*) {base} AND date(d.discovered_at) >= ? GROUP BY 1",
+                                   ((today - dt.timedelta(days=29)).isoformat(),)).fetchall())
+        daily = []     # the last 30 days, one column each, every column the list of that day's additions
+        for k in range(29, -1, -1):
+            day = (today - dt.timedelta(days=k)).isoformat()
+            daily.append({"day": day, "n": daily_n.get(day, 0), "url": docs_url(added_from=day, added_to=day, sort="added")})
         recent = [dict(r) for r in con.execute(
             f"""SELECT d.id, d.title, d.year, d.lang, d.status, d.url, d.local_path, d.discovered_at, s.country, s.agency, s.id source_id
                 {base} ORDER BY d.discovered_at DESC, d.id DESC LIMIT 8""")]
@@ -313,10 +320,14 @@ def dashboard(today: dt.date | None = None) -> dict:
         first_added = (one(f"SELECT MIN(d.discovered_at) {base}")[0] or "")[:10] or None
         # reports by publication year: the last 15 years, older ones and undated ones – together all listed reports
         y0 = year_now - 14
-        per_year = dict(con.execute(f"SELECT d.year, COUNT(*) {base} AND d.year BETWEEN ? AND ? GROUP BY d.year",
-                                    (y0, year_now)).fetchall())
-        years = [{"year": y, "n": per_year.get(y, 0), "url": docs_url(year=y), "partial": y == year_now}
-                 for y in range(year_now, y0 - 1, -1)]
+        per_year = {r[0]: (r[1], r[2]) for r in con.execute(
+            f"SELECT d.year, COUNT(*), SUM(CASE WHEN {trends.OFFICIAL} THEN 0 ELSE 1 END) {base} AND d.year BETWEEN ? AND ? GROUP BY d.year",
+            (y0, year_now))}
+        # each year's bar is two links: the official agencies' reports and the think tanks' (together the year's count)
+        years = [{"year": y, "n": per_year.get(y, (0, 0))[0], "n_ind": per_year.get(y, (0, 0))[1],
+                  "n_off": per_year.get(y, (0, 0))[0] - per_year.get(y, (0, 0))[1], "url": docs_url(year=y),
+                  "url_off": docs_url(year=y, type="official"), "url_ind": docs_url(year=y, type="think-tank"),
+                  "partial": y == year_now} for y in range(year_now, y0 - 1, -1)]
         older = {"n": one(f"SELECT COUNT(*) {base} AND d.year < ?", (y0,))[0], "url": docs_url(year_to=y0 - 1), "before": y0}
         later = one(f"SELECT COUNT(*) {base} AND d.year > ?", (year_now,))[0]     # misdated into the future
         undated = {"n": one(f"SELECT COUNT(*) {base} AND d.year IS NULL")[0], "url": docs_url(undated=1)}
@@ -341,9 +352,10 @@ def dashboard(today: dt.date | None = None) -> dict:
                   for k, label in (("downloaded", "downloaded"), ("new", "waiting for download"),
                                    ("browser-only", "open in a browser only"), ("failed", "download failed"))]
     rise = trends.rising(limit=6)
+    rise["axis"] = max([r[k] for r in rise["rising"] for k in ("earlier", "recent")] + [0.01])
     return {"today": today.isoformat(), "totals": totals,
             "newest": newest, "newest_year": newest_year, "newest_n": newest_n, "newest_url": docs_url(year=newest_year),
-            "added": added, "recent": recent, "last_added": last_added, "recent_url": docs_url(sort="added"), "first_added": first_added,
+            "added": added, "daily": daily, "daily_max": max([x["n"] for x in daily] + [1]), "recent": recent, "last_added": last_added, "recent_url": docs_url(sort="added"), "first_added": first_added,
             "years": years, "years_max": max([y["n"] for y in years] + [1]), "older": older, "undated": undated,
             "later": later, "by_type": by_type, "type_max": max([t["n"] for t in by_type] + [1]),
             "top_actors": top_actors, "actor_year": actor_year, "actor_year_docs": actor_year_docs,
@@ -360,6 +372,9 @@ def figures(d: dict) -> list[tuple[str, int, str]]:
            ("before", d["older"]["n"], d["older"]["url"]), ("undated", d["undated"]["n"], d["undated"]["url"])]
     out += [(f"added {a['days']} days", a["n"], a["url"]) for a in d["added"]]
     out += [(f"year {y['year']}", y["n"], y["url"]) for y in d["years"]]
+    out += [(f"year {y['year']} official", y["n_off"], y["url_off"]) for y in d["years"]]
+    out += [(f"year {y['year']} think tanks", y["n_ind"], y["url_ind"]) for y in d["years"]]
+    out += [(f"added {x['day']}", x["n"], x["url"]) for x in d["daily"]]
     out += [(f"type {t['key']}", t["n"], t["url"]) for t in d["by_type"]]
     out += [(f"actor {a['label']}", a["n"], a["url"]) for a in d["top_actors"]]
     out += [(f"status {h['key']}", h["n"], h["url"]) for h in d["health"]]
