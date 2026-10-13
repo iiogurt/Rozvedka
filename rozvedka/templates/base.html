@@ -15,21 +15,15 @@
   {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
+{% set nav = menu(request.url.path) %}
 <header class="top">
   <a class="brand{{ ' on' if request.url.path == '/' }}" href="/" title="Home – search and what is new">Rozvedka</a>
-  <nav>
-    <a href="/documents" class="{{ 'on' if request.url.path.startswith('/documents') }}">Documents</a>
-    <a href="/new" class="{{ 'on' if request.url.path == '/new' }}">What's new</a>
-    <a href="/watch" class="{{ 'on' if request.url.path == '/watch' }}">Watchlist</a>
-    <a href="/series" class="{{ 'on' if request.url.path.startswith('/series') }}">Series</a>
-    <a href="/sources" class="{{ 'on' if request.url.path.startswith('/sources') or request.url.path.startswith('/collect') }}">Sources</a>
-    <a href="/topics" class="{{ 'on' if request.url.path.startswith('/topics') }}">Topics</a>
-    <a href="/trends" class="{{ 'on' if request.url.path.startswith('/trends') }}">Trends</a>
-    <a href="/actors" class="{{ 'on' if request.url.path.startswith('/actors') }}">Actors</a>
-    <a href="/compare" class="{{ 'on' if request.url.path == '/compare' }}">Compare</a>
-    <a href="/network" class="{{ 'on' if request.url.path == '/network' }}">Network</a>
-    <a href="/map" class="{{ 'on' if request.url.path.startswith('/map') }}">Map</a>
-  </nav>
+  {% include "_nav.html" %}
+  {% if request.url.path != '/' %}
+  <form class="top-search" method="get" action="/search" role="search">
+    <input type="search" name="q" placeholder="Search reports…" aria-label="Search the reports" autocomplete="off">
+  </form>
+  {% endif %}
   {% set hs = header_status() %}
   <a class="upd-btn {{ 'on' if request.url.path == '/update' }} {{ 'busy' if hs.job }} {{ 'old' if hs.days is not none and hs.days >= 7 }}" href="/update"
      title="{% if hs.job %}{{ hs.job }} running{% if hs.pct is not none %} – {{ hs.pct }} %{% endif %}{% else %}Check the agencies for new reports – every source checked since {{ (hs.last or 'never')[:16].replace('T', ' ') }}; latest check {{ (hs.latest or 'never')[:16].replace('T', ' ') }}{% endif %}">
@@ -40,8 +34,9 @@
     <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
   </button>
 </header>
+{% include "_sectionnav.html" %}
 <main>{% block main %}{% endblock %}</main>
-<footer class="foot">Rozvedka <a href="/changelog" title="What's new">v{{ VERSION }}</a>{% if BUILD != VERSION %}
+<footer class="foot">Rozvedka <a href="/views">all views</a> · <a href="/changelog" title="What's new">v{{ VERSION }}</a>{% if BUILD != VERSION %}
   <span class="muted" title="Build: commits after the release (git)">· build {{ BUILD.split('+', 1)[1] }}</span>{% endif %}</footer>
 </body>
 </html>

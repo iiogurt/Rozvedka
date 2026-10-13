@@ -1,0 +1,4 @@
+{# the pages of the section you are in, as tabs under the header (not on the home page) #}
+{% for g in nav.groups if g.on and g.pages|length > 1 %}
+<div class="secwrap"><nav class="subnav sectionnav" aria-label="{{ g.label }}"><span class="sec-name">{{ g.label }}</span>{% for i in g.pages %}<a href="{{ i.href }}" class="{{ 'on' if i.on }}" title="{{ i.blurb }}">{{ i.label }}</a>{% endfor %}</nav></div>
+{% endfor %}

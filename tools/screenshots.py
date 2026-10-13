@@ -69,6 +69,9 @@ SHOTS = {
     "cves": ("/cves", 900, [], None),                                  # CVE numbers named in reports, with CISA's list
     "cve": ("/cves/CVE-2021-26855", 1000, [], None),                   # one CVE: CISA entry, reports with passages, actors nearby
     "threat-levels": ("/threat-levels", 1300, [], None),               # official levels with the passage behind each
+    "menu": ("/cves", 520, [("eval", "var s=document.createElement('style');s.textContent='.grp:nth-child(4) .drop{display:block!important}';"
+                                      "document.head.appendChild(s); 1")], None),   # a group's pages open under the header
+    "views": ("/views", 1000, [], None),                               # every page, grouped like the menu
     "techniques": ("/techniques", 1000, [], None),                     # ATT&CK techniques named in reports
     "citations": ("/citations", 1100, [], None),                      # who cites whom: agencies, reports, outside hosts
     "review": ("/actors/review", 1100, [], None),

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}All views · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">All views</h1>
+<p class="muted small">Every page of the portal, grouped as in the menu. Where a view holds a countable thing, the number is shown; it is the number the page itself shows.</p>
+{% for g in nav.groups if g.key != 'overview' %}
+<section class="viz-card views-group" id="{{ g.key }}">
+  <h2 class="viz-title"><a href="{{ g.hub }}">{{ g.label }}</a></h2>
+  <div class="views-grid">
+    {% for i in g.pages %}<a class="view-card" href="{{ i.href }}"><b>{{ i.label }}</b>{% if c.get(i.href) %}<em>{{ c[i.href] }}</em>{% endif %}<span>{{ i.blurb }}</span></a>{% endfor %}
+  </div>
+</section>
+{% endfor %}
+{% endblock %}

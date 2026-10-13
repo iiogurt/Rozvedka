@@ -2,11 +2,6 @@
 {% block title %}{{ views[view] }} · Trends · Rozvedka{% endblock %}
 {% block head %}<script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>{% endblock %}
 {% block main %}
-<nav class="subnav" aria-label="Trend views">
-  {% for key, name in views.items() %}
-  <a href="/trends{{ '' if key == 'topics' else '/' ~ key }}" class="{{ 'on' if key == view }}">{{ name }}</a>
-  {% endfor %}
-</nav>
 
 <form class="filters trend-filters" id="scope" onsubmit="return false">
   {% if view != 'matrix' %}

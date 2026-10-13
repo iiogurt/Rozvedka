@@ -235,7 +235,7 @@
                  data: data.cells.map((x) => ({ value: [rowIdx.get(x.row), topIdx.get(x.topic), x.share], n: x.n, link: x.link })) }],
     }, true);
     $("#viz-sub").innerHTML = `Share of each ${data.by === "country" ? "country's" : "agency's"} reports from ${data.year_from}–${data.year_to}
-      tagged with each topic · darker = larger share (0 – ${pct(max)}) · empty cell = no report tagged ·
+      tagged with each topic · further right on the ramp = larger share (0 – ${pct(max)}) · empty cell = no report tagged ·
       ${rows.length} ${data.by === "country" ? "countries" : "agencies"} with at least 5 reports
       <span class="legend-ramp" aria-hidden="true">${SEQ[mode()].map((col) => `<i style="background:${col}"></i>`).join("")}</span>`;
     const cell = new Map(data.cells.map((x) => [x.row + "|" + x.topic, x]));

@@ -11,7 +11,7 @@ from fastapi.responses import PlainTextResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from markupsafe import Markup, escape
 
-from . import __version__, build_version, countries, db, guard, publishers, ratings, series, trends, updater
+from . import __version__, build_version, countries, db, guard, nav, publishers, ratings, series, trends, updater
 from . import jobs as jobrunner
 
 HERE = Path(__file__).parent
@@ -67,6 +67,7 @@ tpl.env.globals.update(sid=series.sid, COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=T
                        coalition_tags=coalition_tags, COALITIONS=countries.coalitions(), VERSION=__version__,
                        BUILD=build_version())
 
+tpl.env.globals["menu"] = nav.menu
 tpl.env.filters["num"] = lambda n: f"{n or 0:,}"
 
 _independent: dict = {"at": None, "ids": frozenset(), "levels": {}}     # at=None: not loaded yet

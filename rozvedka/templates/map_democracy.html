@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Democracy over time · Map · Rozvedka{% endblock %}
-{% block body_class %}theme-dark map-page{% endblock %}
+{% block body_class %}map-page{% endblock %}
 {% block head %}<link rel="stylesheet" href="{{ asset('vendor/leaflet/leaflet.css') }}">{% endblock %}
 {% block main %}
 <div class="mapwrap">
   <aside class="mappanel dm-panel" aria-label="Map controls">
-    <nav class="subnav map-tabs" aria-label="Map views"><a href="/map">Headquarters</a><a href="/map/democracy" class="on">Democracy</a><a href="/map/mentions">Who reports on whom</a></nav>
     <form id="dm" onsubmit="return false">
       <label class="coal-select">Colour countries by
         <select name="measure">

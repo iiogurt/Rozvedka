@@ -3,7 +3,6 @@
 {% from "_ratings.html" import strip, badges %}
 {% block title %}Sources · Rozvedka{% endblock %}
 {% block main %}
-<nav class="subnav" aria-label="Source views"><a href="/sources" class="on">Agencies</a><a href="/publishers">Think tanks</a><a href="/sources/coverage">Coverage</a><a href="/ratings">Democracy ratings</a><a href="/collect">To collect</a><a href="/data">Data exchange</a></nav>
 <div class="summary">
   <span><b>{{ n_official }}</b> official agencies and institutions in <b>{{ groups|length }}</b> countries and bodies
     {% if n_independent %}· <a class="pub-count" href="#independent"><b>{{ n_independent }}</b> independent think tanks ◆</a>{% endif %}</span>

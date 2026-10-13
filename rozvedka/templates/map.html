@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Map · Rozvedka{% endblock %}
-{% block body_class %}theme-dark map-page{% endblock %}
+{% block body_class %}map-page{% endblock %}
 {% block head %}
 <link rel="stylesheet" href="{{ asset('vendor/leaflet/leaflet.css') }}">
 <link rel="stylesheet" href="{{ asset('vendor/markercluster/MarkerCluster.css') }}">
@@ -9,7 +9,6 @@
 {% block main %}
 <div class="mapwrap">
   <aside class="mappanel" aria-label="Map filters">
-    <nav class="subnav map-tabs" aria-label="Map views"><a href="/map" class="on">Headquarters</a><a href="/map/democracy">Democracy</a><a href="/map/mentions">Who reports on whom</a></nav>
     <h2 class="panel-h">Agency headquarters</h2>
     <p class="muted small">Hover a pin for the agency card, click for details and links.
       Pins sit on the publicly listed headquarters or contact address.

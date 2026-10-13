@@ -132,6 +132,21 @@ Each item: why · what · done when · version step.
     suggestions: aliases in every language, misspellings forgiven, related actors to fill the list. Next: a non-free
     logo is skipped (e.g. Wagner) – an official emblem from the group's own register entry could fill such gaps.
 
+### F. Menu, design and visualisation (from the Opus 5.5 review of 0.53.0)
+
+1. ✅ (0.54.0) **Menu in six groups, section tabs, phone menu, `/views`, header search** (`rozvedka/nav.py`, test that no page is missing). · minor
+2. ◐ (0.54.0: map pages follow the theme, matrix legend, network mark, phone overflow) **Visual fixes** – still open: aligned bars on `/actors`, stable bar columns. · patch
+3. **Page header component** – `<h1>` and breadcrumb on every list page, the long method notes folded into "How this is counted". · patch
+4. **Design tokens** – spacing/type scale, one categorical palette in CSS read by the charts, an SVG icon sprite (Lucide or Tabler, about 8 KB). · patch
+5. **Overview dashboard** – sparkline tiles instead of the 30/90-day tiles, official/think-tank stacked years, dumbbell for rising topics. · minor
+6. **Topic matrix** – marginal totals, an over-representation (lift) mode. · minor
+7. **Annotated actor timeline** – dated events and the country grid on one year axis. · minor
+8. **Threat-level small multiples** – one step chart per state on its own scale. · minor
+9. **Citations** – agency × agency matrix; a chord diagram for agency types only. · minor
+10. **ATT&CK tactic grid and CVE lag plot.** · minor
+11. **Coverage overview grid and a country × agency-type gap matrix.** · minor
+12. **Topic and country briefing pages** (`/topics/{key}`: trend, top agencies and actors, newest passages). · minor / large
+
 ### E. Engineering and operations
 
 1. ✅ (0.48.0: optional, tested, **not activated** – the owner does not want it) **The portal starts after a reboot** – install `deploy/rozvedka-web.service` as a user service with
