@@ -57,3 +57,13 @@ def test_header_and_section_tabs(empty_library):
     assert "sectionnav" not in c.get("/").text
     v = c.get("/views").text
     assert 'id="maintain"' in v and "/techniques" in v
+
+
+def test_every_list_page_has_a_title(empty_library):
+    from rozvedka.app import app
+    c = TestClient(app)
+    for _k, _l, _h, items in nav.GROUPS:
+        for i in items:
+            if i[1] in ("/", "/map", "/map/democracy", "/map/mentions", "/feed.atom"):      # the map pages title their side panel
+                continue
+            assert "<h1" in c.get(i[1]).text, i[1]

@@ -2,6 +2,7 @@
 {% from "_pager.html" import pager %}
 {% block title %}Actors · Rozvedka{% endblock %}
 {% block main %}
+<h1 class="page-h">Actors</h1>
 <form class="filters" method="get" action="/actors" id="actor-search">
   <div class="ac-wrap">
     <input type="search" name="q" value="{{ f.q }}" placeholder="Find actor or alias – any spelling…" aria-label="Find actor"

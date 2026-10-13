@@ -2,6 +2,7 @@
 {% block title %}{{ views[view] }} · Trends · Rozvedka{% endblock %}
 {% block head %}<script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>{% endblock %}
 {% block main %}
+<h1 class="page-h">{{ views[view] }}</h1>
 
 <form class="filters trend-filters" id="scope" onsubmit="return false">
   {% if view != 'matrix' %}
