@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Topic mind map · Rozvedka{% endblock %}
 {% block main %}
-<nav class="subnav" aria-label="Topic views"><a href="/topics">List</a><a href="/topics/map" class="on">Mind map</a></nav>
 <form class="filters trend-filters" id="scope" onsubmit="return false">
   <select name="coalition" aria-label="Reporting coalition"><option value="">Reports from all countries</option>
     {% for key, c in COALITIONS.items() %}<option value="{{ key }}">Reports from {{ c.name }}</option>{% endfor %}

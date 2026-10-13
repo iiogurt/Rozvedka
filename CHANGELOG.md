@@ -27,6 +27,29 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.54.0] – 2026-10-13
+
+### Added
+- **A menu in six groups** – Overview, Library, Topics & trends, Actors & threats, Sources and Maintain. Hover (or keyboard focus)
+  on a group opens its pages with one line on what each answers; the group's name goes to its main page. Under the header, tabs
+  show the pages of the section you are in, with the current one marked – on every page, also detail pages (an actor page lights
+  up Actors, a report page Documents). A search box sits in the header on every page but the home page, which has its own.
+  The menu is one table (`rozvedka/nav.py`); a test fails when a page is missing from it.
+- **All views** (`/views`, linked in the menu and the footer): every page of the portal as a card, grouped like the menu, with the
+  number it holds where there is one (reports, agencies, CVEs, techniques …).
+- **Phone menu**: below 860 px the header shows a Menu button that opens all groups with their pages and a search box.
+
+### Changed
+- Watchlist and Compare are no longer top-level entries (Library › Watchlist, Topics & trends › Compare agencies); Update, Coverage,
+  To collect, Year conflicts, Actor names, Precision review and Data exchange are under Maintain. The copied tab rows on the Sources,
+  Topics, Trends and Map pages and the row of small links on the Actors page are replaced by the section tabs.
+
+### Fixed
+- The map pages now follow the light/dark choice (they stayed dark in light mode).
+- The topic matrix legend no longer says "darker = larger" (in the dark theme larger values are lighter): it points along the colour ramp.
+- The "known connection" mark on the Network page renders on every system (the chain symbol showed as an empty box).
+- Phone width: no page is wider than the screen any more (wide tables scroll inside themselves; header and menu fit).
+
 ## [0.53.0] – 2026-10-13
 
 ### Added
@@ -1074,7 +1097,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.53.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.54.0...HEAD
+[0.54.0]: https://github.com/iiogurt/Rozvedka/compare/v0.53.0...v0.54.0
 [0.53.0]: https://github.com/iiogurt/Rozvedka/compare/v0.52.0...v0.53.0
 [0.52.0]: https://github.com/iiogurt/Rozvedka/compare/v0.51.0...v0.52.0
 [0.51.0]: https://github.com/iiogurt/Rozvedka/compare/v0.50.0...v0.51.0
