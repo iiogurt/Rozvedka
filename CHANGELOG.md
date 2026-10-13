@@ -27,6 +27,15 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.55.0] – 2026-10-13
+
+### Changed
+- **Overview dashboard**: the 30- and 90-day "recently added" tiles repeated the whole library for a young library; a span that adds
+  nothing over the shorter one is dropped, and a column chart shows the additions of each of the last 30 days (each column opens
+  that day's list). Each bar of "Reports by publication year" is split into official agencies and think tanks (two colours, each part
+  a link). "Rising topics" is a dumbbell: the earlier and the recent share as two dots on one scale, each opening its reports. The
+  bars of "Library" take the colour of the agency type.
+
 ## [0.54.2] – 2026-10-13
 
 ### Changed
@@ -1118,7 +1127,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.54.2...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.55.0...HEAD
+[0.55.0]: https://github.com/iiogurt/Rozvedka/compare/v0.54.2...v0.55.0
 [0.54.2]: https://github.com/iiogurt/Rozvedka/compare/v0.54.1...v0.54.2
 [0.54.1]: https://github.com/iiogurt/Rozvedka/compare/v0.54.0...v0.54.1
 [0.54.0]: https://github.com/iiogurt/Rozvedka/compare/v0.53.0...v0.54.0

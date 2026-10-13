@@ -100,6 +100,8 @@ def test_every_dashboard_count_matches_its_list(library):
     years = sum(y["n"] for y in d["years"]) + d["older"]["n"] + d["undated"]["n"] + d["later"]
     assert years == d["totals"]["reports"]["n"] == 8           # every listed report is in exactly one row
     assert [a["n"] for a in d["added"]] == [4, 5, 6]
+    assert all(y["n_off"] + y["n_ind"] == y["n"] for y in d["years"])    # a year's bar is its official and think-tank parts
+    assert len(d["daily"]) == 30 and sum(x["n"] for x in d["daily"]) == 5       # reports added in the last 30 days (a longer span adds none)
     assert [a["label"] for a in d["top_actors"]] == ["Fancy Bear"]
     assert d["rising"]["rising"]                                # drones/ransomware shares differ between periods
 
