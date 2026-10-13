@@ -335,7 +335,7 @@ column; <i>over-emphasis</i> shows how much more or less often a row carries a t
   Spain, Austria, Sweden, Latvia), each on the state's own scale and with the page it comes from. Hand-curated; every quote is
   checked (`fetch-threat-levels` for the announcement pages, the library's stored text for the reports).
 
-- **Who cites whom** (`/citations`) – the web addresses in the reports resolved against the library: which agencies other
+- **Who cites whom** (`/citations`) – a chord diagram of citations between agency types (each ribbon opens its reports) and the web addresses in the reports resolved against the library: which agencies other
   agencies link to, which library reports are cited by other reports, which outside hosts (news, academic, law …) the reports rely
   on. Report pages list what a report links to and which reports link to it; every count links to the reports it counts.
 

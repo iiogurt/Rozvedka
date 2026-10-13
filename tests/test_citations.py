@@ -63,6 +63,11 @@ def test_overview_and_every_count_links_to_its_reports(library):
     d = citations.of_doc(2)
     assert [c["id"] for c in d["cited"]] == [1] and d["agencies"] == [{"id": 1, "agency": "NCSC", "links": 1}]
     assert {c["id"] for c in citations.of_doc(1)["cited_by"]} == {2, 3}
+    # flows between agency types: every number is the Documents list it links to
+    assert o["flows"]
+    for f in o["flows"]:
+        assert doclist.count(type=f["src"], cite="stype:" + f["dst"], indexed=1) == f["reports"], f
+    assert citations.clause("stype:bad type!") is None
 
 
 def test_pages(library):

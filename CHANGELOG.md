@@ -27,6 +27,14 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.61.0] – 2026-10-13
+
+### Added
+- **Citations between kinds of publisher** (`/citations`): a chord diagram of how agency types cite each other – reports of one type
+  linking to agencies of another (their sites or their reports in the library), think tanks included – with a table beside it holding
+  every number. Each ribbon and each number opens exactly those reports, through the new Documents filter `cite=stype:<type>`
+  combined with the citing type.
+
 ## [0.60.0] – 2026-10-13
 
 ### Added
@@ -1185,7 +1193,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.60.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.61.0...HEAD
+[0.61.0]: https://github.com/iiogurt/Rozvedka/compare/v0.60.0...v0.61.0
 [0.60.0]: https://github.com/iiogurt/Rozvedka/compare/v0.59.0...v0.60.0
 [0.59.0]: https://github.com/iiogurt/Rozvedka/compare/v0.58.1...v0.59.0
 [0.58.1]: https://github.com/iiogurt/Rozvedka/compare/v0.58.0...v0.58.1

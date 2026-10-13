@@ -1282,3 +1282,9 @@ td.a-docs > a { display: inline-block; min-width: 3.2em; font-family: var(--mono
 .tlm-axis span { position: absolute; transform: translateX(-50%); top: 5px; }
 .tlm-key { grid-column: 1 / -1; margin: 0; padding: 10px 16px; box-shadow: 0 0 0 1px var(--line); }
 .tlm-key-dot { position: relative; display: inline-block; margin: 0 2px; vertical-align: -1px; }
+
+/* ── Citations between kinds of publisher: chord diagram with its table ── */
+.chord-wrap { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(280px, 1fr); gap: 18px; align-items: start; }
+#chord { height: 520px; }
+.chord-table { max-height: 520px; overflow-y: auto; display: block; }
+@media (max-width: 900px) { .chord-wrap { grid-template-columns: 1fr; } #chord { height: 380px; } }

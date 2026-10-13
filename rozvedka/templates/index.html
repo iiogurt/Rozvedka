@@ -60,7 +60,7 @@
     {% if f.cve != 'kev' %}<a class="small" href="/cves/{{ f.cve }}">CVE page</a>{% endif %}{% endif %}
   {% if f.technique %}<a class="topic-chip on" href="/documents?{{ qs(technique='', page=1) }}" title="Remove">naming ATT&amp;CK technique {{ f.technique }} ✕</a>
     <a class="small" href="/techniques/{{ f.technique }}">technique page</a>{% endif %}
-  {% if f.cite %}{% set k, _, v = f.cite.partition(':') %}<a class="topic-chip on" href="/documents?{{ qs(cite='', page=1) }}" title="Remove">{% if k == 'doc' %}citing report {{ v }}{% elif k == 'by' %}cited by report {{ v }}{% elif k == 'src' %}linking to the site of source {{ v }}{% else %}linking to {{ v }}{% endif %} ✕</a>
+  {% if f.cite %}{% set k, _, v = f.cite.partition(':') %}<a class="topic-chip on" href="/documents?{{ qs(cite='', page=1) }}" title="Remove">{% if k == 'doc' %}citing report {{ v }}{% elif k == 'by' %}cited by report {{ v }}{% elif k == 'src' %}linking to the site of source {{ v }}{% elif k == 'stype' %}linking to agencies of the type “{{ TYPE_NAMES.get(v, v) }}”{% else %}linking to {{ v }}{% endif %} ✕</a>
     {% if k in ('doc', 'by') %}<a class="small" href="/report/{{ v }}">the report</a> · {% endif %}<a class="small" href="/citations">citations overview</a>{% endif %}
   {% if f.main %}<a class="topic-chip on" href="/documents?{{ qs(main='', page=1) }}" title="Remove">topics among each report's 3 main topics ✕</a>{% endif %}
   {% if f.indexed %}<a class="topic-chip on" href="/documents?{{ qs(indexed='', page=1) }}" title="Remove – the Trends charts count only documents with topic-classified text">classified text only ✕</a>{% endif %}
