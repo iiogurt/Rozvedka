@@ -27,6 +27,15 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.54.1] – 2026-10-13
+
+### Changed
+- Every list page now has a title (Documents, Actors, Agencies, Report series, Topics, Connections, Coverage, To collect, the Trends views and
+  the topic mind map); the browser tab of the Documents page says "Documents".
+- The long method notes on the Threat levels, CVEs, ATT&CK techniques, Citations and Attributions pages are folded under "How this is counted",
+  below a one-line summary of what the page shows; the text is unchanged.
+- The "← Actors" back links on pages of the Actors & threats section are gone: the section tabs under the header show where you are.
+
 ## [0.54.0] – 2026-10-13
 
 ### Added
@@ -1097,7 +1106,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.54.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.54.1...HEAD
+[0.54.1]: https://github.com/iiogurt/Rozvedka/compare/v0.54.0...v0.54.1
 [0.54.0]: https://github.com/iiogurt/Rozvedka/compare/v0.53.0...v0.54.0
 [0.53.0]: https://github.com/iiogurt/Rozvedka/compare/v0.52.0...v0.53.0
 [0.52.0]: https://github.com/iiogurt/Rozvedka/compare/v0.51.0...v0.52.0

@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Sanctions and designations · Actors · Rozvedka{% endblock %}
 {% block main %}
-<p class="small"><a href="/actors">← Actors</a></p>
 <h1 class="page-h">Sanctions and designations</h1>
 {% if not have_data %}
 <p class="muted small">The sanctions lists have not been fetched yet: run <code>python -m rozvedka fetch-sanctions</code>.</p>

@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Citations · Rozvedka{% endblock %}
 {% block main %}
-<p class="small"><a href="/actors">← Actors</a></p>
 <h1 class="page-h">Who cites whom</h1>
+<p class="lede">Which agencies and reports cite which – the web addresses in the report texts, tied to the library.</p>
+<details class="how"><summary>How this is counted</summary>
 <p class="muted small">The web addresses in the report texts, tied to the library where they point into it.
   {{ totals.reports }} of {{ n_reports }} reports contain addresses ({{ "{:,}".format(totals.links) }} different ones in all, on {{ "{:,}".format(totals.hosts) }} hosts).
   An address counts once per report. It points to <b>a report of the library</b> when it is that report's address (case, "www." and a trailing slash
   ignored), to <b>another agency</b> when it lies on the site of one other source of the library (the host of its home page; where the home page is deeper in a shared
   portal like gov.uk, only that path; a host two sources share is not guessed at; a report linking to its own agency's site is left out), and otherwise to an <b>outside source</b>. Addresses broken across
-  lines in a PDF are not recovered, so every count is a minimum. Each number links to the reports it counts.</p>
+  lines in a PDF are not recovered, so every count is a minimum. Each number links to the reports it counts.</p></details>
 
 <section class="viz-card">
   <h2 class="viz-title">Agencies cited by others <span class="muted small">{{ cited_sources|length }}</span></h2>

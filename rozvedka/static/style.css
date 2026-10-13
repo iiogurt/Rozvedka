@@ -1069,3 +1069,10 @@ td.nw { white-space: nowrap; vertical-align: top; }
   select, input { max-width: 100%; }
   main pre, main .viz-card { max-width: 100%; overflow-x: auto; }
 }
+
+/* ── page heads: title, one-line lede, the method folded away ── */
+.lede { margin: 0 0 8px; font-size: 15px; color: var(--ink); max-width: 900px; }
+.how { margin: 0 0 14px; max-width: 1100px; }
+.how > summary { cursor: pointer; display: inline-block; font-size: 12px; color: var(--muted); padding: 2px 0; }
+.how > summary:hover { color: var(--accent); }
+.how[open] > summary { margin-bottom: 4px; }

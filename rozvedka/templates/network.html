@@ -2,6 +2,7 @@
 {% block title %}Network · Rozvedka{% endblock %}
 {% block head %}<script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>{% endblock %}
 {% block main %}
+<h1 class="page-h">Connections</h1>
 <form class="filters trend-filters" id="scope" onsubmit="return false">
   <label class="chk">from <select name="year_from"><option value="">all</option>{% for y in years|reverse %}<option>{{ y }}</option>{% endfor %}</select></label>
   <label class="chk">to <select name="year_to"><option value="">all</option>{% for y in years %}<option>{{ y }}</option>{% endfor %}</select></label>

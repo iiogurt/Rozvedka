@@ -15,6 +15,7 @@
 </form>
 {% endmacro %}
 {% block main %}
+<h1 class="page-h">To collect</h1>
 
 <div class="collect-head">
   <p class="small">Data last crawled <b>{{ fresh.last_crawl[:10] if fresh.last_crawl else 'never' }}</b>{% if fresh.crawl_days is not none %}

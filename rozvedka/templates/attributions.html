@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Official attributions · Actors · Rozvedka{% endblock %}
 {% block main %}
-<p class="small"><a href="/actors">← Actors</a></p>
 <h1 class="page-h">Official attributions</h1>
+<p class="lede">Government statements that name who is behind a cyber attack, with the quote and the page it comes from.</p>
+<details class="how"><summary>How this is counted</summary>
 <p class="muted small">Statements in which a government body names a cyber threat group and, where it says so, the state body behind it –
   {{ n }} listed, {{ confirmed }} with the quote confirmed on the published page{% if checked %} (last check {{ checked }}){% endif %}.
   The list is hand-written (<code>sources/attributions.yaml</code>) and short: it holds statements from pages the crawler may fetch
   (UK NCSC, US CISA); the Council of the EU, for example, blocks automatic access, so its statements are not here. It is not
   every attribution ever made. <b>An attribution is the issuing government's assessment</b>, with the confidence wording of the
-  page. The quotes are checked by <code>python -m rozvedka fetch-attributions</code>.</p>
+  page. The quotes are checked by <code>python -m rozvedka fetch-attributions</code>.</p></details>
 <table class="rp-topics small">
   <thead><tr><th>Date</th><th>Issued by</th><th>Statement</th><th>Actors named</th></tr></thead>
   {% for t in rows %}<tr>

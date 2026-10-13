@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% from "_pager.html" import pager %}
+{% block title %}Documents · Rozvedka{% endblock %}
 {% block main %}
+<h1 class="page-h">Documents</h1>
 <form class="filters" method="get" action="/documents">
   <input type="search" name="q" value="{{ f.q }}" placeholder="Search titles and full text…" title='Searches inside the reports. Use "quotes" for phrases.'>
   {% for t in f.topic %}<input type="hidden" name="topic" value="{{ t }}">{% endfor %}

@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 {% block title %}Terrorism threat levels · Rozvedka{% endblock %}
 {% block main %}
-<p class="small"><a href="/actors">← Actors</a></p>
 <h1 class="page-h">Terrorism threat levels</h1>
+<p class="lede">Official terrorism threat levels of {{ countries|length }} states, each with the quote and its source.</p>
+<details class="how"><summary>How this is counted</summary>
 <p class="muted small">What the official sources say about the terrorism threat level of {{ countries|length }} states – {{ n }} statements,
   {{ confirmed }} confirmed against their source{% if checked %} (announcement pages last checked {{ checked }}){% endif %}. Two kinds:
   <b>announcement</b> – the official notice of a change (UK MI5; page re-checked by <code>fetch-threat-levels</code>), and
   <b>report</b> – a level that an agency's report in this library states; the quote is checked against the library's stored text every time.
   A report shows the level <em>at that time</em>: not when it began, and not a complete history. The scales differ between states (a
   "3" in Belgium's four steps is not a "3" in the Netherlands' five), so levels are shown on each state's own scale and never ranked
-  across states. The list is hand-curated and short; the states that do not publish a level are not here.</p>
+  across states. The list is hand-curated and short; the states that do not publish a level are not here.</p></details>
 {% for c in countries %}
 <section class="viz-card">
   <h2 class="viz-title"><img class="flag-sm" src="{{ flag_url(c.country) }}" alt=""> {{ COUNTRY_NAMES.get(c.country, c.country) }}</h2>

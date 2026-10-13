@@ -3,6 +3,7 @@
 {% from "_ratings.html" import strip, badges %}
 {% block title %}Sources · Rozvedka{% endblock %}
 {% block main %}
+<h1 class="page-h">Agencies</h1>
 <div class="summary">
   <span><b>{{ n_official }}</b> official agencies and institutions in <b>{{ groups|length }}</b> countries and bodies
     {% if n_independent %}· <a class="pub-count" href="#independent"><b>{{ n_independent }}</b> independent think tanks ◆</a>{% endif %}</span>
