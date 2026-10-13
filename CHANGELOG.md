@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.54.2] – 2026-10-13
+
+### Changed
+- **One home for the colours**: spacing, type sizes, radii and the chart colours (categorical, sequential, "no data") are tokens in `style.css`
+  for both themes; the Trends, Network and "Who reports on which country" charts read them (values unchanged, the actor-kind dots now use the
+  same categorical set). Changing the palette is a one-place edit.
+- Icons for refresh, download, upload and edit come from one sprite (`static/icons.svg`, Lucide, ISC licence) instead of text symbols
+  that look different on every system.
+
+### Fixed
+- The "Who reports on which country" map now uses a light colour scale in the light theme (it was a dark-theme scale on a pale map) and redraws when you switch the theme.
+
 ## [0.54.1] – 2026-10-13
 
 ### Changed
@@ -1106,7 +1118,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.54.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.54.2...HEAD
+[0.54.2]: https://github.com/iiogurt/Rozvedka/compare/v0.54.1...v0.54.2
 [0.54.1]: https://github.com/iiogurt/Rozvedka/compare/v0.54.0...v0.54.1
 [0.54.0]: https://github.com/iiogurt/Rozvedka/compare/v0.53.0...v0.54.0
 [0.53.0]: https://github.com/iiogurt/Rozvedka/compare/v0.52.0...v0.53.0

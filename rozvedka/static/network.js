@@ -10,9 +10,6 @@
   const darkQuery = window.rzDark;
   const pct = (v) => Math.round(v * 100) + "%";
   const flag = (c) => `/static/flags/${String(c || "other").toLowerCase()}.svg`;
-  // sequential blue: weak association recedes toward the surface in both modes
-  const RAMP = { light: ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"],
-                 dark: ["#1b2a3d", "#184f95", "#256abf", "#3987e5", "#6da7ec", "#9ec5f4", "#cde2fb"] };
 
   // ── state in the URL ──
   const url = new URL(window.location);
@@ -73,7 +70,7 @@
   // ── matrix ──
   function drawMatrix() {
     const ink = css("--ink"), muted = css("--muted"), line = css("--line"), panel = css("--panel"), chip = css("--chip");
-    const ramp = RAMP[darkQuery.matches ? "dark" : "light"];
+    const ramp = rzTokens.seq();
     const keys = data.actors.map((a) => a.key);
     const idx = Object.fromEntries(keys.map((k, i) => [k, i]));
     const strong = [], weak = [];

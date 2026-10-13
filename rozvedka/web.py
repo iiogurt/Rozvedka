@@ -67,6 +67,12 @@ tpl.env.globals.update(sid=series.sid, COUNTRY_NAMES=COUNTRY_NAMES, TYPE_NAMES=T
                        coalition_tags=coalition_tags, COALITIONS=countries.coalitions(), VERSION=__version__,
                        BUILD=build_version())
 
+def ico(name: str) -> Markup:
+    """An icon of static/icons.svg (Lucide, ISC licence), drawn in the text colour at the text size."""
+    return Markup(f'<svg class="ico" aria-hidden="true" viewBox="0 0 24 24"><use href="/static/icons.svg#{escape(name)}"/></svg>')
+
+
+tpl.env.globals["ico"] = ico
 tpl.env.globals["menu"] = nav.menu
 tpl.env.filters["num"] = lambda n: f"{n or 0:,}"
 
