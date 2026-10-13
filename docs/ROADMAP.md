@@ -111,6 +111,7 @@ Each item: why · what · done when · version step.
    DE PKGr, NO EOS-utvalget, DK TET, UK IPCO): official, and they report what the services do not. · patch (sources)
 5. ◐ (0.44.1: DE, NATO, US DoD; more countries to add) **National security strategies and white papers** – the governments' own strategy documents, linked to their
    agencies; a natural "document type" (B3). · patch (sources)
+6e. ✅ (0.53.0) **ATT&CK techniques** – technique numbers named in reports tied to MITRE's catalog (Enterprise, Mobile, ICS), with groups that use them. Next: techniques as a column of the actor pages (needs a proximity rule). · minor
 6d. ✅ (0.52.0) **Dated events per actor** – Wikidata dates, sanctions-list entries, attributions, country threat levels and first/last report year on the actor timeline. Next: CVE and incident dates once they are tied to actors beyond nearness. · minor
 6c. ✅ (0.51.0) **Citations between reports and agencies** – addresses in the texts resolved against the library; `/citations`, report pages, Documents filter. Next: the names of cited documents (not only addresses), a graph by agency pair. · minor
 6b. ✅ (0.50.0) **Terrorism threat levels** – dated official statements per state with passage (UK MI5 announcements; levels stated in NL, BE, ES, AT, SE, LV reports). Next: more states (FI, DK, FR, CH), the NCTV quarterly levels. · minor

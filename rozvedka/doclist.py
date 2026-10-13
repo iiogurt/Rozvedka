@@ -3,14 +3,14 @@ list shows for the same parameters."""
 import json
 import re
 
-from . import actors, citations, concepts, countries, cves, db, doctypes, series, topics, trends, works
+from . import actors, citations, concepts, countries, cves, db, doctypes, series, techniques, topics, trends, works
 
 
 def build(country: str = "", type: str = "", lang: str = "", year="", status: str = "", q: str = "", source: int = 0,
           show_hidden: int = 0, coalition: str = "", topic=(), year_from="", year_to="", indexed: int = 0,
           actor: str = "", main: int = 0, cluster: str = "", series_id: str = "", added_from: str = "",
           added_to: str = "", undated: int = 0, doc_type: str = "", all_types: int = 0, all_files: int = 0,
-          exact: int = 0, cve: str = "", cve_near: str = "", cite: str = "") -> dict:
+          exact: int = 0, cve: str = "", cve_near: str = "", cite: str = "", technique: str = "") -> dict:
     """SQL condition (over documents d JOIN sources s) and its arguments for the Documents list's parameters."""
     tax = topics.taxonomy()["topics"]
     topic = [topic] if isinstance(topic, str) else list(topic or [])
@@ -76,6 +76,11 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
             where.append("d.id IN (SELECT doc_id FROM actor_cves WHERE cve=? AND actor_key=?)"); args += [cve.upper(), cve_near]
         else:
             where.append("d.id IN (SELECT doc_id FROM doc_cves WHERE cve=?)"); args.append(cve.upper())
+    if technique:   # reports naming this ATT&CK technique number (a sub-technique is counted on its own)
+        techniques.init()
+        t = technique.upper()
+        if re.fullmatch(r"T1\d{3}(\.\d{3})?", t):
+            where.append("d.id IN (SELECT doc_id FROM doc_techniques WHERE technique=?)"); args.append(t)
     if cite:
         citations.init()
         cl = citations.clause(cite)

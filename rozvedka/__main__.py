@@ -57,6 +57,8 @@ def main():
     sub.add_parser("fetch-attributions", help="check the official attribution statements (sources/attributions.yaml) against their pages")
     sub.add_parser("fetch-kev", help="download CISA's Known Exploited Vulnerabilities catalog (CC0) for the CVE pages")
     sub.add_parser("index-cves", help="find CVE numbers in the report texts and near which actors they are named")
+    sub.add_parser("fetch-attack", help="download MITRE ATT&CK's technique list (names, tactics, groups) for the technique pages")
+    sub.add_parser("index-techniques", help="find ATT&CK technique numbers (T1566 …) in the report texts")
     sub.add_parser("fetch-threat-levels", help="check the official threat-level announcements (sources/threat_levels.yaml) against their pages")
     sub.add_parser("index-citations", help="resolve the web addresses in the report texts: other reports, other agencies, outside sources")
     sub.add_parser("fetch-sanctions", help="download the EU, UK, UN and US sanctions lists and match them with the actors")
@@ -129,6 +131,12 @@ def main():
     elif a.cmd == "index-cves":
         from . import cves
         print(cves.index())
+    elif a.cmd == "fetch-attack":
+        from . import techniques
+        print(techniques.fetch())
+    elif a.cmd == "index-techniques":
+        from . import techniques
+        print(techniques.index())
     elif a.cmd == "fetch-threat-levels":
         from . import threat_levels
         print(threat_levels.fetch_all())
