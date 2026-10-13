@@ -72,6 +72,16 @@ def test_matrix_shares(library, monkeypatch):
     cells = {(c["row"], c["topic"]): c for c in m["cells"]}
     assert cells[(2, "ransomware")]["share"] == 1.0 and cells[(1, "russia")]["n"] == 2
     assert "year_from=2023" in cells[(1, "russia")]["link"] and "source=1" in cells[(1, "russia")]["link"]
+    # the reference column: every report of the period, also of rows too small to show; over-emphasis against it
+    tops = {t["key"]: t for t in m["topics"]}
+    assert m["docs_all"] == sum(r["docs"] for r in m["rows"])
+    assert tops["ransomware"]["share_all"] == round(tops["ransomware"]["n_all"] / m["docs_all"], 4)
+    c = cells[(2, "ransomware")]
+    assert c["lift"] == round(c["share"] / (tops["ransomware"]["n_all"] / m["docs_all"]), 3)
+    from rozvedka import doclist
+    from urllib.parse import parse_qs, urlsplit
+    q = {k: v[0] for k, v in parse_qs(urlsplit(tops["ransomware"]["link_all"]).query).items()}
+    assert doclist.count(**q) == tops["ransomware"]["n_all"]
 
 
 def test_events_are_sourced():

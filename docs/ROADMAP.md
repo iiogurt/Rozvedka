@@ -144,7 +144,7 @@ combined timeline · C4 ✅ (0.58.1) the other pages in the panel style.
 3. **Page header component** – `<h1>` and breadcrumb on every list page, the long method notes folded into "How this is counted". · patch
 4. **Design tokens** – spacing/type scale, one categorical palette in CSS read by the charts, an SVG icon sprite (Lucide or Tabler, about 8 KB). · patch
 5. **Overview dashboard** – sparkline tiles instead of the 30/90-day tiles, official/think-tank stacked years, dumbbell for rising topics. · minor
-6. **Topic matrix** – marginal totals, an over-representation (lift) mode. · minor
+6. ✅ (0.59.0) **Topic matrix** – a reference column of all reports and an over-emphasis (lift) mode. · minor
 7. **Annotated actor timeline** – dated events and the country grid on one year axis. · minor
 8. **Threat-level small multiples** – one step chart per state on its own scale. · minor
 9. **Citations** – agency × agency matrix; a chord diagram for agency types only. · minor

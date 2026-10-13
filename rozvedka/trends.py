@@ -251,6 +251,13 @@ def matrix(year_from: int, year_to: int, by: str = "country", coalition: str = "
                 cells.append({"row": r["k"], "topic": r["topic"], "n": r["n"], "share": round(r["n"] / row["docs"], 4),
                               "link": docs_url({**params, **row["params"]}, topic=r["topic"],
                                                year_from=year_from, year_to=year_to)})
+        # the reference: every report of the period in scope (all rows, also those too small to show) and each topic's share of them
+        docs_all = con.execute(f"SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id WHERE {period}", pargs).fetchone()[0]
+        n_all = dict(con.execute(f"""SELECT t.topic, COUNT(*) FROM doc_topics t JOIN documents d ON d.id=t.doc_id
+                                     JOIN sources s ON s.id=d.source_id WHERE {period} GROUP BY t.topic""", pargs).fetchall())
+        share_all = {t: (n_all.get(t, 0) / docs_all if docs_all else 0) for t in cols}
+        for c in cells:   # over-emphasis: the row's share against the share in all reports (1 = as often as everyone)
+            c["lift"] = round(c["share"] / share_all[c["topic"]], 3) if share_all[c["topic"]] else None
         prov = _provenance(con, f"Each cell: documents of the {'country' if by == 'country' else 'agency'} from "
                                 f"{year_from}–{year_to} tagged with the topic ÷ all its documents in that period. "
                                 f"Rows with fewer than {MATRIX_MIN_DOCS} documents are left out. Countries publish "
@@ -260,8 +267,11 @@ def matrix(year_from: int, year_to: int, by: str = "country", coalition: str = "
         row["link"] = docs_url({**params, **row.pop("params")}, year_from=year_from, year_to=year_to)
     return {"rows": sorted(rows.values(), key=lambda r: r["label"]),
             "topics": [{"key": t, "name": tax["topics"][t]["name"],
-                        "category": next(c["name"] for c in tax["categories"].values() if t in c["topics"])}
+                        "category": next(c["name"] for c in tax["categories"].values() if t in c["topics"]),
+                        "n_all": n_all.get(t, 0), "share_all": round(share_all[t], 4),
+                        "link_all": docs_url(params, topic=t, year_from=year_from, year_to=year_to)}
                        for t in cols],
+            "docs_all": docs_all, "link_all": docs_url(params, year_from=year_from, year_to=year_to),
             "cells": cells, "year_from": year_from, "year_to": year_to, "by": by, "provenance": prov}
 
 
