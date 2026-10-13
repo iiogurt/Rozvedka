@@ -24,15 +24,6 @@
     <h1 id="h-name" class="h-name">Rozvedka <span>· разведка · reconnaissance</span></h1>
     <div class="h-term">
       <div><span class="h-prompt">&gt;</span> OPEN-SOURCE INTELLIGENCE · official reports of intelligence, security, cyber and civil-protection agencies, and ◆ independent think tanks</div>
-      <div><span class="h-prompt">&gt;</span>
-        <a href="{{ d.totals.reports.url }}"><b>{{ d.totals.reports.n|num }}</b> reports</a> ·
-        <a href="{{ d.totals.agencies.url }}"><b>{{ d.totals.agencies.n|num }}</b> official agencies</a> ·
-        {% if d.totals.think_tanks.n %}<a class="pub-count" href="{{ d.totals.think_tanks.url }}" title="Independent publishers – not run by states"><b>{{ d.totals.think_tanks.n }}</b> think tanks ◆</a>
-        (<a class="pub-count" href="{{ d.totals.think_tanks.reports_url }}">{{ d.totals.think_tanks.reports|num }} reports</a>) ·{% endif %}
-        <a href="{{ d.totals.countries.url }}"><b>{{ d.totals.countries.n|num }}</b> countries</a> ·
-        <b>{{ d.totals.languages.n }}</b> languages ·
-        <a href="{{ d.totals.searchable.url }}" title="Reports whose text is extracted and indexed (full-text search, topics, actors)"><b>{{ d.totals.searchable.n|num }}</b> searchable</a>
-        ({{ (d.totals.searchable.words / 1e6)|round(1) }} M words)</div>
       <div><span class="h-prompt">&gt;</span> last crawl
         {% if d.fresh.last_crawl %}<b>{{ d.fresh.last_crawl[:10] }}</b> ({{ d.fresh.crawl_days }} day{{ 's' if d.fresh.crawl_days != 1 }} ago){% else %}never{% endif %}
         · updates run by hand (<code>python -m rozvedka update</code>)<span class="h-cursor" aria-hidden="true">▌</span></div>
@@ -74,6 +65,15 @@
         <a href="/topics">Topics</a> and <a href="/actors/names">actor names</a> pages for the rules.</li>
     </ul>
   </details>
+</section>
+
+<section class="kpis" aria-label="The library in numbers">
+  <a href="{{ d.totals.reports.url }}"><span>Reports</span><b>{{ d.totals.reports.n|num }}</b><em>{{ d.totals.searchable.n|num }} full-text searchable</em></a>
+  <a href="{{ d.totals.agencies.url }}"><span>Official agencies</span><b>{{ d.totals.agencies.n|num }}</b><em>state bodies, EU and NATO</em></a>
+  {% if d.totals.think_tanks.n %}<a class="kpi-ind" href="{{ d.totals.think_tanks.reports_url }}" title="Independent publishers – not run by states"><span>Think tanks ◆</span><b>{{ d.totals.think_tanks.n }}</b><em>{{ d.totals.think_tanks.reports|num }} reports</em></a>{% endif %}
+  <a href="{{ d.totals.countries.url }}"><span>Countries</span><b>{{ d.totals.countries.n|num }}</b><em>+ EU and NATO bodies</em></a>
+  <a href="{{ d.totals.searchable.url }}"><span>Languages</span><b>{{ d.totals.languages.n }}</b><em>{{ (d.totals.searchable.words / 1e6)|round(1) }} M words indexed</em></a>
+  <a href="/collect"><span>To collect</span><b>{{ d.collect.missing }}</b><em>editions missing from series</em></a>
 </section>
 
 <section class="h-grid">
@@ -132,6 +132,20 @@
         <td class="bar"><i style="width: {{ (100 * a.n / d.actor_max)|round(1) }}%"></i></td>
         <td class="n"><a href="{{ a.url }}">{{ a.n }}</a></td></tr>{% else %}<tr><td class="muted">No actor index yet (<code>python -m rozvedka index-actors</code>).</td></tr>{% endfor %}
     </table>
+  </article>
+
+  <article class="viz-card h-card">
+    <h2 class="viz-title">Threat watch</h2>
+    <p class="viz-sub muted small">The numbers reports name most often: <a href="/cves">{{ d.threats.n_cves|num }} CVEs</a>
+      ({{ d.threats.n_kev|num }} on CISA's list of exploited vulnerabilities) and <a href="/techniques">{{ d.threats.n_techs|num }} ATT&amp;CK techniques</a>.</p>
+    <div class="h-threats">
+      <table class="h-tlist"><thead><tr><th>CVE</th><th class="n">Reports</th></tr></thead>
+        {% for t in d.threats.cves %}<tr><th><a class="mono" href="{{ t.page }}">{{ t.id }}</a>{% if t.kev %} <span class="kev" title="On CISA's Known Exploited Vulnerabilities list">KEV</span>{% endif %}<span class="muted small">{{ t.what }}</span></th>
+          <td class="n"><a href="{{ t.url }}">{{ t.n }}</a></td></tr>{% endfor %}</table>
+      <table class="h-tlist"><thead><tr><th>ATT&amp;CK technique</th><th class="n">Reports</th></tr></thead>
+        {% for t in d.threats.techs %}<tr><th><a class="mono" href="{{ t.page }}">{{ t.id }}</a><span class="muted small">{{ t.what }}</span></th>
+          <td class="n"><a href="{{ t.url }}">{{ t.n }}</a></td></tr>{% endfor %}</table>
+    </div>
   </article>
 
   <article class="viz-card h-card">

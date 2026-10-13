@@ -62,11 +62,13 @@ The start page (`/`): an ASCII radar and word mark, one search box for the whole
   countries, each with the number of reports it lists. <kbd>↑</kbd>/<kbd>↓</kbd> choose, <kbd>Enter</kbd> opens,
   <kbd>Tab</kbd> puts the suggestion into the query as a filter, <kbd>/</kbd> jumps to the box. Recent searches
   are remembered in your browser only.
-- **Dashboards** – newest editions; reports added lately, with a column for each of the last 30 days (a column opens
+- **Key numbers** – a strip under the search: reports, official agencies, ◆ think tanks, countries, languages and editions to collect.
+- **Dashboards** – one grid of panels: newest editions; reports added lately, with a column for each of the last 30 days (a column opens
   that day's additions); reports per publication year, each bar split into official agencies and ◆ think tanks (every
   report in one row, undated ones included); rising topics as a dumbbell – each topic's share in the earlier and the
   recent period, both dots opening their reports; the actors most named in last year's reports; the library by
-  agency type (bars in the type's colour) and download state, with the editions still to collect; and when the data
+  agency type (bars in the type's colour) and download state, with the editions still to collect; the threat watch (the CVE numbers and
+  ATT&CK techniques the reports name most); and when the data
   was last crawled. Every number and every bar part opens the list it counts.
 
 <img src="docs/images/home-search.png" alt="Search suggestions: actors, topics with report counts" width="900">

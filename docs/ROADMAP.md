@@ -135,7 +135,7 @@ Each item: why · what · done when · version step.
 ### F. Menu, design and visualisation (from the Opus 5.5 review of 0.53.0)
 
 The owner chose the "Console" redesign (dark, dense, green/yellow accents) from three mockups on 2026-10-13. Its steps:
-C1 ✅ (0.56.0) theme, fonts, side rail, command bar · C2 overview as a panel grid with a key-number strip · C3 actor page with the
+C1 ✅ (0.56.0) theme, fonts, side rail, command bar · C2 ✅ (0.57.0) overview as a panel grid with a key-number strip · C3 actor page with the
 combined timeline · C4 the other pages in the panel style.
 
 
