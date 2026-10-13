@@ -52,7 +52,7 @@ def test_header_and_section_tabs(empty_library):
     from rozvedka.app import app
     c = TestClient(app)
     t = c.get("/cves").text
-    assert 'class="grp on"' in t
+    assert 'class="rgrp on"' in t
     assert 'class="subnav sectionnav" aria-label="Actors &amp; threats"' in t and 'class="on" title="Vulnerabilities' in t
     assert "sectionnav" not in c.get("/").text
     v = c.get("/views").text

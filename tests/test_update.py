@@ -147,4 +147,4 @@ def test_data_age_is_the_oldest_source_check(library):
         assert since == con.execute("SELECT MAX(last_crawled) FROM pages WHERE source_id=1").fetchone()[0]
     from rozvedka import app as app_module
     app_module._age_cache.clear()                                # the header caches the age for 30 s
-    assert "20 d ago" in TestClient(app_module.app).get("/").text   # the header's Update button
+    assert "data 20 d old" in TestClient(app_module.app).get("/").text   # the header's data age

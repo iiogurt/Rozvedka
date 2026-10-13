@@ -69,7 +69,7 @@ SHOTS = {
     "cves": ("/cves", 900, [], None),                                  # CVE numbers named in reports, with CISA's list
     "cve": ("/cves/CVE-2021-26855", 1000, [], None),                   # one CVE: CISA entry, reports with passages, actors nearby
     "threat-levels": ("/threat-levels", 1300, [], None),               # official levels with the passage behind each
-    "menu": ("/cves", 520, [("eval", "var s=document.createElement('style');s.textContent='.grp:nth-child(4) .drop{display:block!important}';"
+    "menu": ("/cves", 520, [("eval", "var s=document.createElement('style');s.textContent='.rgrp:nth-of-type(4) .drop{display:block!important}';"
                                       "document.head.appendChild(s); 1")], None),   # a group's pages open under the header
     "views": ("/views", 1000, [], None),                               # every page, grouped like the menu
     "techniques": ("/techniques", 1000, [], None),                     # ATT&CK techniques named in reports
@@ -116,6 +116,9 @@ async def shoot(ws, name: str, base: str, path: str, height: int, steps: list, c
                 await asyncio.sleep(0.05)
         elif kind == "sleep":
             await asyncio.sleep(arg)
+    # headless Chromium does not start loading the page's web fonts by itself: load them all, then draw
+    await call("Runtime.evaluate", expression="Promise.all([...document.fonts].map((f) => f.load().catch(() => 0))).then(() => 1)",
+               awaitPromise=True)
     await call("Runtime.evaluate", expression=NO_LOGOS)
     await call("Runtime.evaluate", expression=NO_HOME)
     await asyncio.sleep(0.5)

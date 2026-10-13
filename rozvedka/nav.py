@@ -74,7 +74,7 @@ def locate(path: str):
 def menu(path: str) -> dict:
     """What the templates draw for this page: the groups with their items, and which group and item are the current ones."""
     group, link = locate(path)
-    return {"groups": [{"key": k, "label": label, "hub": hub, "on": k == group,
+    return {"groups": [{"key": k, "label": label, "short": label.split(" ")[0], "hub": hub, "on": k == group,
                         "pages": [{"label": i[0], "href": i[1], "blurb": i[3], "on": i[1] == link} for i in items]}
                        for k, label, hub, items in GROUPS],
             "group": group, "link": link}

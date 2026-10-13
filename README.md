@@ -41,13 +41,13 @@ local library, so you can follow how state security, social resilience and disas
 
 ## Features
 
-**Finding your way.** The menu has six groups – *Overview*, *Library* (documents, what's new, series, watchlist), *Topics & trends*,
+**Finding your way.** The side rail has six groups – *Overview*, *Library* (documents, what's new, series, watchlist), *Topics & trends*,
 *Actors & threats* (actors, connections, sanctions, attributions, threat levels, CVEs, ATT&CK techniques), *Sources* (agencies, think
 tanks, maps, ratings, citations) and *Maintain* (update, coverage, upkeep, data exchange). Hover a group for its pages, each with a
-line on what it answers; tabs under the header show the section you are in. **All views** (`/views`) lists every page with the
+line on what it answers; tabs under the command bar show the section you are in, and the command bar (`rz>`) searches from every page. **All views** (`/views`) lists every page with the
 number it holds. On a phone the groups open from one Menu button.
 
-<img src="docs/images/menu.png" alt="The menu: Actors and threats open, with its seven pages and a line on each" width="900">
+<img src="docs/images/menu.png" alt="The side rail: Actors and threats open, with its seven pages and a line on each" width="900">
 
 
 ### 🛰️ Home – search console and dashboards
@@ -955,6 +955,7 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | Reports | the agencies' official websites, listed in [`sources/sources.md`](sources/sources.md) | the publishers' terms; downloaded for personal reference, not redistributed |
 | Agency logos | the agencies' home pages (`data/logos/`, not committed) | the agencies' marks |
 | Flags | [flag-icons](https://github.com/lipis/flag-icons) | MIT ([`LICENSE.flag-icons`](rozvedka/static/flags/LICENSE.flag-icons)); `nato.svg`, `other.svg` drawn for this project |
+| Fonts | [IBM Plex](https://github.com/IBM/plex) Sans and Mono, from the Fontsource packages (`static/vendor/plex/`) | SIL OFL 1.1 ([`LICENSE.OFL`](rozvedka/static/vendor/plex/LICENSE.OFL)) |
 | Icons | [Lucide](https://lucide.dev) (a few, in `static/icons.svg`) | ISC ([`LICENSE.lucide`](rozvedka/static/LICENSE.lucide)) |
 | Actor reference data | [Wikidata](https://www.wikidata.org) | CC0 |
 | Actor summaries | [English Wikipedia](https://en.wikipedia.org) | CC BY-SA 4.0, attributed with article and revision on each page (also in the actor screenshot above) |
