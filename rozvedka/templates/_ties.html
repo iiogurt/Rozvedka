@@ -1,0 +1,15 @@
+{# shared pieces of the connection-graph pages (rozvedka/ties.py) #}
+{% macro lay(layer, group, name) %}<span class="lay lay-{{ group }}" title="{{ name }}">{{ layer }}</span>{% endmacro %}
+{% macro ent(label, kind, href) %}<span class="ent"><i class="kdot kind-{{ kind }}"></i><a href="{{ href }}">{{ label }}</a></span>{% endmacro %}
+{% macro evidence(r) %}{% set e = r.evidence %}
+  {%- if r.layer == 'reports' -%}<a href="{{ e.link }}"><b>{{ e.docs }}</b> reports</a> <span class="muted">name both in one passage</span>
+  {%- else -%}
+    {%- if e.quote %}<blockquote class="snippet small">“{{ e.quote }}”</blockquote>{% endif -%}
+    <span class="muted small">
+    {%- if r.layer in ('us', 'uk', 'un', 'eu') %}<a href="{{ e.url }}" rel="noopener">{{ e.list }} {{ e.ref }}</a>{% if e.found and e.found != e.found|upper %} · found as “{{ e.found }}”{% endif %}
+    {%- elif r.layer == 'attack' %}<a href="{{ e.url }}" rel="noopener">MITRE ATT&amp;CK</a>{% if e.retrieved %}, retrieved {{ e.retrieved }}{% endif %}
+    {%- elif r.layer == 'wikipedia' %}<a href="{{ e.url }}" rel="noopener">Wikipedia: {{ e.source.article }}</a>, infobox “{{ e.source.field }}”, rev. {{ e.source.revision }}, retrieved {{ e.source.retrieved }}
+    {%- elif r.layer == 'wikidata' %}<a href="{{ e.url }}" rel="noopener">Wikidata {{ e.source.property }}</a>{% if e.source.ref %} · <a href="{{ e.source.ref }}" rel="noopener">cited source</a>{% endif %}, retrieved {{ e.source.retrieved }}
+    {%- endif %}{% if e.role %} · {{ e.role }}{% endif %}{% if r.date %} · {{ r.date }}{% endif %}</span>
+  {%- endif -%}
+{% endmacro %}

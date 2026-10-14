@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% from "_ties.html" import lay, ent %}
+{% block title %}Network · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Network</h1>
+<p class="lede">{{ s.ties|num }} stated links between {{ s.entities|num }} groups, people, companies, vessels, malware and campaigns –
+  from the official sanctions lists, Wikidata, Wikipedia, MITRE ATT&amp;CK and the library's reports, each with its evidence.</p>
+<details class="how"><summary>How this is built</summary>
+<p class="muted small">Every link is something a source states; nothing is inferred. <b>Official lists</b>: OFAC's “Linked To” remarks
+  (the name resolved on the same list), and the narratives of UK, UN and EU listings that name another listing of the same list by
+  its full name (one-word names only for organisations and only where written as a name; names made only of generic words such as
+  “Ministry of Defence” are not looked for) – the sentence is kept as evidence. Two samples of 40 such links read by hand: 37 and 38 right,
+  the wrong ones led to the rules above. <b>Reference data</b>: Wikidata statements and Wikipedia infobox fields of the actor
+  gazetteer; MITRE ATT&amp;CK's groups, software and campaigns. <b>Reports</b>: two actors (not countries) named in one passage
+  of at least two reports – a co-mention, not a stated tie. A list entry that the sanctions matching tied to an actor by its exact
+  name is that actor, so layers meet there; entries of different lists are not yet merged with each other.
+  Not resolved (a name found on several entries or on none): {% for k, v in (meta.stats or {}).items() if v.unresolved is defined %}{{ k|upper }} {{ v.unresolved }}{{ ', ' if not loop.last }}{% endfor %}.
+  Built {{ meta.built }} with <code>build-graph</code>.</p></details>
+
+<section class="kpis kpis-dense" aria-label="Links by layer">
+  {% for l in s.layers if l.ties %}<a href="{{ l.link }}" class="kpi-{{ l.group }}"><span>{{ l.name }}</span><b>{{ l.ties|num }}</b><em>{{ l.entities|num }} entities · {{ s.groups[l.group] }}</em></a>{% endfor %}
+</section>
+
+<form class="small top-gap" method="get" action="/graph/ties">
+  Find links of <input name="q" placeholder="name: Wagner, IRGC, APT28, Rostec …" size="34"> <button>Search</button>
+  <span class="muted">· or open any actor's page: its <b>Network</b> section lists the links.</span>
+</form>
+
+<div class="panels h-grid top-gap">
+  <section class="h-card">
+    <h2 class="viz-title">Most linked on the official lists</h2>
+    <p class="muted small">How many different entities the OFAC, UK, UN and EU listings tie to each.</p>
+    <table class="rp-topics small rank">
+      {% set top = (rank|map(attribute='n')|max) or 1 %}
+      {% for r in rank %}<tr><th>{{ ent(r.label, r.kind, r.href) }}</th>
+        <td class="n"><a href="{{ r.link }}">{{ r.n }}</a></td>
+        <td class="barcell"><i class="bar" style="width: {{ (100 * r.n / top)|round(1) }}%"></i></td></tr>{% endfor %}
+    </table>
+  </section>
+  <section class="h-card">
+    <h2 class="viz-title">Where the layers meet</h2>
+    <p class="muted small">Entities with links in three or more layers – official lists, reference data and the reports all say
+      something about them. The number is all their links.</p>
+    <table class="rp-topics small">
+      {% for r in cross %}<tr><th>{{ ent(r.label, r.kind, r.href) }}</th>
+        <td>{% for l in r.layers %}{{ lay(l, layers[l].group, layers[l].name) }}{% endfor %}</td>
+        <td class="n"><a href="{{ r.link }}">{{ r.n }}</a></td></tr>{% endfor %}
+    </table>
+  </section>
+</div>
+
+<section class="viz-card top-gap">
+  <h2 class="viz-title">Layers and sources</h2>
+  <table class="rp-topics small">
+    <thead><tr><th>Layer</th><th>Kind</th><th>What a link means</th><th class="n">Links</th><th class="n">Entities</th><th>Retrieved</th></tr></thead>
+    {% for l in s.layers %}<tr><th>{{ lay(l.key, l.group, l.name) }} {{ l.name }}</th><td>{{ s.groups[l.group] }}</td><td class="muted">{{ l.about }}</td>
+      <td class="n">{% if l.ties %}<a href="{{ l.link }}">{{ l.ties|num }}</a>{% else %}0{% endif %}</td><td class="n">{{ l.entities|num }}</td>
+      <td class="muted">{{ (meta.retrieved or {}).get(l.key) or ('rebuilt ' ~ meta.built[:10] if l.key == 'reports' and meta.built else '–') }}</td></tr>{% endfor %}
+  </table>
+</section>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_network.html" import network %}
+{% block title %}{{ e.label }} · Network · Rozvedka{% endblock %}
+{% block main %}
+<p class="muted small"><a href="/graph">Network</a> › {{ e.kind_name }}</p>
+<h1 class="page-h"><i class="kdot kind-{{ e.kind }}"></i>{{ e.label }}</h1>
+{% set d = e.data %}
+<p class="lede">{{ e.kind_name }}{% if d.list %} on the {{ lists[d.list].name }} ({{ lists[d.list].issuer }}){% elif e.origin == 'attack' %} in MITRE ATT&amp;CK{% elif e.origin == 'wikidata' %} on Wikidata{% endif %} –
+  not an actor the reports are searched for; it is here because a source links it to one.</p>
+<section class="viz-card facts">
+  <h2 class="viz-title">Reference</h2>
+  <table class="rp-topics small">
+    {% if d.list %}<tr><th>Entry</th><td><a href="{{ d.url }}" rel="noopener">{{ d.list }} {{ d.ref }}</a>{% if d.date %} · listed {{ d.date }}{% endif %}</td></tr>
+      {% if d.programme %}<tr><th>Programme</th><td>{{ d.programme }}</td></tr>{% endif %}
+      {% if d.names|length > 1 %}<tr><th>Other names</th><td>{{ d.names[1:]|join(' · ') }}</td></tr>{% endif %}{% endif %}
+    {% if d.description %}<tr><th>Description</th><td>{{ d.description }}</td></tr>{% endif %}
+    {% if d.attack %}<tr><th>ATT&amp;CK</th><td><a href="{{ d.url }}" rel="noopener">{{ d.attack }}</a>{% if d.aliases %} · also {{ d.aliases|join(', ') }}{% endif %}{% if d.first %} · active {{ d.first }} – {{ d.last }}{% endif %}</td></tr>{% endif %}
+    {% if e.origin == 'wikidata' %}<tr><th>Wikidata</th><td><a href="{{ d.url }}" rel="noopener">{{ e.id }}</a>{% if d.wikipedia %} · <a href="{{ d.wikipedia }}" rel="noopener">Wikipedia</a>{% endif %}</td></tr>{% endif %}
+  </table>
+</section>
+<section class="viz-card" id="network">
+  <h2 class="viz-title">Links <span class="muted small"><a href="/graph/ties?entity={{ e.id }}">{{ groups|sum(attribute='n') }}</a></span></h2>
+  {{ network(groups, e.label) }}
+</section>
+{% endblock %}

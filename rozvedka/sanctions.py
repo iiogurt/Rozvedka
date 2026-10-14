@@ -75,7 +75,9 @@ def _iso(s: str) -> str:
 
 
 def _entries(path: Path, kind: str):
-    """Yield the entries of one list file as dicts: ref, type (person/group/other), name, names, date, programme, legal."""
+    """Yield the entries of one list file as dicts: ref, type (person/group/other), name, names, date, programme, legal –
+    and for the connection graph (rozvedka/ties.py) `shape` (the list's own type: Individual, Entity, Vessel …), `text`
+    (the list's narrative: UK statement of reasons, UN comments, EU remarks) and `linked` (OFAC's "Linked To" names)."""
     for _, e in ET.iterparse(path, events=("end",)):
         t = _tag(e)
         if kind == "UN" and t in ("INDIVIDUAL", "ENTITY"):
@@ -85,7 +87,8 @@ def _entries(path: Path, kind: str):
                     names.append(_text(a, "ALIAS_NAME"))
             yield {"ref": _text(e, "REFERENCE_NUMBER") or _text(e, "DATAID"), "type": "person" if t == "INDIVIDUAL" else "group",
                    "name": names[0], "names": names, "primary": 1, "date": _iso(_text(e, "LISTED_ON")),
-                   "programme": _text(e, "UN_LIST_TYPE"), "legal": [], "url": None}
+                   "programme": _text(e, "UN_LIST_TYPE"), "legal": [], "url": None,
+                   "shape": "Individual" if t == "INDIVIDUAL" else "Entity", "text": _text(e, "COMMENTS1"), "linked": []}
             e.clear()
         elif kind == "UK" and t == "Designation":
             names, aliases = [], []
@@ -98,7 +101,8 @@ def _entries(path: Path, kind: str):
             shape = _text(e, "IndividualEntityShip")
             yield {"ref": _text(e, "UniqueID"), "type": "person" if shape == "Individual" else "group" if shape == "Entity" else "other",
                    "name": names[0] if names else "", "names": names, "primary": primary or 1, "date": _iso(_text(e, "DateDesignated")),
-                   "programme": _text(e, "RegimeName"), "legal": [], "url": None}
+                   "programme": _text(e, "RegimeName"), "legal": [], "url": None,
+                   "shape": shape, "text": _text(e, "UKStatementofReasons"), "linked": []}
             e.clear()
         elif kind == "US" and t == "sdnEntry":
             def full(x):
@@ -111,7 +115,8 @@ def _entries(path: Path, kind: str):
             progs = [(p.text or "").strip() for p in e.iter() if _tag(p) == "program"]
             yield {"ref": _text(e, "uid"), "type": "person" if typ == "Individual" else "group" if typ == "Entity" else "other",
                    "name": names[0], "names": names, "primary": 1, "date": "", "programme": ", ".join(progs), "legal": [],
-                   "url": f"https://sanctionssearch.ofac.treas.gov/Details.aspx?id={_text(e, 'uid')}"}
+                   "url": f"https://sanctionssearch.ofac.treas.gov/Details.aspx?id={_text(e, 'uid')}",
+                   "shape": typ, "text": "", "linked": linked_to(_text(e, "remarks"))}
             e.clear()
         elif kind == "EU" and t == "sanctionEntity":
             names = [a.get("wholeName") for a in e if _tag(a) == "nameAlias" and a.get("wholeName")]
@@ -125,8 +130,22 @@ def _entries(path: Path, kind: str):
                    "name": names[0] if names else "", "names": names, "primary": 1,
                    "date": _iso(e.get("designationDate") or "") or (regs[0].get("entryIntoForceDate", "") if regs else ""),
                    "programme": ", ".join(dict.fromkeys(r.get("programme", "") for r in regs if r.get("programme"))),
-                   "legal": legal, "url": None}
+                   "legal": legal, "url": None, "shape": {"person": "Individual", "enterprise": "Entity"}.get(code, code),
+                   "text": "\n".join((r.text or "").strip() for r in e if _tag(r) == "remark" and (r.text or "").strip()),
+                   "linked": []}
             e.clear()
+
+
+def linked_to(remarks: str) -> list[str]:
+    """OFAC remarks "(Linked To: IRGC (IRGC)-QODS FORCE; Linked To: HIZBALLAH)" → the names, as the list writes them."""
+    out = []
+    for part in re.findall(r"Linked To:\s*([^;]+)", remarks or ""):
+        part = part.strip()
+        while part.endswith(")") and part.count(")") > part.count("("):
+            part = part[:-1].rstrip()
+        if part:
+            out.append(part)
+    return out
 
 
 def fetch_lists() -> dict:

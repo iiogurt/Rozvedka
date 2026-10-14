@@ -1288,3 +1288,26 @@ td.a-docs > a { display: inline-block; min-width: 3.2em; font-family: var(--mono
 #chord { height: 520px; }
 .chord-table { max-height: 520px; overflow-y: auto; display: block; }
 @media (max-width: 900px) { .chord-wrap { grid-template-columns: 1fr; } #chord { height: 380px; } }
+
+/* ── Network (rozvedka/ties.py): layer tags, entity kinds that are not actor kinds, link tables ── */
+.lay { display: inline-block; min-width: 22px; margin-right: 3px; padding: 0 5px; border-radius: 3px; font: 600 10px/16px var(--mono);
+       text-transform: uppercase; text-align: center; border: 1px solid currentColor; }
+.lay-official { color: var(--accent); }
+.lay-reference { color: var(--accent-2); }
+.lay-reports { color: var(--muted); }
+.kpis .kpi-official span { color: var(--accent); } .kpis .kpi-reference span { color: var(--accent-2); }
+.kind-vessel { background: transparent; box-shadow: inset 0 0 0 2px var(--k-crime); border-radius: 2px; }
+.kind-aircraft { background: transparent; box-shadow: inset 0 0 0 2px var(--k-armed); border-radius: 2px; }
+.kind-malware { background: var(--k-cyber); border-radius: 2px; transform: rotate(45deg) scale(.85); }
+.kind-tool { background: transparent; box-shadow: inset 0 0 0 2px var(--k-cyber); border-radius: 2px; transform: rotate(45deg) scale(.85); }
+.kind-campaign { background: var(--accent-2); border-radius: 1px; }
+.ent { white-space: nowrap; } .ent a { white-space: normal; }
+table.ties td, table.ties th { vertical-align: top; }
+table.ties .snippet { margin: 0 0 2px; }
+td.tie-rel { width: 22%; color: var(--muted); } td.tie-rel b { color: var(--ink); font-weight: 600; }
+table.rank .barcell { width: 35%; } table.rank .bar { display: block; height: 8px; background: var(--accent); border-radius: 2px; opacity: .8; }
+.top-gap { margin-top: 14px; }
+.kpis.kpis-dense { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); } .kpis-dense a { padding: 10px 12px; } .kpis-dense b { font-size: 20px; }
+.tie-grid { list-style: none; margin: 0 0 12px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2px 18px; }
+.tie-grid li { padding: 3px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 8px; }
+.tie-rel-line { margin: 4px 0; color: var(--muted); } .tie-rel-line b { color: var(--ink); }

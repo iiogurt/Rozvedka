@@ -27,6 +27,24 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.62.0] – 2026-10-14
+
+### Added
+- **Network of stated links** (`/graph`, menu Actors & threats → Network): 22,109 links between 18,761 groups, people, companies,
+  vessels, malware and campaigns, each with its layer and evidence – OFAC's “Linked To” remarks, UK statements of reasons, UN and
+  EU listing narratives naming another listing (with the sentence), Wikidata and Wikipedia connections, MITRE ATT&CK (groups and
+  campaigns using malware and tools, campaigns attributed to groups) and actors named together in at least two reports. A
+  sanctions entry matched with an actor is that actor, so the layers meet: actor pages get a **Network** section and a key number.
+  Links can be searched by any name (`/graph/ties`); entities that are not actors have their own page (`/entity/…`).
+- Command `build-graph` (no network), run by `update` after the indexes; `fetch-attack` now also keeps ATT&CK's software,
+  campaigns and their relations.
+- The release check (`tools/check_links.py`) also compares the Network page's numbers with their lists.
+
+### Changed
+- The co-mention page is now called **Named together** (`/network`) so it is not confused with the new Network.
+- In the network, a sanctions entry matched with one actor by its own name and with others only by aliases is that actor
+  (OFAC's HIZBALLAH is Hezbollah, not the groups named like its aliases).
+
 ## [0.61.0] – 2026-10-13
 
 ### Added
@@ -1193,7 +1211,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.61.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.62.0...HEAD
+[0.62.0]: https://github.com/iiogurt/Rozvedka/compare/v0.61.0...v0.62.0
 [0.61.0]: https://github.com/iiogurt/Rozvedka/compare/v0.60.0...v0.61.0
 [0.60.0]: https://github.com/iiogurt/Rozvedka/compare/v0.59.0...v0.60.0
 [0.59.0]: https://github.com/iiogurt/Rozvedka/compare/v0.58.1...v0.59.0

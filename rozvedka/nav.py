@@ -22,7 +22,8 @@ GROUPS = [
     ]),
     ("actors", "Actors & threats", "/actors", [
         ("Actors", "/actors", (), "Groups, states, people and services named in the reports."),
-        ("Connections", "/network", (), "Who is named together with whom."),
+        ("Network", "/graph", ("/entity",), "Stated links between groups, people, companies, malware: sanctions lists, Wikidata, ATT&CK."),
+        ("Named together", "/network", (), "Who the reports name together with whom."),
         ("Sanctions", "/actors/sanctions", (), "EU, UK, UN and US lists matched with the actors."),
         ("Attributions", "/actors/attributions", (), "Official statements that name who is behind a cyber attack."),
         ("Threat levels", "/threat-levels", (), "Official terrorism threat levels, with the quote."),
