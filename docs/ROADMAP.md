@@ -179,9 +179,10 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
    reports mostly use the common names; one conflict found and ruled out:
    MISP's "APT38" under Lazarus), "similar/overlaps" as a layer; `/graph/twins` by IDF-weighted overlap of techniques and
    software (CVEs shown, not scored). · minor
-5. **Leads and brokers** – pairs never named together in any report but sharing several associates, tools or CVEs
-   (Adamic–Adar), labelled as hypotheses with a review screen; entities that bridge communities (crime ↔ state, terror ↔
-   crime). · minor
+5. ✅ (0.66.0) **Leads and brokers** – 613 leads (Adamic–Adar on the stated network; hubs over 200 links, shared software and
+   shared rivals excluded after looking at the first results – shared tools and shared enemies inflated cyber and cartel pairs),
+   review kept in `sources/lead_reviews.yaml`; brokers by the kinds of actor their links reach. Next: let confirmed leads feed
+   back (a reviewed-confirmed lead as a link of its own, with the note as evidence). · minor
 6. **Official sources on people** – FBI Wanted API, US Justice Department indictments and press releases, Europol's EU Most
    Wanted, Rewards for Justice: persons, aliases and handles, units. · sources / minor
 7. **Views** – rings around one entity (hops as rings, relation types as sectors, every label visible), a matrix ordered

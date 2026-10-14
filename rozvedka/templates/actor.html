@@ -198,6 +198,20 @@
   {{ net(network, a.label) }}
 </section>
 {% endif %}
+{% if leads %}
+<section class="viz-card" id="leads">
+  <h2 class="viz-title">Leads <span class="ctag warn-tag">hypotheses</span></h2>
+  <p class="muted small viz-sub">Actors no report names together with {{ a.label }} and no source links to it, but that share neighbours
+    with it in the stated network – a reason to look, not a finding. Each opens the shared neighbours with the evidence on both sides,
+    and can be reviewed. All: <a href="/graph/leads">Leads</a>.</p>
+  <table class="rp-topics small">
+    {% for l in leads %}{% set other_label = l.b_label if l.a == a.key else l.a_label %}{% set other = l.b if l.a == a.key else l.a %}
+    <tr><th><a href="/actors/{{ other }}">{{ other_label }}</a></th><td class="n">{{ l.score }}</td>
+      <td><a href="{{ l.link }}">{{ l.shared }} shared neighbours</a></td>
+      <td>{% if l.review %}<span class="ctag">{{ l.review.verdict }}</span>{% else %}<span class="muted">not reviewed</span>{% endif %}</td></tr>{% endfor %}
+  </table>
+</section>
+{% endif %}
 {% if twins %}
 <section class="viz-card" id="twins">
   <h2 class="viz-title">Toolkit twins</h2>

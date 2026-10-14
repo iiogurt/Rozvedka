@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.66.0] – 2026-10-14
+
+### Added
+- **Leads** (`/graph/leads`, menu Actors & threats): hypotheses – pairs of actors never named together in a report and not linked by any
+  source, but sharing neighbours in the stated network, ranked by Adamic–Adar (hubs, shared software and shared rivals not counted);
+  613 today. A page per lead with the shared neighbours and the evidence on both sides, and a review (confirmed / rejected / unclear
+  with a note) kept in `sources/lead_reviews.yaml`; the strongest leads on actor pages.
+- **Brokers** (`/graph/brokers`): entities whose stated links reach actors of several kinds (state, cyber, terror, armed, crime),
+  ranked by the kind they reach less; every number opens those links.
+- The list of links can be filtered by the kind of the other end and to stated links only (`other_kind`, `group=stated`); the
+  release check also compares the leads' and brokers' numbers with their lists.
+
 ## [0.65.0] – 2026-10-14
 
 ### Added
@@ -1249,7 +1261,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.65.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.66.0...HEAD
+[0.66.0]: https://github.com/iiogurt/Rozvedka/compare/v0.65.0...v0.66.0
 [0.65.0]: https://github.com/iiogurt/Rozvedka/compare/v0.64.0...v0.65.0
 [0.64.0]: https://github.com/iiogurt/Rozvedka/compare/v0.63.0...v0.64.0
 [0.63.0]: https://github.com/iiogurt/Rozvedka/compare/v0.62.0...v0.63.0

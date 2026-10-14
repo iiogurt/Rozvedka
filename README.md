@@ -458,6 +458,24 @@ listed PJSC Sovcomflot).
   page lists what the two share, rarest first, what only one uses, and the CVE numbers reports name near both; actor pages show
   their closest twins. Alike is not linked – a lead to read about, kept apart from the stated links.
 
+#### Leads and brokers
+
+<img src="docs/images/lead.png" alt="A lead: the Taliban and Lashkar-e-Taiba, never named together, share neighbours in the stated network – each with the evidence on both sides" width="900">
+
+- **Leads** (`/graph/leads`) are hypotheses, marked as such: pairs of actors that **no report names together and no source links**,
+  but that share neighbours in the stated network (every layer except co-mentions) – 613 today. Ranked by Adamic–Adar: a shared
+  neighbour counts 1 ÷ log(its links), so sharing a small front company says more than sharing a hub. Hubs (over 200 links), shared
+  software (that is Toolkit twins' subject) and links that say two are rivals (a shared enemy is no connection) are not counted.
+  Each lead's page lists the shared neighbours, least-linked first, with what the sources state on both sides – and a **review**:
+  confirmed, rejected or unclear, with a note, kept in `sources/lead_reviews.yaml`. Many top leads are a lineage the sources
+  describe in other words (Jama'at al-Tawhid wal-Jihad → Islamic State); the review is where that is recorded.
+- **Brokers** (`/graph/brokers`): entities whose stated links reach actors of several worlds – state services, cyber groups,
+  terrorist groups, armed groups, organised crime – ranked by the side they reach less (a broker joins worlds). Each number opens
+  exactly those links: e.g. Tren de Aragua (organised crime ↔ terrorist-designated groups), the Axis of Resistance, Hezbollah
+  (four kinds).
+
+<img src="docs/images/brokers.png" alt="Brokers: entities whose links reach several kinds of actor, with the number of links to each kind" width="900">
+
 #### Find a connection
 
 <img src="docs/images/graph-path.png" alt="Find a connection: chains from Evil Corp to the FSB – through Maksim Yakubets on the US Treasury list, through shared malware in ATT&CK, through co-mentions" width="900">
@@ -817,6 +835,7 @@ flowchart LR
 | `rozvedka/topics.py` | text extraction with page offsets, FTS5 index, topic classification (all CPU cores) |
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
+| `rozvedka/leads.py` | leads (shared neighbours, never named together; reviews in `sources/lead_reviews.yaml`) and brokers |
 | `rozvedka/identity.py`, `vendors.py`, `twins.py` | one target across sanctions lists and the details they share; vendors' names of threat groups (MISP); toolkit twins |
 | `rozvedka/paths.py` | Find a connection: the most specific chains between two entities (hub-penalised shortest paths, alternatives on other routes), name resolution |
 | `rozvedka/ties.py` | the network of stated links: entities and links from the sanctions lists, Wikidata, Wikipedia, ATT&CK and the reports, each with its evidence |
