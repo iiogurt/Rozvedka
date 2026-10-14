@@ -152,6 +152,38 @@ combined timeline · C4 ✅ (0.58.1) the other pages in the panel style.
 11. **Coverage overview grid and a country × agency-type gap matrix.** · minor
 12. **Topic and country briefing pages** (`/topics/{key}`: trend, top agencies and actors, newest passages). · minor / large
 
+### G. Networks of groups and people (owner's decision 2026-10-14: everything, no mockups)
+
+Measured at 0.61.0: 85 % of actor mentions are countries; the people the reports name are heads of state, not operatives;
+co-mentions find the obvious pairs (Islamic State–Al-Qaeda, MI5–GCHQ). The links that are not obvious are in sources the
+reports do not contain – starting with the sanctions lists already on disk (9,168 OFAC “Linked To” remarks, 5,472 UK
+statements of reasons, shared addresses and identifiers). Approved sources include the non-official ones (company registries,
+ICIJ Offshore Leaks), always marked as such and loaded only for names already in the network.
+
+1. ✅ (0.62.0) **Connection graph** – `entities` + `ties` with layer and evidence: OFAC “Linked To”, UK/UN/EU listing
+   narratives (sentence matching, 37/40 and 38/40 right in two hand-read samples, rules from the misses), Wikidata,
+   Wikipedia, ATT&CK software and campaigns, co-mentions ≥ 2 reports; `/graph`, `/graph/ties`, `/entity/…`, a Network
+   section on actor pages. Next: entries of different lists merged (G3). · minor
+2. **“How are X and Y connected?”** – shortest chains of links between any two entities, hub-penalised (a step through
+   Russia or Islamic State costs more), countries left out, layers selectable; shown as a chain of cards with the evidence
+   of every step, alternative chains stacked. · minor
+3. **Shared identifiers and one person across lists** – same address, passport or ID number, crypto wallet, vessel
+   (IMO / MMSI), e-mail, website, director as links; the same person or company on the US, UK, EU and UN lists and Wikidata
+   merged by name + date of birth + identifiers, with the reasons shown. · minor
+4. **Vendor names and toolkit twins** – the MISP threat-actor galaxy as a name crosswalk (APT28 = Fancy Bear = Forest
+   Blizzard …) and cyber groups ranked by shared techniques, software and CVEs. · minor
+5. **Leads and brokers** – pairs never named together in any report but sharing several associates, tools or CVEs
+   (Adamic–Adar), labelled as hypotheses with a review screen; entities that bridge communities (crime ↔ state, terror ↔
+   crime). · minor
+6. **Official sources on people** – FBI Wanted API, US Justice Department indictments and press releases, Europol's EU Most
+   Wanted, Rewards for Justice: persons, aliases and handles, units. · sources / minor
+7. **Views** – rings around one entity (hops as rings, relation types as sectors, every label visible), a matrix ordered
+   by communities, BioFabric for medium networks, links on a time axis and the network as of a year. · minor
+8. **Case file** – one shared board (no per-user state): pin entities, chains between them found automatically, export
+   with citations. · minor
+9. **Company registries and leaks** – GLEIF (ownership, CC0), UK Companies House (persons with significant control), ICIJ
+   Offshore Leaks (ODbL; journalistic, marked as non-official) for the companies and people already in the network. · minor
+
 ### E. Engineering and operations
 
 1. ✅ (0.48.0: optional, tested, **not activated** – the owner does not want it) **The portal starts after a reboot** – install `deploy/rozvedka-web.service` as a user service with

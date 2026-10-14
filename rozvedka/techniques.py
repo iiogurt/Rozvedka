@@ -3,7 +3,9 @@
   - `index` finds every technique number in the report texts, with the places in the text.
   - `fetch` downloads the Enterprise, Mobile and ICS ATT&CK catalogs (STIX 2.1, github.com/mitre-attack/attack-stix-data) into
     data/gazetteer/attack_techniques.json: for each technique its name, tactics, address, whether MITRE has retired it, and the
-    groups MITRE lists as using it, with the catalog versions and the retrieval date. MITRE's terms permit this use with the copyright notice shown on the pages.
+    groups MITRE lists as using it, with the catalog versions and the retrieval date; also the software (malware and tools)
+    and campaigns, and which group uses which software and which campaign MITRE attributes to which group (for the
+    connection graph, rozvedka/ties.py). MITRE's terms permit this use with the copyright notice shown on the pages.
     Once the catalog is stored, only numbers that are in it count (a pattern like "T1234" can also be a part number).
 Nothing here calls out except `fetch`: the portal reads the stored file."""
 import datetime as dt
@@ -59,8 +61,16 @@ def index() -> dict:
 
 
 # ── MITRE's catalog ──
+def _clean(text: str, limit: int = 400) -> str:
+    """MITRE's relationship text without its citation markers, shortened: "[APT28](…) has used X.(Citation: …)" → "APT28 has used X." """
+    text = re.sub(r"\(Citation:[^)]*\)", "", text or "")
+    text = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", text).strip()
+    return text if len(text) <= limit else text[:limit].rsplit(" ", 1)[0] + " …"
+
+
 def fetch() -> dict:
     out, versions = {}, {}
+    software, campaigns, relations, allgroups = {}, {}, [], {}
     for matrix in MATRICES:          # Enterprise first: its entry wins where a number is in two matrices
         bundle = actor_sources._get(ATTACK_BASE.format(matrix), timeout=600)
         objs = bundle["objects"]
@@ -86,15 +96,37 @@ def fetch() -> dict:
                 techs[o["target_ref"]]["groups"].append(groups[o["source_ref"]])
         for t in techs.values():
             out.setdefault(t["id"], {**t, "groups": sorted(t["groups"])})
+        soft = {o["id"]: {"id": mitre_ref(o)["external_id"], "name": o["name"], "type": o["type"], "url": mitre_ref(o)["url"],
+                          "aliases": [a for a in o.get("x_mitre_aliases", []) if a != o["name"]][:10]}
+                for o in objs if o["type"] in ("malware", "tool") and live(o) and mitre_ref(o)}
+        camps = {o["id"]: {"id": mitre_ref(o)["external_id"], "name": o["name"], "url": mitre_ref(o)["url"],
+                           "first": (o.get("first_seen") or "")[:10], "last": (o.get("last_seen") or "")[:10]}
+                 for o in objs if o["type"] == "campaign" and live(o) and mitre_ref(o)}
+        allgroups.update({g[0]: g[1] for g in groups.values()})
+        for v in soft.values():
+            software.setdefault(v["id"], v)
+        for v in camps.values():
+            campaigns.setdefault(v["id"], v)
+        ids = {k: v["id"] for k, v in {**soft, **camps}.items()} | {k: g[0] for k, g in groups.items()}
+        for o in objs:
+            if o["type"] != "relationship" or not live(o) or o["source_ref"] not in ids or o["target_ref"] not in ids:
+                continue
+            rel, src, dst = o.get("relationship_type"), o["source_ref"], o["target_ref"]
+            if (rel == "uses" and src.split("--")[0] in ("intrusion-set", "campaign") and dst.split("--")[0] in ("malware", "tool")) \
+                    or (rel == "attributed-to" and src.startswith("campaign--") and dst.startswith("intrusion-set--")):
+                relations.append([ids[src], rel, ids[dst], _clean(o.get("description", ""))])
     for t in out.values():          # a sub-technique is shown after its parent
         if "." in t["id"] and t["id"].split(".")[0] in out:
             t["parent"] = out[t["id"].split(".")[0]]["name"]
     FILE.parent.mkdir(parents=True, exist_ok=True)
     FILE.write_text(json.dumps({"meta": {"versions": versions, "retrieved": dt.date.today().isoformat(),
                                          "url": ATTACK_BASE, "page": PAGE, "terms": TERMS},
-                                "techniques": out}), encoding="utf-8")
+                                "techniques": out, "software": software, "campaigns": campaigns,
+                                "groups": allgroups,
+                                "relations": sorted({tuple(r) for r in relations})}), encoding="utf-8")
     _stored.cache_clear()
-    return {"techniques": len(out), "retired": sum(1 for t in out.values() if t["retired"]), "versions": versions}
+    return {"techniques": len(out), "retired": sum(1 for t in out.values() if t["retired"]), "software": len(software),
+            "campaigns": len(campaigns), "relations": len(relations), "versions": versions}
 
 
 @lru_cache(maxsize=1)

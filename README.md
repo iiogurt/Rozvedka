@@ -395,7 +395,39 @@ column; <i>over-emphasis</i> shows how much more or less often a row carries a t
 
 <img src="docs/images/review.png" alt="Review actor matches: names by impact with sample passages to mark right or wrong" width="900">
 
-### 🕸️ Network
+### 🔗 Network – stated links between groups, people, companies and tools
+
+<img src="docs/images/graph.png" alt="Network: links by layer, the entities most linked on the official sanctions lists, and where official lists, reference data and reports meet" width="900">
+
+One graph of **22,000 links between 18,700 entities** – groups, people, companies, vessels, aircraft, malware, tools
+and campaigns – each link with the layer it comes from and its evidence. Nothing is inferred: every link is something a
+source states.
+
+| Layer | What a link means | Evidence kept |
+|---|---|---|
+| **US Treasury (OFAC)** | an SDN entry's remarks say “Linked To: …” another entry (the name resolved on the same list) | the remark and the entry |
+| **UK, UN, EU sanctions lists** | the narrative of a listing (UK statement of reasons, UN comments, EU remarks) names another listing of the same list; UN listings also by reference number (`QDe.004`) | the sentence, the name it was found as |
+| **Wikidata, Wikipedia** | statements and infobox fields of the actor gazetteer (leaders, founders, members, parents, allies) | statement or infobox revision, cited source |
+| **MITRE ATT&CK** | a group or campaign uses malware or a tool; a campaign is attributed to a group | MITRE's sentence |
+| **Reports** | two actors (not countries) named in one passage of at least two reports – a co-mention | the pair page with the passages |
+
+A sanctions entry matched with an actor is that actor, so the layers meet on the actor pages: Hezbollah's **Network**
+section lists the 138 entries OFAC links to it and the UK listings whose reasons name it, each with its reference.
+Narrative matching is kept honest by rules – full names only, one-word names only for organisations and only where written
+as a name (“Rostec”, not “prosperity”), no names made only of generic words (“Ministry of Defence”: whose?). Two samples of
+40 such links read by hand were 37 and 38 right; the wrong ones led to these rules.
+
+<img src="docs/images/graph-actor.png" alt="An actor's Network section: entries the US Treasury links to Hezbollah, UK listings whose reasons name it, with the quoted sentences" width="900">
+
+- **Links** (`/graph/ties`): search any name across all layers, filter by layer and kind; every row with its evidence.
+- **Entity pages** (`/entity/…`) for what is not an actor: a sanctions entry with its programme and other names, a piece
+  of malware, a campaign, a Wikidata person – and its links.
+- On the overview: the entities **most linked on the official lists** and those **where the layers meet** (links in three or
+  more layers). Every number opens the list of links it counts (checked before each release).
+
+<img src="docs/images/graph-ties.png" alt="Links found by name: listings that name Rostec, with the sentences from the UK statements of reasons" width="900">
+
+### 🕸️ Named together
 
 <img src="docs/images/network.png" alt="Network: clusters of actors named together, with ties, main topics, timeline and reporting agencies" width="900">
 
@@ -580,7 +612,8 @@ failure. Starting it after a reboot with nobody logged in needs `loginctl enable
 | `index-citations` | resolve the web addresses in the report texts: other library reports, other agencies' sites, outside hosts (`update` runs it) |
 | `fetch-threat-levels` | check the official threat-level announcements in `sources/threat_levels.yaml` against their pages (network); the reports' quotes are checked against the library when the page is shown |
 | `fetch-kev` · `index-cves` | download CISA's Known Exploited Vulnerabilities catalog (CC0; network) · find CVE numbers in the report texts and the actors named near them (`update` runs the second) |
-| `fetch-attack` · `index-techniques` | download MITRE ATT&CK's technique list (Enterprise, Mobile, ICS; network) · find technique numbers in the report texts (`update` runs the second) |
+| `fetch-attack` · `index-techniques` | download MITRE ATT&CK (techniques, groups, software, campaigns and their relations; Enterprise, Mobile, ICS; network) · find technique numbers in the report texts (`update` runs the second) |
+| `build-graph` | rebuild the network of links from what is stored: sanctions lists, Wikidata and Wikipedia connections, ATT&CK, the actor index (no network; `update` runs it last) |
 | `fetch-attributions` | check the official attribution statements in `sources/attributions.yaml` against their pages (network); the result with the check date is stored in `data/gazetteer/attributions.json` |
 | `fetch-sanctions` | download the EU, UK, UN Security Council and US (OFAC) consolidated sanctions lists into `data/sanctions/` and match them with the actors (network; `match-sanctions` matches again without downloading, `index-actors` does it too) |
 | `fetch-actor-profiles [--refresh]` | pictures (flag, logo or photo, with author and licence), key facts and Wikipedia leads of every actor the reports name, from Wikipedia, Wikidata and Wikimedia Commons (network; part of `fetch-actors`; `--refresh` downloads the pictures again) |
@@ -734,6 +767,7 @@ flowchart LR
 | `rozvedka/topics.py` | text extraction with page offsets, FTS5 index, topic classification (all CPU cores) |
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
+| `rozvedka/ties.py` | the network of stated links: entities and links from the sanctions lists, Wikidata, Wikipedia, ATT&CK and the reports, each with its evidence |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |
 | `rozvedka/updater.py` | the Update page: plan (pages, duration), the update steps, every source's last check, history |
 | `rozvedka/jobs.py`, `progress.py`, `folders.py` | long jobs from the portal (update, export, import): progress, log, cancel, one at a time; the Data exchange folder picker |
@@ -877,6 +911,7 @@ erDiagram
 | `uploads`, `collect_checks` | 0 / 0 | provenance of reports added by hand; “checked, nothing new” marks | To collect |
 | `runs` | 91 | every crawl, download and update with its summary | the Update page's history and estimates |
 | `actor_meta` | 2 | versions of the actor index | rebuilds only when needed |
+| `entities`, `ties`, `ties_meta` | 18,761 / 22,109 / 1 | the network: groups, people, companies, vessels, malware, campaigns; links with layer, relation, date and evidence | Network, the Network section of actor pages |
 
 ## Security
 

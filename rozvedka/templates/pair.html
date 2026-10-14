@@ -2,7 +2,7 @@
 {% from "_pager.html" import pager %}
 {% block title %}{{ a.label }} · {{ b.label }} · Rozvedka{% endblock %}
 {% block main %}
-<p class="small"><a href="/network">← Network</a> · <a href="/actors/{{ a.key }}">{{ a.label }}</a> · <a href="/actors/{{ b.key }}">{{ b.label }}</a></p>
+<p class="small"><a href="/network">← Named together</a> · <a href="/actors/{{ a.key }}">{{ a.label }}</a> · <a href="/actors/{{ b.key }}">{{ b.label }}</a></p>
 <h1 class="page-h">{{ a.label }} <span class="muted">and</span> {{ b.label }}</h1>
 <p class="muted">Named within {{ window }} characters of each other – roughly the same paragraph – in <b>{{ docs }}</b>
   report{{ 's' if docs != 1 }}{% if filters %} ({% for k, v in filters.items() %}{{ k.replace('_', ' ') }} {{ TOPICS[v].name if k == 'topic' and v in TOPICS else v }}{{ ', ' if not loop.last }}{% endfor %}){% endif %}.

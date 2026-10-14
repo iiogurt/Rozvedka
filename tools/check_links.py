@@ -2,7 +2,8 @@
 
     python tools/check_links.py
 
-For every number on the home page and the latest update on What's new, opens its Documents link and compares the list's total with the number.
+For every number on the home page and the latest update on What's new, opens its Documents link and compares the list's total with the number;
+the same for the Network page's numbers and their lists of links.
 Then follows every internal link on the main pages once and reports any that fail.
 """
 import os
@@ -14,10 +15,10 @@ os.environ.setdefault("ROZVEDKA_ALLOWED_HOSTS", "testserver")   # the host name 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fastapi.testclient import TestClient  # noqa: E402
 
-from rozvedka import compare, home, updates, watch  # noqa: E402
+from rozvedka import compare, home, ties, updates, watch  # noqa: E402
 from rozvedka.app import app  # noqa: E402
 
-PAGES = ["/", "/new", "/watch", "/compare", "/actors/review", "/data", "/documents", "/years", "/ratings", "/publishers", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/map", "/map/democracy", "/collect"]
+PAGES = ["/", "/new", "/watch", "/compare", "/actors/review", "/data", "/documents", "/years", "/ratings", "/publishers", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/graph", "/map", "/map/democracy", "/collect"]
 
 
 def main() -> int:
@@ -37,6 +38,14 @@ def main() -> int:
             bad += 1
             print(f"MISMATCH {label}: shows {n}, list has {listed} – {url}")
     print(f"home, What's new, Compare, Watchlist: {len(figs)} counts checked, {bad} mismatches")
+    net = ties.figures()                       # a negative number is a count of other entities ("with N others")
+    for label, n, url in net:
+        m = re.search(r"<b>(\d+)</b> links(?: with <b>(\d+)</b> others)?", client.get(url).text)
+        listed = (int(m.group(2) or 0) if n < 0 else int(m.group(1))) if m else None
+        if listed != abs(n):
+            bad += 1
+            print(f"MISMATCH {label}: shows {abs(n)}, list has {listed} – {url}")
+    print(f"Network: {len(net)} counts checked")
     seen, broken = set(), 0
     # one report page as well: the first report on the home page
     sample = re.search(r'href="(/report/\d+)"', client.get("/").text)

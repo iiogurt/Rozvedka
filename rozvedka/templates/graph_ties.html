@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% from "_ties.html" import lay, ent, evidence %}
+{% block title %}Links{% if focus %} of {{ focus.label }}{% endif %} · Network · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Links{% if focus %} of {{ ent(focus.label, focus.kind, focus.href) }}{% endif %}</h1>
+<p class="lede"><b>{{ total }}</b> links{% if total %} with <b>{{ others }}</b> others{% endif %}{% if f.layer %} · {{ layers[f.layer].name }}{% elif f.group %} · {{ groups[f.group] }}{% endif %}.
+  Each with its evidence; <a href="/graph">how the network is built</a>.</p>
+<form class="small" method="get">
+  {% if f.entity %}<input type="hidden" name="entity" value="{{ f.entity }}">{% endif %}
+  Name <input name="q" value="{{ f.q }}" size="22">
+  layer <select name="layer"><option value="">all</option>{% for k, l in layers.items() %}<option value="{{ k }}" {{ 'selected' if f.layer == k }}>{{ l.name }}</option>{% endfor %}</select>
+  kind <select name="kind"><option value="">any</option>{% for k, n in kinds.items() %}<option value="{{ k }}" {{ 'selected' if f.kind == k }}>{{ n }}</option>{% endfor %}</select>
+  <button>Filter</button>{% if f.entity %} <a href="/graph/ties">all entities</a>{% endif %}
+</form>
+{{ pager(pg, "links") }}
+<table class="rp-topics small ties">
+  <thead><tr><th>{{ 'Linked' if focus else 'From' }}</th><th>Says</th><th>{{ '' if focus else 'To' }}</th><th>Layer</th><th>Evidence</th></tr></thead>
+  {% for r in rows %}<tr>
+    {% if focus %}<th>{{ ent(r.other_label, r.other_kind, r.other_href) }}</th><td>{{ focus.label }} <b>{{ r.says }}</b></td><td></td>
+    {% else %}<th>{{ ent(r.a_label, r.a_kind, r.a_href) }}</th><td><b>{{ r.rel }}</b></td><td>{{ ent(r.b_label, r.b_kind, r.b_href) }}</td>{% endif %}
+    <td>{{ lay(r.layer, r.layer_group, r.layer_name) }}</td><td>{{ evidence(r) }}</td></tr>
+  {% else %}<tr><td class="muted" colspan="5">No link matches this filter.</td></tr>{% endfor %}
+</table>
+{{ pager(pg, "links") }}
+{% endblock %}

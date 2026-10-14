@@ -1,0 +1,20 @@
+{# the links of one entity, grouped by layer and relation – on actor and entity pages #}
+{% from "_ties.html" import lay, ent, evidence %}
+{% macro network(groups, label) %}
+{% for g in groups %}
+  <h3 class="viz-mini">{{ lay(g.layer, g.group, g.name) }} {{ g.name }} <a class="muted small" href="{{ g.link }}">{{ g.n }} link{{ 's' if g.n != 1 }}</a></h3>
+  {% if g.layer == 'us' %}{# OFAC's evidence is the same short remark for every entry: names and references in a grid #}
+  {% for rel in g.rels %}
+    <p class="small tie-rel-line">{{ label }} <b>{{ rel.says }}</b> <span class="muted">({{ rel.n }}{% if rel.n > rel.rows|length %}, <a href="{{ g.link }}">all</a>{% endif %})</span></p>
+    <ul class="tie-grid small">{% for r in rel.rows %}<li>{{ ent(r.other_label, r.other_kind, r.other_href) }} <a class="muted" href="{{ r.evidence.url }}" rel="noopener" title="“{{ r.evidence.quote }}”">{{ r.evidence.list }} {{ r.evidence.ref }}</a></li>{% endfor %}</ul>
+  {% endfor %}
+  {% else %}
+  <table class="rp-topics small ties">
+  {% for rel in g.rels %}
+    {% for r in rel.rows %}<tr>{% if loop.first %}<td class="tie-rel" rowspan="{{ rel.rows|length }}">{{ label }} <b>{{ rel.says }}</b>{% if rel.n > rel.rows|length %}<br><a class="small" href="{{ g.link }}">all {{ rel.n }}</a>{% endif %}</td>{% endif %}
+      <th>{{ ent(r.other_label, r.other_kind, r.other_href) }}</th><td>{{ evidence(r) }}</td></tr>{% endfor %}
+  {% endfor %}
+  </table>
+  {% endif %}
+{% endfor %}
+{% endmacro %}

@@ -42,6 +42,7 @@
   {% set peak = dated|sort(attribute='docs')|last %}<a href="{{ peak.link }}"><span>Most named</span><b>{{ peak.year }}</b><em>{{ peak.docs }} reports</em></a>{% endif %}
   <a href="{{ '#attributions' if attributions else '/actors/attributions' }}"><span>Official attributions</span><b>{{ attributions|length }}</b><em>government statements</em></a>
   <a href="{{ '#sanctions' if sanctions else '/actors/sanctions' }}"><span>Sanctions entries</span><b>{{ sanctions|length }}</b><em>EU, UK, UN, US lists</em></a>
+  <a href="/graph/ties?entity={{ a.key }}"><span>Network links</span><b>{{ net_layers|sum(attribute='n') }}</b><em>{{ net_layers|length }} layer{{ 's' if net_layers|length != 1 }}</em></a>
   <a class="kpi-go" href="/actors/{{ a.key }}/timeline"><span>Timeline</span><b>→</b><em>events, reports, who reports</em></a>
 </section>
 <div class="actor-grid">
@@ -184,6 +185,17 @@
       <td>{% if c.on_kev %}added {{ c.kev.dateAdded }}{% if c.kev.knownRansomwareCampaignUse == 'Known' %} · <b>ransomware</b>{% endif %}{% else %}<span class="muted">–</span>{% endif %}</td>
       <td class="muted">{% if c.kev %}{{ c.kev.vendorProject }} {{ c.kev.product }}{% endif %}</td></tr>{% endfor %}
   </table>
+</section>
+{% endif %}
+{% if network %}
+{% from "_network.html" import network as net %}
+<section class="viz-card" id="network">
+  <h2 class="viz-title">Network <span class="muted small"><a href="/graph/ties?entity={{ a.key }}">{{ net_layers|sum(attribute='n') }} links</a></span></h2>
+  <p class="muted small viz-sub">What official sanctions lists and MITRE ATT&amp;CK state about {{ a.label }}'s ties – each with the
+    sentence or entry it comes from. Wikidata and Wikipedia ties are under Connections below; co-mentions in reports on the
+    <a href="/network">Named together</a> page. All layers: {% for l in net_layers %}<a href="{{ l.link }}">{{ l.name }} {{ l.n }}</a>{{ ' · ' if not loop.last }}{% endfor %}.
+    How it is built: <a href="/graph">Network</a>.</p>
+  {{ net(network, a.label) }}
 </section>
 {% endif %}
 {% if connections %}

@@ -195,7 +195,7 @@ def import_(manifest: str, prefer: str) -> dict:
 
 INDEXERS = (("Matching topics in the new reports", "index-topics"), ("Dating the new reports", "date-documents"),
             ("Typing the new reports and grouping their languages", "type-documents"),
-            ("Matching actors in the new reports", "index-actors"))
+            ("Matching actors in the new reports", "index-actors"), ("Building the network of links", "build-graph"))
 
 
 def _import_and_index(path, prefer: str) -> dict:
