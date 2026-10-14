@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}Brokers · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Brokers</h1>
+<p class="lede">Entities whose stated links reach actors of several worlds – state services, cyber groups, terrorist groups, armed groups,
+  organised crime: the facilitators, proxies and umbrellas between them. {{ pg.total|num }} entities.</p>
+<details class="how"><summary>How this is counted</summary>
+<p class="muted small">For each entity of the <a href="/graph">Network</a>, its neighbours in the stated layers (all but co-mentions in
+  reports) that are actors of one of the five kinds are counted per kind. An entity reaching two kinds or more is listed, ranked by its
+  links to the kind it reaches second most – a broker joins worlds, so one strong side is not enough. Each number opens exactly those
+  links with their evidence.</p></details>
+<form class="small" method="get">reaching <select name="kind"><option value="">any kind</option>{% for k, n in domains.items() %}<option value="{{ k }}" {{ 'selected' if kind == k }}>{{ n }}</option>{% endfor %}</select> <button>Filter</button></form>
+{{ pager(pg, "brokers") }}
+<table class="rp-topics small">
+  <thead><tr><th>Entity</th><th>Kind</th>{% for k, n in domains.items() %}<th class="n">{{ n }}</th>{% endfor %}</tr></thead>
+  {% for r in rows %}{% set by = {} %}{% for d in r.domains %}{% set _ = by.update({d.kind: d}) %}{% endfor %}
+  <tr><th><span class="ent"><i class="kdot kind-{{ r.kind }}"></i><a href="{{ r.href }}">{{ r.label }}</a></span></th><td class="muted">{{ r.kind_name }}</td>
+    {% for k in domains %}<td class="n">{% if k in by %}<a href="{{ by[k].link }}">{{ by[k].n }}</a>{% else %}<span class="muted">·</span>{% endif %}</td>{% endfor %}</tr>
+  {% else %}<tr><td class="muted">No entity matches.</td></tr>{% endfor %}
+</table>
+{{ pager(pg, "brokers") }}
+{% endblock %}

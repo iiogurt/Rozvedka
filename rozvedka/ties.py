@@ -50,6 +50,7 @@ LAYERS = {
                 "about": "two actors named in one passage (600 characters) of at least two reports – a co-mention, not a stated tie"},
 }
 GROUPS = {"official": "Official lists", "reference": "Reference data", "reports": "The library's reports"}
+GROUP_FILTERS = {**GROUPS, "stated": "Stated links (all but co-mentions)"}
 LIST_LAYER = {"US": "us", "UK": "uk", "UN": "un", "EU": "eu"}
 SHAPES = {"Individual": "person", "Entity": "org", "Vessel": "vessel", "Ship": "vessel", "Aircraft": "aircraft"}
 KINDS = {**actors.KINDS, "person": "Person", "org": "Company or organisation", "vessel": "Vessel", "aircraft": "Aircraft",
@@ -559,12 +560,17 @@ def crossroads(limit: int = 30) -> list[dict]:
     return rows
 
 
-def _where(entity: str = "", layer: str = "", group: str = "", q: str = "", kind: str = "") -> tuple[str, list]:
+def _where(entity: str = "", layer: str = "", group: str = "", q: str = "", kind: str = "", other_kind: str = "") -> tuple[str, list]:
     where, args = ["1=1"], []
     if entity:
         where.append("(t.a=? OR t.b=?)"); args += [entity, entity]
+        if other_kind:                    # the kind of the other end (Brokers: links to terrorist groups …)
+            where.append("(CASE WHEN t.a=? THEN eb.kind ELSE ea.kind END)=? AND (CASE WHEN t.a=? THEN eb.actor ELSE ea.actor END) IS NOT NULL")
+            args += [entity, other_kind, entity]
     if layer in LAYERS:
         where.append("t.layer=?"); args.append(layer)
+    elif group == "stated":               # everything a source states: all layers but co-mentions in reports
+        where.append("t.layer != 'reports'")
     elif group in GROUPS:
         ls = [k for k, v in LAYERS.items() if v["group"] == group]
         where.append(f"t.layer IN ({','.join('?' * len(ls))})"); args += ls
@@ -615,9 +621,9 @@ SELECT = """SELECT t.*, ea.label a_label, ea.kind a_kind, ea.actor a_actor, eb.l
                    eb.actor b_actor"""
 
 
-def tie_list(entity: str = "", layer: str = "", group: str = "", q: str = "", kind: str = "", offset: int = 0,
-             limit: int = 100) -> list[dict]:
-    where, args = _where(entity, layer, group, q, kind)
+def tie_list(entity: str = "", layer: str = "", group: str = "", q: str = "", kind: str = "", other_kind: str = "",
+             offset: int = 0, limit: int = 100) -> list[dict]:
+    where, args = _where(entity, layer, group, q, kind, other_kind)
     with db.session() as con:
         init()
         rows = con.execute(f"""{SELECT} {FROM} WHERE {where}
@@ -682,9 +688,10 @@ def figures() -> list[tuple[str, int, str]]:
     return out
 
 
-def paged(entity: str = "", layer: str = "", group: str = "", q: str = "", kind: str = "", page="1", per_page="") -> dict:
+def paged(entity: str = "", layer: str = "", group: str = "", q: str = "", kind: str = "", page="1", per_page="",
+          other_kind: str = "") -> dict:
     size = paging.per_page_of(per_page, 50)
-    f = {"entity": entity, "layer": layer, "group": group, "q": q, "kind": kind}
+    f = {"entity": entity, "layer": layer, "group": group, "q": q, "kind": kind, "other_kind": other_kind}
     total = count(**f)
     pg = paging.paginate(total, page, size, "/graph/ties", {**f, "per_page": size if size != 50 else ""}, default=50)
     return {"rows": tie_list(**f, offset=pg["offset"], limit=size), "pg": pg, "total": total, "f": f,

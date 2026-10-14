@@ -15,10 +15,10 @@ os.environ.setdefault("ROZVEDKA_ALLOWED_HOSTS", "testserver")   # the host name 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fastapi.testclient import TestClient  # noqa: E402
 
-from rozvedka import compare, home, ties, twins, updates, watch  # noqa: E402
+from rozvedka import compare, home, leads, ties, twins, updates, watch  # noqa: E402
 from rozvedka.app import app  # noqa: E402
 
-PAGES = ["/", "/new", "/watch", "/compare", "/actors/review", "/data", "/documents", "/years", "/ratings", "/publishers", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/graph", "/graph/path?a=Evil+Corp&b=Federal+Security+Service", "/graph/twins", "/map", "/map/democracy", "/collect"]
+PAGES = ["/", "/new", "/watch", "/compare", "/actors/review", "/data", "/documents", "/years", "/ratings", "/publishers", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/graph", "/graph/path?a=Evil+Corp&b=Federal+Security+Service", "/graph/twins", "/graph/leads", "/graph/brokers", "/map", "/map/democracy", "/collect"]
 
 
 def main() -> int:
@@ -38,7 +38,7 @@ def main() -> int:
             bad += 1
             print(f"MISMATCH {label}: shows {n}, list has {listed} – {url}")
     print(f"home, What's new, Compare, Watchlist: {len(figs)} counts checked, {bad} mismatches")
-    net = ties.figures()                       # a negative number is a count of other entities ("with N others")
+    net = ties.figures() + [f for f in leads.figures() if f[1] < 0]    # a negative number counts other entities ("with N others")
     for label, n, url in net:
         m = re.search(r"<b>(\d+)</b> links(?: with <b>(\d+)</b> others)?", client.get(url).text)
         listed = (int(m.group(2) or 0) if n < 0 else int(m.group(1))) if m else None
@@ -52,7 +52,13 @@ def main() -> int:
             bad += 1
             print(f"MISMATCH {label}: shows {n}, pair page has {listed} – {url}")
         net.append((label, n, url))
-    print(f"Network and Toolkit twins: {len(net)} counts checked")
+    for label, n, url in [f for f in leads.figures() if f[1] >= 0]:
+        m = re.search(r"share <b>(\d+)</b> counted neighbours", client.get(url).text)
+        if (int(m.group(1)) if m else None) != n:
+            bad += 1
+            print(f"MISMATCH {label}: shows {n}, lead page has {m and m.group(1)} – {url}")
+        net.append((label, n, url))
+    print(f"Network, Toolkit twins, Leads, Brokers: {len(net)} counts checked")
     seen, broken = set(), 0
     # one report page as well: the first report on the home page
     sample = re.search(r'href="(/report/\d+)"', client.get("/").text)

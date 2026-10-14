@@ -4,10 +4,12 @@
 {% block title %}Links{% if focus %} of {{ focus.label }}{% endif %} · Network · Rozvedka{% endblock %}
 {% block main %}
 <h1 class="page-h">Links{% if focus %} of {{ ent(focus.label, focus.kind, focus.href) }}{% endif %}</h1>
-<p class="lede"><b>{{ total }}</b> links{% if total %} with <b>{{ others }}</b> others{% endif %}{% if f.layer %} · {{ layers[f.layer].name }}{% elif f.group %} · {{ groups[f.group] }}{% endif %}.
+<p class="lede"><b>{{ total }}</b> links{% if total %} with <b>{{ others }}</b> others{% endif %}{% if f.layer %} · {{ layers[f.layer].name }}{% elif f.group %} · {{ groups[f.group] }}{% endif %}{% if f.other_kind %} · to {{ kinds[f.other_kind] }}{% endif %}.
   Each with its evidence; <a href="/graph">how the network is built</a>.</p>
 <form class="small" method="get">
   {% if f.entity %}<input type="hidden" name="entity" value="{{ f.entity }}">{% endif %}
+  {% if f.other_kind %}<input type="hidden" name="other_kind" value="{{ f.other_kind }}">{% endif %}
+  {% if f.group %}<input type="hidden" name="group" value="{{ f.group }}">{% endif %}
   Name <input name="q" value="{{ f.q }}" size="22">
   layer <select name="layer"><option value="">all</option>{% for k, l in layers.items() %}<option value="{{ k }}" {{ 'selected' if f.layer == k }}>{{ l.name }}</option>{% endfor %}</select>
   kind <select name="kind"><option value="">any</option>{% for k, n in kinds.items() %}<option value="{{ k }}" {{ 'selected' if f.kind == k }}>{{ n }}</option>{% endfor %}</select>

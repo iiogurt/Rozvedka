@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}Leads · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Leads <span class="ctag warn-tag">hypotheses</span></h1>
+<p class="lede">Pairs of actors that <b>no report names together</b> and <b>no source links</b>, but that share neighbours in the stated network –
+  connections the sources do not make, worth a look. {{ pg.total|num }} pairs; {{ reviewed }} reviewed
+  ({% for v, n in by_verdict.items() %}{{ n }} {{ v }}{{ ', ' if not loop.last }}{% endfor %}).</p>
+<details class="how"><summary>How leads are found</summary>
+<p class="muted small">The stated network is every layer of the <a href="/graph">Network</a> except co-mentions in reports. Two actors (not
+  countries) are a lead when they share at least {{ min_shared }} neighbours there, are not linked to each other in any layer and are never named
+  within one passage of any report. Each shared neighbour counts 1 ÷ log(its number of links) (Adamic–Adar): sharing a small front company
+  says more than sharing a hub. Neighbours with more than {{ hub }} links, and shared malware, tools and campaigns (see
+  <a href="/graph/twins">Toolkit twins</a>), are not counted, nor links saying two are rivals – sharing an enemy is no sign
+  of a connection. Many leads are a lineage the sources describe in other words (a predecessor
+  organisation, a parallel unit) – mark them; a review is kept with its note in <code>sources/lead_reviews.yaml</code>.</p></details>
+<form class="small" method="get">
+  Actor <input name="q" value="{{ f.q }}" size="20">
+  kind <select name="kind"><option value="">any</option>{% for k, n in kinds.items() if k != 'country' %}<option value="{{ k }}" {{ 'selected' if f.kind == k }}>{{ n }}</option>{% endfor %}</select>
+  review <select name="status"><option value="">all</option><option value="open" {{ 'selected' if f.status == 'open' }}>not reviewed</option>
+    {% for v in verdicts %}<option value="{{ v }}" {{ 'selected' if f.status == v }}>{{ v }}</option>{% endfor %}</select>
+  <button>Filter</button>
+</form>
+{{ pager(pg, "leads") }}
+<table class="rp-topics small rank">
+  <thead><tr><th>Actor</th><th>Actor</th><th class="n">Score</th><th></th><th class="n">Shared</th><th>Review</th></tr></thead>
+  {% set top = (rows|map(attribute='score')|max) if rows else 1 %}
+  {% for r in rows %}<tr><th><span class="ent"><i class="kdot kind-{{ r.a_kind }}"></i><a href="{{ r.a_href }}">{{ r.a_label }}</a></span></th>
+    <th><span class="ent"><i class="kdot kind-{{ r.b_kind }}"></i><a href="{{ r.b_href }}">{{ r.b_label }}</a></span></th>
+    <td class="n">{{ r.score }}</td><td class="barcell"><i class="bar bar-lead" style="width: {{ (100 * r.score / top)|round(1) }}%"></i></td>
+    <td class="n"><a href="{{ r.link }}">{{ r.shared }} neighbours</a></td>
+    <td>{% if r.review %}<span class="ctag">{{ r.review.verdict }}</span>{% else %}<a class="muted" href="{{ r.link }}#review">review</a>{% endif %}</td></tr>
+  {% else %}<tr><td class="muted">No lead matches.</td></tr>{% endfor %}
+</table>
+{{ pager(pg, "leads") }}
+{% endblock %}

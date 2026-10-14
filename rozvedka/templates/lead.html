@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "_ties.html" import lay, ent, evidence %}
+{% block title %}Lead: {{ d.ea.label }} – {{ d.eb.label }} · Rozvedka{% endblock %}
+{% block main %}
+<p class="muted small"><a href="/graph/leads">Leads</a></p>
+<h1 class="page-h">{{ ent(d.ea.label, d.ea.kind, d.ea.href) }} and {{ ent(d.eb.label, d.eb.kind, d.eb.href) }} <span class="ctag warn-tag">hypothesis</span></h1>
+{% if notice %}<p class="notice">Review saved.</p>{% endif %}
+<p class="lede">They share <b>{{ d.counted }}</b> counted neighbours in the stated network (score {{ d.score }}){% if d.common|length > d.counted %}, and
+  {{ d.common|length - d.counted }} not counted (hubs of more than {{ d.hub }} links, or shared software){% endif %}.
+  {% if d.direct %}<b>They are linked directly</b> – this is no longer a lead.{% elif d.together %}<b>A report names them together</b> – this is no longer a lead.
+  {% else %}No source links them and no report names them in one passage.{% endif %}
+  <a href="/graph/path?a={{ d.a }}&b={{ d.b }}">All chains between them</a>.</p>
+
+<section class="viz-card" id="shared">
+  <h2 class="viz-title">Shared neighbours</h2>
+  <p class="muted small">Least-linked first: the most telling. Each with what the sources state on both sides.</p>
+  <table class="rp-topics small ties">
+    <thead><tr><th>Neighbour</th><th class="n">Weight</th><th>{{ d.ea.label }}</th><th>{{ d.eb.label }}</th></tr></thead>
+    {% for w in d.common %}<tr class="{{ '' if w.counted else 'muted' }}">
+      <th>{{ ent(w.label, w.kind, w.href) }}<br><span class="muted">{{ w.kind_name }} · {{ w.links }} links</span></th>
+      <td class="n">{{ w.weight if w.counted else '–' }}</td>
+      {% for side in (w.a, w.b) %}<td>{% for r in side %}<div>{{ lay(r.layer, r.layer_group, r.layer_name) }} <b>{{ r.says }}</b> {{ evidence(r) }}</div>{% endfor %}</td>{% endfor %}</tr>
+    {% endfor %}
+  </table>
+</section>
+
+<section class="viz-card" id="review">
+  <h2 class="viz-title">Review</h2>
+  {% if d.review %}<p class="small">Reviewed {{ d.review.date }}: <b>{{ d.verdicts[d.review.verdict] }}</b>{% if d.review.note %} – “{{ d.review.note }}”{% endif %}</p>{% endif %}
+  <form method="post" action="/graph/leads/review" class="small">
+    <input type="hidden" name="a" value="{{ d.a }}"><input type="hidden" name="b" value="{{ d.b }}">
+    {% for v, n in d.verdicts.items() %}<label class="chk"><input type="radio" name="verdict" value="{{ v }}" {{ 'checked' if d.review and d.review.verdict == v }} required> {{ n }}</label> {% endfor %}
+    <br><input name="note" value="{{ d.review.note if d.review else '' }}" size="80" placeholder="why – with a source where there is one">
+    <button>Save</button>
+  </form>
+  <p class="muted small">Kept in <code>sources/lead_reviews.yaml</code> with the date; shared by everyone using this portal.</p>
+</section>
+{% endblock %}

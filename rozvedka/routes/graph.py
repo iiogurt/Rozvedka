@@ -1,8 +1,8 @@
 """The connection graph: overview, the list of links, and a page per entity that is not an actor."""
-from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi import APIRouter, Form, HTTPException, Query, Request
 from fastapi.responses import RedirectResponse
 
-from .. import paging, paths, sanctions, techniques, ties, twins
+from .. import actors, leads, paging, paths, sanctions, techniques, ties, twins
 from ..web import tpl
 
 router = APIRouter()
@@ -18,12 +18,12 @@ def graph_page(request: Request):
 
 @router.get("/graph/ties")
 def ties_page(request: Request, entity: str = "", layer: str = "", group: str = "", q: str = "", kind: str = "",
-              page: str = "1", per_page: str = ""):
-    d = ties.paged(entity, layer if layer in ties.LAYERS else "", group if group in ties.GROUPS else "", q,
-                   kind if kind in ties.KINDS else "", page, per_page)
+              other_kind: str = "", page: str = "1", per_page: str = ""):
+    d = ties.paged(entity, layer if layer in ties.LAYERS else "", group if group in ties.GROUP_FILTERS else "", q,
+                   kind if kind in ties.KINDS else "", page, per_page, other_kind if other_kind in ties.KINDS and entity else "")
     if entity and not d["focus"]:
         raise HTTPException(404, "no such entity in the network")
-    return tpl.TemplateResponse(request, "graph_ties.html", {**d, "layers": ties.LAYERS, "groups": ties.GROUPS,
+    return tpl.TemplateResponse(request, "graph_ties.html", {**d, "layers": ties.LAYERS, "groups": ties.GROUP_FILTERS,
                                                              "kinds": ties.KINDS})
 
 
@@ -74,3 +74,48 @@ def twins_pair_page(request: Request, a: str, b: str):
     if d is None:
         raise HTTPException(404, "not two groups of MITRE ATT&CK")
     return tpl.TemplateResponse(request, "twins_pair.html", {"d": d})
+
+
+@router.get("/graph/leads")
+def leads_page(request: Request, kind: str = "", q: str = "", status: str = "", page: str = "1", per_page: str = ""):
+    """Hypotheses: actors never named together, not linked, but sharing neighbours in the stated network."""
+    rows = leads.ranking(kind if kind in actors.KINDS else "", q)
+    if status == "open":
+        rows = [r for r in rows if not r["review"]]
+    elif status in leads.VERDICTS:
+        rows = [r for r in rows if r["review"] and r["review"]["verdict"] == status]
+    size = paging.per_page_of(per_page, 50)
+    f = {"kind": kind, "q": q, "status": status}
+    pg = paging.paginate(len(rows), page, size, "/graph/leads", {**f, "per_page": size if size != 50 else ""}, default=50)
+    reviewed = leads.reviews()
+    return tpl.TemplateResponse(request, "leads.html", {
+        "rows": rows[pg["offset"]:pg["offset"] + size], "pg": pg, "f": f, "kinds": actors.KINDS, "verdicts": leads.VERDICTS,
+        "hub": leads.HUB, "min_shared": leads.MIN_SHARED, "reviewed": len(reviewed),
+        "by_verdict": {v: sum(1 for r in reviewed.values() if r["verdict"] == v) for v in leads.VERDICTS}})
+
+
+@router.get("/graph/leads/{a}/{b}")
+def lead_page(request: Request, a: str, b: str, notice: str = ""):
+    d = leads.detail(a, b)
+    if d is None:
+        raise HTTPException(404, "not two actors of the network")
+    return tpl.TemplateResponse(request, "lead.html", {"d": d, "notice": notice})
+
+
+@router.post("/graph/leads/review")
+def lead_review(a: str = Form(...), b: str = Form(...), verdict: str = Form(...), note: str = Form("")):
+    r = leads.record(a, b, verdict, note)
+    if "error" in r:
+        raise HTTPException(400, r["error"])
+    a, b = sorted((a, b))
+    return RedirectResponse(f"/graph/leads/{a}/{b}?notice=saved", status_code=303)
+
+
+@router.get("/graph/brokers")
+def brokers_page(request: Request, kind: str = "", page: str = "1", per_page: str = ""):
+    """Entities whose stated links reach actors of several kinds – state, cyber, terror, armed, crime."""
+    rows = leads.brokers(kind if kind in leads.DOMAINS else "")
+    size = paging.per_page_of(per_page, 50)
+    pg = paging.paginate(len(rows), page, size, "/graph/brokers", {"kind": kind, "per_page": size if size != 50 else ""}, default=50)
+    return tpl.TemplateResponse(request, "brokers.html", {"rows": rows[pg["offset"]:pg["offset"] + size], "pg": pg, "kind": kind,
+                                                          "domains": {d: actors.KINDS[d] for d in leads.DOMAINS}})
