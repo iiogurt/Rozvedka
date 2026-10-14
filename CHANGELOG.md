@@ -27,6 +27,22 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.64.0] – 2026-10-14
+
+### Added
+- **One target on several sanctions lists** (`rozvedka/identity.py`): 11,155 entries of the EU, UK, UN and US lists are recognised as
+  4,393 people, companies and vessels – by a UN reference the UK or EU entry gives, by a shared IMO, passport, national ID,
+  registration or tax number plus a shared name word, or by the same name and (for people) date of birth; at most one entry per
+  list, never two different actors. Entity pages list the entries, the reason for every merge, dates of birth, numbers and addresses.
+- **Shared details** (network layer “ids”): street addresses, e-mail addresses, websites (platform accounts), telephone numbers and
+  crypto wallets given by two different targets become entities linked to both – 2,946 links. The UK list's parent companies,
+  subsidiaries and ships' owners and operators are linked by name (legal forms ignored); owners that are not listed but shared by
+  several entries become entities too.
+- The sanctions lists' dates of birth, identity and registration numbers, addresses and contacts are read with each entry.
+
+### Changed
+- EU list entries are named by their original or English name (the list also holds translations into every EU language).
+
 ## [0.63.0] – 2026-10-14
 
 ### Added
@@ -1222,7 +1238,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.63.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.64.0...HEAD
+[0.64.0]: https://github.com/iiogurt/Rozvedka/compare/v0.63.0...v0.64.0
 [0.63.0]: https://github.com/iiogurt/Rozvedka/compare/v0.62.0...v0.63.0
 [0.62.0]: https://github.com/iiogurt/Rozvedka/compare/v0.61.0...v0.62.0
 [0.61.0]: https://github.com/iiogurt/Rozvedka/compare/v0.60.0...v0.61.0

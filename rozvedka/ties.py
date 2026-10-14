@@ -20,7 +20,9 @@ import json
 import logging
 import re
 
-from . import actors, db, paging, sanctions, techniques, trends
+from collections import Counter
+
+from . import actors, db, identity, paging, sanctions, techniques, trends
 from .actors import PAIR_FOUNDED
 
 log = logging.getLogger("rozvedka.ties")
@@ -28,12 +30,14 @@ log = logging.getLogger("rozvedka.ties")
 LAYERS = {
     "us": {"name": "US Treasury: “Linked To”", "group": "official",
            "about": "OFAC's SDN list: an entry's remarks name the entry it is linked to"},
-    "uk": {"name": "UK: statements of reasons", "group": "official",
-           "about": "the UK Sanctions List's statement of reasons for a designation names another designation"},
+    "uk": {"name": "UK Sanctions List", "group": "official",
+           "about": "a designation's statement of reasons names another designation; its parent companies, subsidiaries, ship owners"},
     "un": {"name": "UN Security Council: listing narratives", "group": "official",
            "about": "the comments of a UN Security Council listing name another listed person or entity"},
     "eu": {"name": "EU: remarks", "group": "official",
            "about": "the remarks of an EU listing (associated entities, reasons) name another EU listing"},
+    "ids": {"name": "Shared details", "group": "official",
+            "about": "list entries giving the same street address, e-mail, website, telephone number or crypto wallet – linked through it"},
     "wikidata": {"name": "Wikidata statements", "group": "reference",
                  "about": "statements such as member of, founded by, parent organisation – with their references"},
     "wikipedia": {"name": "Wikipedia infoboxes", "group": "reference",
@@ -47,7 +51,11 @@ GROUPS = {"official": "Official lists", "reference": "Reference data", "reports"
 LIST_LAYER = {"US": "us", "UK": "uk", "UN": "un", "EU": "eu"}
 SHAPES = {"Individual": "person", "Entity": "org", "Vessel": "vessel", "Ship": "vessel", "Aircraft": "aircraft"}
 KINDS = {**actors.KINDS, "person": "Person", "org": "Company or organisation", "vessel": "Vessel", "aircraft": "Aircraft",
-         "malware": "Malware", "tool": "Tool", "campaign": "Campaign"}
+         "malware": "Malware", "tool": "Tool", "campaign": "Campaign", "address": "Address", "email": "E-mail address",
+         "website": "Website", "phone": "Telephone number", "wallet": "Crypto wallet"}
+LABEL_ORDER = ("UK", "EU", "UN", "US")
+DETAIL_BACK = {"address": "address of", "email": "e-mail address of", "website": "website of", "phone": "telephone number of",
+               "wallet": "crypto wallet of"}
 UN_REF = re.compile(r"\b([A-Z]{2}[ei]\.\d{3})\b")       # a UN listing's reference number: QDe.004, CDi.012
 MIN_TOGETHER = 2
 MIN_NAME = 6            # characters: shorter names are not looked for in the narratives
@@ -151,11 +159,11 @@ def _sentences(text: str) -> list[str]:
 
 
 def _label(lst: str, e: dict) -> str:
-    """The entry's name as the list writes it; the EU list's names come in no order – its longest Latin-script one."""
+    """The entry's name as the list writes it; for the EU list its first original or English name in Latin script."""
     if lst == "EU":
         latin = [n for n in e["names"] if n and sum(c.isascii() for c in n if c.isalpha()) >= 0.8 * sum(c.isalpha() for c in n)]
         if latin:
-            return max(latin, key=len)
+            return latin[0]
     return e["name"] or e["ref"]
 
 
@@ -168,24 +176,111 @@ def _quote(s: str) -> str:
     return s if len(s) <= QUOTE else s[:QUOTE].rsplit(" ", 1)[0] + " …"
 
 
-def _entry_node(g: _Graph, canon: dict, lst: str, e: dict) -> str:
-    key = canon.get(f"{lst}:{e['ref']}")
-    if key and key in g.actors:
-        return g.actor(key)
-    return g.node(f"{lst}:{e['ref']}", SHAPES.get(e.get("shape"), "person" if e["type"] == "person" else "org"),
-                  _label(lst, e), lst.lower(),
-                  {"list": lst, "ref": e["ref"], "programme": e["programme"], "date": e["date"],
-                   "url": e["url"] or sanctions.LISTS[lst]["page"], "names": e["names"][:12]})
+class _Targets:
+    """List entries → the target they describe (rozvedka/identity.py): one node per person, company or vessel, whichever
+    lists name it; the node of the actor where the sanctions matching tied an entry to one."""
+
+    def __init__(self, g: _Graph, entries: dict[str, dict], canon: dict[str, str]):
+        self.g, self.entries, self.canon = g, entries, canon
+        self.root, self.reasons = identity.clusters(entries, canon)
+        self.members: dict[str, list] = {}
+        for k, r in self.root.items():
+            self.members.setdefault(r, []).append(k)
+        self.node_of: dict[str, str] = {}
+
+    def node(self, key: str) -> str:
+        if key in self.node_of:
+            return self.node_of[key]
+        ms = sorted(self.members[self.root[key]], key=lambda m: identity.LIST_ORDER.index(m.split(":")[0]))
+        actor = next((self.canon[m] for m in ms if self.canon.get(m) in self.g.actors), None)
+        if actor:
+            nid = self.g.actor(actor)
+        else:
+            first = self.entries[ms[0]]
+            lst = ms[0].split(":")[0]
+            # the label: UK's name first (English, often in mixed case), written as a name rather than in capitals where one is
+            named = [_label(m.split(":")[0], self.entries[m]) for m in sorted(ms, key=lambda m: LABEL_ORDER.index(m.split(":")[0]))]
+            label = next((n for n in named if not n.isupper()), named[0])
+            data = {"list": lst, "ref": first["ref"], "programme": first["programme"], "date": first["date"],
+                    "url": first["url"] or sanctions.LISTS[lst]["page"], "names": first["names"][:12]}
+            if len(ms) > 1:
+                data["members"] = [{"list": m.split(":")[0], "ref": self.entries[m]["ref"], "name": self.entries[m]["name"],
+                                    "programme": self.entries[m]["programme"], "date": self.entries[m]["date"],
+                                    "url": self.entries[m]["url"] or sanctions.LISTS[m.split(":")[0]]["page"]} for m in ms]
+                data["why"] = self.reasons.get(self.root[key], [])
+            det = [self.entries[m]["details"] for m in ms]
+            data["dob"] = sorted({x for d in det for x in d["dob"]})
+            data["ids"] = sorted({tuple(i) for d in det for i in d["ids"]})[:20]
+            data["addresses"] = [a for i, a in enumerate(x for d in det for x in d["addresses"]) if i < 8]
+            nid = self.g.node(ms[0], SHAPES.get(first.get("shape"), "person" if first["type"] == "person" else "org"),
+                              label, lst.lower(), data)
+        for m in ms:
+            self.node_of[m] = nid
+        return nid
+
+
+def _entry_node(g: _Graph, targets: _Targets, lst: str, e: dict) -> str:
+    return targets.node(f"{lst}:{e['ref']}")
+
+
+def _from_details(g: _Graph, targets: _Targets, stats: dict) -> None:
+    """Shared addresses, e-mails, websites, telephone numbers and wallets; the UK list's parents, subsidiaries, owners."""
+    n = 0
+    for nid, kind, label, given in identity.detail_nodes(targets.entries, targets.root):
+        g.node(nid, kind, label, "ids", {"given_by": len(given)})
+        for key, rel in given:
+            e = targets.entries[key]
+            lst = key.split(":")[0]
+            g.tie(targets.node(key), nid, rel, DETAIL_BACK[kind], "ids",
+                  {"list": lst, "ref": e["ref"], "url": e["url"] or sanctions.LISTS[lst]["page"], "quote": f"{KINDS[kind]}: {label}"})
+            n += 1
+    names: dict[str, set] = {}
+    bare: dict[str, set] = {}             # without legal forms: the UK list names owners short ("SOVCOMFLOT")
+    for key, e in targets.entries.items():
+        if e["type"] == "person":
+            continue
+        for nm in e["names"]:
+            names.setdefault(sanctions.normalise(nm), set()).add(targets.root[key])
+            if len(identity.bare(nm)) >= 5:
+                bare.setdefault(identity.bare(nm), set()).add(targets.root[key])
+    unresolved, shared = 0, {}
+    for key, e in targets.entries.items():
+        if not key.startswith("UK:"):
+            continue
+        d = e["details"]
+        for field, rel, back, what in (("parents", "subsidiary of", "parent company of", "Parent company"),
+                                       ("subsidiaries", "parent company of", "subsidiary of", "Subsidiary"),
+                                       ("owners", "owned or operated by", "owns or operates", "Current owner/operator")):
+            for name in d[field]:
+                roots = (names.get(sanctions.normalise(name)) or bare.get(identity.bare(name)) or set()) - {targets.root[key]}
+                ev = {"list": "UK", "ref": e["ref"], "url": sanctions.LISTS["UK"]["page"], "quote": f"{what}: {name.strip()}"}
+                if len(roots) == 1:
+                    g.tie(targets.node(key), targets.node(next(iter(roots))), rel, back, "uk", ev)
+                else:
+                    unresolved += 1
+                    shared.setdefault(sanctions.normalise(name), []).append((key, name.strip(), rel, back, ev, len(roots)))
+    for norm, refs in shared.items():          # not on any list, but named by two entries or more: a shared owner or parent
+        if len({targets.root[k] for k, *_ in refs}) < 2 or len(norm) < 4:
+            continue
+        nid = g.node(f"uk-name:{norm}", "org", refs[0][1], "uk", {"named_by": len(refs), "candidates": max(r[5] for r in refs)})
+        for key, _, rel, back, ev, _ in refs:
+            g.tie(targets.node(key), nid, rel, back, "uk", ev)
+    merged = {r: ms for r, ms in targets.members.items() if len(ms) > 1}
+    stats["ids"] = {"ties": n, "unresolved_names": unresolved,
+                    "targets_merged": len(merged), "entries_merged": sum(len(ms) for ms in merged.values()),
+                    "reasons": dict(Counter(" ".join(w.split()[:2]) for v in targets.reasons.values() for _, _, w in v))}
 
 
 def _from_lists(g: _Graph, stats: dict) -> None:
     canon = _canon()
+    per_list = {lst: list(sanctions._entries(sanctions.DIR / spec["file"], lst))
+                for lst, spec in sanctions.LISTS.items() if (sanctions.DIR / spec["file"]).exists()}
+    targets = _Targets(g, {f"{lst}:{e['ref']}": e for lst, es in per_list.items() for e in es}, canon)
     for lst, spec in sanctions.LISTS.items():
-        path = sanctions.DIR / spec["file"]
-        if not path.exists():
+        if lst not in per_list:
             continue
         layer = LIST_LAYER[lst]
-        entries = list(sanctions._entries(path, lst))
+        entries = per_list[lst]
         by_ref = {e["ref"]: e for e in entries}
         unresolved = 0
         if lst == "US":
@@ -200,7 +295,7 @@ def _from_lists(g: _Graph, stats: dict) -> None:
                         unresolved += 1
                         continue
                     other = by_ref[next(iter(refs))]
-                    g.tie(_entry_node(g, canon, lst, e), _entry_node(g, canon, lst, other), "linked to", "linked to it", layer,
+                    g.tie(_entry_node(g, targets, lst, e), _entry_node(g, targets, lst, other), "linked to", "linked to it", layer,
                           {"list": lst, "ref": e["ref"], "url": e["url"], "quote": f"Linked To: {target}"})
         else:
             names: dict[str, set] = {}
@@ -239,12 +334,13 @@ def _from_lists(g: _Graph, stats: dict) -> None:
                     for ref, as_ in found.items():
                         if ref == e["ref"]:
                             continue
-                        g.tie(_entry_node(g, canon, lst, e), _entry_node(g, canon, lst, by_ref[ref]),
+                        g.tie(_entry_node(g, targets, lst, e), _entry_node(g, targets, lst, by_ref[ref]),
                               "names in its listing", "named in the listing of", layer,
                               {"list": lst, "ref": e["ref"], "url": e["url"] or spec["page"], "quote": _quote(sentence),
                                "found": as_},
                               e["date"])
         stats[layer] = {"entries": len(entries), "unresolved": unresolved}
+    _from_details(g, targets, stats)
 
 
 def _from_gazetteer(g: _Graph, con) -> None:

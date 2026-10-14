@@ -399,7 +399,7 @@ column; <i>over-emphasis</i> shows how much more or less often a row carries a t
 
 <img src="docs/images/graph.png" alt="Network: links by layer, the entities most linked on the official sanctions lists, and where official lists, reference data and reports meet" width="900">
 
-One graph of **22,000 links between 18,700 entities** – groups, people, companies, vessels, aircraft, malware, tools
+One graph of **25,000 links between 20,000 entities** – groups, people, companies, vessels, aircraft, malware, tools
 and campaigns – each link with the layer it comes from and its evidence. Nothing is inferred: every link is something a
 source states.
 
@@ -426,6 +426,21 @@ as a name (“Rostec”, not “prosperity”), no names made only of generic wo
   more layers). Every number opens the list of links it counts (checked before each release).
 
 <img src="docs/images/graph-ties.png" alt="Links found by name: listings that name Rostec, with the sentences from the UK statements of reasons" width="900">
+
+#### One target on several lists, and the details they share
+
+<img src="docs/images/graph-entity.png" alt="Sovcomflot on the EU, UK and US lists: why the entries are one company, its numbers and address, the tankers linked to it" width="900">
+
+The four sanctions lists describe many of the same targets separately; **11,155 entries are recognised as 4,393 targets**:
+when a UK or EU entry gives the UN reference of a UN listing, when entries share an IMO, passport, national ID, company
+registration or tax number and a word of their names, or when they have the same name and – for people – the same date of
+birth. A target holds at most one entry per list (front companies sharing an alias stay apart), and its page lists the entries
+with the reason for each merge, the dates of birth, numbers and addresses. 35 merges read by hand were all right.
+
+**Shared details** become links: a street address, e-mail address, website (on platforms the account, e.g. `vk.com/…`),
+telephone number or crypto wallet that two different targets give is an entity linked to both – 2,946 such links. The UK list's
+parent companies, subsidiaries and ships' owners and operators are linked by name, legal forms ignored (“PAO Sovcomflot” is the
+listed PJSC Sovcomflot).
 
 #### Find a connection
 
