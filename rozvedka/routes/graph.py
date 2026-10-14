@@ -2,7 +2,7 @@
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import RedirectResponse
 
-from .. import paths, sanctions, ties
+from .. import paging, paths, sanctions, techniques, ties, twins
 from ..web import tpl
 
 router = APIRouter()
@@ -55,3 +55,22 @@ def path_page(request: Request, a: str = "", b: str = "", layer: list[str] = Que
 def api_entity_suggest(q: str = ""):
     """Entities of the network for the path form as one types: actors by any of their names, list entries by label."""
     return {"q": q, "entities": paths.suggest(q)}
+
+
+@router.get("/graph/twins")
+def twins_page(request: Request, q: str = "", page: str = "1", per_page: str = ""):
+    """Threat groups that work alike: the most similar toolkits by MITRE ATT&CK, rare items weighted up."""
+    rows = twins.ranking(q=q)
+    size = paging.per_page_of(per_page, 50)
+    pg = paging.paginate(len(rows), page, size, "/graph/twins", {"q": q, "per_page": size if size != 50 else ""}, default=50)
+    return tpl.TemplateResponse(request, "twins.html", {"rows": rows[pg["offset"]:pg["offset"] + size], "pg": pg, "q": q,
+                                                        "min_shared": twins.MIN_SHARED, "meta": techniques.meta(),
+                                                        "groups": len(twins._profiles()["prof"])})
+
+
+@router.get("/graph/twins/{a}/{b}")
+def twins_pair_page(request: Request, a: str, b: str):
+    d = twins.pair(a, b)
+    if d is None:
+        raise HTTPException(404, "not two groups of MITRE ATT&CK")
+    return tpl.TemplateResponse(request, "twins_pair.html", {"d": d})

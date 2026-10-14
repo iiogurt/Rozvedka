@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ d.a_label }} and {{ d.b_label }} · Toolkit twins · Rozvedka{% endblock %}
+{% block main %}
+<p class="muted small"><a href="/graph/twins">Toolkit twins</a></p>
+<h1 class="page-h"><a href="{{ d.a_href }}">{{ d.a_label }}</a> and <a href="{{ d.b_href }}">{{ d.b_label }}</a></h1>
+<p class="lede">Alike {{ '%.2f'|format(d.score) }}: they share <b>{{ d.techniques }}</b> techniques and <b>{{ d.software }}</b> programs in
+  MITRE ATT&amp;CK. {{ d.a_label }} also uses {{ d.only_a.techniques }} techniques and {{ d.only_a.software }} programs the other does not;
+  {{ d.b_label }} {{ d.only_b.techniques }} and {{ d.only_b.software }}. Rarest first: the number of the {{ d.groups }} groups using each item says
+  how telling it is. <a href="/graph/path?a={{ d.a }}&b={{ d.b }}">Are they connected?</a></p>
+<div class="panels h-grid">
+  <section class="h-card">
+    <h2 class="viz-title">Shared software <span class="muted small">{{ d.software }}</span></h2>
+    <table class="rp-topics small">
+      {% for s in d.shared_software %}<tr><th><a href="{{ s.href }}">{{ s.name }}</a> <span class="muted">{{ s.id }} · {{ s.type }}</span></th><td class="n">{{ s.groups }} group{{ 's' if s.groups != 1 }}</td></tr>
+      {% else %}<tr><td class="muted">None.</td></tr>{% endfor %}
+    </table>
+  </section>
+  <section class="h-card">
+    <h2 class="viz-title">Shared techniques <span class="muted small">{{ d.techniques }}</span></h2>
+    <table class="rp-topics small">
+      {% for t in d.shared_techniques %}<tr><th><a href="/techniques/{{ t.id }}">{{ t.id }}</a> {{ t.name }} <span class="muted">{{ t.tactics|join(', ') }}</span></th><td class="n">{{ t.groups }} groups</td></tr>
+      {% else %}<tr><td class="muted">None.</td></tr>{% endfor %}
+    </table>
+  </section>
+</div>
+{% if d.cves %}
+<section class="viz-card top-gap">
+  <h2 class="viz-title">CVE numbers named near both in reports <span class="muted small">{{ d.cves|length }}</span></h2>
+  <p class="muted small">Not counted above: a nearness in text, not a statement that either used the vulnerability.</p>
+  <p class="small">{% for c in d.cves %}<a href="/cves/{{ c }}">{{ c }}</a>{{ ' · ' if not loop.last }}{% endfor %}</p>
+</section>
+{% endif %}
+<p class="muted small top-gap">MITRE ATT&amp;CK® {% if d.meta %}catalog {{ d.meta.versions.get('enterprise-attack') }}, retrieved {{ d.meta.retrieved }}{% endif %} – © The MITRE Corporation, reproduced with permission.</p>
+{% endblock %}

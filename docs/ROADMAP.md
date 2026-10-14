@@ -174,8 +174,11 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
    subsidiaries, ship owners by name. Still open: Wikidata people merged with list entries (by date of birth), MMSI, directors
    from company registries (G9); the largest connected part grew only from 9,526 to 11,150 entities – most list clusters link
    to the actors only through people the reports never name. · minor
-4. **Vendor names and toolkit twins** – the MISP threat-actor galaxy as a name crosswalk (APT28 = Fancy Bear = Forest
-   Blizzard …) and cyber groups ranked by shared techniques, software and CVEs. · minor
+4. ✅ (0.65.0) **Vendor names and toolkit twins** – MISP galaxy: 176 groups tied, their distinctive names added to the
+   matching (measured: 92 matches through names only MISP gives, 15 sampled all right; few new mentions overall – the
+   reports mostly use the common names; one conflict found and ruled out:
+   MISP's "APT38" under Lazarus), "similar/overlaps" as a layer; `/graph/twins` by IDF-weighted overlap of techniques and
+   software (CVEs shown, not scored). · minor
 5. **Leads and brokers** – pairs never named together in any report but sharing several associates, tools or CVEs
    (Adamic–Adar), labelled as hypotheses with a review screen; entities that bridge communities (crime ↔ state, terror ↔
    crime). · minor

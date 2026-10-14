@@ -15,10 +15,10 @@ os.environ.setdefault("ROZVEDKA_ALLOWED_HOSTS", "testserver")   # the host name 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fastapi.testclient import TestClient  # noqa: E402
 
-from rozvedka import compare, home, ties, updates, watch  # noqa: E402
+from rozvedka import compare, home, ties, twins, updates, watch  # noqa: E402
 from rozvedka.app import app  # noqa: E402
 
-PAGES = ["/", "/new", "/watch", "/compare", "/actors/review", "/data", "/documents", "/years", "/ratings", "/publishers", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/graph", "/graph/path?a=Evil+Corp&b=Federal+Security+Service", "/map", "/map/democracy", "/collect"]
+PAGES = ["/", "/new", "/watch", "/compare", "/actors/review", "/data", "/documents", "/years", "/ratings", "/publishers", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/graph", "/graph/path?a=Evil+Corp&b=Federal+Security+Service", "/graph/twins", "/map", "/map/democracy", "/collect"]
 
 
 def main() -> int:
@@ -45,7 +45,14 @@ def main() -> int:
         if listed != abs(n):
             bad += 1
             print(f"MISMATCH {label}: shows {abs(n)}, list has {listed} – {url}")
-    print(f"Network: {len(net)} counts checked")
+    for label, n, url in twins.figures():
+        m = re.search(r"share <b>(\d+)</b> techniques and <b>(\d+)</b> programs", client.get(url).text)
+        listed = int(m.group(1)) + int(m.group(2)) if m else None
+        if listed != n:
+            bad += 1
+            print(f"MISMATCH {label}: shows {n}, pair page has {listed} – {url}")
+        net.append((label, n, url))
+    print(f"Network and Toolkit twins: {len(net)} counts checked")
     seen, broken = set(), 0
     # one report page as well: the first report on the home page
     sample = re.search(r'href="(/report/\d+)"', client.get("/").text)
