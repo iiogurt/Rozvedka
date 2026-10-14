@@ -48,6 +48,7 @@ PERSON_KINDS = {"person"}
 GROUP_KINDS = {"state", "cyber", "terror", "armed", "crime", "movement", "party", "org", "other"}
 
 
+@lru_cache(maxsize=300_000)
 def normalise(name: str) -> str:
     """'Hizb Allah' → 'hizb allah': no accents, case or punctuation; words separated by one space."""
     s = unicodedata.normalize("NFKD", name or "")
@@ -74,10 +75,16 @@ def _iso(s: str) -> str:
     return s[:10] if re.match(r"\d{4}-\d{2}-\d{2}", s or "") else ""
 
 
+def _details(e, kind: str) -> dict:
+    from . import identity              # dates of birth, numbers, addresses, contacts (rozvedka/identity.py)
+    return identity.details(e, kind)
+
+
 def _entries(path: Path, kind: str):
     """Yield the entries of one list file as dicts: ref, type (person/group/other), name, names, date, programme, legal –
     and for the connection graph (rozvedka/ties.py) `shape` (the list's own type: Individual, Entity, Vessel …), `text`
-    (the list's narrative: UK statement of reasons, UN comments, EU remarks) and `linked` (OFAC's "Linked To" names)."""
+    (the list's narrative: UK statement of reasons, UN comments, EU remarks), `linked` (OFAC's "Linked To" names) and
+    `details` (dates of birth, identity and registration numbers, addresses, contacts – rozvedka/identity.py)."""
     for _, e in ET.iterparse(path, events=("end",)):
         t = _tag(e)
         if kind == "UN" and t in ("INDIVIDUAL", "ENTITY"):
@@ -85,7 +92,7 @@ def _entries(path: Path, kind: str):
             for a in e:
                 if _tag(a) in ("INDIVIDUAL_ALIAS", "ENTITY_ALIAS") and _text(a, "ALIAS_NAME") and _text(a, "QUALITY") != "Low":
                     names.append(_text(a, "ALIAS_NAME"))
-            yield {"ref": _text(e, "REFERENCE_NUMBER") or _text(e, "DATAID"), "type": "person" if t == "INDIVIDUAL" else "group",
+            yield {"details": _details(e, kind), "ref": _text(e, "REFERENCE_NUMBER") or _text(e, "DATAID"), "type": "person" if t == "INDIVIDUAL" else "group",
                    "name": names[0], "names": names, "primary": 1, "date": _iso(_text(e, "LISTED_ON")),
                    "programme": _text(e, "UN_LIST_TYPE"), "legal": [], "url": None,
                    "shape": "Individual" if t == "INDIVIDUAL" else "Entity", "text": _text(e, "COMMENTS1"), "linked": []}
@@ -99,7 +106,7 @@ def _entries(path: Path, kind: str):
             primary = len(names)
             names += aliases
             shape = _text(e, "IndividualEntityShip")
-            yield {"ref": _text(e, "UniqueID"), "type": "person" if shape == "Individual" else "group" if shape == "Entity" else "other",
+            yield {"details": _details(e, kind), "ref": _text(e, "UniqueID"), "type": "person" if shape == "Individual" else "group" if shape == "Entity" else "other",
                    "name": names[0] if names else "", "names": names, "primary": primary or 1, "date": _iso(_text(e, "DateDesignated")),
                    "programme": _text(e, "RegimeName"), "legal": [], "url": None,
                    "shape": shape, "text": _text(e, "UKStatementofReasons"), "linked": []}
@@ -113,19 +120,22 @@ def _entries(path: Path, kind: str):
                     names.append(full(a))
             typ = _text(e, "sdnType")
             progs = [(p.text or "").strip() for p in e.iter() if _tag(p) == "program"]
-            yield {"ref": _text(e, "uid"), "type": "person" if typ == "Individual" else "group" if typ == "Entity" else "other",
+            yield {"details": _details(e, kind), "ref": _text(e, "uid"), "type": "person" if typ == "Individual" else "group" if typ == "Entity" else "other",
                    "name": names[0], "names": names, "primary": 1, "date": "", "programme": ", ".join(progs), "legal": [],
                    "url": f"https://sanctionssearch.ofac.treas.gov/Details.aspx?id={_text(e, 'uid')}",
                    "shape": typ, "text": "", "linked": linked_to(_text(e, "remarks"))}
             e.clear()
         elif kind == "EU" and t == "sanctionEntity":
-            names = [a.get("wholeName") for a in e if _tag(a) == "nameAlias" and a.get("wholeName")]
+            aliases = [a for a in e if _tag(a) == "nameAlias" and a.get("wholeName")]
+            # original and English names first; the list also carries translations into every EU language
+            aliases.sort(key=lambda a: (a.get("nameLanguage") not in ("", "EN"), a.get("strong") != "true"))
+            names = [a.get("wholeName") for a in aliases]
             code = next((s.get("code") for s in e if _tag(s) == "subjectType"), "")
             regs = [r for r in e if _tag(r) == "regulation"]
             regs.sort(key=lambda r: r.get("publicationDate", ""))
             legal = [{"text": f"{r.get('numberTitle')} ({r.get('programme')})", "url": (r.findtext("{*}publicationUrl") or "").strip() or None}
                      for r in regs]
-            yield {"ref": e.get("euReferenceNumber") or e.get("logicalId"),
+            yield {"details": _details(e, kind), "ref": e.get("euReferenceNumber") or e.get("logicalId"),
                    "type": "person" if code == "person" else "group" if code == "enterprise" else "other",
                    "name": names[0] if names else "", "names": names, "primary": 1,
                    "date": _iso(e.get("designationDate") or "") or (regs[0].get("entryIntoForceDate", "") if regs else ""),

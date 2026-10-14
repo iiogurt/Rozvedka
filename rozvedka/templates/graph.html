@@ -13,7 +13,14 @@
   the wrong ones led to the rules above. <b>Reference data</b>: Wikidata statements and Wikipedia infobox fields of the actor
   gazetteer; MITRE ATT&amp;CK's groups, software and campaigns. <b>Reports</b>: two actors (not countries) named in one passage
   of at least two reports – a co-mention, not a stated tie. A list entry that the sanctions matching tied to an actor by its exact
-  name is that actor, so layers meet there; entries of different lists are not yet merged with each other.
+  name is that actor, so layers meet there. <b>One target, several lists</b>: entries are recognised as the same person, company
+  or vessel when a list gives the other's UN reference, when they share an IMO, passport, national ID, registration or tax number
+  and a word of their names, or when they have the same name and – for people – the same date of birth; at most one entry per
+  list, the reason shown on the entity's page ({{ (meta.stats or {}).get('ids', {}).get('entries_merged', 0)|num }} entries →
+  {{ (meta.stats or {}).get('ids', {}).get('targets_merged', 0)|num }} targets; 35 merges read by hand, none wrong).
+  <b>Shared details</b>: a street address, e-mail, website, telephone number or crypto wallet that two targets give becomes an
+  entity linked to both; the UK list's parent companies, subsidiaries and ships' owners are linked by name (legal forms such as
+  PJSC ignored).
   Not resolved (a name found on several entries or on none): {% for k, v in (meta.stats or {}).items() if v.unresolved is defined %}{{ k|upper }} {{ v.unresolved }}{{ ', ' if not loop.last }}{% endfor %}.
   Built {{ meta.built }} with <code>build-graph</code>.</p></details>
 

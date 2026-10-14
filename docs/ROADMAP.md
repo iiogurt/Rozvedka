@@ -168,9 +168,12 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
    intermediate's links, +1.5 for common tools), alternatives on other routes, layers and countries selectable, evidence per
    step, co-mention-only steps flagged. Measured: 9,526 of 18,761 entities are in one connected part; sanctions-list clusters
    (e.g. 176 companies around one trader) stand apart until entries are merged across lists – G3 is next. · minor
-3. **Shared identifiers and one person across lists** – same address, passport or ID number, crypto wallet, vessel
-   (IMO / MMSI), e-mail, website, director as links; the same person or company on the US, UK, EU and UN lists and Wikidata
-   merged by name + date of birth + identifiers, with the reasons shown. · minor
+3. ✅ (0.64.0) **Shared identifiers and one target across lists** – 11,155 entries → 4,393 targets (UN references, IMO /
+   passport / ID / registration / tax numbers with a shared name word, same name + date of birth; one entry per list; 35 merges
+   read by hand, none wrong); shared addresses, e-mails, websites, phones, wallets as entities (2,946 links); UK parents,
+   subsidiaries, ship owners by name. Still open: Wikidata people merged with list entries (by date of birth), MMSI, directors
+   from company registries (G9); the largest connected part grew only from 9,526 to 11,150 entities – most list clusters link
+   to the actors only through people the reports never name. · minor
 4. **Vendor names and toolkit twins** – the MISP threat-actor galaxy as a name crosswalk (APT28 = Fancy Bear = Forest
    Blizzard …) and cyber groups ranked by shared techniques, software and CVEs. · minor
 5. **Leads and brokers** – pairs never named together in any report but sharing several associates, tools or CVEs

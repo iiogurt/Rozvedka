@@ -5,14 +5,28 @@
 <p class="muted small"><a href="/graph">Network</a> › {{ e.kind_name }}</p>
 <h1 class="page-h"><i class="kdot kind-{{ e.kind }}"></i>{{ e.label }}</h1>
 {% set d = e.data %}
-<p class="lede">{{ e.kind_name }}{% if d.list %} on the {{ lists[d.list].name }} ({{ lists[d.list].issuer }}){% elif e.origin == 'attack' %} in MITRE ATT&amp;CK{% elif e.origin == 'wikidata' %} on Wikidata{% endif %} –
+{% if e.origin == 'ids' %}
+<p class="lede">{{ e.kind_name }} given by {{ d.given_by }} entries of the sanctions lists that describe different targets – a detail they
+  share, so a link between them. It may be innocent (a registered agent's office, a parliament building): read the entries.</p>
+{% elif d.named_by %}
+<p class="lede">Named by {{ d.named_by }} UK list entries as their parent company, subsidiary or ship owner/operator, and
+  {{ 'not found as an entry of its own' if not d.candidates else 'matching ' ~ d.candidates ~ ' entries by name – which one is unclear' }}.</p>
+{% else %}
+<p class="lede">{{ e.kind_name }}{% if d.members %} on {{ d.members|length }} sanctions lists{% elif d.list %} on the {{ lists[d.list].name }} ({{ lists[d.list].issuer }}){% elif e.origin == 'attack' %} in MITRE ATT&amp;CK{% elif e.origin == 'wikidata' %} on Wikidata{% endif %} –
   not an actor the reports are searched for; it is here because a source links it to one.</p>
+{% endif %}
 <section class="viz-card facts">
   <h2 class="viz-title">Reference</h2>
   <table class="rp-topics small">
-    {% if d.list %}<tr><th>Entry</th><td><a href="{{ d.url }}" rel="noopener">{{ d.list }} {{ d.ref }}</a>{% if d.date %} · listed {{ d.date }}{% endif %}</td></tr>
+    {% if d.members %}{% for m in d.members %}<tr><th>{{ 'Entries' if loop.first }}</th><td><a href="{{ m.url }}" rel="noopener">{{ m.list }} {{ m.ref }}</a> · {{ m.name }}{% if m.date %} · listed {{ m.date }}{% endif %}{% if m.programme %} <span class="muted">· {{ m.programme }}</span>{% endif %}</td></tr>{% endfor %}
+      <tr><th>One target because</th><td>{% for a, b, why in d.why %}{{ a }} = {{ b }}: {{ why }}{{ '; ' if not loop.last }}{% endfor %}
+        <span class="muted small">– see <a href="/graph">how entries are recognised</a></span></td></tr>
+    {% elif d.list %}<tr><th>Entry</th><td><a href="{{ d.url }}" rel="noopener">{{ d.list }} {{ d.ref }}</a>{% if d.date %} · listed {{ d.date }}{% endif %}</td></tr>
       {% if d.programme %}<tr><th>Programme</th><td>{{ d.programme }}</td></tr>{% endif %}
       {% if d.names|length > 1 %}<tr><th>Other names</th><td>{{ d.names[1:]|join(' · ') }}</td></tr>{% endif %}{% endif %}
+    {% if d.dob %}<tr><th>Born</th><td>{{ d.dob|join(' · ') }}</td></tr>{% endif %}
+    {% if d.ids %}<tr><th>Numbers</th><td>{% for k, n, c in d.ids %}{{ k|replace('-', ' ') }} <code>{{ n }}</code>{{ ' (' ~ c ~ ')' if c }}{{ ' · ' if not loop.last }}{% endfor %}</td></tr>{% endif %}
+    {% if d.addresses %}<tr><th>Addresses</th><td>{% for a in d.addresses %}{{ a.street }}{{ ', ' ~ a.city if a.city }}{{ ', ' ~ a.country if a.country }}{{ '; ' if not loop.last }}{% endfor %}</td></tr>{% endif %}
     {% if d.description %}<tr><th>Description</th><td>{{ d.description }}</td></tr>{% endif %}
     {% if d.attack %}<tr><th>ATT&amp;CK</th><td><a href="{{ d.url }}" rel="noopener">{{ d.attack }}</a>{% if d.aliases %} · also {{ d.aliases|join(', ') }}{% endif %}{% if d.first %} · active {{ d.first }} – {{ d.last }}{% endif %}</td></tr>{% endif %}
     {% if e.origin == 'wikidata' %}<tr><th>Wikidata</th><td><a href="{{ d.url }}" rel="noopener">{{ e.id }}</a>{% if d.wikipedia %} · <a href="{{ d.wikipedia }}" rel="noopener">Wikipedia</a>{% endif %}</td></tr>{% endif %}
