@@ -27,6 +27,17 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.65.0] – 2026-10-14
+
+### Added
+- **Security vendors' names of threat groups** (`fetch-misp`, `rozvedka/vendors.py`): the MISP threat-actor galaxy (CC0) ties 176
+  groups to the gazetteer's actors and adds their vendors' names (Forest Blizzard, STRONTIUM, TA422 …) to the report matching –
+  only names that cannot be ordinary words and are no other actor's own name; the Actor names page shows them with their origin.
+  MISP's “similar” and “overlaps” statements are a new network layer.
+- **Toolkit twins** (`/graph/twins`, menu Actors & threats): pairs of ATT&CK groups ranked by the overlap of their techniques and
+  software, rare items weighted up; a page per pair with what they share (rarest first), what only one uses and CVEs named near
+  both; the closest twins on actor pages. The release check compares each pair's numbers with its page.
+
 ## [0.64.0] – 2026-10-14
 
 ### Added
@@ -1238,7 +1249,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.64.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.65.0...HEAD
+[0.65.0]: https://github.com/iiogurt/Rozvedka/compare/v0.64.0...v0.65.0
 [0.64.0]: https://github.com/iiogurt/Rozvedka/compare/v0.63.0...v0.64.0
 [0.63.0]: https://github.com/iiogurt/Rozvedka/compare/v0.62.0...v0.63.0
 [0.62.0]: https://github.com/iiogurt/Rozvedka/compare/v0.61.0...v0.62.0

@@ -22,7 +22,7 @@ import re
 
 from collections import Counter
 
-from . import actors, db, identity, paging, sanctions, techniques, trends
+from . import actors, db, identity, paging, sanctions, techniques, trends, vendors
 from .actors import PAIR_FOUNDED
 
 log = logging.getLogger("rozvedka.ties")
@@ -44,6 +44,8 @@ LAYERS = {
                   "about": "infobox fields of the actor's English Wikipedia article (leaders, allies, parent …)"},
     "attack": {"name": "MITRE ATT&CK", "group": "reference",
                "about": "groups and campaigns using malware and tools; campaigns attributed to groups"},
+    "misp": {"name": "MISP threat-actor galaxy", "group": "reference",
+             "about": "the community catalogue of threat groups (CC0) states that two groups are similar or overlap"},
     "reports": {"name": "Named together in the reports", "group": "reports",
                 "about": "two actors named in one passage (600 characters) of at least two reports – a co-mention, not a stated tie"},
 }
@@ -407,6 +409,37 @@ def _from_attack(g: _Graph) -> int:
     return n
 
 
+def _from_misp(g: _Graph) -> dict:
+    """MISP's statements that two threat groups are similar, overlap or are part of one another (rozvedka/vendors.py)."""
+    data = vendors.stored()
+    if not data["clusters"]:
+        return {}
+    clusters = {c["uuid"]: c for c in data["clusters"]}
+    tied = vendors.tie_to_actors(actors.load_gazetteer()["actors"])
+
+    def end(uuid):
+        if uuid in tied and tied[uuid][0] in g.actors:
+            return g.actor(tied[uuid][0])
+        c = clusters.get(uuid)
+        if not c:
+            return None
+        return g.node(f"misp:{uuid}", "cyber", c["value"], "misp",
+                      {"description": c["description"], "synonyms": c["synonyms"][:15], "country": c["country"],
+                       "sponsor": c["sponsor"], "refs": c["refs"], "url": vendors.PAGE})
+    n = 0
+    for c in clusters.values():
+        for r in c["related"]:
+            a, b = end(c["uuid"]), end(r["uuid"])
+            if a and b:
+                rel, back = vendors.RELATED[r["type"]]
+                g.tie(a, b, rel, back, "misp", {"url": vendors.PAGE, "quote": f"{c['value']} – {r['type']} – "
+                                                f"{clusters.get(r['uuid'], {}).get('value', '?')}"
+                                                + (f" (likelihood: {r['likelihood']})" if r["likelihood"] else ""),
+                                                "retrieved": (data["meta"] or {}).get("retrieved")})
+                n += 1
+    return {"relations": n, "tied": len(tied)}
+
+
 def _from_reports(g: _Graph, con) -> None:
     """The same count the pair page shows (rozvedka/actors.py pair_detail without filters)."""
     where, args, _ = trends.scope()
@@ -430,6 +463,7 @@ def build() -> dict:
         _from_lists(g, stats)
         _from_gazetteer(g, con)
         stats["attack"] = {"relations": _from_attack(g)}
+        stats["misp"] = _from_misp(g)
         _from_reports(g, con)
         con.execute("DELETE FROM ties")
         con.execute("DELETE FROM entities")
@@ -438,7 +472,7 @@ def build() -> dict:
         cat = techniques.meta() or {}
         meta = {"built": dt.datetime.now().isoformat(timespec="seconds"), "stats": stats,
                 "retrieved": {**{LIST_LAYER[k]: v for k, v in (sanctions.data().get("retrieved") or {}).items()},
-                              "attack": cat.get("retrieved"), **dict.fromkeys(("wikidata", "wikipedia"), actors.stamp().get("gazetteer_retrieved"))}}
+                              "attack": cat.get("retrieved"), "misp": (vendors.stored()["meta"] or {}).get("retrieved"), **dict.fromkeys(("wikidata", "wikipedia"), actors.stamp().get("gazetteer_retrieved"))}}
         con.execute("INSERT OR REPLACE INTO ties_meta VALUES ('meta', ?)", (json.dumps(meta),))
     counts: dict[str, int] = {}
     for t in g.ties.values():

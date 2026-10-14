@@ -163,7 +163,9 @@ def load_config() -> dict:
 
 
 def load_gazetteer() -> dict:
-    return json.loads(GAZETTEER.read_text(encoding="utf-8"))
+    """The gazetteer, with the security vendors' names of threat groups added (rozvedka/vendors.py)."""
+    from . import vendors
+    return vendors.with_names(json.loads(GAZETTEER.read_text(encoding="utf-8")))
 
 
 _SYMBOL = re.compile(r"[%!$&+#@]")      # part of a name ("III %", "Heimat!", "LAPSUS$"); matching sees only the words

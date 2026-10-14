@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}Toolkit twins · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Toolkit twins</h1>
+<p class="lede">Threat groups that work alike: of {{ groups }} groups in MITRE ATT&amp;CK, the pairs whose techniques and software overlap most –
+  rare items weighted up, so sharing a custom implant counts and sharing “PowerShell” hardly does.</p>
+<details class="how"><summary>How this is counted</summary>
+<p class="muted small">Each group's toolkit is what MITRE ATT&amp;CK{% if meta %} (catalog {{ meta.versions.get('enterprise-attack') }}, retrieved {{ meta.retrieved }}){% endif %}
+  lists as its techniques and its software. An item's weight is log(groups ÷ groups using it). The score is the weight of what two
+  groups share divided by the weight of everything either uses – 1.0 for identical toolkits, 0 for nothing in common. Pairs sharing
+  at least {{ min_shared }} items are listed. A similar toolkit is a lead, not a link: groups copy each other, buy the same tools and
+  are described by the same vendors; stated links are on the <a href="/graph">Network</a> page. Each pair's numbers open the
+  items it shares.</p></details>
+<form class="small" method="get">Group <input name="q" value="{{ q }}" placeholder="Sandworm, Lazarus …" size="24"> <button>Filter</button></form>
+{{ pager(pg, "pairs") }}
+<table class="rp-topics small rank">
+  <thead><tr><th>Group</th><th>Group</th><th class="n">Alike</th><th></th><th class="n">Shared</th></tr></thead>
+  {% set top = (rows|map(attribute='score')|max) if rows else 1 %}
+  {% for r in rows %}<tr><th><a href="{{ r.a_href }}">{{ r.a_label }}</a></th><th><a href="{{ r.b_href }}">{{ r.b_label }}</a></th>
+    <td class="n">{{ '%.2f'|format(r.score) }}</td><td class="barcell"><i class="bar" style="width: {{ (100 * r.score / top)|round(1) }}%"></i></td>
+    <td class="n"><a href="{{ r.link }}">{{ r.techniques }} techniques · {{ r.software }} software</a></td></tr>
+  {% else %}<tr><td class="muted">No pair matches.</td></tr>{% endfor %}
+</table>
+{{ pager(pg, "pairs") }}
+{% endblock %}

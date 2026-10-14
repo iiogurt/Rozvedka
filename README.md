@@ -442,6 +442,22 @@ telephone number or crypto wallet that two different targets give is an entity l
 parent companies, subsidiaries and ships' owners and operators are linked by name, legal forms ignored (“PAO Sovcomflot” is the
 listed PJSC Sovcomflot).
 
+#### Vendors' names and toolkit twins
+
+<img src="docs/images/twins.png" alt="Toolkit twins: pairs of threat groups with the most alike MITRE ATT&CK toolkits, rare items weighted up" width="900">
+
+- **One group, many names.** APT28 is *Fancy Bear*, *Forest Blizzard*, *STRONTIUM*, *Sofacy*, *Pawn Storm*, *UAC-0001* … The
+  [MISP threat-actor galaxy](https://github.com/MISP/misp-galaxy) (`fetch-misp`) ties 176 of its groups to the gazetteer's actors (by
+  the ATT&CK number among their synonyms, else by a name only one actor has) and adds the vendors' names to the report matching –
+  with the usual rules, and only names that cannot be ordinary words (a digit as in *TA422*, or an all-capital code name such as
+  *STRONTIUM*; not *Pioneer* or *Axiom*) and that are no other actor's own name (MISP lists *APT38* under Lazarus) – 92 report
+  matches go through such a name (*Cloud Hopper*, *UAC-0057*, *UNC788*), 15 read by hand all right. MISP's
+  statements that two groups are similar or overlap are a network layer of their own.
+- **Toolkit twins** (`/graph/twins`): threat groups that work alike – of 182 ATT&CK groups, the pairs whose techniques and software
+  overlap most, each item weighted by how rare it is (sharing a custom implant counts, sharing PowerShell hardly does). A pair's
+  page lists what the two share, rarest first, what only one uses, and the CVE numbers reports name near both; actor pages show
+  their closest twins. Alike is not linked – a lead to read about, kept apart from the stated links.
+
 #### Find a connection
 
 <img src="docs/images/graph-path.png" alt="Find a connection: chains from Evil Corp to the FSB – through Maksim Yakubets on the US Treasury list, through shared malware in ATT&CK, through co-mentions" width="900">
@@ -646,6 +662,7 @@ failure. Starting it after a reboot with nobody logged in needs `loginctl enable
 | `fetch-threat-levels` | check the official threat-level announcements in `sources/threat_levels.yaml` against their pages (network); the reports' quotes are checked against the library when the page is shown |
 | `fetch-kev` · `index-cves` | download CISA's Known Exploited Vulnerabilities catalog (CC0; network) · find CVE numbers in the report texts and the actors named near them (`update` runs the second) |
 | `fetch-attack` · `index-techniques` | download MITRE ATT&CK (techniques, groups, software, campaigns and their relations; Enterprise, Mobile, ICS; network) · find technique numbers in the report texts (`update` runs the second) |
+| `fetch-misp` | download the MISP threat-actor galaxy (CC0): security vendors' names of threat groups and which groups it holds similar (network; then `index-actors` and `build-graph`) |
 | `build-graph` | rebuild the network of links from what is stored: sanctions lists, Wikidata and Wikipedia connections, ATT&CK, the actor index (no network; `update` runs it last) |
 | `fetch-attributions` | check the official attribution statements in `sources/attributions.yaml` against their pages (network); the result with the check date is stored in `data/gazetteer/attributions.json` |
 | `fetch-sanctions` | download the EU, UK, UN Security Council and US (OFAC) consolidated sanctions lists into `data/sanctions/` and match them with the actors (network; `match-sanctions` matches again without downloading, `index-actors` does it too) |
@@ -800,6 +817,7 @@ flowchart LR
 | `rozvedka/topics.py` | text extraction with page offsets, FTS5 index, topic classification (all CPU cores) |
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
+| `rozvedka/identity.py`, `vendors.py`, `twins.py` | one target across sanctions lists and the details they share; vendors' names of threat groups (MISP); toolkit twins |
 | `rozvedka/paths.py` | Find a connection: the most specific chains between two entities (hub-penalised shortest paths, alternatives on other routes), name resolution |
 | `rozvedka/ties.py` | the network of stated links: entities and links from the sanctions lists, Wikidata, Wikipedia, ATT&CK and the reports, each with its evidence |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |
@@ -1038,6 +1056,8 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | Actor summaries | [English Wikipedia](https://en.wikipedia.org) | CC BY-SA 4.0, attributed with article and revision on each page (also in the actor screenshot above) |
 | Actor pictures | [Wikimedia Commons](https://commons.wikimedia.org) – the Wikipedia article image or the Wikidata flag / logo / image (`data/gazetteer/actor_images/`, not committed) | free licences only (CC BY, CC BY-SA, public domain …); author, licence and file page shown with each picture |
 | Threat groups | [MITRE ATT&CK®](https://attack.mitre.org) | © The MITRE Corporation, reproduced with permission |
+| Vendors' names of threat groups | [MISP threat-actor galaxy](https://github.com/MISP/misp-galaxy) | CC0 1.0 |
+| Sanctions lists | EU (FPI), UK (FCDO), UN Security Council, US Treasury (OFAC) – official XML files | public official data |
 | Event dates | Wikidata via `tools/build_events.py` | CC0 |
 | Charts | [Apache ECharts](https://echarts.apache.org) 6.1.0, vendored | Apache-2.0 |
 | Map | [Leaflet](https://leafletjs.com) 1.9.4, Leaflet.markercluster 1.5.3, [Natural Earth](https://www.naturalearthdata.com) outlines | BSD-2, MIT, public domain |
