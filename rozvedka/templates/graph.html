@@ -21,7 +21,11 @@
   {% for l in s.layers if l.ties %}<a href="{{ l.link }}" class="kpi-{{ l.group }}"><span>{{ l.name }}</span><b>{{ l.ties|num }}</b><em>{{ l.entities|num }} entities · {{ s.groups[l.group] }}</em></a>{% endfor %}
 </section>
 
-<form class="small top-gap" method="get" action="/graph/ties">
+<form class="small top-gap" method="get" action="/graph/path">
+  <b>How are</b> <input name="a" placeholder="Wagner Group" size="22"> <b>and</b> <input name="b" placeholder="GRU" size="22"> <b>connected?</b>
+  <button>Find chains</button>
+</form>
+<form class="small" method="get" action="/graph/ties">
   Find links of <input name="q" placeholder="name: Wagner, IRGC, APT28, Rostec …" size="34"> <button>Search</button>
   <span class="muted">· or open any actor's page: its <b>Network</b> section lists the links.</span>
 </form>

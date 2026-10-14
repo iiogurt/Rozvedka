@@ -80,6 +80,7 @@ SHOTS = {
     "graph": ("/graph", 1250, [], None),                                # the network of stated links: layers, most linked
     "graph-actor": ("/actors/Q41053", 1100, [("sleep", 2)], "#network"),  # Hezbollah: what the sanctions lists tie to it
     "graph-ties": ("/graph/ties?q=Rostec", 1000, [], None),             # links found by name, each with its evidence
+    "graph-path": ("/graph/path?a=Evil+Corp&b=Federal+Security+Service", 1300, [], None),     # chains of stated links between two actors
     "map": ("/map", 800, [("sleep", 5)], None),
     "democracy-map": ("/map/democracy?measure=vdem_regime&year=2025", 900, [("sleep", 6)], None),
     "democracy-change": ("/map/democracy?measure=change&year=2025", 900, [("sleep", 6)], None),

@@ -164,9 +164,10 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
    narratives (sentence matching, 37/40 and 38/40 right in two hand-read samples, rules from the misses), Wikidata,
    Wikipedia, ATT&CK software and campaigns, co-mentions ≥ 2 reports; `/graph`, `/graph/ties`, `/entity/…`, a Network
    section on actor pages. Next: entries of different lists merged (G3). · minor
-2. **“How are X and Y connected?”** – shortest chains of links between any two entities, hub-penalised (a step through
-   Russia or Islamic State costs more), countries left out, layers selectable; shown as a chain of cards with the evidence
-   of every step, alternative chains stacked. · minor
+2. ✅ (0.63.0) **“How are X and Y connected?”** – `/graph/path`: up to five chains, hub-penalised (½ per doubling of an
+   intermediate's links, +1.5 for common tools), alternatives on other routes, layers and countries selectable, evidence per
+   step, co-mention-only steps flagged. Measured: 9,526 of 18,761 entities are in one connected part; sanctions-list clusters
+   (e.g. 176 companies around one trader) stand apart until entries are merged across lists – G3 is next. · minor
 3. **Shared identifiers and one person across lists** – same address, passport or ID number, crypto wallet, vessel
    (IMO / MMSI), e-mail, website, director as links; the same person or company on the US, UK, EU and UN lists and Wikidata
    merged by name + date of birth + identifiers, with the reasons shown. · minor

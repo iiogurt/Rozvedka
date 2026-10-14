@@ -1311,3 +1311,24 @@ table.rank .barcell { width: 35%; } table.rank .bar { display: block; height: 8p
 .tie-grid { list-style: none; margin: 0 0 12px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2px 18px; }
 .tie-grid li { padding: 3px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 8px; }
 .tie-rel-line { margin: 4px 0; color: var(--muted); } .tie-rel-line b { color: var(--ink); }
+
+/* ── Find a connection (rozvedka/paths.py): chains as cards and steps ── */
+.path-form { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin: 4px 0 14px; }
+.path-form input[name=a], .path-form input[name=b] { min-width: 0; max-width: 100%; }
+.path-form .swap { padding: 4px 9px; }
+.path-layers { flex-basis: 100%; border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+.path-layers legend { float: left; margin-right: 6px; color: var(--muted); }
+.chain-row { display: flex; flex-wrap: wrap; align-items: stretch; gap: 6px 0; margin: 6px 0 4px; }
+.chain-node { display: flex; flex-direction: column; justify-content: center; gap: 2px; min-width: 130px; max-width: 230px; padding: 8px 12px;
+              background: var(--chip); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); }
+.chain-node:hover { text-decoration: none; border-color: var(--accent); }
+.chain-node b { font-weight: 600; line-height: 1.25; } .chain-node span { font-size: 11px; color: var(--muted); }
+.chain-node:first-child, .chain-node:last-child { border-color: var(--accent); }
+.chain-step { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-width: 96px; max-width: 170px;
+              padding: 0 6px; font-size: 11px; color: var(--muted); text-align: center; }
+.chain-says { color: var(--ink); } .chain-says em { font-style: normal; color: var(--muted); }
+
+.chain-ev summary { cursor: pointer; color: var(--muted); }
+.warn-tag { color: var(--warn); border: 1px solid var(--warn); background: transparent; margin-left: 6px; font-size: 10px; }
+@media (max-width: 700px) { .chain-row { flex-direction: column; } .chain-node { max-width: none; } .chain-step { flex-direction: row; max-width: none; padding: 4px 0; }
+}
