@@ -27,6 +27,17 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.63.0] – 2026-10-14
+
+### Added
+- **Find a connection** (`/graph/path`, menu Actors & threats): how two groups, people, companies or tools are linked – up to five
+  chains of stated links, the most specific first. A step costs least on an official sanctions list and most where two actors are
+  only named together in reports; passing through an entity costs more the more links it has (and extra for common system tools),
+  so chains through hubs come last. Alternative chains take other routes. Each step shows its relation as the source states it,
+  its layers and its evidence; co-mention-only steps are flagged. Layers and countries can be chosen; with no chain, the page
+  says whether the two are in separate parts of the network. Suggestions while typing (`/api/entities/suggest`); actor and entity
+  pages link to it.
+
 ## [0.62.0] – 2026-10-14
 
 ### Added
@@ -1211,7 +1222,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.62.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.63.0...HEAD
+[0.63.0]: https://github.com/iiogurt/Rozvedka/compare/v0.62.0...v0.63.0
 [0.62.0]: https://github.com/iiogurt/Rozvedka/compare/v0.61.0...v0.62.0
 [0.61.0]: https://github.com/iiogurt/Rozvedka/compare/v0.60.0...v0.61.0
 [0.60.0]: https://github.com/iiogurt/Rozvedka/compare/v0.59.0...v0.60.0

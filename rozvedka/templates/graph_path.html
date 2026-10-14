@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% from "_ties.html" import lay, ent, evidence %}
+{% block title %}Find a connection{% if ea and eb %}: {{ ea.label }} – {{ eb.label }}{% endif %} · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Find a connection</h1>
+<p class="lede">How are two groups, people, companies or tools linked? The most <b>specific</b> chains of stated links between them –
+  not only the shortest – with the evidence of every step.</p>
+<details class="how"><summary>How chains are chosen</summary>
+<p class="muted small">A step costs {{ base.us }} on an official sanctions list, {{ base.wikidata }} in reference data (Wikidata, Wikipedia,
+  ATT&amp;CK) and {{ base.reports }} where two actors are only named together in reports. Passing <i>through</i> an entity adds
+  {{ hub }} for every doubling of its links – a chain through Islamic State or the “Donetsk People's Republic” (hundreds of links)
+  says little, one through a small front company says much – and passing through a common system tool (net, PowerShell,
+  Mimikatz) adds 1.5 more. Each step reads as the source states it: “← linked to” means the next entity is linked to the
+  previous one. The cheapest chain comes first. The next chains may not reuse its intermediate entities, so they are
+  other routes, not variations of one. At most {{ max_steps }} steps; countries are left out unless asked for. A chain is a set of
+  stated links, not a finding: read the evidence. Entries of different sanctions lists are not merged yet, so one company can
+  appear as several entities (choose the one with more links).</p></details>
+
+<form class="path-form" method="get" autocomplete="off">
+  <label>From <input name="a" value="{{ ea.value if ea else a }}" list="ent-list" data-suggest size="34" placeholder="name: Wagner Group, APT28, Rostec …"></label>
+  <button type="button" class="swap" title="swap" onclick="var f=this.form;var t=f.a.value;f.a.value=f.b.value;f.b.value=t">⇄</button>
+  <label>to <input name="b" value="{{ eb.value if eb else b }}" list="ent-list" data-suggest size="34" placeholder="GRU, Hezbollah, a company …"></label>
+  <button>Find chains</button>
+  <datalist id="ent-list"></datalist>
+  <fieldset class="small path-layers"><legend>Layers</legend>
+    {% for k, l in layers.items() %}<label class="chk"><input type="checkbox" name="layer" value="{{ k }}" {{ 'checked' if k in f.layers }}> {{ lay(k, l.group, l.name) }}</label>{% endfor %}
+    <label class="chk"><input type="checkbox" name="countries" value="1" {{ 'checked' if f.countries }}> through countries</label>
+  </fieldset>
+</form>
+
+{% for side, cands, text in (('a', ca, a), ('b', cb, b)) if cands %}
+<section class="viz-card">
+  <h2 class="viz-title">Which “{{ text }}”?</h2>
+  <p class="muted small">Several entities carry this name – often one company on several lists. More links usually means a better start.</p>
+  <ul class="tie-grid small">{% for c in cands %}<li><span class="ent"><i class="kdot kind-{{ c.kind }}"></i><a href="/graph/path?{{ side }}={{ c.value|urlencode }}&{{ 'b' if side == 'a' else 'a' }}={{ (eb.value if side == 'a' and eb else ea.value if side == 'b' and ea else (b if side == 'a' else a))|urlencode }}">{{ c.label }}</a></span>
+    <span class="muted">{{ c.kind_name }} · {{ c.links }} links</span></li>{% endfor %}</ul>
+</section>
+{% endfor %}
+{% for side, text, e, cands in (('From', a, ea, ca), ('To', b, eb, cb)) if text and not e and not cands %}
+<p class="notice">{{ side }}: nothing in the network is called “{{ text }}”.</p>
+{% endfor %}
+
+{% if chains is not none %}
+  {% if chains %}
+  <p class="small muted">{{ chains|length }} chain{{ 's' if chains|length != 1 }} between {{ ent(ea.label, ea.kind, ea.href) }} and {{ ent(eb.label, eb.kind, eb.href) }}, the most specific first.</p>
+  {% for c in chains %}
+  <section class="viz-card chain">
+    <h2 class="viz-title">Chain {{ loop.index }} <span class="muted small">{{ c.n }} step{{ 's' if c.n != 1 }} · cost {{ c.cost }}{% if c.hubs %} · through {{ c.hubs|map(attribute='label')|join(', ') }} ({{ c.hubs|map(attribute='links')|join(', ') }} links){% endif %}</span>
+      {% if c.co_mention_only %}<span class="ctag warn-tag" title="steps resting only on reports that name both">{{ c.co_mention_only|length }} step{{ 's' if c.co_mention_only|length != 1 }} only named together</span>{% endif %}</h2>
+    <div class="chain-row">
+      {% for n in c.nodes %}
+        <a class="chain-node" href="{{ n.href }}"><i class="kdot kind-{{ n.kind }}"></i><b>{{ n.label }}</b><span>{{ n.kind_name }} · {{ n.links }} links</span></a>
+        {% if not loop.last %}{% set s = c.steps[loop.index0] %}
+        {% set l0 = s.links[0] %}
+        <div class="chain-step" title="{{ l0.a_label }} {{ l0.rel }} {{ l0.b_label }}"><span class="chain-says">{% set sym = l0.rel == l0.back %}{{ '← ' if not l0.forward and not sym }}{{ l0.rel }}{{ ' →' if l0.forward and not sym }}{% if s.links|length > 1 %} <em>+{{ s.links|length - 1 }}</em>{% endif %}</span>
+          <span>{% for l in s.layers %}{{ lay(l, layers[l].group, layers[l].name) }}{% endfor %}</span></div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <details class="chain-ev" {{ 'open' if loop.first }}><summary class="small">Evidence of each step</summary>
+      <table class="rp-topics small ties">
+      {% for s in c.steps %}{% set step = loop.index %}
+        {% for l in s.links %}<tr>{% if loop.first %}<td class="tie-rel" rowspan="{{ s.links|length }}">Step {{ step }}</td>{% endif %}
+          <td>{{ l.a_label }} <b>{{ l.rel }}</b> {{ l.b_label }}</td><td>{{ lay(l.layer, l.layer_group, l.layer_name) }}</td><td>{{ evidence(l) }}</td></tr>{% endfor %}
+      {% endfor %}
+      </table>
+    </details>
+  </section>
+  {% endfor %}
+  {% else %}
+  <section class="viz-card">
+    <h2 class="viz-title">No chain within {{ max_steps }} steps</h2>
+    {% if parts and parts.a.id != parts.b.id %}
+    <p class="small">{{ ent(ea.label, ea.kind, ea.href) }} and {{ ent(eb.label, eb.kind, eb.href) }} are in separate parts of the network:
+      {{ ea.label }} in one of {{ parts.a.size|num }} entities{{ ' (the largest)' if parts.a.largest }}, {{ eb.label }} in one of
+      {{ parts.b.size|num }}{{ ' (the largest)' if parts.b.largest }} – no stated link joins them in the chosen layers. Sanctions-list
+      clusters often stand apart until the same company or person is recognised across lists.</p>
+    {% else %}<p class="small">They are linked, but only by more than {{ max_steps }} steps{{ ' or through layers left out' if not f.all }}{{ ' or through countries' if not f.countries }}.</p>{% endif %}
+  </section>
+  {% endif %}
+{% endif %}
+<script src="{{ asset('paths.js') }}"></script>
+{% endblock %}

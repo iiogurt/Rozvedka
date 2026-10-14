@@ -427,6 +427,24 @@ as a name (“Rostec”, not “prosperity”), no names made only of generic wo
 
 <img src="docs/images/graph-ties.png" alt="Links found by name: listings that name Rostec, with the sentences from the UK statements of reasons" width="900">
 
+#### Find a connection
+
+<img src="docs/images/graph-path.png" alt="Find a connection: chains from Evil Corp to the FSB – through Maksim Yakubets on the US Treasury list, through shared malware in ATT&CK, through co-mentions" width="900">
+
+**How are two groups, people, companies or tools connected?** Type two names (suggestions as you type: actors by any of
+their names, sanctions entries, malware, campaigns) and get up to five chains of stated links, **the most specific first**:
+
+- A step costs less on an official sanctions list than in reference data, and least of all where two actors are only named
+  together in reports; passing *through* an entity costs more the more links it has. A chain through Islamic State or the
+  “Donetsk People's Republic” (hundreds of links) says little; one through a single listed person says much – Evil Corp →
+  **Maksim Yakubets** → FSB, both steps from the US Treasury's list. Common system tools (net, PowerShell, Mimikatz) cost extra.
+- The next chains may not reuse the intermediate entities of the earlier ones: other routes, not variations of one.
+- Each step reads as the source states it (“← linked to”), with its layers; steps that rest only on co-mentions are flagged;
+  the evidence of every step – the list remark, the sentence, the Wikidata statement, MITRE's text – is one click away.
+- Choose the layers (e.g. only the official lists) and whether chains may pass through countries. Where no chain exists,
+  the page says whether the two are in separate parts of the network and how large each part is.
+- Every actor and entity page links to it (“Find a connection from …”).
+
 ### 🕸️ Named together
 
 <img src="docs/images/network.png" alt="Network: clusters of actors named together, with ties, main topics, timeline and reporting agencies" width="900">
@@ -767,6 +785,7 @@ flowchart LR
 | `rozvedka/topics.py` | text extraction with page offsets, FTS5 index, topic classification (all CPU cores) |
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
+| `rozvedka/paths.py` | Find a connection: the most specific chains between two entities (hub-penalised shortest paths, alternatives on other routes), name resolution |
 | `rozvedka/ties.py` | the network of stated links: entities and links from the sanctions lists, Wikidata, Wikipedia, ATT&CK and the reports, each with its evidence |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |
 | `rozvedka/updater.py` | the Update page: plan (pages, duration), the update steps, every source's last check, history |
