@@ -408,6 +408,7 @@ source states.
 | **US Treasury (OFAC)** | an SDN entry's remarks say “Linked To: …” another entry (the name resolved on the same list) | the remark and the entry |
 | **UK, UN, EU sanctions lists** | the narrative of a listing (UK statement of reasons, UN comments, EU remarks) names another listing of the same list; UN listings also by reference number (`QDe.004`) | the sentence, the name it was found as |
 | **Wikidata, Wikipedia** | statements and infobox fields of the actor gazetteer (leaders, founders, members, parents, allies) | statement or infobox revision, cited source |
+| **Wikipedia article text** | a sentence of an actor's English Wikipedia article links to another known subject's article (`fetch-wikitext`) | the sentence, section, article revision; the relation word as a hint |
 | **MITRE ATT&CK** | a group or campaign uses malware or a tool; a campaign is attributed to a group | MITRE's sentence |
 | **Reports** | two actors (not countries) named in one passage of at least two reports – a co-mention | the pair page with the passages |
 
@@ -457,6 +458,20 @@ listed PJSC Sovcomflot).
   overlap most, each item weighted by how rare it is (sharing a custom implant counts, sharing PowerShell hardly does). A pair's
   page lists what the two share, rarest first, what only one uses, and the CVE numbers reports name near both; actor pages show
   their closest twins. Alike is not linked – a lead to read about, kept apart from the stated links.
+
+#### Wikipedia article text
+
+The infobox names leaders and allies; the article text says much more – “its first members were from the Badr Organization”,
+“an offshoot of PIJ called as-Sabirin”, “a cooperation deal between the SSG and the KGB of Belarus”. `fetch-wikitext` reads the
+English articles of the 843 actors the reports name and keeps every sentence that links to the article of another known actor
+or person (redirects included, countries left out, See also / References skipped): **12,735 links**, each reading *“its article
+names …”* / *“named in the article of …”* with the sentence, its section and the article revision as evidence. Who is meant is
+certain – the sentence links to that article. What the relation is comes from a word within a few words of the link (member,
+founded, split, funded, led, allied, attacked …) and is shown only as a hint in brackets – *(membership)*, *(support or
+funding)* – because a keyword cannot read a sentence: of 40 such hints read by hand, 25 were right. Sentences without such a
+word are kept as plain “named in the article”. Leads do not count article links about conflict or without a relation word.
+
+<img src="docs/images/graph-wikitext.png" alt="Links of Kata'ib Hezbollah from the text of Wikipedia articles: each with its sentence, section, revision and the relation word" width="900">
 
 #### Leads and brokers
 
@@ -680,6 +695,7 @@ failure. Starting it after a reboot with nobody logged in needs `loginctl enable
 | `fetch-threat-levels` | check the official threat-level announcements in `sources/threat_levels.yaml` against their pages (network); the reports' quotes are checked against the library when the page is shown |
 | `fetch-kev` · `index-cves` | download CISA's Known Exploited Vulnerabilities catalog (CC0; network) · find CVE numbers in the report texts and the actors named near them (`update` runs the second) |
 | `fetch-attack` · `index-techniques` | download MITRE ATT&CK (techniques, groups, software, campaigns and their relations; Enterprise, Mobile, ICS; network) · find technique numbers in the report texts (`update` runs the second) |
+| `fetch-wikitext` | read the English Wikipedia articles of the actors the reports name and keep the sentences that link to another known subject (network, ~5 min; then `build-graph`) |
 | `fetch-misp` | download the MISP threat-actor galaxy (CC0): security vendors' names of threat groups and which groups it holds similar (network; then `index-actors` and `build-graph`) |
 | `build-graph` | rebuild the network of links from what is stored: sanctions lists, Wikidata and Wikipedia connections, ATT&CK, the actor index (no network; `update` runs it last) |
 | `fetch-attributions` | check the official attribution statements in `sources/attributions.yaml` against their pages (network); the result with the check date is stored in `data/gazetteer/attributions.json` |
@@ -835,6 +851,7 @@ flowchart LR
 | `rozvedka/topics.py` | text extraction with page offsets, FTS5 index, topic classification (all CPU cores) |
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
+| `rozvedka/wikitext.py` | links stated in the text of Wikipedia articles: sentences with links, the relation word, redirects |
 | `rozvedka/leads.py` | leads (shared neighbours, never named together; reviews in `sources/lead_reviews.yaml`) and brokers |
 | `rozvedka/identity.py`, `vendors.py`, `twins.py` | one target across sanctions lists and the details they share; vendors' names of threat groups (MISP); toolkit twins |
 | `rozvedka/paths.py` | Find a connection: the most specific chains between two entities (hub-penalised shortest paths, alternatives on other routes), name resolution |
@@ -1072,7 +1089,7 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | Fonts | [IBM Plex](https://github.com/IBM/plex) Sans and Mono, from the Fontsource packages (`static/vendor/plex/`) | SIL OFL 1.1 ([`LICENSE.OFL`](rozvedka/static/vendor/plex/LICENSE.OFL)) |
 | Icons | [Lucide](https://lucide.dev) (a few, in `static/icons.svg`) | ISC ([`LICENSE.lucide`](rozvedka/static/LICENSE.lucide)) |
 | Actor reference data | [Wikidata](https://www.wikidata.org) | CC0 |
-| Actor summaries | [English Wikipedia](https://en.wikipedia.org) | CC BY-SA 4.0, attributed with article and revision on each page (also in the actor screenshot above) |
+| Actor summaries, article sentences | [English Wikipedia](https://en.wikipedia.org) | CC BY-SA 4.0, attributed with article and revision on each page (also in the actor screenshot above) |
 | Actor pictures | [Wikimedia Commons](https://commons.wikimedia.org) – the Wikipedia article image or the Wikidata flag / logo / image (`data/gazetteer/actor_images/`, not committed) | free licences only (CC BY, CC BY-SA, public domain …); author, licence and file page shown with each picture |
 | Threat groups | [MITRE ATT&CK®](https://attack.mitre.org) | © The MITRE Corporation, reproduced with permission |
 | Vendors' names of threat groups | [MISP threat-actor galaxy](https://github.com/MISP/misp-galaxy) | CC0 1.0 |

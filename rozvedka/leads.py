@@ -4,8 +4,8 @@ Leads: two actors of the library that no report names together and no source lin
 stated network (every layer except co-mentions in reports – rozvedka/ties.py). Ranked by Adamic–Adar: each shared
 neighbour counts 1 ÷ log(its number of links), so sharing a small front company says much more than sharing a hub.
 Neighbours with more than HUB links are not counted (a parliament building or a ministry joins hundreds), nor shared malware,
-tools and campaigns (alike toolkits are rozvedka/twins.py's subject); links that say two are rivals ("opposed to") are left out
-– sharing an enemy is no sign of a connection. Each lead can be
+tools and campaigns (alike toolkits are rozvedka/twins.py's subject); links that say two are rivals ("opposed to", an article sentence about
+conflict) are left out – sharing an enemy is no sign of a connection – and so are article sentences without a relation word. Each lead can be
 reviewed – confirmed, rejected or unclear, with a note – and the verdict is kept in sources/lead_reviews.yaml.
 
 Brokers: entities whose stated links reach actors of several kinds – state services, cyber groups, terrorist groups, armed
@@ -42,7 +42,7 @@ def _stated() -> dict:
     if _cache["v"] == g["v"]:
         return _cache
     with db.session() as con:
-        rivals = {r[0] for r in con.execute("SELECT id FROM ties WHERE rel IN ('opposed to')")}
+        rivals = {r[0] for r in con.execute(f"SELECT id FROM ties t WHERE {ties.NOT_A_TIE}")}
     adj: dict[str, dict[str, list]] = {}
     for u, nb in g["adj"].items():
         for v, links in nb.items():
@@ -117,7 +117,7 @@ def detail(a: str, b: str) -> dict | None:
             for x in (a, b):
                 sides[x] = [ties._row(r, x) for r in con.execute(
                     f"""{ties.SELECT} {ties.FROM} WHERE ((t.a=? AND t.b=?) OR (t.a=? AND t.b=?)) AND t.layer != 'reports'
-                        AND t.rel != 'opposed to'""",
+                        AND NOT {ties.NOT_A_TIE}""",
                     (x, w, w, x))]
             e = ents[w]
             rows.append({"id": w, "label": e["label"], "kind": e["kind"], "kind_name": ties.KINDS.get(e["kind"], e["kind"]),
@@ -180,7 +180,7 @@ def brokers(kind: str = "") -> list[dict]:
         out.append({"id": x, "label": e["label"], "kind": e["kind"], "kind_name": ties.KINDS.get(e["kind"], e["kind"]),
                     "href": ties.entity_url(x, e["actor"]), "score": counts[reached[1]], "reached": len(reached),
                     "domains": [{"kind": d, "name": actors.KINDS[d], "n": counts[d],
-                                 "link": ties.ties_url(entity=x, other_kind=d, group="stated")} for d in reached]})
+                                 "link": ties.ties_url(entity=x, other_kind=d, group="connecting")} for d in reached]})
     out.sort(key=lambda r: (-r["score"], -r["reached"], r["label"]))
     return out
 

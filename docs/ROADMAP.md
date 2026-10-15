@@ -183,6 +183,11 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
    shared rivals excluded after looking at the first results – shared tools and shared enemies inflated cyber and cartel pairs),
    review kept in `sources/lead_reviews.yaml`; brokers by the kinds of actor their links reach. Next: let confirmed leads feed
    back (a reviewed-confirmed lead as a link of its own, with the note as evidence). · minor
+5b. ✅ (0.67.0, owner's idea) **Links from Wikipedia article text** – 12,735 sentence links from 843 articles; the subject is
+   certain (a wiki link), the relation word only a hint (25/40 right in a hand-read sample, even after requiring the word to
+   stand near the link – a keyword cannot read a sentence). The largest connected part grew from 11,150 to 12,559 entities;
+   leads grew from 613 to 5,961 (the strongest now substantive: bin Laden – ISI, Hekmatyar – Al-Qaeda). Next: Wikidata family
+   and position statements for people; articles of the connected people, not only of actors in the reports. · minor
 6. **Official sources on people** – FBI Wanted API, US Justice Department indictments and press releases, Europol's EU Most
    Wanted, Rewards for Justice: persons, aliases and handles, units. · sources / minor
 7. **Views** – rings around one entity (hops as rings, relation types as sectors, every label visible), a matrix ordered

@@ -80,6 +80,7 @@ SHOTS = {
     "graph": ("/graph", 1250, [], None),                                # the network of stated links: layers, most linked
     "graph-actor": ("/actors/Q41053", 1100, [("sleep", 2)], "#network"),  # Hezbollah: what the sanctions lists tie to it
     "graph-ties": ("/graph/ties?q=Rostec", 1000, [], None),             # links found by name, each with its evidence
+    "graph-wikitext": ("/graph/ties?entity=Q4119382&layer=wikitext", 1100, [], None),   # links from Wikipedia article sentences
     "leads": ("/graph/leads", 1000, [], None),                         # hypotheses: never named together, shared neighbours
     "lead": ("/graph/leads/Q42418/Q736955", 1100, [], None),         # one lead with the evidence on both sides
     "brokers": ("/graph/brokers", 900, [], None),                      # entities bridging state, cyber, terror, armed, crime

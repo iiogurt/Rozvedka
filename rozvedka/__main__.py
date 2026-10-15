@@ -60,6 +60,7 @@ def main():
     sub.add_parser("fetch-attack", help="download MITRE ATT&CK (techniques, groups, software, campaigns) for the technique pages and the network")
     sub.add_parser("index-techniques", help="find ATT&CK technique numbers (T1566 …) in the report texts")
     sub.add_parser("fetch-misp", help="download the MISP threat-actor galaxy (CC0): security vendors' names of threat groups, similar groups")
+    sub.add_parser("fetch-wikitext", help="links between subjects stated in the text of their English Wikipedia articles (network)")
     sub.add_parser("build-graph", help="rebuild the network of links (sanctions lists, Wikidata, ATT&CK, reports) – no download")
     sub.add_parser("fetch-threat-levels", help="check the official threat-level announcements (sources/threat_levels.yaml) against their pages")
     sub.add_parser("index-citations", help="resolve the web addresses in the report texts: other reports, other agencies, outside sources")
@@ -142,6 +143,9 @@ def main():
     elif a.cmd == "fetch-misp":
         from . import vendors
         print(vendors.fetch())
+    elif a.cmd == "fetch-wikitext":
+        from . import wikitext
+        print(wikitext.fetch())
     elif a.cmd == "build-graph":
         from . import ties
         print(ties.build())

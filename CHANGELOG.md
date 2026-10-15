@@ -27,6 +27,17 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.67.0] – 2026-10-15
+
+### Added
+- **Links from the text of Wikipedia articles** (`fetch-wikitext`, `rozvedka/wikitext.py`, network layer “Wikipedia article text”):
+  sentences of the English articles of the 843 actors the reports name that link to another known actor or person – 12,735
+  links, each with the sentence, its section and the article revision, reading “its article names …” / “named in the article of
+  …”. The relation word near the link (member, founded, split, funded, led, allied, attacked …) is shown as a hint in brackets
+  (25 of 40 hints read by hand were right); sentences without one are “named in the article”. Countries are not linked; See also
+  and References are skipped. Find a connection weighs these links between the infobox and co-mentions; leads ignore article
+  links about conflict or without a relation word.
+
 ## [0.66.0] – 2026-10-14
 
 ### Added
@@ -1261,7 +1272,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.66.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.67.0...HEAD
+[0.67.0]: https://github.com/iiogurt/Rozvedka/compare/v0.66.0...v0.67.0
 [0.66.0]: https://github.com/iiogurt/Rozvedka/compare/v0.65.0...v0.66.0
 [0.65.0]: https://github.com/iiogurt/Rozvedka/compare/v0.64.0...v0.65.0
 [0.64.0]: https://github.com/iiogurt/Rozvedka/compare/v0.63.0...v0.64.0
