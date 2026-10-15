@@ -22,7 +22,7 @@ import re
 
 from collections import Counter
 
-from . import actors, db, identity, paging, sanctions, techniques, trends, vendors
+from . import actors, db, identity, paging, sanctions, techniques, trends, vendors, wikitext
 from .actors import PAIR_FOUNDED
 
 log = logging.getLogger("rozvedka.ties")
@@ -42,6 +42,8 @@ LAYERS = {
                  "about": "statements such as member of, founded by, parent organisation – with their references"},
     "wikipedia": {"name": "Wikipedia infoboxes", "group": "reference",
                   "about": "infobox fields of the actor's English Wikipedia article (leaders, allies, parent …)"},
+    "wikitext": {"name": "Wikipedia article text", "group": "reference",
+                 "about": "a sentence of an actor's English Wikipedia article links to another subject's article; the relation from its words"},
     "attack": {"name": "MITRE ATT&CK", "group": "reference",
                "about": "groups and campaigns using malware and tools; campaigns attributed to groups"},
     "misp": {"name": "MISP threat-actor galaxy", "group": "reference",
@@ -50,7 +52,10 @@ LAYERS = {
                 "about": "two actors named in one passage (600 characters) of at least two reports – a co-mention, not a stated tie"},
 }
 GROUPS = {"official": "Official lists", "reference": "Reference data", "reports": "The library's reports"}
-GROUP_FILTERS = {**GROUPS, "stated": "Stated links (all but co-mentions)"}
+GROUP_FILTERS = {**GROUPS, "stated": "Stated links (all but co-mentions)",
+                 "connecting": "Stated links that connect (no rivalries, no bare article mentions)"}
+# links that say two are rivals, and article sentences about conflict or without a relation word: no sign of a connection
+NOT_A_TIE = "(t.rel = 'opposed to' OR (t.layer = 'wikitext' AND (t.rel LIKE '%(conflict)' OR t.rel NOT LIKE '%(%')))"
 LIST_LAYER = {"US": "us", "UK": "uk", "UN": "un", "EU": "eu"}
 SHAPES = {"Individual": "person", "Entity": "org", "Vessel": "vessel", "Ship": "vessel", "Aircraft": "aircraft"}
 KINDS = {**actors.KINDS, "person": "Person", "org": "Company or organisation", "vessel": "Vessel", "aircraft": "Aircraft",
@@ -370,6 +375,39 @@ def _from_gazetteer(g: _Graph, con) -> None:
             g.tie(a, b, r["a_says"], r["b_says"], layer, ev, r["start"] or "")
 
 
+def _from_wikitext(g: _Graph, con) -> dict:
+    """Sentences of the actors' Wikipedia articles that link to another known subject (rozvedka/wikitext.py)."""
+    data = wikitext.stored()
+    if not data["articles"]:
+        return {}
+    ents = {r["qid"]: dict(r) for r in con.execute("SELECT * FROM link_entities")}
+
+    def end(k):
+        if k in g.actors:
+            return g.actor(k)
+        e = ents.get(k)
+        if not e:
+            return None
+        return g.node(k, "person" if e["human"] else "org", e["label"] or k, "wikidata",
+                      {"description": e["description"], "wikipedia": e["wikipedia"], "url": f"https://www.wikidata.org/wiki/{k}"})
+    n = 0
+    retrieved = (data["meta"] or {}).get("retrieved")
+    for key, art in data["articles"].items():
+        a = end(key)
+        if not a:
+            continue
+        for l in art["links"]:
+            b = end(l["to"])
+            if not b or b == a or g.entities.get(b, ("",))[0] == "country":
+                continue
+            hint = "" if l["relation"] == wikitext.GENERIC else f" ({l['relation']})"
+            g.tie(a, b, f"its article names{hint}", f"named in the article of{hint}", "wikitext",
+                  {"url": wikitext.wiki_rev(art["title"], art["revision"]), "quote": wikitext._bare(l["sentence"]), "article": art["title"],
+                   "section": l["section"], "word": l["word"], "revision": art["revision"], "retrieved": retrieved})
+            n += 1
+    return {"links": n, "articles": len(data["articles"])}
+
+
 def _from_attack(g: _Graph) -> int:
     cat = techniques._catalog()
     if not cat.get("relations"):
@@ -463,6 +501,7 @@ def build() -> dict:
         stats: dict = {}
         _from_lists(g, stats)
         _from_gazetteer(g, con)
+        stats["wikitext"] = _from_wikitext(g, con)
         stats["attack"] = {"relations": _from_attack(g)}
         stats["misp"] = _from_misp(g)
         _from_reports(g, con)
@@ -473,7 +512,8 @@ def build() -> dict:
         cat = techniques.meta() or {}
         meta = {"built": dt.datetime.now().isoformat(timespec="seconds"), "stats": stats,
                 "retrieved": {**{LIST_LAYER[k]: v for k, v in (sanctions.data().get("retrieved") or {}).items()},
-                              "attack": cat.get("retrieved"), "misp": (vendors.stored()["meta"] or {}).get("retrieved"), **dict.fromkeys(("wikidata", "wikipedia"), actors.stamp().get("gazetteer_retrieved"))}}
+                              "attack": cat.get("retrieved"),
+                              "wikitext": (wikitext.stored()["meta"] or {}).get("retrieved"), "misp": (vendors.stored()["meta"] or {}).get("retrieved"), **dict.fromkeys(("wikidata", "wikipedia"), actors.stamp().get("gazetteer_retrieved"))}}
         con.execute("INSERT OR REPLACE INTO ties_meta VALUES ('meta', ?)", (json.dumps(meta),))
     counts: dict[str, int] = {}
     for t in g.ties.values():
@@ -571,6 +611,8 @@ def _where(entity: str = "", layer: str = "", group: str = "", q: str = "", kind
         where.append("t.layer=?"); args.append(layer)
     elif group == "stated":               # everything a source states: all layers but co-mentions in reports
         where.append("t.layer != 'reports'")
+    elif group == "connecting":           # … without rivalries and bare mentions (Leads, Brokers)
+        where.append(f"t.layer != 'reports' AND NOT {NOT_A_TIE}")
     elif group in GROUPS:
         ls = [k for k, v in LAYERS.items() if v["group"] == group]
         where.append(f"t.layer IN ({','.join('?' * len(ls))})"); args += ls

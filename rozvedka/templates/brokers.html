@@ -7,7 +7,7 @@
   organised crime: the facilitators, proxies and umbrellas between them. {{ pg.total|num }} entities.</p>
 <details class="how"><summary>How this is counted</summary>
 <p class="muted small">For each entity of the <a href="/graph">Network</a>, its neighbours in the stated layers (all but co-mentions in
-  reports) that are actors of one of the five kinds are counted per kind. An entity reaching two kinds or more is listed, ranked by its
+  reports, rivalries and bare article mentions) that are actors of one of the five kinds are counted per kind. An entity reaching two kinds or more is listed, ranked by its
   links to the kind it reaches second most – a broker joins worlds, so one strong side is not enough. Each number opens exactly those
   links with their evidence.</p></details>
 <form class="small" method="get">reaching <select name="kind"><option value="">any kind</option>{% for k, n in domains.items() %}<option value="{{ k }}" {{ 'selected' if kind == k }}>{{ n }}</option>{% endfor %}</select> <button>Filter</button></form>

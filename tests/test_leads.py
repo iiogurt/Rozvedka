@@ -63,7 +63,7 @@ def test_brokers(network):
     assert set(rows) == {"US:F", "US:P", "US:H"}
     f = rows["US:F"]
     assert {(d["kind"], d["n"]) for d in f["domains"]} == {("terror", 1), ("crime", 1), ("state", 1)}
-    assert ties.others(entity="US:F", other_kind="terror", group="stated") == 1
+    assert ties.others(entity="US:F", other_kind="terror", group="connecting") == 1
     for label, n, url in leads.figures():
         if n < 0:
             q = dict(p.split("=", 1) for p in url.split("?", 1)[1].split("&"))
@@ -82,5 +82,5 @@ def test_pages(network):
         assert client.get("/graph/leads/Q1/NOPE").status_code == 404
         b = client.get("/graph/brokers").text
         assert "Front Company" in b
-        assert "with <b>1</b> others" in client.get("/graph/ties?entity=US:F&other_kind=terror&group=stated").text
+        assert "with <b>1</b> others" in client.get("/graph/ties?entity=US:F&other_kind=terror&group=connecting").text
         assert 'id="leads"' in client.get("/actors/Q1").text
