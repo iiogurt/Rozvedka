@@ -37,6 +37,7 @@ REPORT_WORDS = re.compile(
     r"sk[yý]rsl|rapor|извешт|проценк|publikacii|yay[iı]nlar",
     re.I)
 YEAR_RE = re.compile(r"(?<!\d)(19[89]\d|20[0-4]\d)(?!\d)")
+SERIAL_DIR = re.compile(r"([A-Za-z]+)\d+")
 
 LANG_TOKENS = {
     "en": r"en|eng|english|anglicky|angl|englisch|anglais|engels",
@@ -53,7 +54,7 @@ GENERIC_TITLES = re.compile(
 # link texts that are calls to action, not titles ("Click here to access our report")
 _CTA_WORDS = re.compile(
     r"(?<!\w)(click|klikn\w*|cliquez|download\w*|télécharg\w*|herunterladen|stáhn\w*|stiahn\w*|pobierz|scarica|"
-    r"descarg\w*|consultez|here|hier|ici|zde|tady)(?!\w)", re.I)
+    r"descarg\w*|consultez|here|hier|här|ici|zde|tady)(?!\w)", re.I)
 
 
 class _CallToAction:
@@ -65,6 +66,9 @@ class _CallToAction:
 
 
 CALL_TO_ACTION = _CallToAction()
+# the action words a link text starts with before the publication's name ("Get publication The Last European Colonial Empire")
+ACTION_PREFIX = re.compile(r"^\s*(get publication|hämta publikation|download(?: the)?(?: full)?(?: report| pdf| publication)?|"
+                           r"ladda ner|lataa|télécharger|herunterladen|read(?: the)?(?: full)? report)\b\s*[:–-]?\s*", re.I)
 # kept but hidden by default: administrative documents that are not security reports
 LOW_RELEVANCE_RE = re.compile((
     r"contract|procurement|corrigendum|questionnaire|formulier|zakázk|veřejn[aá] zak|кандидат|конкурс|класиране|"
@@ -120,18 +124,28 @@ def guess_lang(url: str, text: str, page_lang: str, allowed: set[str]) -> str:
 def guess_year(title: str, url: str) -> int | None:
     # years after the current one are horizons ("NATO 2030", "Trends 2035"), not publication years
     now = datetime.now().year
-    for s in (title, unquote(urlsplit(url).path.rsplit("/", 1)[-1]), unquote(urlsplit(url).path)):
+    path = unquote(urlsplit(url).path)
+    for s in (title, path.rsplit("/", 1)[-1], path):
+        if s is path:
+            # a folder that groups numbered files ("RRA2000/RRA2032-1/RAND_RRA2032-1.pdf") holds a serial number,
+            # not a year
+            s = "/".join(seg for seg in path.split("/")
+                         if not ((m := SERIAL_DIR.fullmatch(seg)) and re.search(rf"{m[1]}\d", path[path.index(seg) + len(seg):])))
         years = [y for y in map(int, YEAR_RE.findall(s or "")) if y <= now]
         if years:
             return years[0] if s is title else max(years)
     return None
 
 
-_SIZE_SUFFIX = re.compile(r"\s*[\(\[]\s*(?:pdf[,\s]*)?[\d.,]+\s*[kmg]i?b\s*[\)\]]\s*$", re.I)
+_SIZE_SUFFIX = re.compile(r"\s*(?:[\(\[]\s*(?:pdf[,\s]*)?[\d.,]+\s*[kmg]i?b\s*[\)\]]|[,–-]?\s*(?<![\w.])pdf[,\s]+[\d.,]+\s*[kmg]i?b)\s*$",
+                          re.I)
+# screen-reader notes at the end of a link ("här pdf, 19.5 MB, öppnas i nytt fönster.")
+_NEW_WINDOW = re.compile(r"[\s,.(–-]*(öppnas i (?:ett )?nytt fönster|opens in (?:a )?new (?:window|tab)|"
+                         r"(?:s')?ouvre dans une nouvelle fenêtre|öffnet in (?:einem )?neuen fenster)[\s.)]*$", re.I)
 
 
 def _title_for(a) -> str:
-    t = _SIZE_SUFFIX.sub("", " ".join(a.get_text(" ", strip=True).split()))
+    t = _SIZE_SUFFIX.sub("", _NEW_WINDOW.sub("", " ".join(a.get_text(" ", strip=True).split())))
     if GENERIC_TITLES.match(t) or CALL_TO_ACTION.match(t) or len(t) < 4:
         t = a.get("title") or a.get("aria-label") or ""
     if GENERIC_TITLES.match(t) or CALL_TO_ACTION.match(t) or len(t) < 4:
@@ -237,6 +251,7 @@ LABEL_ONLY = re.compile(r"(?:(?:true|false|null|en|fr|es|sp|ar|de|ru|zh|english|
 def is_poor_title(title: str | None, url: str) -> bool:
     return (not title or bool(GENERIC_TITLES.match(title)) or bool(CALL_TO_ACTION.match(title))
             or bool(LABEL_ONLY.fullmatch(title.strip()))
+            or (bool(ACTION_PREFIX.match(title)) and not ACTION_PREFIX.sub("", title).strip())
             or title == humanize_filename(url) or bool(re.fullmatch(r"[\w .%()-]+\.pdf", title, re.I)))
 
 
@@ -328,12 +343,18 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
                     sub_docs, _ = extract(r.text, r.url)
                     heading = strip_site_name(page_heading(r.text) or clean_link_text(sub_title), src) if follow else ""
                     for d in sub_docs:
-                        if follow and heading:
+                        named = ACTION_PREFIX.sub("", d["title"]) if ACTION_PREFIX.match(d["title"]) else ""
+                        if (follow and heading and len(sub_docs) > 1 and len(named.split()) >= 3
+                                and named.lower() not in heading.lower() and heading.lower() not in named.lower()):
+                            # a related publication the page links to ("Get publication <its name>"): its own name,
+                            # not this page's heading
+                            d["lang_hint"], d["title"] = d["title"], named
+                        elif follow and heading:
                             # a publication page: its title is the page's own heading; the PDF's own link text
                             # ("Read report", "Spanish") is added only when it says which file it is, and kept as a
-                            # language hint
+                            # language hint; a paragraph (the description beside a bare link) says neither
                             own = d["lang_hint"] = d["title"]
-                            d["title"] = heading if (len(sub_docs) == 1 or is_poor_title(own, d["url"])
+                            d["title"] = heading if (len(sub_docs) == 1 or is_poor_title(own, d["url"]) or len(own) > 100
                                                      or own.lower() in heading.lower()) else f"{heading} – {own}"
                         elif d["title"] == humanize_filename(d["url"]) and sub_title:
                             # a bare filename says little; prefix the title of the page that linked it
