@@ -541,6 +541,21 @@
   pages:
     - {lang: sv, kind: archive, url: "https://www.ncsc.se/sv/radgivning-och-stod/hantera-och-rapportera-it-incidenter-och-cyberangrepp/arsrapporter-om-it-incidenter/"}
 
+- country: SE
+  agency: MPF
+  name_local: "Myndigheten för psykologiskt försvar"
+  name_en: "Swedish Psychological Defence Agency"
+  homepage: "https://mpf.se/"
+  hq: {address: "Karlstad, Sweden", lat: 59.3793, lon: 13.50357, precision: city}
+  description: "Swedish agency for psychological defence (since 2022): identifies and counters foreign malign information influence. Reports on Russian and Chinese information influence, AI-driven influence operations, election interference and psychological defence."
+  type: other
+  access: auto
+  frequency: periodic
+  report_types: [rapporter, reports]
+  pages:
+    - {lang: sv, kind: archive, url: "https://mpf.se/publikationer", follow: "mpf\\.se/publikationer/publikationer/[^/]+$"}
+    - {lang: en, kind: archive, url: "https://mpf.se/psychological-defence-agency/publications", follow: "psychological-defence-agency/publications/archive/[^/]+$"}
+
 # ════════════════════════ DENMARK ════════════════════════
 - country: DK
   agency: PET
@@ -793,6 +808,22 @@
   report_types: [FIMI threat reports, activity report]
   pages:
     - {lang: fr, kind: current, url: "https://www.sgdsn.gouv.fr/viginum/publications"}
+
+- country: FR
+  agency: IRSEM
+  name_local: "Institut de recherche stratégique de l'École militaire"
+  name_en: "Institute for Strategic Research (IRSEM)"
+  homepage: "https://www.irsem.fr/"
+  hq: {address: "École militaire, 1 place Joffre, 75007 Paris, France", lat: 48.85117, lon: 2.30305, precision: street}
+  description: "The French Ministry of the Armed Forces' strategic research institute. Études, research papers and reports – incl. on information manipulation and Chinese and Russian influence operations."
+  type: other
+  access: auto
+  frequency: periodic
+  report_types: [études, notes de recherche, rapports]
+  pages:
+    - {lang: fr, kind: archive, url: "https://www.irsem.fr/publications", follow: "irsem\\.fr/publications/[^/?#]+$"}
+    - {lang: en, kind: archive, url: "https://www.irsem.fr/en/publications", follow: "irsem\\.fr/en/publications/[^/?#]+$"}
+    - {lang: en, kind: archive, url: "https://www.irsem.fr/en/publications?page=2", follow: "irsem\\.fr/en/publications/[^/?#]+$"}
 
 # ════════════════════════ ITALY ════════════════════════
 - country: IT
@@ -1414,6 +1445,36 @@
   pages:
     - {lang: en, kind: archive, url: "https://ccdcoe.org/library/publications/"}
 
+- country: NATO
+  agency: NATO STO
+  name_local: "NATO Science and Technology Organization"
+  name_en: "NATO Science and Technology Organization (STO)"
+  homepage: "https://www.sto.nato.int/"
+  hq: {address: "Neuilly-sur-Seine, France", lat: 48.8846, lon: 2.2697, precision: city}
+  description: "NATO's science and technology body (Collaboration Support Office). Technical reports and the Chief Scientist's reports, incl. on cognitive warfare."
+  type: nato
+  access: manual
+  frequency: periodic
+  report_types: [technical reports, Chief Scientist reports]
+  notes: "The site answers automated requests with 403 (bot protection) – reports are collected by hand on To collect."
+  pages:
+    - {lang: en, kind: archive, url: "https://www.sto.nato.int/publications/"}
+
+- country: NATO
+  agency: NATO ACT
+  name_local: "NATO Allied Command Transformation"
+  name_en: "NATO Allied Command Transformation (ACT)"
+  homepage: "https://www.act.nato.int/"
+  hq: {address: "Norfolk, Virginia, United States", lat: 36.85077, lon: -76.28588, precision: city}
+  description: "NATO's strategic command for transformation. Cognitive warfare concept work, newsletters and studies; strategic foresight."
+  type: nato
+  access: manual
+  frequency: periodic
+  report_types: [cognitive warfare newsletter, concept papers, strategic foresight analysis]
+  notes: "The site answers automated requests with 403 (bot protection) – reports are collected by hand on To collect."
+  pages:
+    - {lang: en, kind: current, url: "https://www.act.nato.int/activities/cognitive-warfare/"}
+
 # ════════════════════════ NATO MEMBERS OUTSIDE THE EU ════════════════════════
 # Researched 2026-10-06. Not added, with the reason:
 #   Albania – SHISH (state intelligence service): its site publishes no documents.
@@ -1809,6 +1870,20 @@
     - {lang: en, kind: current, url: "https://www.gov.uk/government/publications/national-risk-register-2025"}
 
 - country: GB
+  agency: DCDC
+  name_local: "Development, Concepts and Doctrine Centre"
+  name_en: "Development, Concepts and Doctrine Centre (UK Ministry of Defence)"
+  homepage: "https://www.gov.uk/government/groups/development-concepts-and-doctrine-centre"
+  hq: {address: "Shrivenham, Swindon, United Kingdom", lat: 51.5994, lon: -1.6511, precision: city}
+  description: "The UK Ministry of Defence's think tank for concepts and doctrine. Global Strategic Trends – the long-term assessment of the security environment, incl. information and cognitive competition – and its strategic-trends papers."
+  type: other
+  access: auto
+  frequency: periodic
+  report_types: [Global Strategic Trends, strategic trends papers]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.gov.uk/government/collections/strategic-trends-programme", follow: "gov\\.uk/government/publications/[^/?#]+$"}
+
+- country: GB
   agency: ISC
   name_local: "Intelligence and Security Committee of Parliament"
   name_en: "Intelligence and Security Committee of Parliament"
@@ -1894,6 +1969,20 @@
   report_types: [Internet Crime Report]
   pages:
     - {lang: en, kind: archive, url: "https://www.ic3.gov/AnnualReport/Reports"}
+
+- country: US
+  agency: USCC
+  name_local: "U.S.-China Economic and Security Review Commission"
+  name_en: "U.S.-China Economic and Security Review Commission (USCC)"
+  homepage: "https://www.uscc.gov/"
+  hq: {address: "Washington, DC, United States", lat: 38.8951, lon: -77.03638, precision: city}
+  description: "Commission of the US Congress. Annual reports to Congress on China's military, intelligence, cyber and influence operations and their implications for US security."
+  type: other
+  access: auto
+  frequency: yearly
+  report_types: [annual report to Congress]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.uscc.gov/annual-reports"}
 
 # ════════════════════════ CANADA ════════════════════════
 - country: CA
@@ -2385,6 +2474,15 @@
 # with regular reports. `publisher: independent` marks them in every view; their reports come from their own domains.
 # Researched and left out for now: RUSI, SWP, Chatham House, Carnegie (publication lists built by JavaScript);
 # EU DisinfoLab (reports are web pages without PDF); state-run institutes (OSW, PISM, NUPI) – not independent.
+# Harvested from the Small Wars Journal's articles on cognitive, narrative and information warfare (118 posts, 2025-08 to
+# 2026-10, 2026-10-16): added RAND, DFRLab here and MPF (SE), IRSEM (FR), DCDC (GB), USCC (US), NATO STO and ACT (manual);
+# already in the registry: EEAS, VIGINUM, StratCom CoE, Hybrid CoE, ASPI, ISD, CSIS, ISW, Freedom House. Left out: NDU INSS
+# (publication list built by JavaScript); Congressional Research Service (thousands of products on every policy area);
+# Finnish Government's overviews of information influence (403 to automated requests, no regular series found);
+# Lund University's Psychological Defence Research Institute (a university institute funded by MPF – neither an agency
+# nor independent; its working papers also appear via MPF); Irregular Warfare Initiative, Modern War Institute, War on the
+# Rocks (articles and podcasts, no report series); Graphika (a company); Brookings, Hudson, Heritage, CNA, CFR, Belfer,
+# FPRI, Wilson Center (cited, but not on cognitive warfare regularly – candidates for later).
 - country: US
   agency: CEPA
   name_local: "Center for European Policy Analysis"
@@ -2447,6 +2545,38 @@
   report_types: [Freedom in the World, Freedom on the Net, Nations in Transit, special reports]
   pages:
     - {lang: en, kind: archive, url: "https://freedomhouse.org/reports", follow: "freedomhouse\\.org/report/[a-z0-9-]+(/\\d{4}/[^/]+)?$"}
+
+- country: US
+  agency: RAND
+  name_local: "RAND Corporation"
+  name_en: "RAND Corporation"
+  homepage: "https://www.rand.org/"
+  description: "Research institute on national security, defence and public policy. Research reports on information operations, psychological warfare, disinformation and cognitive security – the source the Small Wars Journal cites most."
+  hq: {address: "Santa Monica, California, United States", lat: 34.01949, lon: -118.49119, precision: city}
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: periodic
+  report_types: [research reports, perspectives]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.rand.org/topics/information-operations.html", follow: "rand\\.org/pubs/(research_reports|perspectives)/[A-Z]+[\\w.-]+\\.html$"}
+    - {lang: en, kind: archive, url: "https://www.rand.org/topics/psychological-warfare.html", follow: "rand\\.org/pubs/(research_reports|perspectives)/[A-Z]+[\\w.-]+\\.html$"}
+
+- country: US
+  agency: DFRLab
+  name_local: "Digital Forensic Research Lab (Atlantic Council)"
+  name_en: "Atlantic Council's Digital Forensic Research Lab (DFRLab)"
+  homepage: "https://dfrlab.org/"
+  description: "The Atlantic Council's open-source research lab on disinformation and foreign information manipulation: investigations of Russian, Chinese and Iranian influence operations, election interference, Foreign Interference Attribution Tracker."
+  hq: {address: "Washington, DC, United States", lat: 38.8951, lon: -77.03638, precision: city}
+  type: think-tank
+  publisher: independent
+  access: auto
+  frequency: periodic
+  report_types: [reports]
+  notes: "Most DFRLab analyses are web pages; only the reports with a PDF are collected."
+  pages:
+    - {lang: en, kind: archive, url: "https://dfrlab.org/research/", follow: "dfrlab\\.org/\\d{4}/\\d{2}/\\d{2}/[^/]*report[^/]*/$"}
 
 - country: GB
   agency: ISD

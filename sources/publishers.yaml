@@ -32,6 +32,24 @@ US/CSIS:
   former_ratings:
     - {by: Transparify, year: 2016, rating: "4 stars – broadly transparent (donors grouped in brackets)", source: "https://onthinktanks.org/wp-content/uploads/2016/09/OnThinkTanks_TransparifyCharts.pdf"}
 
+US/RAND:
+  wikipedia: "RAND Corporation"
+  funding:
+    disclosure: names
+    evidence: "https://www.rand.org/about/clients_grantors.html"
+    checked: 2026-10-16
+    note: "Revenue by kind of funder with amounts (FY2025, $469.7M: US national-security agencies $82.1M, Health and Human Services $72.6M, Homeland Security $58.3M, Air Force $55.7M, Army $47.1M; non-US governments and international NGOs $11.8M) and the funders of projects of $100,000 or more by name, without amounts. Non-US government funders named: Australia, Canada, Japan, Denmark, Qatar, the Netherlands, the United Kingdom, the European Union."
+    governments: [USA, AUS, CAN, JPN, DNK, QAT, NLD, GBR]
+
+US/DFRLab:
+  wikipedia: "Digital Forensic Research Lab"
+  funding:
+    disclosure: brackets
+    evidence: "https://www.atlanticcouncil.org/in-depth-research-reports/report/2025-honor-roll-of-contributors/"
+    checked: 2026-10-16
+    note: "A lab of the Atlantic Council, whose honor roll names its contributors in funding brackets (cash received in 2025, published 2026-04-22). Government donors from $25,000: United Arab Emirates embassy, US Departments of Defense and State ($1M+); United Kingdom, Norway ($500,000–999,999); Sweden, Norwegian defence ministry, US Department of Energy; Denmark, Canada, Spain, Lithuania; Saudi Arabia, Kuwait, Switzerland, NATO STO; Belgium, Ireland, Japan, Singapore, the Netherlands, Italy, NATO StratCom CoE; France ($10,000–24,999). The lab's own funders are not listed separately."
+    governments: [ARE, USA, GBR, NOR, SWE, DNK, CAN, ESP, LTU, SAU, KWT, CHE, BEL, IRL, JPN, SGP, NLD, ITA, FRA]
+
 US/ISW:
   wikipedia: "Institute for the Study of War"
   funding:
