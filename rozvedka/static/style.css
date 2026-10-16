@@ -1335,3 +1335,5 @@ table.rank .barcell { width: 35%; } table.rank .bar { display: block; height: 8p
 .kind-address, .kind-email, .kind-website, .kind-phone, .kind-wallet { background: transparent; border-radius: 1px; box-shadow: inset 0 0 0 2px var(--muted); }
 .kind-wallet { box-shadow: inset 0 0 0 2px var(--accent-2); }
 .bar-lead { background: var(--warn) !important; opacity: .7; }
+.kind-case { background: transparent; border-radius: 1px; box-shadow: inset 0 0 0 2px var(--accent); }
+.wanted-tag { color: var(--accent); border: 1px solid var(--accent); background: transparent; margin-left: 6px; font-size: 10px; }

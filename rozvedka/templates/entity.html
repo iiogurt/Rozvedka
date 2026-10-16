@@ -8,22 +8,29 @@
 {% if e.origin == 'ids' %}
 <p class="lede">{{ e.kind_name }} given by {{ d.given_by }} entries of the sanctions lists that describe different targets – a detail they
   share, so a link between them. It may be innocent (a registered agent's office, a parliament building): read the entries.</p>
+{% elif e.kind == 'case' %}
+<p class="lede">A wanted notice about several people at once{% if d.wanted %} ({{ 'the FBI' if d.wanted[0].source == 'FBI' else 'Europe’s Most Wanted' }}){% endif %}: the people,
+  units and groups its text names are linked to it, so the notice joins them. An allegation, not a conviction.</p>
 {% elif d.named_by %}
 <p class="lede">Named by {{ d.named_by }} UK list entries as their parent company, subsidiary or ship owner/operator, and
   {{ 'not found as an entry of its own' if not d.candidates else 'matching ' ~ d.candidates ~ ' entries by name – which one is unclear' }}.</p>
 {% else %}
-<p class="lede">{{ e.kind_name }}{% if d.members %} on {{ d.members|length }} sanctions lists{% elif d.list %} on the {{ lists[d.list].name }} ({{ lists[d.list].issuer }}){% elif e.origin == 'attack' %} in MITRE ATT&amp;CK{% elif e.origin == 'wikidata' %} on Wikidata{% endif %} –
-  not an actor the reports are searched for; it is here because a source links it to one.</p>
+<p class="lede">{{ e.kind_name }}{% if d.members %}{% set nw = d.members|selectattr('list', 'in', ['FBI', 'EUMW'])|list|length %}{% set ns = d.members|length - nw %} on {{ ns }} sanctions list{{ 's' if ns != 1 }}{% if nw %} and {{ nw }} wanted list{{ 's' if nw != 1 }}{% endif %}{% elif d.list %} on the {{ lists[d.list].name }} ({{ lists[d.list].issuer }}){% elif e.origin == 'attack' %} in MITRE ATT&amp;CK{% elif e.origin == 'wikidata' %} on Wikidata{% endif %} –
+  not an actor the reports are searched for; it is here because a source links it to one.{% if d.wanted %} A wanted notice states an
+  allegation, not a conviction.{% endif %}</p>
 {% endif %}
 <section class="viz-card facts">
   <h2 class="viz-title">Reference</h2>
   <table class="rp-topics small">
-    {% if d.members %}{% for m in d.members %}<tr><th>{{ 'Entries' if loop.first }}</th><td><a href="{{ m.url }}" rel="noopener">{{ m.list }} {{ m.ref }}</a> · {{ m.name }}{% if m.date %} · listed {{ m.date }}{% endif %}{% if m.programme %} <span class="muted">· {{ m.programme }}</span>{% endif %}</td></tr>{% endfor %}
+    {% if d.members %}{% for m in d.members %}<tr><th>{{ 'Entries' if loop.first }}</th><td><a href="{{ m.url }}" rel="noopener">{{ m.list }}{% if m.list not in ('FBI', 'EUMW') %} {{ m.ref }}{% endif %}</a> · {{ m.name }}{% if m.date %} · {{ 'published' if m.list in ('FBI', 'EUMW') else 'listed' }} {{ m.date }}{% endif %}{% if m.programme %} <span class="muted">· {{ m.programme }}</span>{% endif %}</td></tr>{% endfor %}
       <tr><th>One target because</th><td>{% for a, b, why in d.why %}{{ a }} = {{ b }}: {{ why }}{{ '; ' if not loop.last }}{% endfor %}
         <span class="muted small">– see <a href="/graph">how entries are recognised</a></span></td></tr>
+    {% elif d.list in ('FBI', 'EUMW') %}{% if d.names|length > 1 %}<tr><th>Other names</th><td>{{ d.names[1:]|join(' · ') }}</td></tr>{% endif %}
     {% elif d.list %}<tr><th>Entry</th><td><a href="{{ d.url }}" rel="noopener">{{ d.list }} {{ d.ref }}</a>{% if d.date %} · listed {{ d.date }}{% endif %}</td></tr>
       {% if d.programme %}<tr><th>Programme</th><td>{{ d.programme }}</td></tr>{% endif %}
       {% if d.names|length > 1 %}<tr><th>Other names</th><td>{{ d.names[1:]|join(' · ') }}</td></tr>{% endif %}{% endif %}
+    {% for w in d.wanted %}<tr><th>Wanted<span class="tag wanted-tag">official</span></th><td><a href="{{ w.url }}" rel="noopener">{{ lists[w.source].name }}: {{ w.title }}</a>{% if w.published %} · published {{ w.published }}{% endif %}
+      {% if w.charges %}<br>{{ w.charges }}{% endif %}{% if w.subjects %}<br><span class="muted">{{ w.subjects|join(' · ') }}{% if w.nationality %} · {{ w.nationality }}{% endif %}</span>{% endif %}</td></tr>{% endfor %}
     {% if d.dob %}<tr><th>Born</th><td>{{ d.dob|join(' · ') }}</td></tr>{% endif %}
     {% if d.ids %}<tr><th>Numbers</th><td>{% for k, n, c in d.ids %}{{ k|replace('-', ' ') }} <code>{{ n }}</code>{{ ' (' ~ c ~ ')' if c }}{{ ' · ' if not loop.last }}{% endfor %}</td></tr>{% endif %}
     {% if d.addresses %}<tr><th>Addresses</th><td>{% for a in d.addresses %}{{ a.street }}{{ ', ' ~ a.city if a.city }}{{ ', ' ~ a.country if a.country }}{{ '; ' if not loop.last }}{% endfor %}</td></tr>{% endif %}

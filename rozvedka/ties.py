@@ -22,7 +22,7 @@ import re
 
 from collections import Counter
 
-from . import actors, db, identity, paging, sanctions, techniques, trends, vendors, wikitext
+from . import actors, db, identity, paging, sanctions, techniques, trends, vendors, wanted, wikitext
 from .actors import PAIR_FOUNDED
 
 log = logging.getLogger("rozvedka.ties")
@@ -44,6 +44,8 @@ LAYERS = {
                   "about": "infobox fields of the actor's English Wikipedia article (leaders, allies, parent …)"},
     "wikitext": {"name": "Wikipedia article text", "group": "reference",
                  "about": "a sentence of an actor's English Wikipedia article links to another subject's article; the relation from its words"},
+    "wanted": {"name": "Wanted notices (FBI, Europe's Most Wanted)", "group": "official",
+               "about": "a wanted notice's text names an actor, a sanctions-list entry or another wanted person; a notice about several people links them"},
     "attack": {"name": "MITRE ATT&CK", "group": "reference",
                "about": "groups and campaigns using malware and tools; campaigns attributed to groups"},
     "misp": {"name": "MISP threat-actor galaxy", "group": "reference",
@@ -55,13 +57,14 @@ GROUPS = {"official": "Official lists", "reference": "Reference data", "reports"
 GROUP_FILTERS = {**GROUPS, "stated": "Stated links (all but co-mentions)",
                  "connecting": "Stated links that connect (no rivalries, no bare article mentions)"}
 # links that say two are rivals, and article sentences about conflict or without a relation word: no sign of a connection
-NOT_A_TIE = "(t.rel = 'opposed to' OR (t.layer = 'wikitext' AND (t.rel LIKE '%(conflict)' OR t.rel NOT LIKE '%(%')))"
+NOT_A_TIE = ("(t.rel = 'opposed to' OR (t.layer IN ('wikitext', 'wanted') AND (t.rel LIKE '%(conflict)' OR t.rel LIKE '%(target)' OR t.rel LIKE '%(victim)'"
+             " OR t.rel NOT LIKE '%(%')))")
 LIST_LAYER = {"US": "us", "UK": "uk", "UN": "un", "EU": "eu"}
 SHAPES = {"Individual": "person", "Entity": "org", "Vessel": "vessel", "Ship": "vessel", "Aircraft": "aircraft"}
 KINDS = {**actors.KINDS, "person": "Person", "org": "Company or organisation", "vessel": "Vessel", "aircraft": "Aircraft",
          "malware": "Malware", "tool": "Tool", "campaign": "Campaign", "address": "Address", "email": "E-mail address",
-         "website": "Website", "phone": "Telephone number", "wallet": "Crypto wallet"}
-LABEL_ORDER = ("UK", "EU", "UN", "US")
+         "website": "Website", "phone": "Telephone number", "wallet": "Crypto wallet", "case": "Wanted notice (several people)"}
+LABEL_ORDER = ("UK", "EU", "UN", "US", "FBI", "EUMW")
 DETAIL_BACK = {"address": "address of", "email": "e-mail address of", "website": "website of", "phone": "telephone number of",
                "wallet": "crypto wallet of"}
 UN_REF = re.compile(r"\b([A-Z]{2}[ei]\.\d{3})\b")       # a UN listing's reference number: QDe.004, CDi.012
@@ -166,6 +169,44 @@ def _sentences(text: str) -> list[str]:
     return [s for s, _ in out]
 
 
+class _Finder:
+    """Full names of a name index ({normalised name: {values}}) in a sentence, the longest first; a name of two values or
+    more is ambiguous and not used (counted as unresolved); a one-word name only where the sentence capitalises it."""
+
+    def __init__(self, names: dict[str, set]):
+        self.names = names
+        self.first = {n.split()[0] for n in names}
+        self.longest = max((len(n.split()) for n in names), default=0)
+
+    def find(self, sentence: str, own=()) -> tuple[dict, int]:
+        words = sanctions.normalise(sentence).split()
+        found, i, missed = {}, 0, 0
+        while i < len(words):
+            step = 1
+            if words[i] in self.first:
+                for n in range(min(self.longest, len(words) - i), 0, -1):
+                    gram = " ".join(words[i:i + n])
+                    if gram in self.names and (n > 1 or _capitalised(gram, sentence)):
+                        refs = self.names[gram]
+                        if len(refs) == 1 and gram not in own:
+                            found.setdefault(next(iter(refs)), gram)
+                        elif len(refs) > 1:
+                            missed += 1
+                        step = n
+                        break
+            i += step
+        return found, missed
+
+
+def _notice(n: dict) -> dict:
+    """What an entity's page shows of a wanted notice (rozvedka/wanted.py)."""
+    return {k: n[k] for k in ("source", "url", "title", "charges", "subjects", "published", "nationality")}
+
+
+def _page(lst: str) -> str:
+    return (sanctions.LISTS.get(lst) or wanted.SOURCES[lst])["page"]
+
+
 def _label(lst: str, e: dict) -> str:
     """The entry's name as the list writes it; for the EU list its first original or English name in Latin script."""
     if lst == "EU":
@@ -201,8 +242,12 @@ class _Targets:
             return self.node_of[key]
         ms = sorted(self.members[self.root[key]], key=lambda m: identity.LIST_ORDER.index(m.split(":")[0]))
         actor = next((self.canon[m] for m in ms if self.canon.get(m) in self.g.actors), None)
+        notices = [self.entries[m]["notice"] for m in ms if "notice" in self.entries[m]]
         if actor:
             nid = self.g.actor(actor)
+            if notices:                    # the actor is wanted: its page shows the notices
+                kind, label, key, origin, _ = self.g.entities[nid]
+                self.g.entities[nid] = (kind, label, key, origin, json.dumps({"wanted": [_notice(n) for n in notices]}))
         else:
             first = self.entries[ms[0]]
             lst = ms[0].split(":")[0]
@@ -210,16 +255,18 @@ class _Targets:
             named = [_label(m.split(":")[0], self.entries[m]) for m in sorted(ms, key=lambda m: LABEL_ORDER.index(m.split(":")[0]))]
             label = next((n for n in named if not n.isupper()), named[0])
             data = {"list": lst, "ref": first["ref"], "programme": first["programme"], "date": first["date"],
-                    "url": first["url"] or sanctions.LISTS[lst]["page"], "names": first["names"][:12]}
+                    "url": first["url"] or _page(lst), "names": first["names"][:12]}
             if len(ms) > 1:
                 data["members"] = [{"list": m.split(":")[0], "ref": self.entries[m]["ref"], "name": self.entries[m]["name"],
                                     "programme": self.entries[m]["programme"], "date": self.entries[m]["date"],
-                                    "url": self.entries[m]["url"] or sanctions.LISTS[m.split(":")[0]]["page"]} for m in ms]
+                                    "url": self.entries[m]["url"] or _page(m.split(":")[0])} for m in ms]
                 data["why"] = self.reasons.get(self.root[key], [])
             det = [self.entries[m]["details"] for m in ms]
             data["dob"] = sorted({x for d in det for x in d["dob"]})
             data["ids"] = sorted({tuple(i) for d in det for i in d["ids"]})[:20]
             data["addresses"] = [a for i, a in enumerate(x for d in det for x in d["addresses"]) if i < 8]
+            if notices:
+                data["wanted"] = [_notice(n) for n in notices]
             nid = self.g.node(ms[0], SHAPES.get(first.get("shape"), "person" if first["type"] == "person" else "org"),
                               label, lst.lower(), data)
         for m in ms:
@@ -240,7 +287,7 @@ def _from_details(g: _Graph, targets: _Targets, stats: dict) -> None:
             e = targets.entries[key]
             lst = key.split(":")[0]
             g.tie(targets.node(key), nid, rel, DETAIL_BACK[kind], "ids",
-                  {"list": lst, "ref": e["ref"], "url": e["url"] or sanctions.LISTS[lst]["page"], "quote": f"{KINDS[kind]}: {label}"})
+                  {"list": lst, "ref": e["ref"], "url": e["url"] or _page(lst), "quote": f"{KINDS[kind]}: {label}"})
             n += 1
     names: dict[str, set] = {}
     bare: dict[str, set] = {}             # without legal forms: the UK list names owners short ("SOVCOMFLOT")
@@ -283,7 +330,9 @@ def _from_lists(g: _Graph, stats: dict) -> None:
     canon = _canon()
     per_list = {lst: list(sanctions._entries(sanctions.DIR / spec["file"], lst))
                 for lst, spec in sanctions.LISTS.items() if (sanctions.DIR / spec["file"]).exists()}
-    targets = _Targets(g, {f"{lst}:{e['ref']}": e for lst, es in per_list.items() for e in es}, canon)
+    notices = wanted.entries()
+    canon.update(wanted.actor_of(notices, g.actors))
+    targets = _Targets(g, {**{f"{lst}:{e['ref']}": e for lst, es in per_list.items() for e in es}, **notices}, canon)
     for lst, spec in sanctions.LISTS.items():
         if lst not in per_list:
             continue
@@ -312,29 +361,14 @@ def _from_lists(g: _Graph, stats: dict) -> None:
                     n = _usable(nm, e, i >= e["primary"])
                     if n:
                         names.setdefault(n, set()).add(e["ref"])
-            first = {n.split()[0] for n in names}
-            longest = max((len(n.split()) for n in names), default=0)
+            finder = _Finder(names)
             for e in entries:
                 if not e["text"]:
                     continue
                 own = {sanctions.normalise(nm) for nm in e["names"]}
                 for sentence in _sentences(e["text"]):
-                    words = sanctions.normalise(sentence).split()
-                    found, i = {}, 0
-                    while i < len(words):
-                        step = 1
-                        if words[i] in first:
-                            for n in range(min(longest, len(words) - i), 0, -1):
-                                gram = " ".join(words[i:i + n])
-                                if gram in names and (n > 1 or _capitalised(gram, sentence)):
-                                    refs = names[gram]
-                                    if len(refs) == 1 and gram not in own:
-                                        found.setdefault(next(iter(refs)), gram)
-                                    elif len(refs) > 1:
-                                        unresolved += 1
-                                    step = n
-                                    break
-                        i += step
+                    found, missed = finder.find(sentence, own)
+                    unresolved += missed
                     if lst == "UN":
                         for m in UN_REF.findall(sentence):
                             if m in by_ref:
@@ -349,6 +383,84 @@ def _from_lists(g: _Graph, stats: dict) -> None:
                               e["date"])
         stats[layer] = {"entries": len(entries), "unresolved": unresolved}
     _from_details(g, targets, stats)
+    stats["wanted"] = _from_wanted(g, targets)
+
+
+OTHER_OF_THE_NAME = {"Saudi", "Turkish", "Kuwaiti", "Bahraini", "Hejazi"}
+
+
+def _actor_finder():
+    """The reports' actor matching (rozvedka/actors.py) for other texts: sentence → {actor key: the name as written}.
+    Countries and weak names (sources/actors.yaml) are left out."""
+    gaz, cfg = actors.load_gazetteer(), actors.load_config()
+    names = actors.prepare_names(gaz, cfg)
+    actors._init_matcher(names)
+    kind = {a["key"]: a["kind"] for a in gaz["actors"]}
+    of = {n["id"]: n["actor_key"] for n in names if n["status"] == "used" and not n["weak"] and kind[n["actor_key"]] != "country"}
+
+    def find(sentence: str) -> dict[str, str]:
+        hits, _ = actors.match_text(sentence)
+        out = {}
+        for nid, spans in hits.items():
+            if nid in of:
+                s, e = spans[0]
+                before = sentence[:s].split()[-1:]
+                if before and before[0] in OTHER_OF_THE_NAME:
+                    continue          # "Saudi Hizballah", "Turkish Hezbollah": other groups of the same name
+                out.setdefault(of[nid], sentence[s:e])
+        return out
+    return find
+
+
+def _from_wanted(g: _Graph, targets: _Targets) -> dict:
+    """Wanted notices (rozvedka/wanted.py): the actors, list entries and wanted people a notice's text names. A notice about
+    one person is that person's entry (merged with the same person's list entries); one about several is a case node."""
+    data = wanted.stored()
+    if not data["notices"]:
+        return {}
+    retrieved = (data["meta"] or {}).get("retrieved")
+    names: dict[str, set] = {}
+    for key, e in targets.entries.items():
+        for i, nm in enumerate(e["names"]):
+            n = _usable(nm, e, i >= e["primary"])
+            if n:
+                names.setdefault(n, set()).add(targets.root[key])
+    finder, in_text = _Finder(names), _actor_finder()
+    stats = {"notices": len(data["notices"]), "cases": 0, "ties": 0, "by_relation": {}}
+    for n in data["notices"]:
+        key = f"{n['source']}:{n['ref']}"
+        if n["case"]:
+            a = g.node(f"case:{key}", "case", wanted.case_label(n["title"]), "wanted",
+                       {"wanted": [_notice(n)]})
+            mine, stats["cases"] = None, stats["cases"] + 1
+        else:
+            a, mine = targets.node(key), targets.root[key]
+        own = {sanctions.normalise(x) for x in [n["name"]] + n["aliases"]}
+        for sentence in _sentences(n["text"]):
+            ends: dict[str, tuple] = {}
+            # a name never runs over a comma: "Rim Un Chol, Kim Mu Rim" does not name a "Chol Kim"
+            found = {r: as_ for part in re.split(r"[,;]", sentence) for r, as_ in finder.find(part, own)[0].items()}
+            named = {k: as_ for k, as_ in in_text(sentence).items() if k in g.actors and k not in wanted.INVESTIGATORS}
+            longer = [sanctions.normalise(x) for x in named.values()]
+            for root, as_ in found.items():
+                if root != mine and not any(as_ != x and f" {as_} " in f" {x} " for x in longer):
+                    b = targets.node(root)     # not "Digital Security" inside "Ashiyane Digital Security Team"
+                    ends.setdefault(b, (as_, g.entities[b][0] == "person"))
+            for k, as_ in named.items():
+                ends.setdefault(g.actor(k), (as_, g.actors[k]["kind"] == "person"))
+            for b, (as_, person) in ends.items():
+                if b == a or g.entities[b][0] == "country":
+                    continue
+                rel, word = wanted.relation(sentence, person, sanctions.normalise(as_))
+                at = wanted._position(sentence, sanctions.normalise(as_))
+                as_ = sentence[at[0]:at[1]] if at else as_          # as the notice writes it
+                hint = f" ({rel})" if rel else ""
+                g.tie(a, b, f"its wanted notice names{hint}", f"named in the wanted notice of{hint}", "wanted",
+                      {"list": n["source"], "ref": n["ref"], "url": n["url"], "notice": n["title"], "quote": _quote(sentence),
+                       "found": as_, "word": word, "retrieved": retrieved}, n["published"])
+                stats["ties"] += 1
+                stats["by_relation"][rel or "named"] = stats["by_relation"].get(rel or "named", 0) + 1
+    return stats
 
 
 def _from_gazetteer(g: _Graph, con) -> None:
@@ -513,7 +625,7 @@ def build() -> dict:
         meta = {"built": dt.datetime.now().isoformat(timespec="seconds"), "stats": stats,
                 "retrieved": {**{LIST_LAYER[k]: v for k, v in (sanctions.data().get("retrieved") or {}).items()},
                               "attack": cat.get("retrieved"),
-                              "wikitext": (wikitext.stored()["meta"] or {}).get("retrieved"), "misp": (vendors.stored()["meta"] or {}).get("retrieved"), **dict.fromkeys(("wikidata", "wikipedia"), actors.stamp().get("gazetteer_retrieved"))}}
+                              "wikitext": (wikitext.stored()["meta"] or {}).get("retrieved"), "wanted": (wanted.stored()["meta"] or {}).get("retrieved"), "misp": (vendors.stored()["meta"] or {}).get("retrieved"), **dict.fromkeys(("wikidata", "wikipedia"), actors.stamp().get("gazetteer_retrieved"))}}
         con.execute("INSERT OR REPLACE INTO ties_meta VALUES ('meta', ?)", (json.dumps(meta),))
     counts: dict[str, int] = {}
     for t in g.ties.values():

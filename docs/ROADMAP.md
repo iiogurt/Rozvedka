@@ -188,8 +188,15 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
    stand near the link – a keyword cannot read a sentence). The largest connected part grew from 11,150 to 12,559 entities;
    leads grew from 613 to 5,961 (the strongest now substantive: bin Laden – ISI, Hekmatyar – Al-Qaeda). Next: Wikidata family
    and position statements for people; articles of the connected people, not only of actors in the reports. · minor
-6. **Official sources on people** – FBI Wanted API, US Justice Department indictments and press releases, Europol's EU Most
-   Wanted, Rewards for Justice: persons, aliases and handles, units. · sources / minor
+6. ✅ (0.68.0) **Official sources on people: wanted notices** – 352 FBI and 24 Europe's Most Wanted notices about security
+   (never victims or missing persons, no photos), merged with sanctions entries by name + full date of birth (109) and with
+   gazetteer people (12); 571 links read with the narrative rules and the reports' actor matching; notices about several
+   people as case nodes. Four hand-read samples of 40 drove the rules (no name across a comma, a name inside a longer group name
+   not counted, "Saudi Hizballah" is not Hezbollah, relation words only near the name, "son" in lowercase only); the last: 40/40
+   right subject, 24/27 hints right. Fixed on the way: "People's Liberation Army" (73 reports) was the Manipur group; "KGB",
+   "ARC" now need context. Rewards for Justice excluded (robots.txt). Next: **6b** US Justice Department press releases (API
+   searches titles only, 10 s per request – search the titles for the actors' names, read the sentences naming known people);
+   a gazetteer actor for "Saudi Hizballah" (Hezbollah Al-Hejaz). · minor
 7. **Views** – rings around one entity (hops as rings, relation types as sectors, every label visible), a matrix ordered
    by communities, BioFabric for medium networks, links on a time axis and the network as of a year. · minor
 8. **Case file** – one shared board (no per-user state): pin entities, chains between them found automatically, export

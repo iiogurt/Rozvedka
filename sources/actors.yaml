@@ -194,6 +194,13 @@ context_aliases:
   Q97183292:                                  # Berserk Bear: "Havex" is also the name of the malware it used
     Havex: [group, actor, adversar, energetic, dragonfly, berserk, crouching, apt]
     NSC: [india, indien, indisch, delhi, doval, modi]
+  # Found reading wanted notices (rozvedka/wanted.py), 2026-10-15: the name also means a bigger or older namesake
+  Q3113069:                                   # People's Liberation Army of Manipur: the reports mostly mean China's PLA
+    People’s Liberation Army: [manipur, imphal, meitei, naga, assam, india, indien, myanmar]
+  Q1329608:                                   # KGB of Belarus: "KGB" is also the Soviet KGB
+    KGB: [belarus, belaru, bielorus, bielorr, bielor, weissrus, weißrus, lukashenk, lukasenk, lukašenk, łukaszenk, minsk, białoru, bělorus]
+  Q2838267:                                   # Caribbean Revolutionary Alliance: "ARC" is also a company and an acronym of many things
+    ARC: [guadeloup, martiniq, caraib, caraïb, caribb, caribe, antill, independ, indépend]
 
 # Review of the most frequent matches, 2026-10-01: each entry was checked against sample passages.
 exclude_aliases:

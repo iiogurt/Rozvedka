@@ -27,6 +27,33 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.68.0] – 2026-10-16
+
+### Added
+- **Wanted notices as a network source** (`fetch-wanted`, `rozvedka/wanted.py`, layer “Wanted notices (FBI, Europe's Most
+  Wanted)”): 352 FBI notices (its public API) and 24 of Europe's Most Wanted, only those about security – the FBI's cyber,
+  counter-intelligence, China, Iran, terrorism, transnational repression and criminal-enterprise notices, the European ones
+  for terrorism, criminal organisations, computer crime, trafficking and money laundering. Never victims or missing persons;
+  no photographs or physical descriptions are kept. A notice is merged with the same person's sanctions entry when the name
+  and the full date of birth agree (109 notices, e.g. the GRU officers of Units 26165 and 74455 on the OFAC and EU lists), and
+  with an actor of the gazetteer by full name (12). Its text is read with the narrative name rules and the reports' actor
+  matching: 571 links – a GRU officer to Unit 74455 (Sandworm), the indicted to each other, Mabna Institute contractors to
+  the IRGC. A notice about several people (“APT 41 Group”, “GRU 29155 Cyber Actors”) is a case node linking them. The relation
+  – member or officer, charged together, family, associate, support or funding, target, victim – is a hint from a word near
+  the name; in a hand-read sample of 40 links all 40 named the right subject and 24 of 27 hints were right. The
+  investigating agencies (FBI, DEA) are not linked; targets and victims do not count as connections for leads.
+  Entity and actor pages show the notice, its charges and an “allegation, not a conviction” note.
+
+### Fixed
+- Actor matching: “People's Liberation Army” no longer counts as the Manipur group of that name (73 reports meant China's
+  PLA), and “KGB” and “ARC” count for Belarus's KGB and the Caribbean Revolutionary Alliance only next to words of their
+  field (found reading the wanted notices).
+- Dates of birth written month first (“December 28, 1951”) are understood.
+
+### Not added
+- Rewards for Justice: its robots.txt allows only search engines. The US Justice Department's press releases follow
+  separately (its API searches titles only, at one request per 10 seconds).
+
 ## [0.67.0] – 2026-10-15
 
 ### Added
@@ -1272,7 +1299,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.67.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.68.0...HEAD
+[0.68.0]: https://github.com/iiogurt/Rozvedka/compare/v0.67.0...v0.68.0
 [0.67.0]: https://github.com/iiogurt/Rozvedka/compare/v0.66.0...v0.67.0
 [0.66.0]: https://github.com/iiogurt/Rozvedka/compare/v0.65.0...v0.66.0
 [0.65.0]: https://github.com/iiogurt/Rozvedka/compare/v0.64.0...v0.65.0

@@ -26,7 +26,7 @@ MONTHS = {m: i for i, m in enumerate(("jan", "feb", "mar", "apr", "may", "jun", 
 STRONG = {"passport", "national-id", "registration", "tax", "imo"}
 MIN_NUMBER = 6
 MIN_STREET = 10
-LIST_ORDER = ("UN", "EU", "UK", "US")       # whose entry names a merged entity when no actor does
+LIST_ORDER = ("UN", "EU", "UK", "US", "FBI", "EUMW")   # whose entry names a merged entity when no actor does (wanted notices last)
 
 US_IDS = {"Passport": "passport", "National ID No.": "national-id", "Cedula No.": "national-id", "C.U.R.P.": "national-id",
           "Identification Number": "national-id", "Registration Number": "registration", "Business Registration Number": "registration",
@@ -66,6 +66,9 @@ def dob(s: str) -> str:
     m = re.search(r"\b(\d{1,2})\s+([A-Za-z]{3})[a-z]*\.?\s+(\d{4})\b", s)
     if m and m.group(2).lower() in MONTHS:
         return f"{m.group(3)}-{MONTHS[m.group(2).lower()]:02d}-{int(m.group(1)):02d}"
+    m = re.search(r"\b([A-Za-z]{3})[a-z]*\.?\s+(\d{1,2}),?\s+(\d{4})\b", s)        # 'December 28, 1951' (wanted notices)
+    if m and m.group(1).lower() in MONTHS:
+        return f"{m.group(3)}-{MONTHS[m.group(1).lower()]:02d}-{int(m.group(2)):02d}"
     m = re.search(r"\b(\d{2})/(\d{2})/(\d{4})\b", s)
     if m:
         return f"{m.group(3)}-{m.group(2)}-{m.group(1)}"
