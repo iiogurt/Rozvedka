@@ -28,8 +28,8 @@ local library, so you can follow how state security, social resilience and disas
 
 | | |
 |---|---|
-| **Coverage** | 134 agencies and institutions in 50 countries and bodies: 26 EU member states, EU bodies and NATO, every NATO member except Montenegro (Iceland, Albania, North Macedonia, Türkiye, the UK, Norway, the USA, Canada), Switzerland, Ukraine, six Latin American countries, Australia, New Zealand, Japan, South Korea and Taiwan |
-| **Library** | about 3,450 reports in 30 languages, with archives back to 2000, downloaded as PDF |
+| **Coverage** | 163 agencies and institutions and 19 independent think tanks in 50 countries and bodies: 26 EU member states, EU bodies and NATO, every NATO member except Montenegro (Iceland, Albania, North Macedonia, Türkiye, the UK, Norway, the USA, Canada), Switzerland, Ukraine, six Latin American countries, Australia, New Zealand, Japan, South Korea and Taiwan |
+| **Library** | about 4,400 reports in 32 languages, with archives back to 2000, downloaded as PDF |
 | **Index** | full text of every report, 66 topics from a 4,400-term multilingual keyword list, about 1,550 named actors and 189 countries |
 | **Runs on** | a Raspberry Pi (or any Linux box) – Python, SQLite and the browser; no cloud service, no account |
 

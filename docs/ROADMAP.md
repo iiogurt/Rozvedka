@@ -67,6 +67,12 @@ Each item: why · what · done when · version step.
    latest three editions are in the library. · owner + data
 6. ✅ (0.42.6: 80 → 24) **Browser-only reports** (80) – try per-site download links (DIS Italy's attachment API, E-tjenesten, StratCom CoE
    pdfjs viewer → the underlying PDF); otherwise keep them as links. 0.42.6: DIS Italy and StratCom CoE solved; the 20 of E-tjenesten (bot challenge) and 4 of Canada (publications.gc.ca archive notice, script-gated) stay links – not circumvented. · patch
+7. ✅ (0.68.1, owner's idea) **Cognitive and narrative warfare sources from Small Wars Journal** – the article "Doors of
+   Perception" and 118 SWJ posts on information, influence and cognitive warfare (2025-08 – 2026-10, robots.txt crawl delay
+   10 s) cite 771 domains. Added: Swedish Psychological Defence Agency (MPF, 9 reports), IRSEM (67), USCC annual reports (61),
+   UK DCDC strategic trends (8), RAND (10) and DFRLab (3) as think tanks with funding profiles; NATO STO and ACT by hand
+   (bot protection). Already covered: EEAS, VIGINUM, StratCom CoE, Hybrid CoE, ASPI, ISD, CSIS, ISW, Freedom House.
+   Candidates noted in the registry: NDU INSS (JavaScript list), CRS, Lund PDRI, Irregular Warfare Initiative, Graphika. · patch (sources)
 
 ### B. Quality you can measure
 

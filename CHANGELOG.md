@@ -27,6 +27,22 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.68.1] – 2026-10-16
+
+### Added
+- Sources on cognitive and narrative warfare, harvested from the links in Small Wars Journal posts: the Swedish
+  Psychological Defence Agency (MPF, Swedish and English publications), the French military research institute IRSEM,
+  the US–China Economic and Security Review Commission's annual reports, the UK Development, Concepts and Doctrine
+  Centre's strategic-trends series, and – as think tanks, each with a funding profile – RAND (information operations and
+  psychological warfare) and the Atlantic Council's DFRLab. NATO's Science and Technology Organization and Allied Command
+  Transformation are listed for collection by hand (their sites block automated requests).
+
+### Fixed
+- A publication page that also links other publications ("Get publication <name>") now gives each PDF its own name,
+  not the page's heading; screen-reader notes ("opens in a new window") and size notes without brackets
+  ("PDF, 0.1 MB") no longer end up in titles.
+- A folder that groups numbered reports (RAND's `RRA2000/RRA2032-1/…`) is no longer read as a publication year.
+
 ## [0.68.0] – 2026-10-16
 
 ### Added
@@ -1299,7 +1315,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.68.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.68.1...HEAD
+[0.68.1]: https://github.com/iiogurt/Rozvedka/compare/v0.68.0...v0.68.1
 [0.68.0]: https://github.com/iiogurt/Rozvedka/compare/v0.67.0...v0.68.0
 [0.67.0]: https://github.com/iiogurt/Rozvedka/compare/v0.66.0...v0.67.0
 [0.66.0]: https://github.com/iiogurt/Rozvedka/compare/v0.65.0...v0.66.0
