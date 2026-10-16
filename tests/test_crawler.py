@@ -49,6 +49,7 @@ def test_guess_lang(url, text, page_lang, allowed, expected):
     ("Nothing here", "https://x/report.pdf", None),
     ("Cyber Threats and NATO 2030", "https://x/uploads/2020/12/NATO-2030.pdf", 2020),   # horizon year is not the date
     ("Trendanalyse Bevölkerungsschutz 2035", "https://x/Trends2035_D.pdf", None),
+    ("Who's Winning", "https://x/research_reports/RRA2000/RRA2032-1/RAND_RRA2032-1.pdf", None),   # serial numbers
 ])
 def test_guess_year(title, url, expected):
     assert guess_year(title, url) == expected
@@ -173,6 +174,39 @@ def test_yearly_report_pages_are_followed_despite_navigation_pdfs(monkeypatch):
     assert {u for u in stored if "raport-20" in u} == {f"https://x.al/files/raport-{y}.pdf" for y in (2021, 2022, 2023, 2024)}
     assert not any("RFC-2350" in u or "eidas" in u for u in stored)
     assert crawler.LOW_RELEVANCE_RE.search("Përditësime të Sigurisë – Mozilla CVE-2026-8090")
+
+
+def test_related_publications_on_a_publication_page_keep_their_own_names(monkeypatch):
+    """A publication page (followed from a think tank's or agency's list) also links other publications' PDFs: those keep
+    the name their link gives, not this page's heading (seen on the Swedish Psychological Defence Agency's pages)."""
+    from types import SimpleNamespace
+    from rozvedka import crawler
+    pages = {"https://x.org/pubs": '<a href="https://x.org/pubs/archive/a">A</a><a href="https://x.org/pubs/archive/b">B</a>',
+             "https://x.org/pubs/archive/a": '<h1>The Architecture of Repression</h1><a href="/d/a.pdf">Get publication</a>'
+                                            '<a href="/d/b.pdf">Get publication The Last European Colonial Empire</a>',
+             "https://x.org/pubs/archive/b": '<h1>The Last European Colonial Empire</h1><a href="/d/b.pdf">Get publication</a>'
+                                            '<p>The report maps the organisations, programmes and resources of the Presidential '
+                                            'Administration and how they shape the indoctrination of the population. '
+                                            '<a href="/d/b-sv.pdf">här pdf, 1 MB, öppnas i nytt fönster</a></p>'}
+    monkeypatch.setattr(crawler, "get_page", lambda url, src: SimpleNamespace(status=200, content_type="text/html",
+                                                                             text=pages.get(url, ""), url=url))
+    stored = {}
+    monkeypatch.setattr(crawler, "_store", lambda con, sid, pid, docs, *a: stored.update({d["url"]: d["title"] for d in docs}) or len(stored))
+    src = {"id": 1, "access": "auto", "homepage": "https://x.org/", "agency": "X", "name_en": "X", "name_local": "X", "domains": None}
+    crawler.crawl_page(None, src, {"url": "https://x.org/pubs", "id": 1, "lang": "en", "note": None, "follow": r"pubs/archive/"}, {"en"})
+    assert stored == {"https://x.org/d/a.pdf": "The Architecture of Repression", "https://x.org/d/b.pdf": "The Last European Colonial Empire",
+                      "https://x.org/d/b-sv.pdf": "The Last European Colonial Empire"}
+
+
+def test_screen_reader_notes_are_not_part_of_a_link_title():
+    from bs4 import BeautifulSoup
+    from rozvedka.crawler import _title_for, is_poor_title
+    a = BeautifulSoup('<a href="/d/a.pdf">här pdf, 19.5 MB, öppnas i nytt fönster.</a>', "html.parser").a
+    assert is_poor_title(_title_for(a), "https://x.se/d/a.pdf")
+    a = BeautifulSoup('<a href="/d/a.pdf">Annual Report 2025 (opens in a new window)</a>', "html.parser").a
+    assert _title_for(a) == "Annual Report 2025"
+    a = BeautifulSoup('<a href="/d/a.summary.pdf">Research Summary PDF, 0.1 MB</a>', "html.parser").a
+    assert _title_for(a) == "Research Summary"
 
 
 def test_documents_on_the_domain_a_page_redirects_to_are_kept(monkeypatch):
