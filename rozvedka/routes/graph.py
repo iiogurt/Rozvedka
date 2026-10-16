@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Form, HTTPException, Query, Request
 from fastapi.responses import RedirectResponse
 
-from .. import actors, leads, paging, paths, sanctions, techniques, ties, twins
+from .. import actors, leads, paging, paths, sanctions, techniques, ties, twins, wanted
 from ..web import tpl
 
 router = APIRouter()
@@ -34,7 +34,8 @@ def entity_page(request: Request, id_: str):
         raise HTTPException(404, "no such entity in the network")
     if e["actor"]:
         return RedirectResponse(f"/actors/{e['actor']}#network", status_code=307)
-    return tpl.TemplateResponse(request, "entity.html", {"e": e, "groups": ties.neighbours(id_), "lists": sanctions.LISTS})
+    return tpl.TemplateResponse(request, "entity.html", {"e": e, "groups": ties.neighbours(id_),
+                                                         "lists": {**sanctions.LISTS, **wanted.SOURCES}})
 
 
 @router.get("/graph/path")

@@ -10,7 +10,11 @@
   (the name resolved on the same list), and the narratives of UK, UN and EU listings that name another listing of the same list by
   its full name (one-word names only for organisations and only where written as a name; names made only of generic words such as
   “Ministry of Defence” are not looked for) – the sentence is kept as evidence. Two samples of 40 such links read by hand: 37 and 38 right,
-  the wrong ones led to the rules above. <b>Reference data</b>: Wikidata statements and Wikipedia infobox fields of the actor
+  the wrong ones led to the rules above. <b>Wanted notices</b> of the FBI and Europe's Most Wanted, only those about security (cyber,
+  counter-intelligence, terrorism, organised crime; never victims or missing persons): a notice is an entry like a list entry, its
+  text read with the same name rules and the reports' actor matching; a notice about several people is a case linking them; the
+  relation (member or officer, charged together, family …) is a hint from a word near the name – in a hand-read sample of 40, all 40 named the right subject and 24 of 27 hints were right. The investigating
+  agencies (FBI, DEA) are not linked. <b>Reference data</b>: Wikidata statements and Wikipedia infobox fields of the actor
   gazetteer; sentences of the actors' Wikipedia articles that link to another known subject (who is meant is certain; the
   relation word near the link is only a hint – 25 of 40 read by hand were right); MITRE ATT&amp;CK's groups, software and campaigns;
   the MISP threat-actor galaxy's “similar” statements. <b>Reports</b>: two actors (not countries) named in one passage
@@ -42,7 +46,7 @@
 <div class="panels h-grid top-gap">
   <section class="h-card">
     <h2 class="viz-title">Most linked on the official lists</h2>
-    <p class="muted small">How many different entities the OFAC, UK, UN and EU listings tie to each.</p>
+    <p class="muted small">How many different entities the OFAC, UK, UN and EU listings and the wanted notices tie to each.</p>
     <table class="rp-topics small rank">
       {% set top = (rank|map(attribute='n')|max) or 1 %}
       {% for r in rank %}<tr><th>{{ ent(r.label, r.kind, r.href) }}</th>

@@ -136,6 +136,7 @@ def actor_page(request: Request, key: str, page: str = "1", per_page: str = ""):
                                                        "cve_rows": cves.of_actor(key),
                                                        "network": ties.neighbours(key, skip=("wikidata", "wikipedia", "reports")),
                                                        "net_layers": ties.layer_counts(key),
+                                                       "wanted_notices": ((ties.entity(key) or {}).get("data") or {}).get("wanted", []),
                                                        "twins": twins.of_group(key),
                                                        "leads": leads.of_actor(key),
                                                        "sanction_lists": sanctions.LISTS,

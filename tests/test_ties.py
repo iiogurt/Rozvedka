@@ -5,7 +5,7 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
-from rozvedka import actors, collect, db, sanctions, series, techniques, ties
+from rozvedka import actors, collect, db, sanctions, series, techniques, ties, wanted
 
 OFAC = """<sdnList xmlns="x">
 <sdnEntry><uid>7</uid><lastName>HIZBALLAH</lastName><sdnType>Entity</sdnType><programList><program>SDGT</program></programList>
@@ -13,6 +13,7 @@ OFAC = """<sdnList xmlns="x">
 <sdnEntry><uid>8</uid><lastName>AL-QARD FINANCE</lastName><sdnType>Entity</sdnType><programList><program>SDGT</program></programList>
   <remarks>(Linked To: HIZBALLAH; Linked To: DOE, John)</remarks></sdnEntry>
 <sdnEntry><uid>9</uid><firstName>John</firstName><lastName>DOE</lastName><sdnType>Individual</sdnType>
+  <dateOfBirthList><dateOfBirthItem><dateOfBirth>12 Mar 1970</dateOfBirth></dateOfBirthItem></dateOfBirthList>
   <remarks>(Linked To: NOBODY ON THIS LIST)</remarks></sdnEntry>
 <sdnEntry><uid>10</uid><lastName>OCEAN STAR</lastName><sdnType>Vessel</sdnType><remarks>(Linked To: AL-QARD FINANCE)</remarks></sdnEntry>
 </sdnList>"""
@@ -37,6 +38,19 @@ UN = """<CONSOLIDATED_LIST><INDIVIDUALS><INDIVIDUAL><DATAID>1</DATAID><FIRST_NAM
 <REFERENCE_NUMBER>QDe.004</REFERENCE_NUMBER><LISTED_ON>2001-10-06</LISTED_ON></ENTITY></ENTITIES></CONSOLIDATED_LIST>"""
 
 
+def _notice(ref, title, text, dob=(), case=False, aliases=()):
+    return {"source": "FBI", "ref": ref, "title": title, "name": wanted._name(title), "aliases": list(aliases), "dob": list(dob),
+            "nationality": "", "subjects": ["Cyber's Most Wanted"], "charges": "Conspiracy", "text": text,
+            "url": f"https://www.fbi.gov/wanted/cyber/{ref}", "published": "2024-05-01", "modified": "", "case": case}
+
+
+NOTICES = [
+    # the same John DOE as OFAC's entry 9: same name, same date of birth
+    _notice("jd", "JOHN DOE", "John Doe is alleged to be an officer of Hezbollah. He conspired with Jane Roe.\n"
+                              "The case was investigated by the FBI.", ["1970-03-12"]),
+    _notice("jr", "JANE ROE", "Jane Roe is wanted for computer intrusions.", ["1980-01-01"]),
+    _notice("c1", "APT 99 GROUP", "John Doe and Jane Roe are part of a hacking group known as Hezbollah Cyber.", case=True),
+]
 ENTRY = {"list": "US", "ref": "7", "entry": "HIZBALLAH", "matched": "HIZBALLAH", "date": "", "programme": "SDGT", "legal": [],
          "url": "https://sanctionssearch.ofac.treas.gov/Details.aspx?id=7", "type": "group"}
 
@@ -62,6 +76,10 @@ def library(tmp_path, monkeypatch):
     monkeypatch.setattr(sanctions, "MATCHES", tmp_path / "s" / "matches.json")
     monkeypatch.setattr(techniques, "FILE", tmp_path / "attack.json")
     techniques._stored.cache_clear()
+    monkeypatch.setattr(wanted, "FILE", tmp_path / "wanted.json")
+    (tmp_path / "wanted.json").write_text(json.dumps({"meta": {"retrieved": "2026-10-15"}, "notices": NOTICES}))
+    # the reports' actor matching, reduced to two names (the real one reads the whole gazetteer)
+    monkeypatch.setattr(ties, "_actor_finder", lambda: lambda s: {k: n for n, k in (("Hezbollah", "Q2"), ("FBI", "Q8333")) if n in s})
     sanctions._load.cache_clear()
     (tmp_path / "s").mkdir()
     for key, text in (("US", OFAC), ("UK", UK), ("UN", UN)):
@@ -140,7 +158,7 @@ def test_neighbours_seen_from_each_side(library):
     us = groups["us"]["rels"][0]
     assert us["says"] == "linked to it" and us["rows"][0]["other"] == "US:8"
     assert ties.neighbours("US:8")[0]["rels"][0]["says"] in ("linked to", "linked to it")
-    assert {g["layer"] for g in ties.neighbours("Q2", skip=("wikidata", "reports"))} == {"us"}
+    assert {g["layer"] for g in ties.neighbours("Q2", skip=("wikidata", "reports"))} == {"us", "wanted"}
 
 
 def test_counts_match_their_lists(library):
@@ -157,7 +175,7 @@ def test_pages(library):
     with TestClient(app) as client:
         assert "Network" in client.get("/graph").text
         page = client.get("/graph/ties?entity=Q2").text
-        assert "<b>3</b> links with <b>3</b> others" in page and "Linked To: HIZBALLAH" in page
+        assert "<b>5</b> links with <b>5</b> others" in page and "Linked To: HIZBALLAH" in page     # 2 of them wanted notices
         assert client.get("/graph/ties?layer=uk").status_code == 200
         assert "Ivan PETROV is a director" in client.get("/graph/ties?q=Rostec").text
         assert "Mimikatz" in client.get("/entity/S0002").text
@@ -166,3 +184,26 @@ def test_pages(library):
         actor = client.get("/actors/Q2").text
         assert 'id="network"' in actor and "AL-QARD FINANCE" in actor
         assert client.get("/entity/NOPE").status_code == 404 and client.get("/graph/ties?entity=NOPE").status_code == 404
+
+
+def test_wanted_notices(library):
+    t = _all()
+    w = {(a, b): r for (a, b, layer), r in t.items() if layer == "wanted"}
+    # the notice is OFAC's John DOE (name and date of birth); its text names Hezbollah as his employer and Jane Roe as charged with him
+    assert w[("US:9", "Q2")]["rel"] == "its wanted notice names (member or officer)"
+    assert w[("US:9", "FBI:jr")]["rel"] == "its wanted notice names (charged together)"
+    ev = json.loads(w[("US:9", "Q2")]["evidence"])
+    assert ev["quote"] == "John Doe is alleged to be an officer of Hezbollah." and ev["word"] == "officer" and ev["list"] == "FBI"
+    assert ("US:9", "Q8333") not in w                       # the investigating agency is no link
+    # a notice about several people is a case that links them
+    assert {b for a, b in w if a == "case:FBI:c1"} == {"US:9", "FBI:jr", "Q2"}
+    e = ties.entity("US:9")["data"]
+    assert [m["list"] for m in e["members"]] == ["US", "FBI"] and e["wanted"][0]["url"].endswith("/jd")
+    assert ties.entity("case:FBI:c1")["kind"] == "case"
+    assert ties.meta()["stats"]["wanted"]["cases"] == 1
+    from rozvedka.app import app
+    with TestClient(app) as client:
+        page = client.get("/entity/US:9").text
+        assert "Wanted" in page and "fbi.gov/wanted/cyber/jd" in page and "allegation, not a conviction" in page
+        assert "several people at once" in client.get("/entity/case:FBI:c1").text
+        assert "officer of Hezbollah" in client.get("/graph/ties?layer=wanted").text
