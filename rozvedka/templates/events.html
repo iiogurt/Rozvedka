@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}Events · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Events</h1>
+<p class="lede">{{ pg.total|num }} dated events{% if f.source or f.kind or f.country or f.year or f.q or f.actor %} match{% endif %} – the data behind the timeline,
+  each with its source.</p>
+<details class="how"><summary>How this is collected</summary>
+<ul class="prov-list muted small">
+  {% for k, m in meta.items() %}<li><b>{{ m.name }}</b> – <a href="{{ m.url }}" target="_blank" rel="noopener">{{ m.url }}</a>, licence {{ m.license }},
+    retrieved {{ m.retrieved }}: {{ m.rows|num }} events{% if m.note %} ({{ m.note }}){% endif %}. {{ m.citation }}.</li>{% endfor %}
+  <li>Wikidata: events of the classes in <code>sources/events.yaml</code> since 2000 that took place in a state of the library or name an
+    actor of the gazetteer as participant or perpetrator; weight = Wikipedia language editions with an article. EuRepoC: every cyber
+    incident since 2000; a state is an initiator only when EuRepoC codes the initiator as a state; weight = its weighted intensity. UCDP:
+    single events with at least 50 deaths in a state of the library (preliminary candidate events marked ◌); weight = deaths.</li>
+  <li>Nothing is inferred: an actor is linked when its Wikidata item or one of its names matches the gazetteer unambiguously – otherwise it
+    is shown as written, with the reason. Relations (→) are only those a Wikidata item states. Refresh: <code>python -m rozvedka fetch-events</code>.</li>
+  {% if not meta %}<li><b>No events yet</b> – run <code>python -m rozvedka fetch-events</code>.</li>{% endif %}
+</ul></details>
+
+<form class="filters" method="get" action="/events">
+  <input type="search" name="q" value="{{ f.q }}" placeholder="Name of the event…" aria-label="Name of the event">
+  <select name="source" aria-label="Source"><option value="">All sources</option>
+    {% for s, n in facets.sources %}<option value="{{ s }}"{{ ' selected' if s == f.source }}>{{ meta.get(s, {}).get('name', s) }} ({{ n|num }})</option>{% endfor %}</select>
+  <select name="kind" aria-label="Kind"><option value="">All kinds</option>
+    {% for k, n in facets.kinds %}<option value="{{ k }}"{{ ' selected' if k == f.kind }}>{{ k }} ({{ n|num }})</option>{% endfor %}</select>
+  <select name="country" aria-label="State"><option value="">All states</option>
+    {% for c, name in COUNTRY_NAMES|dictsort(by='value') if c not in ('EU', 'NATO', 'OTHER') %}<option value="{{ c }}"{{ ' selected' if c == f.country }}>{{ name }}</option>{% endfor %}</select>
+  <select name="year" aria-label="Year"><option value="">All years</option>
+    {% for y in facets.years %}<option{{ ' selected' if y == f.year }}>{{ y }}</option>{% endfor %}</select>
+  {% if f.actor %}<input type="hidden" name="actor" value="{{ f.actor }}">{% endif %}
+  <button>Filter</button> <a href="/events">Reset</a>
+</form>
+
+{{ pager(pg, "events") }}
+<table class="pc-table small ev-table">
+  <thead><tr><th>Date</th><th>Event</th><th>Where</th><th>Who</th><th class="n">Deaths</th><th>Source</th></tr></thead>
+  {% for e in rows %}<tr>
+    <td class="ev-date">{{ e.start }}{% if e.end and e.end != e.start %}<br><span class="muted">– {{ e.end }}</span>{% endif %}</td>
+    <td><b>{{ e.label }}</b>{% if e.preliminary %} <span class="muted" title="UCDP candidate event: preliminary">◌</span>{% endif %}
+      <div class="muted">{{ e.kind }}{% if e.description %} · {{ e.description[:180] }}{{ '…' if e.description|length > 180 }}{% endif %}</div>
+      {% for l in e.links[:6] %}<div class="ev-link">{% if l.src == e.key %}→ {{ l.rel }} <b>{{ l.dst_label }}</b>{% else %}← <b>{{ l.src_label }}</b> {{ l.rel }} this{% endif %}
+        <span class="muted">(Wikidata {{ l.property }} on {{ 'this item' if l.stated_by == e.key else l.stated_by }})</span></div>{% endfor %}
+      {% if e.links|length > 6 %}<div class="muted">+{{ e.links|length - 6 }} more relations</div>{% endif %}</td>
+    <td>{% for c in e.countries %}<a href="/events?country={{ c }}" title="{{ COUNTRY_NAMES.get(c, c) }}">{% if c in COUNTRY_NAMES %}<img class="flag-sm" src="{{ flag_url(c) }}" alt="{{ c }}" width="20" height="15">{% else %}{{ c }}{% endif %}</a> {% endfor %}</td>
+    <td>{% for a in e.actors[:6] %}<div><span class="muted">{{ a.role }}:</span>
+      {% if a.actor_key %}<a href="/actors/{{ a.actor_key }}">{{ a.actor_label or a.name }}</a>{% else %}<span title="{{ a.reason or '' }}">{{ a.name[:70] }}{{ '…' if a.name|length > 70 }}</span>{% endif %}</div>{% endfor %}
+      {% if e.actors|length > 6 %}<div class="muted">+{{ e.actors|length - 6 }} more</div>{% endif %}</td>
+    <td class="n">{{ e.deaths|num if e.deaths is not none else '' }}</td>
+    <td><a href="{{ e.url }}" target="_blank" rel="noopener">{{ {'wikidata': 'Wikidata', 'eurepoc': 'EuRepoC', 'ucdp': 'UCDP'}[e.source] }}</a>
+      {% if e.weight is not none %}<div class="muted" title="{{ {'wikidata': 'Wikipedia language editions with an article', 'eurepoc': 'EuRepoC weighted intensity', 'ucdp': 'deaths (best estimate)'}[e.source] }}">weight {{ e.weight|round(1) if e.source == 'eurepoc' else e.weight|int }}</div>{% endif %}</td>
+  </tr>{% endfor %}
+</table>
+{{ pager(pg, "events") }}
+{% endblock %}

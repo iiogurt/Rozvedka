@@ -27,6 +27,24 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.71.0] – 2026-10-19
+
+### Added
+- **Events** (roadmap H1a, the data behind the coming timeline) – *Actors & threats → Events*, `/events`: dated events
+  from three sources, each linked to its source and kept apart.
+  - **Wikidata**: events of 14 classes (terrorist attacks, cyberattacks, data breaches, sabotage, assassinations,
+    hostage takings, bombings, massacres, riots, coups, invasions, armed conflicts, natural disasters, pandemics) since
+    2000 that took place in a state of the library or name an actor of the gazetteer. They come with country, place,
+    deaths, participants and perpetrators, and the relations the items state: cause and effect, what followed, what
+    was part of what. The classes are listed in `sources/events.yaml`.
+  - **EuRepoC** cyber incidents (CC BY-NC 4.0), with receiving states, initiators matched to the gazetteer, and who
+    attributed them.
+  - **UCDP** organised violence (CC BY 4.0): deaths per country and month, and single events with at least 50 deaths
+    in a state of the library; the monthly candidate events of the current year are marked as preliminary.
+  - An actor is linked only when its Wikidata item or one of its names matches unambiguously, otherwise it is shown as
+    written with the reason. Filters by source, kind, state, year, name and actor, with the shared pager. Refresh:
+    `python -m rozvedka fetch-events`.
+
 ## [0.70.0] – 2026-10-19
 
 ### Added
@@ -1365,7 +1383,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.70.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.71.0...HEAD
+[0.71.0]: https://github.com/iiogurt/Rozvedka/compare/v0.70.0...v0.71.0
 [0.70.0]: https://github.com/iiogurt/Rozvedka/compare/v0.69.1...v0.70.0
 [0.69.1]: https://github.com/iiogurt/Rozvedka/compare/v0.69.0...v0.69.1
 [0.69.0]: https://github.com/iiogurt/Rozvedka/compare/v0.68.1...v0.69.0

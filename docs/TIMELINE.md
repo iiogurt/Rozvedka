@@ -5,8 +5,9 @@ The owner asked on 2026-10-19 for a graphical timeline of important events that:
 - shows chains of events (what caused or followed what);
 - is joined to the reports and subjects already in the library.
 
-This note covers what exists, the data that can support it, and how to build it. It is research for the
-roadmap; nothing has been built yet.
+This note covers what exists, the data that can support it, and how to build it.
+
+**Status:** H1a (the events store, `fetch-events`, `/events`) built in 0.71.0; H1b–H1d open.
 
 ## 1. What exists already
 
@@ -51,7 +52,7 @@ Roadmap F7 ("annotated actor timeline") is the small version of this, for one ac
 
 | Source | What it adds | Size / coverage | Licence and access | Use? |
 |---|---|---|---|---|
-| **Wikidata** | Events with date (P585 point in time, P580/P582 start/end), country (P17), place (P276), participants (P710), perpetrator (P8031), deaths (P1120). Chains: has cause / has effect (P828/P1542), immediate cause (P1478/P1536), follows / followed by (P155/P156), part of (P361) | Dated since 2000: 1,733 terrorist attacks (88 with a cause, effect or sequence link), 797 natural disasters (72), 335 riots (41), 95 cyberattacks (4), 70 assassinations (11), 45 sabotage acts (4). The large events are well linked: the full-scale Russo-Ukrainian war has 11 causes and 15 effects | CC0, SPARQL – already used | **Yes** – the core |
+| **Wikidata** | Events with date (P585 point in time, P580/P582 start/end), country (P17), place (P276), participants (P710), perpetrator (P8031), deaths (P1120). Chains: has cause / has effect (P828/P1542), immediate cause (P1478/P1536), follows / followed by (P155/P156), part of (P361) | Dated since 2000: 1,733 terrorist attacks (88 with a cause, effect or sequence link), 797 natural disasters (72), 335 riots (41), 95 cyberattacks (4), 70 assassinations (11), 45 hostage takings (4). The large events are well linked: the full-scale Russo-Ukrainian war has 11 causes and 15 effects | CC0, SPARQL – already used | **Yes** – the core |
 | **UCDP** Georeferenced Event Dataset 26.1, Candidate Events 26.0.8 (monthly) | Organised-violence events with date, sides, deaths and coordinates – the war in Ukraine day by day | 1989–2025; candidate events up to the month before | CC BY 4.0; the [downloads](https://ucdp.uu.se/downloads/) are direct CSV files. The API needs a token requested by e-mail (since February 2026) – not needed | **Yes**, for the states in scope (Ukraine; Russia as a side) |
 | **EuRepoC** Global Dataset of Cyber Incidents 1.3 | Cyber incidents with start date, initiator, attribution (who attributed, when), targets and target states – fills the gap Wikidata leaves (95 cyberattacks) | 3,416 incidents, 2000–2024 | CC BY-NC 4.0, [Zenodo](https://zenodo.org/records/14965395) (CSV, XLSX) | **Yes** – non-commercial use fits |
 | The library's own records | Sanctions listings with their dates (EU, UK, UN), official attributions, threat-level changes, wanted notices, CISA KEV dates, the dates of reports | already on disk | as now | **Yes** – drawn as events of their kind |

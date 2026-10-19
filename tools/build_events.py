@@ -72,7 +72,9 @@ def main() -> None:
         print(f"{ev['date']:<10} {ev['wikidata']:<10} {ev['label']}  ({ev['date_property']})")
         time.sleep(1)
     data["events"].sort(key=lambda e: e.get("date", "9999"))
-    EVENTS.write_text(header + yaml.safe_dump(data, allow_unicode=True, sort_keys=False, width=120), encoding="utf-8")
+    # the header keeps the comments and the hand-written `classes`; only the events are written back
+    EVENTS.write_text(header + yaml.safe_dump({"events": data["events"]}, allow_unicode=True, sort_keys=False, width=120),
+                      encoding="utf-8")
 
 
 if __name__ == "__main__":

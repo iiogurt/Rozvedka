@@ -5,6 +5,27 @@
 # marker can be traced back: the date is Wikidata's "point in time" (P585) or "start time" (P580) or "inception" (P571) of that item;
 # events whose item has none of these are listed but not drawn.
 # Do not edit the generated fields by hand; re-run the tool instead.
+#
+# `classes` (written by hand, since 0.71.0) are the Wikidata classes whose events since 2000 go into the timeline
+# (`python -m rozvedka fetch-events`, rozvedka/events.py): an event is kept when it took place in a state of the library
+# or names an actor of the gazetteer as participant or perpetrator. Counts are of dated items since 2000, all countries,
+# checked 2026-10-19.
+classes:
+- {qid: Q2223653, label: terrorist attack}     # 1,733
+- {qid: Q4071928, label: cyberattack}          # 95
+- {qid: Q1172486, label: data breach}          # 149
+- {qid: Q193518, label: sabotage}
+- {qid: Q3882219, label: assassination}        # 70
+- {qid: Q1371150, label: hostage taking}       # 45
+- {qid: Q891854, label: bombing}               # 797
+- {qid: Q3199915, label: massacre}             # 960
+- {qid: Q124757, label: riot}                  # 335
+- {qid: Q45382, label: coup d'état}            # 140
+- {qid: Q467011, label: invasion}              # 14
+- {qid: Q350604, label: armed conflict}        # 2,327 (wars are a subclass)
+- {qid: Q8065, label: natural disaster}        # 797
+- {qid: Q12184, label: pandemic}               # 36
+
 events:
 - wikipedia: September 11 attacks
   label: 9/11 attacks
