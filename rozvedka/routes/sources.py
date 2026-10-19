@@ -1,4 +1,4 @@
-"""Topics, sources, think tanks and democracy ratings."""
+"""Topics, sources, think tanks and the ratings of states."""
 from fastapi import APIRouter, HTTPException, Request
 from .. import actors, db, home, publishers, ratings, series, ties, topics, trends
 from ..web import COUNTRY_NAMES, _independent, independent_ids, region_of, tpl
@@ -115,18 +115,53 @@ def publisher_page(request: Request, source_id: int):
 
 
 @router.get("/ratings")
-def ratings_page(request: Request, sort: str = "ldi"):
-    """Democracy ratings of the library's states over time, with the number of reports from each."""
+def ratings_page(request: Request, sort: str = "", group: str = "democracy"):
+    """Ratings of the library's states over time, one group at a time (democracy, security, governance), with the
+    number of official reports from each state."""
+    group = group if group in ratings.GROUPS else "democracy"
     with db.session() as con:
         n_docs = dict(con.execute(f"""SELECT s.country, COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
                                       WHERE {trends.LISTED} AND {trends.OFFICIAL} GROUP BY s.country""").fetchall())
     rows = [p | {"name": COUNTRY_NAMES.get(c, c), "n_docs": n_docs.get(c, 0)}
             for c in sorted(COUNTRY_NAMES) if (p := ratings.profile(c))]
-    key = {"ldi": lambda r: -(r["measures"].get("vdem_libdem", {}).get("latest") or (0, -9))[1],
-           "change": lambda r: _ldi_change(r), "name": lambda r: r["name"]}.get(sort, lambda r: r["name"])
+    measures = ratings.of_group(group)
+    if group == "democracy":
+        sort = sort or "ldi"
+        key = {"ldi": lambda r: -(r["measures"].get("vdem_libdem", {}).get("latest") or (0, -9))[1],
+               "change": lambda r: _ldi_change(r), "name": lambda r: r["name"]}.get(sort, lambda r: r["name"])
+    else:
+        sort = sort if sort in measures or sort == "name" else next(iter(measures))
+        # by its place among the states (the better end first), unrated states last
+        key = (lambda r: r["name"]) if sort == "name" else \
+            (lambda r: ((r["measures"].get(sort) or {}).get("rank") or (10**6, 0))[0])
     rows.sort(key=key)
     return tpl.TemplateResponse(request, "ratings.html", {"rows": rows, "sort": sort, "MEASURES": ratings.MEASURES,
+                                                         "group": group, "GROUPS": ratings.GROUPS, "measures": measures,
                                                          "meta": ratings.load(), "docs_url": home.docs_url})
+
+
+@router.get("/ratings/{country}")
+def ratings_country(request: Request, country: str):
+    """Every rating of one state: one small chart per measure on its own scale, with the latest value, the state's
+    place among the library's states, the source, and the state's official reports on the matching topic."""
+    country = country.upper()
+    p = ratings.profile(country)
+    if not p or country not in COUNTRY_NAMES:
+        raise HTTPException(404, "no ratings for this state")
+    tax = topics.taxonomy()["topics"]
+    with db.session() as con:
+        topics.init()
+        n_topic = dict(con.execute(f"""SELECT t.topic, COUNT(DISTINCT d.id) FROM doc_topics t JOIN documents d ON d.id=t.doc_id
+                                       JOIN sources s ON s.id=d.source_id
+                                       WHERE {trends.LISTED} AND {trends.OFFICIAL} AND s.country=? GROUP BY t.topic""",
+                                   (country,)).fetchall())
+    groups = [(g, name, about, [p["measures"][k] | {"topic_name": tax.get(m.get("topic") or "", {}).get("name"),
+                                                     "n_topic": n_topic.get(m.get("topic"), 0)}
+                                for k, m in ratings.of_group(g).items() if k in p["measures"]])
+              for g, (name, about) in ratings.GROUPS.items()]
+    return tpl.TemplateResponse(request, "ratings_country.html", {
+        "p": p, "country": country, "name": COUNTRY_NAMES[country], "groups": groups, "meta": ratings.load(),
+        "docs_url": home.docs_url})
 
 
 def _ldi_change(r: dict) -> float:

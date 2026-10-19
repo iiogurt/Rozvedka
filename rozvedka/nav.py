@@ -38,9 +38,9 @@ GROUPS = [
         ("Agencies", "/sources", (), "The official agencies the library follows, by country."),
         ("Think tanks & analysts", "/publishers", ("/publisher",), "Think tanks and commercial analysts with their credibility profile."),
         ("Map", "/map", (), "Where the agencies are."),
-        ("Democracy map", "/map/democracy", (), "Regime ratings of the states, over time."),
+        ("Ratings map", "/map/democracy", (), "Democracy, security and governance ratings of the states, over time."),
         ("Who reports on which country", "/map/mentions", (), "Where agencies' reports point."),
-        ("Ratings", "/ratings", (), "Democracy ratings of the states (V-Dem, Freedom House, World Bank)."),
+        ("Ratings", "/ratings", ("/ratings/",), "Ratings of the states: democracy, security and governance."),
         ("Citations", "/citations", (), "Which agencies and reports cite which."),
     ]),
     ("maintain", "Maintain", "/views#maintain", [

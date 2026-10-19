@@ -27,6 +27,20 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.70.0] – 2026-10-19
+
+### Added
+- **Security and governance ratings of the states** (roadmap H3a), beside the democracy ratings on *Sources → Ratings*:
+  political stability and absence of violence/terrorism, rule of law, control of corruption, government effectiveness
+  and regulatory quality (World Bank WGI), intentional homicides (UNODC), military expenditure as a share of GDP
+  (SIPRI) and the Corruption Perceptions Index (Transparency International). Each measure shows the state's course since
+  1990 on its own scale, its latest value and its place among the library's states, and says which end is better
+  (military spending is context, not a grade); nothing is combined into a score.
+- **A page of all ratings per state** (`/ratings/<country>`): one small chart per measure, with the source, the place
+  and the state's official reports on the matching topic (terrorism, organised crime, corruption, military threat).
+- The **ratings map** (formerly the democracy map) colours countries by any of these measures; blue is always the better
+  end, and a measure without one gets a single-hue scale.
+
 ## [0.69.1] – 2026-10-19
 
 ### Added
@@ -1351,7 +1365,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.69.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.70.0...HEAD
+[0.70.0]: https://github.com/iiogurt/Rozvedka/compare/v0.69.1...v0.70.0
 [0.69.1]: https://github.com/iiogurt/Rozvedka/compare/v0.69.0...v0.69.1
 [0.69.0]: https://github.com/iiogurt/Rozvedka/compare/v0.68.1...v0.69.0
 [0.68.1]: https://github.com/iiogurt/Rozvedka/compare/v0.68.0...v0.68.1

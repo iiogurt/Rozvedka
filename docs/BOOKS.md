@@ -91,9 +91,12 @@ sample measures how often it happens.
 Overall this is roughly twice the work of the commercial-analysts category (0.69.0), plus OCR time if the books are
 scans.
 
-## 6. Questions for the owner
+## 6. Questions for the owner (answered 2026-10-19)
 
 1. Are the books born-digital PDFs (with a text layer) or scans? Is EPUB available for some?
 2. Which languages?
 3. Are extractive meanings (key sentences quoted, dated statements, stated relations, each with its page) enough? Or
    should a trained parser such as spaCy be allowed for better who-did-what extraction?
+
+**Answers:** English books, a mix of PDF and EPUB. The owner prefers the smarter way: a trained parser (spaCy) may be used for
+who-did-what extraction; every statement still shows its sentence and page.

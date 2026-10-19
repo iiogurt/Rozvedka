@@ -1,8 +1,10 @@
 {% extends "base.html" %}
-{% from "_ratings.html" import strip, badges %}
-{% block title %}Democracy ratings · Sources · Rozvedka{% endblock %}
+{% from "_ratings.html" import strip, badges, spark, direction %}
+{% block title %}{{ GROUPS[group][0] }} ratings · Sources · Rozvedka{% endblock %}
 {% block main %}
-<h1 class="page-h">Democracy ratings of the reporting states</h1>
+<h1 class="page-h">Ratings of the reporting states</h1>
+<p class="seg rt-groups" role="tablist" aria-label="Group of ratings">{% for g, (name, about) in GROUPS.items() %}<a role="tab" href="/ratings?group={{ g }}" title="{{ about }}"{% if g == group %} class="on" aria-selected="true"{% endif %}>{{ name }}</a>{% endfor %}</p>
+{% if group == 'democracy' %}
 <p class="muted small">How democratic was a state when its agencies wrote a report? A threat assessment from an electoral autocracy, or from a
   democracy that has since slid, reads differently from one by a stable liberal democracy. Each row shows the state's regime type
   year by year since 1990 (colour) with V-Dem's Liberal Democracy Index as a line, and the latest value of three independent
@@ -15,13 +17,13 @@
   </div>
   <p class="small"><span class="muted">Sort:</span>
     {% for k, label in (('ldi', 'most democratic'), ('change', 'largest decline in ten years'), ('name', 'name')) %}
-      {% if sort == k %}<b>{{ label }}</b>{% else %}<a href="/ratings?sort={{ k }}">{{ label }}</a>{% endif %}{{ ' · ' if not loop.last }}{% endfor %}</p>
+      {% if sort == k %}<b>{{ label }}</b>{% else %}<a href="/ratings?group=democracy&amp;sort={{ k }}">{{ label }}</a>{% endif %}{{ ' · ' if not loop.last }}{% endfor %}</p>
   <table class="rt-table small">
     <thead><tr><th>State</th><th>1990 → {{ rows[0].measures.vdem_regime.latest[0] if rows and rows[0].measures.vdem_regime }}</th>
       {% for key in ('vdem_libdem', 'fh_score', 'wgi_va') %}<th class="n" title="{{ MEASURES[key].about }}">{{ MEASURES[key].by }}<br><span class="muted">{{ MEASURES[key].name }}</span></th>{% endfor %}
       <th>Regime changes</th><th class="n">Official reports</th></tr></thead>
     {% for r in rows %}<tr>
-      <th><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="" width="20" height="15"> {{ r.name }}</th>
+      <th><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="" width="20" height="15"> <a href="/ratings/{{ r.country }}">{{ r.name }}</a></th>
       <td>{{ strip(r, width=220, height=18) }}</td>
       {% for key in ('vdem_libdem', 'fh_score', 'wgi_va') %}{% set m = r.measures.get(key) %}
       <td class="n">{% if m and m.latest %}<a href="{{ m.url }}" target="_blank" rel="noopener" title="{{ m.latest[0] }} · {{ m.citation }} · {{ m.license }}">{{ m.fmt.format(m.latest[1]) }}</a> <span class="muted">{{ "’" ~ (m.latest[0]|string)[-2:] }}</span>{% else %}<span class="muted">–</span>{% endif %}</td>{% endfor %}
@@ -31,16 +33,43 @@
   </table>
 </section>
 
+{% else %}
+<p class="muted small">{{ GROUPS[group][0] }}: {{ GROUPS[group][1] }}. Each column is one measurement with its own source, scale and
+  direction – they are not combined into a score. The small line is the state's course since 1990 on the measure's scale; the number is
+  its latest value and year, then its place among the library's states (the better end first). Every value opens its source; the
+  state's name opens all of its ratings.</p>
+<section class="viz-card">
+  <p class="small"><span class="muted">Sort:</span>
+    {% for k, m in measures.items() %}{% if sort == k %}<b>{{ m.short }}</b>{% else %}<a href="/ratings?group={{ group }}&amp;sort={{ k }}">{{ m.short }}</a>{% endif %} · {% endfor %}
+    {% if sort == 'name' %}<b>name</b>{% else %}<a href="/ratings?group={{ group }}&amp;sort=name">name</a>{% endif %}</p>
+  <table class="rt-table small">
+    <thead><tr><th>State</th>
+      {% for k, m in measures.items() %}<th class="n" title="{{ m.about }}">{{ m.by }}<br><span class="muted">{{ m.name }}<br>{{ direction(m) }}</span></th>{% endfor %}
+      <th class="n">Official reports</th></tr></thead>
+    {% for r in rows %}<tr>
+      <th><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="" width="20" height="15"> <a href="/ratings/{{ r.country }}">{{ r.name }}</a></th>
+      {% for k, m0 in measures.items() %}{% set m = r.measures.get(k) %}
+      <td class="n">{% if m and m.latest %}{{ spark(m) }} <a href="{{ m.url }}" target="_blank" rel="noopener" title="{{ m.latest[0] }} · {{ m.citation }} · {{ m.license }}">{{ m.fmt.format(m.latest[1]) }}</a>
+        <span class="muted">{{ "’" ~ (m.latest[0]|string)[-2:] }}{% if m.rank %} · {{ m.rank[0] }}.{% endif %}</span>{% else %}<span class="muted">–</span>{% endif %}</td>{% endfor %}
+      <td class="n">{% if r.n_docs %}<a href="{{ docs_url(country=r.country, type='official') }}">{{ r.n_docs|num }}</a>{% else %}<span class="muted">0</span>{% endif %}</td>
+    </tr>{% endfor %}
+  </table>
+</section>
+{% endif %}
+
 <section class="viz-card small">
   <h2 class="viz-title">Where the ratings come from</h2>
   <ul class="prov-list">
-    {% for key, m in MEASURES.items() %}<li><b>{{ m.by }} – {{ m.name }}</b>: {{ m.about }}
+    {% for key, m in MEASURES.items() if m.group == group %}<li><b>{{ m.by }} – {{ m.name }}</b>: {{ m.about }}
       <span class="muted">Source: {{ meta.measures.get(key, {}).get('citation') or m.by }} via
         <a href="{{ meta.measures.get(key, {}).get('source') }}" target="_blank" rel="noopener">{{ meta.measures.get(key, {}).get('source') }}</a>;
         licence {{ m.license }}; retrieved {{ meta.measures.get(key, {}).get('retrieved') }}.</span></li>{% endfor %}
-    <li>V-Dem and Freedom House are also think tanks in this library; the World Bank measure is the official, intergovernmental third view.
-      The EIU Democracy Index is a commercial product and is not used. Ratings describe the state, not its agencies' work; they are
-      refreshed with <code>python -m rozvedka fetch-ratings</code> (also part of <code>fetch-actors</code>).</li>
+    {% if group == 'democracy' %}<li>V-Dem and Freedom House are also think tanks in this library; the World Bank measure is the official, intergovernmental third view.
+      The EIU Democracy Index is a commercial product and is not used.</li>{% elif group == 'security' %}
+    <li>Not used: the Global Peace Index and Global Terrorism Index (Institute for Economics &amp; Peace) – their data is given out only through a
+      request form. The states' own terrorism threat levels are on <a href="/threat-levels">Threat levels</a>.</li>{% endif %}
+    <li>Ratings describe the state, not its agencies' work; they are refreshed with <code>python -m rozvedka fetch-ratings</code> (also part of
+      <code>fetch-actors</code>). Other groups: {% for g, (name, about) in GROUPS.items() if g != group %}<a href="/ratings?group={{ g }}">{{ name }}</a>{{ ', ' if not loop.last }}{% endfor %}.</li>
     <li>Not rated: the EU, NATO and other international bodies. Counted reports: official agencies only (◆ think tanks and ■ commercial analysts are not states).</li>
   </ul>
 </section>

@@ -1,8 +1,10 @@
-/* Democracy over time: every country coloured by a democracy measure for a chosen year (V-Dem, Freedom House,
-   World Bank), the library's states listed with their course since 1990, and the library's sources on top.
+/* Ratings over time: every country coloured by one measure for a chosen year – democracy (V-Dem, Freedom House, World
+   Bank), security (World Bank, UNODC, SIPRI) or governance (World Bank, Transparency International) – the library's
+   states listed with their course since 1990, and the library's sources on top.
    All years come in one request (/api/ratings/map); the slider and the play button only redraw. Every report count
-   opens /documents?country=…&year=…&type=official. Colours: blue = more democratic, orange = more autocratic
-   (Okabe–Ito, colour-blind safe), always with a label. */
+   opens /documents?country=…&year=…&type=official. Colours: blue = the better end of the measure (more democratic,
+   safer, cleaner), orange = the worse end (Okabe–Ito, colour-blind safe), always with a label; a measure without a
+   better end (military spending) has a single-hue scale. */
 (function () {
   "use strict";
   // hover cards fully opaque while open; Leaflet sets 0 when one closes, so only the card under the pointer shows
@@ -11,7 +13,8 @@
   const form = $("#dm");
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const REGIME = { 3: "#0072b2", 2: "#56b4e9", 1: "#e69f00", 0: "#d55e00" };
-  const RAMP = ["#a63f00", "#d55e00", "#e69f00", "#bfb08a", "#8fc3e8", "#56b4e9", "#0072b2"];   // autocratic → democratic
+  const RAMP = ["#a63f00", "#d55e00", "#e69f00", "#bfb08a", "#8fc3e8", "#56b4e9", "#0072b2"];   // worse → better
+  const SEQ = ["#2b2a1e", "#4d4524", "#6f6128", "#93802b", "#b8a12f", "#ddc33a", "#f0e442"];    // low → high, no better end
   const NODATA = "#161b22";
   const CHANGE_SPAN = 10, CHANGE_MAX = 0.25;     // years compared; ±0.25 LDI saturates the colour
   const CRED = { transparent: "#2ec4a0", partial: "#f0e442", concerns: "#e69f00", redflag: "#ff7a3d", unassessed: "#9aa1ab" };
@@ -49,20 +52,36 @@
     if (key === "vdem_regime") return REGIME[Math.round(v)];
     let t;
     if (key === "change") t = (Math.max(-CHANGE_MAX, Math.min(CHANGE_MAX, v)) + CHANGE_MAX) / (2 * CHANGE_MAX);
-    else { const [lo, hi] = data.measures[key].scale; t = (v - lo) / (hi - lo); }
+    else {
+      const m = data.measures[key], [lo, hi] = m.scale;
+      t = (v - lo) / (hi - lo);
+      if (m.better === "low") t = 1 - t;
+      if (!m.better) return SEQ[Math.max(0, Math.min(SEQ.length - 1, Math.round(t * (SEQ.length - 1))))];
+    }
     return RAMP[Math.max(0, Math.min(RAMP.length - 1, Math.round(t * (RAMP.length - 1))))];
   }
-  const fmt = (key, v) => v == null ? "–" : key === "vdem_regime" ? data.regimes[Math.round(v)]
-    : key === "change" ? (v >= 0 ? "+" : "") + v.toFixed(2) : key === "fh_score" ? v.toFixed(0)
-    : key === "wgi_va" ? (v >= 0 ? "+" : "") + v.toFixed(2) : v.toFixed(2);
+  // the measure's own format ("{:+.2f}", "{:.1f} %" …, as on the server)
+  function fmt(key, v) {
+    if (v == null) return "–";
+    if (key === "vdem_regime") return data.regimes[Math.round(v)];
+    if (key === "change") return (v >= 0 ? "+" : "") + v.toFixed(2);
+    const f = (data.measures[key] || {}).fmt || "{:.2f}", dec = /\.(\d)f/.exec(f);
+    return (f.includes("+") && v >= 0 ? "+" : "") + v.toFixed(dec ? Number(dec[1]) : 0) + (f.endsWith(" %") ? " %" : "");
+  }
+  const groupOf = (key) => key === "change" ? "democracy" : (data.measures[key] || {}).group;
+  // best first: the better end of the measure (higher first when it has none)
+  const better = (key) => key === "change" ? "high" : (data.measures[key] || {}).better;
   const SHORT = { 3: "liberal dem.", 2: "electoral dem.", 1: "electoral aut.", 0: "closed aut." };   // the list's narrow column
   const reportsIn = (iso, y) => (data.reports[iso] || {})[String(y)] || 0;
   const docsUrl = (iso, y) => `/documents?country=${encodeURIComponent(iso)}&year=${y}&type=official`;
 
-  // a small line of the Liberal Democracy Index since 1990, the chosen year marked
-  function spark(c, y, w = 70, h = 16) {
-    const arr = c.values.vdem_libdem || [], n = arr.length;
-    const pts = arr.map((v, i) => v == null ? null : `${(i / (n - 1) * w).toFixed(1)},${(h - 1 - v * (h - 2)).toFixed(1)}`).filter(Boolean);
+  // a small line of the chosen measure since 1990 on its own scale (the Liberal Democracy Index for the regime type
+  // and its change), the chosen year marked
+  function spark(c, y, w = 70, h = 16, key = "vdem_libdem") {
+    const k = key === "change" || key === "vdem_regime" ? "vdem_libdem" : key;
+    const arr = c.values[k] || [], n = arr.length, [lo, hi] = (data.measures[k] || {}).scale || [0, 1];
+    const t = (v) => Math.max(0, Math.min(1, (v - lo) / (hi - lo)));
+    const pts = arr.map((v, i) => v == null ? null : `${(i / (n - 1) * w).toFixed(1)},${(h - 1 - t(v) * (h - 2)).toFixed(1)}`).filter(Boolean);
     const x = (idx(y) / (n - 1) * w).toFixed(1);
     return `<svg class="dm-spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">
       <polyline points="${pts.join(" ")}" fill="none" stroke="#8fc3e8" stroke-width="1.3"/>
@@ -75,13 +94,15 @@
     if (!c) return `<div class="tip-h"><b>${esc(f.properties.name)}</b></div><span class="muted">no rating in these datasets</span>`;
     const key = measure();
     const row = (k, label, by) => `<tr${k === key ? ' class="on"' : ""}><th>${label}</th><td>${esc(fmt(k, val(c, k, y)))}</td><td class="src">${by}</td></tr>`;
-    const n = reportsIn(f.properties.iso, y);
+    const n = reportsIn(f.properties.iso, y), g = groupOf(key);
+    const rows = g === "democracy"
+      ? `${row("vdem_regime", "Regime type", "V-Dem")}${row("vdem_libdem", "Liberal Democracy Index", "V-Dem")}
+         ${row("change", `LDI change since ${y - CHANGE_SPAN}`, "V-Dem")}
+         ${row("fh_score", "Freedom in the World", "Freedom House")}${row("wgi_va", "Voice and Accountability", "World Bank")}`
+      : Object.entries(data.measures).filter(([, m]) => m.group === g).map(([k, m]) => row(k, esc(m.name), esc(m.by))).join("");
     return `<div class="tip-h"><b>${esc(c.name)}</b><span class="muted">${y}</span></div>
-      <table class="dm-tip">
-      ${row("vdem_regime", "Regime type", "V-Dem")}${row("vdem_libdem", "Liberal Democracy Index", "V-Dem")}
-      ${row("change", `LDI change since ${y - CHANGE_SPAN}`, "V-Dem")}
-      ${row("fh_score", "Freedom in the World", "Freedom House")}${row("wgi_va", "Voice and Accountability", "World Bank")}</table>
-      <div class="tip-spark"><span class="muted">LDI ${data.years[0]}</span>${spark(c, y, 190, 26)}<span class="muted">${data.years.at(-1)}</span></div>
+      <table class="dm-tip">${rows}</table>
+      <div class="tip-spark"><span class="muted">${esc(groupOf(key) === "democracy" ? "LDI" : data.measures[key].short)} ${data.years[0]}</span>${spark(c, y, 190, 26, key)}<span class="muted">${data.years.at(-1)}</span></div>
       <div class="tip-foot">${c.library
         ? `<span class="${n ? "" : "muted"}">${n} official report${n === 1 ? "" : "s"} from ${y} in the library</span>${n ? '<span class="hint">click to list them</span>' : ""}`
         : '<span class="muted">not a reporting state of the library</span>'}</div>`;
@@ -145,9 +166,12 @@
         [3, 2, 1, 0].map((k) => `<tr><th><span class="rt-dot" style="background:${REGIME[k]}"></span>${esc(data.regimes[k])}</th>
           <td class="n">${world[k]}</td><td class="n">${lib[k]}</td></tr>`).join("") + "</table>";
     } else {
-      const [lo, hi] = key === "change" ? [-CHANGE_MAX, CHANGE_MAX] : m.scale;
-      html = `<div class="dm-ramp">${RAMP.map((c) => `<i style="background:${c}"></i>`).join("")}</div>
-        <div class="dm-ramp-l"><span>${key === "change" ? "decline " + lo : lo}</span><span>${key === "change" ? "+" + hi + " improvement" : hi}</span></div>`;
+      const [lo, hi] = key === "change" ? [-CHANGE_MAX, CHANGE_MAX] : m.scale, b = better(key);
+      const ramp = b ? (b === "low" ? [...RAMP].reverse() : RAMP) : SEQ;
+      const ends = key === "change" ? ["decline " + lo, "+" + hi + " improvement"]
+        : [fmt(key, lo) + (b === "high" ? " worse" : b === "low" ? " better" : ""), fmt(key, hi) + (b === "high" ? " better" : b === "low" ? " worse" : " (context, neither end is better)")];
+      html = `<div class="dm-ramp">${ramp.map((c) => `<i style="background:${c}"></i>`).join("")}</div>
+        <div class="dm-ramp-l"><span>${esc(ends[0])}</span><span>${esc(ends[1])}</span></div>`;
     }
     $("#legend").innerHTML = html + `<div class="small muted"><span class="rt-dot" style="background:${NODATA};outline:1px solid #444"></span>no rating · white outline: the library's states</div>`;
     $("#year-label").textContent = y;
@@ -157,14 +181,15 @@
     const key = measure(), y = year();
     const rows = Object.entries(data.countries).filter(([, c]) => c.library)
       .map(([iso, c]) => ({ iso, c, v: val(c, key, y), ldi: val(c, "vdem_libdem", y), ch: val(c, "change", y), n: reportsIn(iso, y) }))
-      .sort((a, b) => (b.v ?? -9) - (a.v ?? -9) || (b.ldi ?? -9) - (a.ldi ?? -9));
+      .sort(better(key) === "low" ? (a, b) => (a.v ?? 1e9) - (b.v ?? 1e9) || (b.ldi ?? -9) - (a.ldi ?? -9)
+                                    : (a, b) => (b.v ?? -1e9) - (a.v ?? -1e9) || (b.ldi ?? -9) - (a.ldi ?? -9));
     $("#list-note").textContent = `${rows.length} · ${y}`;
     $("#list").innerHTML = rows.map((r) => `<li class="dm-row" data-iso="${r.iso}">
         <img src="/static/flags/${r.iso.toLowerCase()}.svg" alt="" width="18" height="13">
         <span class="dm-name">${esc(r.c.name)}</span>
-        ${spark(r.c, y)}
+        ${spark(r.c, y, 70, 16, key)}
         <span class="dm-v" style="--c:${colour(key, r.v)}" title="${esc(fmt(key, r.v))}"><i></i>${esc(key === "vdem_regime" && r.v != null ? SHORT[Math.round(r.v)] : fmt(key, r.v))}</span>
-        <span class="dm-ch ${r.ch == null ? "" : r.ch < -0.02 ? "down" : r.ch > 0.02 ? "up" : ""}" title="Liberal Democracy Index change since ${y - CHANGE_SPAN}">${r.ch == null ? "" : r.ch < -0.02 ? "▼" : r.ch > 0.02 ? "▲" : "▬"}</span>
+        <span class="dm-ch ${groupOf(key) !== "democracy" || r.ch == null ? "" : r.ch < -0.02 ? "down" : r.ch > 0.02 ? "up" : ""}" title="Liberal Democracy Index change since ${y - CHANGE_SPAN}">${groupOf(key) !== "democracy" || r.ch == null ? "" : r.ch < -0.02 ? "▼" : r.ch > 0.02 ? "▲" : "▬"}</span>
         ${r.n ? `<a class="dm-n" href="${docsUrl(r.iso, y)}" title="official reports from ${y}">${r.n}</a>` : '<span class="dm-n muted">0</span>'}
       </li>`).join("");
     for (const li of document.querySelectorAll(".dm-row")) {
@@ -179,7 +204,8 @@
     const m = data.measures, k = measure() === "change" ? "vdem_libdem" : measure();
     $("#sources-note").innerHTML = `${esc(m[k].about)} Source: ${esc(m[k].citation || m[k].by)}
       (<a href="${esc(m[k].source)}" target="_blank" rel="noopener">data</a>, licence ${esc(m[k].license)}), retrieved ${esc(data.retrieved)}.
-      Reports counted: official agencies of the state, by publication year. All states and sources: <a href="/ratings">Democracy ratings</a>.`;
+      Reports counted: official agencies of the state, by publication year. All states and sources:
+      <a href="/ratings?group=${esc(groupOf(measure()))}">${esc(data.groups[groupOf(measure())] || "")} ratings</a>.`;
   }
 
   function redraw() {

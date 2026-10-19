@@ -24,3 +24,21 @@
     {%- else %}{{ m.short }} {{ m.fmt.format(v[1]) }}{% endif %}</a>{% endif %}
 {%- endif %}{% endfor %}
 {% endmacro %}
+
+{# One measure over time on its own scale (values outside it are drawn at its edge); the latest value as a dot. #}
+{% macro spark(m, width=90, height=18, from_year=1990) %}
+{%- set pts = m.spark|selectattr(0, 'ge', from_year)|list -%}
+{%- if pts|length > 1 -%}
+{%- set lo, hi = m.scale -%}{%- set y0, y1 = pts[0][0], pts[-1][0] -%}
+{%- set ns = namespace(d='') -%}
+{%- for y, v in pts -%}{%- set t = ([[(v - lo) / (hi - lo), 0]|max, 1]|min) -%}
+{%- set ns.d = ns.d ~ ((y - y0) * (width - 4) / (y1 - y0) + 2)|round(1) ~ ',' ~ (height - 2 - t * (height - 4))|round(1) ~ ' ' -%}{%- endfor -%}
+<svg class="rt-spark" width="{{ width }}" height="{{ height }}" viewBox="0 0 {{ width }} {{ height }}" role="img"
+     aria-label="{{ m.name }} {{ y0 }}–{{ y1 }}"><polyline points="{{ ns.d }}"/>
+  {%- set last = ns.d.split()[-1].split(',') -%}<circle cx="{{ last[0] }}" cy="{{ last[1] }}" r="2"/><title>{{ m.name }}, {{ y0 }}–{{ y1 }}: {{ m.fmt.format(pts[0][1]) }} → {{ m.fmt.format(pts[-1][1]) }}</title></svg>
+{%- endif -%}
+{% endmacro %}
+
+{% macro direction(m) -%}
+{{ '↑ higher is better' if m.better == 'high' else '↓ lower is better' if m.better == 'low' else 'context – neither end is better' }}
+{%- endmacro %}

@@ -229,17 +229,33 @@ ties** – founders, leaders, investors, partners, donor governments, the US age
 leaders on its Wikidata item – each with its evidence; the same ties are links of the **network** (layer “Publisher
 profiles”), so a path search can show who stands behind the publisher of a report.
 
-### 🗳️ Democracy ratings of the reporting states
+### 🗳️ Ratings of the reporting states – democracy, security, governance
 
 <img src="docs/images/ratings.png" alt="Democracy ratings: regime type per year since 1990 with the Liberal Democracy Index, Freedom House and World Bank scores, regime changes" width="900">
 
-A report reads differently if its state has since slid from democracy (*Sources → Democracy ratings*, `/ratings`):
+A report reads differently if its state has since slid from democracy (*Sources → Ratings*, `/ratings`):
 each state's **regime type year by year since 1990** (V-Dem Regimes of the World, colour) with the **V-Dem Liberal
 Democracy Index** as a line, plus the latest **Freedom House** score and the **World Bank Voice and Accountability**
 indicator – three independent measurements, each value linked to its source, with licence and retrieval date. Sort by
 the largest decline in ten years. Country headings on *Sources* carry the same strip, and every **report page shows the
 ratings of the report's own year** – with a warning when the state's regime type has changed since (e.g. Hungary 2010
-electoral democracy, 2018 electoral autocracy). Data: `python -m rozvedka fetch-ratings` (also part of `fetch-actors`).
+electoral democracy, 2018 electoral autocracy).
+
+<img src="docs/images/ratings-security.png" alt="Security ratings: political stability, homicides and military spending per state, each with its course since 1990, latest value and place" width="900">
+
+Two more groups sit beside democracy. **Security**: the World Bank's *Political Stability and Absence of
+Violence/Terrorism*, UNODC's **intentional homicides** per 100,000 and SIPRI's **military expenditure** as a share of GDP
+(context, not a grade). **Governance**: the World Bank's *Rule of Law*, *Control of Corruption*, *Government
+Effectiveness* and *Regulatory Quality*, and Transparency International's **Corruption Perceptions Index**. Every column
+shows the state's course since 1990 on the measure's own scale, its latest value and year and its place among the
+library's states, and says which end is better. Nothing is combined into a score.
+
+<img src="docs/images/ratings-country.png" alt="Germany's ratings: one small chart per measure with the latest value, its place among the states, the source and the official reports on the matching topic" width="900">
+
+A state's name opens **all of its ratings** (`/ratings/DE`): one small chart per measure, with the latest value, its
+place, the source and licence, and – where a topic matches – the state's official reports on it (terrorism beside
+political stability, organised crime beside homicides, corruption beside the corruption measures). Data:
+`python -m rozvedka fetch-ratings` (also part of `fetch-actors`).
 
 ### 📅 Report series
 
@@ -574,10 +590,15 @@ Which actors the reports name **together more often than their frequency predict
 <td width="50%"><img src="docs/images/democracy-change.png" alt="World map coloured by the ten-year change of the Liberal Democracy Index"></td>
 </tr>
 <tr>
-<td><b>Democracy</b> – every country coloured by its regime type, Liberal Democracy Index, its ten-year change, Freedom House
-or World Bank score, in any year since 1990 (slider, ▶ plays the years).</td>
+<td><b>Ratings</b> – every country coloured by its regime type, Liberal Democracy Index, its ten-year change, Freedom House
+or World Bank score – or by any security or governance measure – in any year since 1990 (slider, ▶ plays the years).</td>
 <td>The panel counts states per regime in the world and in the library, and ranks the library's states with a trend
 line, the change and the number of reports of that year – each count opens its documents.</td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/images/homicide-map.png" alt="World map coloured by intentional homicides per 100,000 in 2023, the library's states ranked from the fewest"></td>
+<td>Each measure keeps its direction: blue is always the better end (fewer homicides, more stability, less corruption),
+orange the worse; military spending, which has no better end, gets a single-hue scale.</td>
 </tr>
 </table>
 
@@ -903,7 +924,7 @@ flowchart LR
 | `rozvedka/report.py` | the report page: provenance, series edition and changes, topics with terms, actors with passages |
 | `rozvedka/doctypes.py`, `works.py`, `dating.py` | document types; language versions and summaries grouped into one report; years from the text and year conflicts |
 | `rozvedka/concepts.py` | cross-language search: concept names in every language from Wikidata |
-| `rozvedka/ratings.py`, `publishers.py` | democracy ratings of states over time; credibility checks of think tanks and commercial analysts (funding or ownership, EU register, FARA, USAspending, sanctions lists) and their owners and sponsors |
+| `rozvedka/ratings.py`, `publishers.py` | democracy, security and governance ratings of states over time; credibility checks of think tanks and commercial analysts (funding or ownership, EU register, FARA, USAspending, sanctions lists) and their owners and sponsors |
 | `rozvedka/app.py`, `web.py`, `routes/`, `templates/`, `static/` | the server-rendered portal: the app and its middleware, what the pages share (templates, helpers, request guard), one route module per area (actors, documents, trends, maps, data, update, …) |
 
 ## Database
@@ -913,7 +934,7 @@ full-text index FTS5). It is a **working copy, not the source of truth**: the ha
 (registry, topics, actors, series, think-tank profiles, reviews) and the downloaded files rebuild it – except the edits
 made in the portal (a corrected title, language or year, a hidden file, an upload), which live only here and travel in
 datasets. Reference data fetched from outside is kept beside it as JSON with its source and date
-(`data/gazetteer/*.json` – actors, concepts, think-tank checks; `data/ratings/ratings.json` – democracy ratings).
+(`data/gazetteer/*.json` – actors, concepts, think-tank checks; `data/ratings/ratings.json` – ratings of states).
 
 <details>
 <summary><b>How to look at the data</b> – read-only, also while the portal runs</summary>

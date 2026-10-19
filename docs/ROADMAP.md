@@ -230,7 +230,7 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
    language model: distinctive terms, key sentences quoted with page, dated statements (→ timeline), stated relations
    with the sentence as evidence. About +20 % of the indexed words; OCR is the slow part if the books are scans.
    Steps H2a–H2d. · 4 × minor
-3. **Country ratings beyond democracy** ([design](COUNTRY_RATINGS.md)) – groups Security (WGI political stability,
+3. ◐ (0.70.0: H3a – five WGI dimensions, homicides, military spending, CPI, a page per state, the ratings map) **Country ratings beyond democracy** ([design](COUNTRY_RATINGS.md)) – groups Security (WGI political stability,
    UNODC homicides, UCDP conflict deaths, SIPRI military spending, threat levels), Governance (WGI rule of law,
    corruption, effectiveness, regulatory quality; TI CPI), Media (RSF), Cyber (ITU GCI, NCSI, EuRepoC incidents) and
    Disaster risk (INFORM, WorldRiskIndex, ND-GAIN); small multiples per country, a measure switch on the map, no
@@ -265,10 +265,10 @@ backups and exchange (0.27–0.28), home page and search console (0.22), Update 
 
 ## 5. Scope questions for the owner
 
-- **Books (H2):** born-digital PDFs or scans? EPUB too? Which languages? Are extractive meanings (quoted key sentences,
-  dated statements, stated relations with page) enough, or may a trained parser such as spaCy be used?
-- **Ratings (H3):** non-commercial and no-derivatives licences (EuRepoC CC BY-NC, TI CPI CC BY-ND) fit a personal
-  library that commits no data – confirm.
+- ✅ **Books (H2)** – answered 2026-10-19: English, a mix of PDF and EPUB; a trained parser (spaCy) may be used for
+  who-did-what extraction (still no LLM, no embeddings).
+- ✅ **Ratings (H3)** – answered 2026-10-19: non-commercial and no-derivatives licences are fine for personal use.
+  Order agreed: H3a → H1 → H2.
 
 - **Wider scope?** Candidates that fit "official and reliable": EU candidate and partner states (Moldova, Georgia,
   Serbia, Bosnia and Herzegovina, Kosovo), Israel, India, South Africa, Uruguay, Costa Rica, Singapore. Each adds
