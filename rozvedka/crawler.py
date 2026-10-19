@@ -3,6 +3,7 @@ import json
 import logging
 import re
 from datetime import datetime, timedelta
+from html import unescape
 from urllib.parse import unquote, urldefrag, urljoin, urlsplit
 
 import warnings
@@ -147,7 +148,9 @@ _NEW_WINDOW = re.compile(r"[\s,.(–-]*(öppnas i (?:ett )?nytt fönster|opens i
 def _title_for(a) -> str:
     t = _SIZE_SUFFIX.sub("", _NEW_WINDOW.sub("", " ".join(a.get_text(" ", strip=True).split())))
     if GENERIC_TITLES.match(t) or CALL_TO_ACTION.match(t) or len(t) < 4:
-        t = a.get("title") or a.get("aria-label") or ""
+        # the name a download link gives the saved file ("ESET Threat Report H1 2026"), unless it is just a filename
+        named = a.get("download") if isinstance(a.get("download"), str) and not re.search(r"\.\w{2,4}$", a.get("download")) else ""
+        t = named or a.get("title") or a.get("aria-label") or ""
     if GENERIC_TITLES.match(t) or CALL_TO_ACTION.match(t) or len(t) < 4:
         parent = a.find_parent(["li", "tr", "article", "div", "p"])
         if parent:
@@ -156,7 +159,17 @@ def _title_for(a) -> str:
             t = ""   # the surrounding text is the same call to action – use the filename instead
     if GENERIC_TITLES.match(t) or len(t) < 4 or t.startswith(("/", "http")):
         t = humanize_filename(a["href"])
-    return t[:300]
+    return clean_spaces(t)[:300]
+
+
+_INVISIBLE = re.compile("[\u00ad\u200b-\u200d\u2060\ufeff]")      # soft hyphen, zero-width characters
+_ODD_SPACE = re.compile("[\u00a0\u2000-\u200a\u202f\u205f\u3000]")
+
+
+def clean_spaces(text: str) -> str:
+    """Entities a parser left as text ("T&hairsp;1"), invisible characters and typographic spaces → plain text."""
+    text = _INVISIBLE.sub("", unescape(text))
+    return " ".join(_ODD_SPACE.sub(" ", text).split())
 
 
 def humanize_filename(url: str) -> str:
@@ -177,9 +190,27 @@ def unwrap_viewer(url: str) -> str:
     return urljoin(url, target) if target.lower().endswith(".pdf") else url
 
 
+SITEMAP_RE = re.compile(r"\s*(<\?xml[^>]*>\s*)?(<!--.*?-->\s*)*<urlset\b", re.S)
+
+
+def _cited(a) -> bool:
+    """A link inside a sentence ("… ran a fake outlet called <a>Peace Data</a> to target …") cites a document – it is not
+    the download of the page's own publication (a call to action such as "read the full report here" is)."""
+    text = " ".join(a.get_text(" ", strip=True).split())
+    block = a.find_parent(["p", "li", "blockquote"])
+    if not block or CALL_TO_ACTION.match(text) or GENERIC_TITLES.match(text):
+        return False
+    around = " ".join(block.get_text(" ", strip=True).split())
+    return len(around) >= 120 and len(text) * 3 < len(around)
+
+
 def extract(html: str, base: str, follow: str | None = None) -> tuple[list[dict], list[tuple[str, str]]]:
     """Return (documents, candidate sub-pages) found on a page. With `follow` (a regex from the registry), the
     sub-pages are the links matching it – the publication pages of a think tank's list – instead of report words."""
+    if follow and SITEMAP_RE.match(html):
+        # an XML sitemap: the site's own list of its pages – its publication pages are the addresses matching `follow`
+        locs = dict.fromkeys(unescape(u).strip() for u in re.findall(r"<loc>\s*([^<]+?)\s*</loc>", html))
+        return [], [(u, "") for u in locs if re.search(follow, u)]
     soup = BeautifulSoup(html, "html.parser")
     for tag in soup(["script", "style", "noscript"]):
         tag.decompose()
@@ -199,7 +230,7 @@ def extract(html: str, base: str, follow: str | None = None) -> tuple[list[dict]
         if JUNK_RE.search(url) or JUNK_RE.search(title) or JUNK_URL_RE.search(url):
             continue
         if DOC_RE.search(url):
-            docs.append({"url": url, "title": title})
+            docs.append({"url": url, "title": title, "cited": _cited(a)})
         elif follow:
             if re.search(follow, url):
                 subs.append((url, title))
@@ -331,8 +362,9 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
         docs = []   # a think tank's list: its own PDFs are site furniture (terms, policies) – only publication pages count
     if follow or len(docs) < 3 or len(yearly) > len(docs):
         page_url = page["url"].rstrip("/")
+        limit = (page["follow_limit"] if "follow_limit" in page.keys() else None) or FOLLOW_LIMIT
         for url, sub_title in (subs if follow or len(docs) < 3 else yearly):
-            if followed >= FOLLOW_LIMIT or url.rstrip("/") == page_url:
+            if followed >= limit or url.rstrip("/") == page_url:
                 continue
             followed += 1
             try:
@@ -344,7 +376,11 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
                     heading = strip_site_name(page_heading(r.text) or clean_link_text(sub_title), src) if follow else ""
                     for d in sub_docs:
                         named = ACTION_PREFIX.sub("", d["title"]) if ACTION_PREFIX.match(d["title"]) else ""
-                        if (follow and heading and len(sub_docs) > 1 and len(named.split()) >= 3
+                        if follow and d.get("cited"):
+                            # a document the text cites (often the publisher's earlier report): not this page's title –
+                            # its filename until the PDF's own title replaces it (improve-titles)
+                            d["title"] = humanize_filename(d["url"])
+                        elif (follow and heading and len(sub_docs) > 1 and len(named.split()) >= 3
                                 and named.lower() not in heading.lower() and heading.lower() not in named.lower()):
                             # a related publication the page links to ("Get publication <its name>"): its own name,
                             # not this page's heading

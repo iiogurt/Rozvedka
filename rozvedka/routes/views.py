@@ -12,9 +12,11 @@ def counts() -> dict[str, str]:
     """What each view holds, as a short phrase – every phrase is a number that the page it links to shows."""
     out = {"/documents": f"{doclist.count():,} reports"}
     with db.session() as con:
-        n_off = con.execute("SELECT COUNT(*) FROM sources WHERE active=1 AND COALESCE(publisher, 'official') != 'independent'").fetchone()[0]
+        n_off = con.execute("SELECT COUNT(*) FROM sources WHERE active=1 AND COALESCE(publisher, 'official') = 'official'").fetchone()[0]
         n_ind = con.execute("SELECT COUNT(*) FROM sources WHERE active=1 AND publisher = 'independent'").fetchone()[0]
-    out["/sources"], out["/publishers"] = f"{n_off} agencies", f"{n_ind} think tanks"
+        n_com = con.execute("SELECT COUNT(*) FROM sources WHERE active=1 AND publisher = 'commercial'").fetchone()[0]
+    out["/sources"] = f"{n_off} agencies"
+    out["/publishers"] = f"{n_ind} think tanks" + (f", {n_com} commercial analysts" if n_com else "")
     out["/cves"] = f"{cves.overview()['total']:,} CVE numbers"
     out["/techniques"] = f"{techniques.overview()['total']:,} techniques"
     out["/threat-levels"] = f"{len(threat_levels.load())} statements"

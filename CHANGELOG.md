@@ -27,6 +27,24 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+### Added
+- **Commercial analysts – a third kind of publisher.** Companies that sell political-risk, security or threat analysis and
+  publish part of it openly are marked ■ (a dashed badge, a square on the map, their own section on Sources and on the
+  credibility page), kept apart from official agencies and ◆ think tanks; the home page, Documents, Trends and every year
+  bar count their reports separately, and "Official agencies only" leaves them out. First sources: Eurasia Group (Top Risks
+  2016–2023), ESET (half-yearly Threat Reports and APT Activity Reports), Graphika (influence-operations investigations,
+  from its sitemap) and Microsoft's Digital Defense Report; the Allianz Risk Barometer and Munich Re's natural catastrophe
+  figures are listed for collection by hand (their sites refuse automated requests).
+- **A credibility rating for companies:** who owns them (listed, owners with or without stakes, undisclosed, a stake held by
+  an autocracy's state), whether they name clients, and – for think tanks too – whether authors and a method are published.
+- **US federal contracts and grants** for every think tank and company with a named recipient, by awarding agency since
+  FY2008, from USAspending.gov (only the exact recipient names count – the API's search is loose).
+- **Owners, sponsors and influence in the network:** each think tank and company is a subject of the network (layer
+  "Publisher profiles") linked to its owners, founders, leaders, investors and partners, its donor governments, the US
+  agencies that paid it and the owner, funder and leaders on its Wikidata item – each link with its evidence – and its
+  profile page lists the same ties.
+- The crawler reads XML sitemaps as lists of publication pages, and a page can follow more than 25 of them (`follow_limit`).
+
 ## [0.68.1] – 2026-10-16
 
 ### Added

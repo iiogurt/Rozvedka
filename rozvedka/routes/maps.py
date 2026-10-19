@@ -79,7 +79,7 @@ def map_data(topic: str = ""):
                WHERE s.active=1 GROUP BY s.id""", (topic, topic)).fetchall()
     agencies = [{**dict(r), "flag": flag_url(r["country"]), "logo": f"/logo/{r['id']}" if r["logo_path"] else None,
                  "type_name": TYPE_NAMES.get(r["type"], r["type"]),
-                 "credibility": (pub_profile(r["id"]) or {}).get("level"),       # think tanks: rating colour of the diamond
+                 "credibility": (pub_profile(r["id"]) or {}).get("level"),       # think tanks, commercial analysts: rating colour of the diamond / square
                  "credibility_label": (pub_profile(r["id"]) or {}).get("label"),
                  "country_name": COUNTRY_NAMES.get(r["country"], r["country"]),
                  "coalitions": in_coalition_order(coalition_members_of(r["country"]))}

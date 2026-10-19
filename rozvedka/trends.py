@@ -24,7 +24,9 @@ MATRIX_MIN_DOCS = 5  # rows (agencies/countries) with fewer documents in the per
 # what every count and chart counts: listed reports – not hidden, not statements, finance tables or forms (doctypes)
 LISTED = (f"d.hidden=0 AND s.active=1 AND d.status NOT IN ('missing','duplicate','skipped') AND {doctypes.COUNTED} "
           f"AND {works.PRIMARY}")    # … and one file per report: other languages and summaries are not counted again
-OFFICIAL = "COALESCE(s.publisher, 'official') = 'official'"     # run by a state or states (not a think tank)
+OFFICIAL = "COALESCE(s.publisher, 'official') = 'official'"     # run by a state or states (not a think tank or company)
+THINK_TANK = "s.publisher = 'independent'"                      # independent publishers (think tanks), type think-tank
+COMMERCIAL = "s.publisher = 'commercial'"                       # companies selling analysis, type commercial
 CLASSIFIED = "d.id IN (SELECT doc_id FROM doc_index WHERE taxonomy_hash IS NOT NULL AND error IS NULL)"
 
 
@@ -37,7 +39,7 @@ def scope(country: str = "", coalition: str = "", type: str = "") -> tuple[str, 
         params["coalition"] = coalition
     if country:
         where.append("s.country=?"); args.append(country.upper()); params["country"] = country.upper()
-    if type:   # "official" = every source run by a state or states; otherwise one agency type ("think-tank" …)
+    if type:   # "official" = every source run by a state or states; otherwise one agency type ("think-tank", "commercial" …)
         where.append(OFFICIAL if type == "official" else "s.type=?")
         args += [] if type == "official" else [type]
         params["type"] = type
@@ -73,11 +75,13 @@ def _excluded(con, where: str, args: list) -> dict:
     # other language versions and summaries of counted reports
     other_files = con.execute(f"""SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
                                   WHERE {every} AND {doctypes.COUNTED} AND NOT {works.PRIMARY}""", args).fetchone()[0]
-    # reports in scope from independent publishers (think tanks) – counted, and said so
+    # reports in scope from think tanks and from commercial analysts – counted, and said so
     independent = con.execute(f"""SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
-                                   WHERE {where} AND NOT {OFFICIAL}""", args).fetchone()[0]
+                                   WHERE {where} AND {THINK_TANK}""", args).fetchone()[0]
+    commercial = con.execute(f"""SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
+                                  WHERE {where} AND {COMMERCIAL}""", args).fetchone()[0]
     return {"listed": r["listed"], "undated": r["undated"] or 0, "unclassified": r["unclassified"] or 0,
-            "independent": independent,
+            "independent": independent, "commercial": commercial,
             "not_reports": not_reports, "other_files": other_files,
             "estimated": r["estimated"] or 0,
             "before_min_year": r["before"] or 0}

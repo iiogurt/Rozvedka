@@ -73,6 +73,12 @@ Each item: why · what · done when · version step.
    UK DCDC strategic trends (8), RAND (10) and DFRLab (3) as think tanks with funding profiles; NATO STO and ACT by hand
    (bot protection). Already covered: EEAS, VIGINUM, StratCom CoE, Hybrid CoE, ASPI, ISD, CSIS, ISW, Freedom House.
    Candidates noted in the registry: NDU INSS (JavaScript list), CRS, Lund PDRI, Irregular Warfare Initiative, Graphika. · patch (sources)
+8. ✅ (0.69.0, owner's decision 2026-10-16) **Commercial analysts** – a third kind of publisher (■), counted and marked apart
+   from agencies and think tanks; rated by ownership, clients, authors and method; US federal contracts from USAspending.gov
+   for every non-state publisher; owners, sponsors and founders as network links (layer "Publisher profiles"). Sources:
+   Eurasia Group, ESET, Graphika, Microsoft MDDR; Allianz Risk Barometer and Munich Re by hand. Next: Swiss Re sigma and
+   Recorded Future (pages built by script – try browser rendering), people and methods checks for the 19 think tanks,
+   `ties` (boards, major donors) for the think tanks with named donors. · minor
 
 ### B. Quality you can measure
 

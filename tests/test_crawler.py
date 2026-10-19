@@ -198,6 +198,48 @@ def test_related_publications_on_a_publication_page_keep_their_own_names(monkeyp
                       "https://x.org/d/b-sv.pdf": "The Last European Colonial Empire"}
 
 
+def test_documents_cited_in_the_text_do_not_take_the_page_heading(monkeypatch):
+    """Graphika's report pages cite its earlier reports inside sentences; those PDFs are not the page's publication."""
+    from types import SimpleNamespace
+    from rozvedka import crawler
+    pages = {"https://x.com/reports": '<a href="https://x.com/reports/posing-as-patriots">Posing as Patriots</a>',
+             "https://x.com/reports/posing-as-patriots":
+                 '<h1>Posing as Patriots</h1><p>The actors behind the campaign succeeded in hiring freelance authors to produce '
+                 'content, and also ran a fake left-wing outlet called <a href="/d/ira_again_unlucky_thirteen.pdf">Peace Data</a> '
+                 'to target both sides of the political debate.</p><p><a href="/d/posing-as-patriots.pdf">Read the full report</a></p>'}
+    monkeypatch.setattr(crawler, "get_page", lambda url, src: SimpleNamespace(status=200, content_type="text/html",
+                                                                             text=pages.get(url, ""), url=url))
+    stored = {}
+    monkeypatch.setattr(crawler, "_store", lambda con, sid, pid, docs, *a: stored.update({d["url"]: d["title"] for d in docs}) or 0)
+    src = {"id": 1, "access": "auto", "homepage": "https://x.com/", "agency": "X", "name_en": "X", "name_local": "X", "domains": None}
+    crawler.crawl_page(None, src, {"url": "https://x.com/reports", "id": 1, "lang": "en", "note": None, "follow": r"x\.com/reports/[\w-]+$"}, {"en"})
+    assert stored == {"https://x.com/d/ira_again_unlucky_thirteen.pdf": "ira again unlucky thirteen",
+                      "https://x.com/d/posing-as-patriots.pdf": "Posing as Patriots"}
+
+
+def test_a_download_attribute_names_the_file():
+    from bs4 import BeautifulSoup
+    from rozvedka.crawler import _title_for
+    a = BeautifulSoup('<a href="/p/eset-threat-report-h12026.pdf" download="ESET Threat Report H1 2026">Download</a>', "html.parser").a
+    assert _title_for(a) == "ESET Threat Report H1 2026"
+    a = BeautifulSoup('<a href="/p/annual-2025.pdf" download="annual-2025.pdf">Download</a>', "html.parser").a
+    assert _title_for(a) == "annual 2025"
+    a = BeautifulSoup('<a href="/p/t1.pdf" download="ESET Threat Report T&amp;hairsp;1 2022">Download</a>', "html.parser").a
+    assert _title_for(a) == "ESET Threat Report T 1 2022"
+    a = BeautifulSoup('<a href="/p/q4.pdf">ESET APT Activity Report Q4 2022\u00ad–Q1\u200a2023</a>', "html.parser").a
+    assert _title_for(a) == "ESET APT Activity Report Q4 2022–Q1 2023"
+
+
+def test_a_sitemap_lists_the_publication_pages_to_follow():
+    from rozvedka.crawler import extract
+    xml = ('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+           '<url><loc>https://x.com/reports/posing-as-patriots</loc></url><url><loc>https://x.com/about</loc></url>'
+           '<url><loc> https://x.com/reports/a&amp;b </loc></url></urlset>')
+    assert extract(xml, "https://x.com/sitemap.xml", r"x\.com/reports/[\w&-]+$") == (
+        [], [("https://x.com/reports/posing-as-patriots", ""), ("https://x.com/reports/a&b", "")])
+    assert extract(xml, "https://x.com/sitemap.xml")[1] == []      # without `follow` a sitemap is not a list of reports
+
+
 def test_screen_reader_notes_are_not_part_of_a_link_title():
     from bs4 import BeautifulSoup
     from rozvedka.crawler import _title_for, is_poor_title

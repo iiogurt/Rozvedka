@@ -6,7 +6,8 @@
 <h1 class="page-h">Agencies</h1>
 <div class="summary">
   <span><b>{{ n_official }}</b> official agencies and institutions in <b>{{ groups|length }}</b> countries and bodies
-    {% if n_independent %}· <a class="pub-count" href="#independent"><b>{{ n_independent }}</b> independent think tanks ◆</a>{% endif %}</span>
+    {% if n_independent %}· <a class="pub-count" href="#independent"><b>{{ n_independent }}</b> independent think tanks ◆</a>{% endif %}
+    {% if n_commercial %}· <a class="pub-count-com" href="#commercial"><b>{{ n_commercial }}</b> commercial analysts ■</a>{% endif %}</span>
   <form method="post" action="/jobs/sync" class="inline"><button title="Reload sources/registry.yaml">Reload registry</button></form>
   <a class="dx-primary upd-link" href="/update">{{ ico("refresh") }} Check for new reports…</a>
 </div>
@@ -19,7 +20,8 @@
 
 <nav class="flagbar" aria-label="Jump to country">
   {% for region, countries, ind in regions %}{% if not loop.first %}<span class="flagsep" aria-hidden="true"></span>{% endif %}
-  {% if ind %}<a class="pub-ind flag-ind" href="#independent" title="Independent publishers – think tanks, not run by states">think tanks</a>{% else %}
+  {% if ind == 'independent' %}<a class="pub-ind flag-ind" href="#independent" title="Independent publishers – think tanks, not run by states">think tanks</a>
+  {% elif ind == 'commercial' %}<a class="pub-ind pub-com flag-ind" href="#commercial" title="Commercial analysts – companies selling analysis to clients, not run by states">commercial</a>{% else %}
   {% for country, items in countries %}
   <a href="#c-{{ country }}" title="{{ COUNTRY_NAMES.get(country, country) }} ({{ items|length }})"
      data-coalitions="{{ coalition_tags(country)|map(attribute='key')|join(' ') }}{{ ' ' ~ country if country in ('EU', 'NATO') }}">
@@ -28,14 +30,20 @@
 </nav>
 
 {% for region, countries, ind in regions %}
-{% if ind %}<h2 class="region region-ind" id="independent">◆ {{ region }}</h2>
+{% if ind == 'independent' %}<h2 class="region region-ind" id="independent">◆ {{ region }}</h2>
 <p class="pub-banner">Not run by a state: pro-democratic and security think tanks and research institutes with regular reports.
   They are kept apart from the official agencies above and marked ◆ wherever their reports appear, in the colour of their
   <a href="/publishers">credibility rating</a> (funding transparency, autocratic donors, official registers, sanctions lists); every
   count can leave them out with “Official agencies only”.</p>
+{% elif ind == 'commercial' %}<h2 class="region region-com" id="commercial">■ {{ region }}</h2>
+<p class="pub-banner" style="--indep: var(--com)">Not run by a state and not a think tank: companies that sell political-risk, security or
+  threat analysis to clients and publish some of it openly. Their reports are a view from the market – written for clients, by firms
+  whose owners and clients shape what they study. They are kept apart from the agencies and the think tanks and marked ■ wherever
+  their reports appear, in the colour of their <a href="/publishers#commercial">credibility rating</a> (who owns them, clients,
+  authors and method, US federal contracts, official registers, sanctions lists); every count can leave them out with “Official agencies only”.</p>
 {% else %}<h2 class="region">{{ region }}</h2>{% endif %}
 {% for country, items in countries %}
-<section class="country" id="{{ 'ci-' if ind else 'c-' }}{{ country }}"
+<section class="country" id="{{ ('ci-' if ind == 'independent' else 'cc-') if ind else 'c-' }}{{ country }}"
          data-coalitions="{{ coalition_tags(country)|map(attribute='key')|join(' ') }}{{ ' ' ~ country if country in ('EU', 'NATO') }}">
   <h2><img class="flag" src="{{ flag_url(country) }}" alt="" width="32" height="24">
     {{ COUNTRY_NAMES.get(country, country) }} <span class="muted">· {{ items|length }}</span>
@@ -44,7 +52,7 @@
     {% set rp = rating(country) %}{% if rp %}<span class="rt-row">{{ strip(rp, width=120, height=14) }}{{ badges(rp) }}<a class="muted" href="/ratings">democracy ratings</a></span>{% endif %}</h2>
   <div class="cards">
   {% for s in items %}
-  <article class="card{{ ' card-ind' if is_independent(s.id) }}" id="s-{{ s.id }}">
+  <article class="card{{ (' card-com' if s.publisher == 'commercial' else ' card-ind') if is_independent(s.id) }}" id="s-{{ s.id }}">
     <div class="card-head">
       <div class="logo">
         {% if s.logo_path %}<img src="/logo/{{ s.id }}" alt="{{ s.agency }} logo" loading="lazy">

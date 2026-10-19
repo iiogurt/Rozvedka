@@ -16,7 +16,7 @@
     {% for k in countries %}<option value="{{ k }}" {{ 'selected' if f.country == k }}>{{ COUNTRY_NAMES.get(k, k) }}</option>{% endfor %}</select>
   <select name="coalition" aria-label="Coalition"><option value="">All coalitions</option>
     {% for key, co in COALITIONS.items() %}<option value="{{ key }}" {{ 'selected' if f.coalition == key }}>{{ co.short }}</option>{% endfor %}</select>
-  <select name="type" aria-label="Agency type"><option value="">All sources – official and think tanks</option><option value="official" {{ 'selected' if f.type == 'official' }}>Official agencies only</option>
+  <select name="type" aria-label="Agency type"><option value="">All sources – official, think tanks, commercial</option><option value="official" {{ 'selected' if f.type == 'official' }}>Official agencies only</option>
     {% for key, name in TYPE_NAMES.items() %}<option value="{{ key }}" {{ 'selected' if f.type == key }}>{{ name }}</option>{% endfor %}</select>
   <button>Compare</button>
 </form>

@@ -48,11 +48,12 @@ def sync(path=REGISTRY) -> dict:
                           for y in range(y0, y1 + 1) for l in pat.get("langs", [""])]
             for p in pages:
                 con.execute(
-                    """INSERT INTO pages(source_id,url,lang,kind,note,verified,follow,active) VALUES(?,?,?,?,?,?,?,1)
+                    """INSERT INTO pages(source_id,url,lang,kind,note,verified,follow,follow_limit,active) VALUES(?,?,?,?,?,?,?,?,1)
                        ON CONFLICT(source_id,url) DO UPDATE SET lang=excluded.lang, kind=excluded.kind,
-                         note=excluded.note, verified=excluded.verified, follow=excluded.follow, active=1""",
+                         note=excluded.note, verified=excluded.verified, follow=excluded.follow,
+                         follow_limit=excluded.follow_limit, active=1""",
                     (sid, p["url"], p.get("lang"), p.get("kind"), p.get("note"), 0 if p.get("verified") is False else 1,
-                     p.get("follow")))
+                     p.get("follow"), p.get("follow_limit")))
                 seen_pages.add(con.execute("SELECT id FROM pages WHERE source_id=? AND url=?", (sid, p["url"])).fetchone()["id"])
         # deactivate things removed from the YAML (documents are kept)
         for (sid,) in con.execute("SELECT id FROM sources").fetchall():

@@ -5,7 +5,7 @@ from rozvedka.registry import load, source_key
 
 SOURCES = load()
 TYPES = {"intelligence-civil", "intelligence-military", "cyber", "civil-protection", "police-ct", "eu-body", "nato", "other",
-         "think-tank"}
+         "think-tank", "commercial"}
 ACCESS = {"auto", "browser-ua", "tls-lenient", "browser-js", "manual"}
 KINDS = {"current", "archive", "series"}
 # rough (lat_min, lat_max, lon_min, lon_max) per country; EU members, EU bodies and NATO use the Europe box
@@ -54,12 +54,18 @@ def test_hq_location(s):
     assert lat0 <= hq["lat"] <= lat1 and lon0 <= hq["lon"] <= lon1, (s["country"], hq["lat"], hq["lon"])
 
 
-def test_publisher_is_official_or_independent():
-    """Think tanks are marked independent, so every view can tell them apart from state agencies."""
+def test_publisher_is_official_independent_or_commercial():
+    """Think tanks are marked independent and companies commercial, so every view can tell them apart from state agencies
+    and from each other; each of them has a credibility profile."""
     import re
+    from rozvedka import publishers
+    profiles = publishers.load_profiles()
     for s in load():
-        assert s.get("publisher", "official") in ("official", "independent"), s["agency"]
+        assert s.get("publisher", "official") in ("official", "independent", "commercial"), s["agency"]
         assert (s["type"] == "think-tank") == (s.get("publisher") == "independent"), s["agency"]
+        assert (s["type"] == "commercial") == (s.get("publisher") == "commercial"), s["agency"]
+        if s.get("publisher") == "commercial":
+            assert profiles.get(f"{s['country']}/{s['agency']}", {}).get("ownership"), f"{s['agency']}: ownership profile"
         for p in s.get("pages", []):
             if p.get("follow"):
                 re.compile(p["follow"])
