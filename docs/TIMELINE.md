@@ -7,7 +7,8 @@ The owner asked on 2026-10-19 for a graphical timeline of important events that:
 
 This note covers what exists, the data that can support it, and how to build it.
 
-**Status:** H1a (the events store, `fetch-events`, `/events`) built in 0.71.0; H1b–H1d open.
+**Status:** H1a (the events store, `fetch-events`, `/events`) built in 0.71.0; H1b (the timeline page, `/timeline`, with
+vis-timeline) in 0.72.0; H1c (drawn chains) and H1d (events joined to reports) open.
 
 ## 1. What exists already
 

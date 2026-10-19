@@ -367,6 +367,17 @@ column; <i>over-emphasis</i> shows how much more or less often a row carries a t
   Spain, Austria, Sweden, Latvia), each on the state's own scale and with the page it comes from. Hand-curated; every quote is
   checked (`fetch-threat-levels` for the announcement pages, the library's stored text for the reports).
 
+- **Timeline** (`/timeline`) – states and actors as lanes on one time axis: their events (Wikidata, EuRepoC, UCDP) and the library's
+  dated records (sanctions listings, designations, official attributions, threat-level changes), UCDP's deaths per month as the lane's
+  shaded background, and a row of the library's reports per year naming the subject (each year opens its list). At every zoom a lane
+  draws only its heaviest events that fit and says how many it hides; clicking one shows its sources, participants and the relations
+  its Wikidata item states. Full screen (`F`) and a wall mode (`W`) with larger type for big screens, sharp at 4K; the whole view lives
+  in the address, so it can be opened on a TV as it is.
+
+<img src="docs/images/timeline.png" alt="Timeline: Ukraine, Sandworm, Germany and the United States as lanes with events, UCDP deaths per month and reports per year" width="900">
+
+<img src="docs/images/timeline-event.png" alt="Timeline with the full-scale Russo-Ukrainian war selected: date, deaths, participants and the causes its Wikidata item states" width="900">
+
 - **Events** (`/events`) – dated events from Wikidata (14 classes, from terrorist attacks and cyberattacks to coups, wars and
   natural disasters, since 2000), EuRepoC's cyber incidents and UCDP's organised violence (single events with at least 50 deaths;
   deaths per country and month), each with its source: date, place, deaths, participants and perpetrators linked to the actor
@@ -1163,6 +1174,7 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | Wanted notices | [FBI Wanted API](https://api.fbi.gov/wanted/v1/list), [Europe's Most Wanted](https://eumostwanted.eu/) (ENFAST, supported by Europol) – text, names, dates of birth and charges only, no photographs (`data/gazetteer/wanted.json`, not committed) | public official notices, linked on each page |
 | Event dates | Wikidata via `tools/build_events.py` | CC0 |
 | Charts | [Apache ECharts](https://echarts.apache.org) 6.1.0, vendored | Apache-2.0 |
+| Timeline | [vis-timeline](https://visjs.github.io/vis-timeline/) 8.5.4, vendored (`static/vendor/vis-timeline/`) | Apache-2.0 or MIT ([`LICENSE.md`](rozvedka/static/vendor/vis-timeline/LICENSE.md)) |
 | Map | [Leaflet](https://leafletjs.com) 1.9.4, Leaflet.markercluster 1.5.3, [Natural Earth](https://www.naturalearthdata.com) outlines | BSD-2, MIT, public domain |
 | Home-page font | [DejaVu Sans Mono](https://dejavu-fonts.github.io), a subset vendored in `rozvedka/static/vendor/fonts/` | Bitstream Vera licence ([`LICENSE-DejaVu.txt`](rozvedka/static/vendor/fonts/LICENSE-DejaVu.txt)); DejaVu changes public domain |
 | Street tiles | [OpenStreetMap](https://www.openstreetmap.org/copyright), loaded in the viewer's browser | ODbL, © OpenStreetMap contributors; OSM tile usage policy |

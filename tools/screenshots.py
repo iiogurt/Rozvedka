@@ -93,6 +93,10 @@ SHOTS = {
     "map": ("/map", 800, [("sleep", 5)], None),
     "democracy-map": ("/map/democracy?measure=vdem_regime&year=2025", 900, [("sleep", 6)], None),
     "homicide-map": ("/map/democracy?measure=homicide&year=2023", 900, [("sleep", 6)], None),
+    "timeline": ("/timeline?lane=country:UA&lane=actor:Q100605916&lane=country:DE&lane=country:US&start=2013-01-01&end=2026-12-31",
+                 900, [("sleep", 6)], None),
+    "timeline-event": ("/timeline?lane=country:UA&lane=actor:Q100605916&start=2021-06-01&end=2023-06-01&sel=Q110999040",
+                       900, [("sleep", 7)], None),                          # an event selected: its details and relations
     "democracy-change": ("/map/democracy?measure=change&year=2025", 900, [("sleep", 6)], None),
     "mentions": (f"/map/mentions?mode=about&about={CHINA}", 800, [("sleep", 6)], None),
     "mindmap": ("/topics/map", 1000, [("sleep", 4)], None),

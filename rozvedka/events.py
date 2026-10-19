@@ -451,8 +451,10 @@ def meta() -> dict[str, dict]:
 
 
 def query(source: str = "", kind: str = "", country: str = "", year: int | None = None, q: str = "",
-          actor: str = "") -> tuple[str, list]:
+          actor: str = "", key: str = "") -> tuple[str, list]:
     where, args = ["1=1"], []
+    if key:
+        where.append("e.key=?"); args.append(key)
     if source:
         where.append("e.source=?"); args.append(source)
     if kind:
@@ -501,3 +503,90 @@ def facets() -> dict:
                 "years": [r[0] for r in con.execute("SELECT DISTINCT year FROM events ORDER BY year DESC")],
                 "links": con.execute("SELECT COUNT(*) FROM event_links").fetchone()[0],
                 "months": con.execute("SELECT COUNT(*) FROM event_months").fetchone()[0]}
+
+
+# ── the timeline (/timeline): lanes of countries and actors on one time axis ──
+RECORD_KINDS = {"listed", "designated", "attributed", "threat level", "founded", "dissolved"}   # not first/last named:
+                                                                                               # the report strip shows those
+_ranks: dict = {"version": None, "ranks": {}}
+
+
+def ranks() -> dict[str, float]:
+    """{event key: 0–1}, its place by weight within its own source (1 = the heaviest): the sources weigh differently
+    (Wikipedia editions, intensity, deaths), so an event is compared only with events of the same source."""
+    v = db.version()
+    if _ranks["version"] != v:
+        init()
+        out = {}
+        with db.session() as con:
+            for (src,) in con.execute("SELECT DISTINCT source FROM events"):
+                rows = con.execute("SELECT key FROM events WHERE source=? ORDER BY COALESCE(weight, 0), key", (src,)).fetchall()
+                n = max(1, len(rows) - 1)
+                out.update({r["key"]: round(i / n, 4) for i, r in enumerate(rows)})
+        _ranks.update(version=v, ranks=out)
+    return _ranks["ranks"]
+
+
+def parse_lanes(specs: list[str]) -> list[tuple[str, str]]:
+    """['country:UA', 'actor:Q100605916'] → [('country', 'UA'), ('actor', 'Q100605916')]; unknown kinds dropped."""
+    out = []
+    for s in specs:
+        kind, _, value = (s or "").partition(":")
+        if kind in ("country", "actor") and re.fullmatch(r"[A-Za-z0-9_-]{1,40}", value) and (kind, value) not in out:
+            out.append((kind, value.upper() if kind == "country" else value))
+    return out
+
+
+def timeline(lanes: list[tuple[str, str]]) -> dict:
+    """Everything the timeline draws for these lanes: the lanes, their events, the library's dated records (sanctions
+    listings, attributions, threat levels …), reports per year naming the lane's subject (each year opens its list),
+    and UCDP deaths per month for a state – each with its source."""
+    from . import actor_events, doclist
+    init()
+    rk = ranks()
+    out = {"lanes": [], "items": [], "strips": {}, "meta": meta()}
+    with db.session() as con:
+        for kind, value in lanes:
+            if kind == "country":
+                row = con.execute("SELECT key, label FROM actors WHERE kind='country' AND iso=?", (value,)).fetchone()
+                actor_key, label, iso = (row["key"], row["label"], value) if row else (None, value, value)
+                evs = con.execute("""SELECT DISTINCT e.* FROM events e WHERE e.key IN (SELECT event_key FROM event_countries WHERE iso=?)
+                                     OR e.key IN (SELECT event_key FROM event_actors WHERE actor_key=?)""", (iso, actor_key or "")).fetchall()
+            else:
+                row = con.execute("SELECT key, label, iso FROM actors WHERE key=?", (value,)).fetchone()
+                if not row:
+                    continue
+                actor_key, label, iso = row["key"], row["label"], row["iso"]
+                evs = con.execute("SELECT DISTINCT e.* FROM events e JOIN event_actors ea ON ea.event_key=e.key WHERE ea.actor_key=?",
+                                  (actor_key,)).fetchall()
+            lane = f"{kind}:{value}"
+            out["lanes"].append({"id": lane, "kind": kind, "value": value, "label": label, "actor": actor_key, "iso": iso,
+                                 "href": f"/actors/{actor_key}" if actor_key else None, "events": len(evs)})
+            for e in evs:
+                out["items"].append({"id": f"{lane}|{e['key']}", "lane": lane, "key": e["key"], "label": e["label"], "kind": e["kind"],
+                                     "source": e["source"], "start": e["start"], "end": e["end"], "deaths": e["deaths"],
+                                     "rank": rk.get(e["key"], 0), "preliminary": e["preliminary"], "url": e["url"]})
+            strip = {"reports": {}, "deaths": {}}
+            if actor_key:
+                for r in actor_events.of_actor(actor_key):
+                    if r["kind"] in RECORD_KINDS and re.match(r"\d{4}", str(r["date"])):
+                        out["items"].append({"id": f"{lane}|rec|{r['kind']}|{r['date']}|{r['title'][:40]}", "lane": lane,
+                                             "key": None, "label": r["title"], "kind": r["kind"], "source": "library",
+                                             "start": str(r["date"]), "end": None, "rank": 1, "url": r.get("source_url"),
+                                             "detail": r.get("detail"), "by": r.get("source")})
+                f = doclist.build(actor=actor_key, indexed=1)
+                for y, n in con.execute(f"""SELECT d.year, COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
+                                            WHERE {' AND '.join(f['where'])} AND d.year IS NOT NULL GROUP BY d.year""", f["args"]):
+                    strip["reports"][str(y)] = {"n": n, "url": f"/documents?actor={actor_key}&indexed=1&year={y}"}
+            if iso:
+                for r in con.execute("SELECT month, deaths, preliminary FROM event_months WHERE iso=? AND deaths > 0 ORDER BY month", (iso,)):
+                    strip["deaths"][r["month"]] = {"n": r["deaths"], "preliminary": r["preliminary"]}
+            out["strips"][lane] = strip
+    return out
+
+
+def detail(key: str) -> dict | None:
+    """One event with its countries, actors and every relation it takes part in (both directions)."""
+    init()
+    total, rows = listing(0, 1, key=key)
+    return rows[0] if rows else None

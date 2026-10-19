@@ -147,3 +147,35 @@ def test_stored_and_listed(library):
     assert "<b>Attack</b>" in t
     assert 'href="/actors/Q2"' in t and "→ caused <b>Maersk outage</b>" in t and "Wikidata P1542" in t
     assert 'href="/events"' in client.get("/views").text
+
+
+def test_timeline_lanes_and_strips(library):
+    e = events.parse_item("Q50", _item(P585=[{"_type": "time", "time": "+2017-06-27T00:00:00Z", "precision": 11}]), "cyberattack", 40)
+    e["countries"] = ["UA"]
+    e["actors"] = [{"role": "perpetrator", "name": "Sandworm", "qid": "Q2", "actor_key": "Q2", "reason": None}]
+    small = {**e, "key": "Q51", "weight": 2, "actors": [], "links": []}
+    with db.session() as con:
+        events._store(con, [e, small], "wikidata")
+        con.execute("INSERT INTO event_months VALUES('UA','2017-06',120,3,120,0,0,0)")
+        con.execute("INSERT INTO sources(id,key,country,agency,type,active) VALUES(1,'DE/BfV','DE','BfV','intelligence-civil',1)")
+        con.execute("""INSERT INTO documents(id,source_id,url,title,lang,year,status,local_path)
+                       VALUES(1,1,'https://x/1.pdf','Report','en',2018,'downloaded','f1.pdf')""")
+        con.execute("INSERT INTO doc_index(doc_id, taxonomy_hash) VALUES(1, 't')")
+        con.execute("INSERT INTO doc_actors(doc_id,actor_key,hits) VALUES(1,'Q2',3)")
+    assert events.parse_lanes(["country:ua", "actor:Q2", "bogus:1", "country:UA", "actor:x;drop"]) == [("country", "UA"), ("actor", "Q2")]
+    assert events.ranks() == {"Q51": 0.0, "Q50": 1.0}                     # heaviest of its own source = 1
+    d = events.timeline([("country", "UA"), ("actor", "Q2")])
+    assert [(l["id"], l["label"], l["events"]) for l in d["lanes"]] == [("country:UA", "Ukraine", 2), ("actor:Q2", "Sandworm", 1)]
+    assert {i["id"] for i in d["items"]} == {"country:UA|Q50", "country:UA|Q51", "actor:Q2|Q50"}
+    assert d["strips"]["country:UA"]["deaths"] == {"2017-06": {"n": 120, "preliminary": 0}}
+    # each year of the report strip opens the list it counts
+    from rozvedka import doclist
+    rp = d["strips"]["actor:Q2"]["reports"]
+    assert rp == {"2018": {"n": 1, "url": "/documents?actor=Q2&indexed=1&year=2018"}}
+    assert doclist.count(actor="Q2", indexed=1, year="2018") == 1
+    client = TestClient(app_module.app)
+    assert client.get("/api/timeline?lane=actor:Q2").json()["lanes"][0]["label"] == "Sandworm"
+    assert client.get("/api/timeline/event/Q50").json()["actors"][0]["actor_key"] == "Q2"
+    assert client.get("/api/timeline/event/Q999").status_code == 404
+    t = client.get("/timeline").text
+    assert "vis-timeline-graph2d.min.js" in t and "timeline.js" in t and 'data-lanes="country:UA,country:RU' in t
