@@ -11,6 +11,22 @@
 #   autocracy by V-Dem (Regimes of the World) is flagged automatically from the ratings data.
 # Every claim has its evidence URL and the date it was checked. Fetched automatically (`fetch-publishers`): EU
 # Transparency Register entry, US FARA registration, US/UK/EU/UN sanctions lists, Wikidata/Wikipedia identity.
+#
+# Commercial analysts (registry publisher: commercial) – companies; instead of funding:
+# ownership.disclosure – who owns the company and how openly that is known:
+#   listed  listed company – its shareholders are in public filings     (✓)
+#   stakes  owners named with their stakes                              (✓)
+#   named   owners named, their stakes not published                    (◐)
+#   none    owners not disclosed                                        (✗ concerns)
+# ownership.states – states that own a stake (ISO alpha-3); an autocracy among them is a concern.
+# clients.disclosure – named | some (some clients or partners named) | none (usual; does not change the rating).
+# Every kind may also have:
+# methods – authors: named | unnamed; methodology: URL of a published method (or null); evidence; checked.
+# us_awards – the exact recipient names on USAspending.gov whose US federal contracts and grants are fetched.
+# ties – owners, sponsors, founders, leaders, partners: {rel, name, kind: person | org | company | foundation | government,
+#   qid (Wikidata, when it has one), country (alpha-3, for a government), amount, note, evidence, checked}. They become links
+#   of the network (layer "publishers"), as do a think tank's donor governments and the owners, founders, funders and
+#   leaders on the publisher's Wikidata item.
 
 US/CEPA:
   wikipedia: "Center for European Policy Analysis"
@@ -190,3 +206,101 @@ AU/IEP:
     checked: 2026-10-07
     note: "Founded in 2007 by entrepreneur Steve Killelea, whose gift funds it; the site names multilateral partners (UN, World Bank, Australian DFAT) but publishes no donor list or amounts."
     governments: []
+
+# ── commercial analysts ──
+
+US/Eurasia Group:
+  wikipedia: "Eurasia Group"
+  ownership:
+    disclosure: none
+    evidence: "https://www.eurasiagroup.net/who-we-are"
+    checked: 2026-10-16
+    note: "A private company founded in 1998 by Ian Bremmer, its president (Maziar Minovi is chief executive). Neither its site nor its Wikipedia article names owners or stakes."
+  clients:
+    disclosure: some
+    evidence: "https://en.wikipedia.org/wiki/Eurasia_Group"
+    checked: 2026-10-16
+    note: "Clients are not named; announced partnerships are – Citi Private Bank (2007), NYSE Euronext (2009), Bank of America / Merrill Lynch (2011), Nikko Asset Management (2015), KPMG International (2017)."
+  methods:
+    authors: named
+    methodology: null
+    evidence: "https://www.eurasiagroup.net/issues/top-risks-2026"
+    checked: 2026-10-16
+    note: "Top Risks names its authors (Ian Bremmer, Cliff Kupchan); no published method for choosing and ranking the risks."
+  us_awards: ["EURASIA GROUP LTD"]
+  ties:
+    - {rel: founded by, name: "Ian Bremmer", kind: person, qid: Q5980992, evidence: "https://en.wikipedia.org/wiki/Eurasia_Group", checked: 2026-10-16, note: "founder and president"}
+    - {rel: owner of, name: "GZERO Media", kind: company, evidence: "https://en.wikipedia.org/wiki/Eurasia_Group", checked: 2026-10-16, note: "media company launched by Eurasia Group in 2017"}
+    - {rel: linked with, name: "The Institute for Global Affairs at Eurasia Group", kind: foundation, evidence: "https://instituteforglobalaffairs.org/announcements/2023/11/eurasia-group-foundation-announces-new-name-for-a-new-era-institute-for-global-affairs/", checked: 2026-10-16, note: "non-profit founded by Ian Bremmer in 2016 as the Eurasia Group Foundation; renamed 2023; he is its board president"}
+    - {rel: partner of, name: "Citi Private Bank", kind: company, qid: Q5122437, evidence: "https://en.wikipedia.org/wiki/Eurasia_Group", checked: 2026-10-16, note: "2007: its clients get Eurasia Group's analysis"}
+    - {rel: partner of, name: "Bank of America", kind: company, qid: Q487907, evidence: "https://en.wikipedia.org/wiki/Eurasia_Group", checked: 2026-10-16, note: "2011: research for Merrill Lynch and US Trust advisers"}
+    - {rel: partner of, name: "KPMG", kind: company, qid: Q493751, evidence: "https://en.wikipedia.org/wiki/Eurasia_Group", checked: 2026-10-16, note: "2017 alliance with KPMG International"}
+
+US/Graphika:
+  wikipedia: "Graphika"
+  ownership:
+    disclosure: none
+    evidence: "https://pitchbook.com/profiles/company/61096-24"
+    checked: 2026-10-16
+    note: "A private company (formerly Morningside Analytics) founded in 2013 by John Kelly. It publishes no owners; commercial investor databases name venture investors (PitchBook: SJF Ventures, First In, Lavrock Ventures, Social Media Enterprises; about $6.5 million raised) – not confirmed by the company."
+  clients:
+    disclosure: none
+    evidence: "https://www.graphika.com/our-story"
+    checked: 2026-10-16
+    note: "Says it serves enterprises and public-sector customers in trust and safety, threat intelligence and strategic communications, naming none."
+  methods:
+    authors: named
+    methodology: null
+    evidence: "https://www.graphika.com/reports"
+    checked: 2026-10-16
+    note: "Reports name their analysts and describe their network-mapping approach case by case; no general method or corrections policy published."
+  us_awards: ["GRAPHIKA, INC.", "GRAPHIKA TECHNOLOGIES INC."]
+  ties:
+    - {rel: founded by, name: "John Kelly", kind: person, evidence: "https://www.graphika.com/our-story", checked: 2026-10-16, note: "computational social scientist; founder and executive chairman"}
+    - {rel: invested in by, name: "SJF Ventures", kind: company, evidence: "https://pitchbook.com/profiles/company/61096-24", evidence_label: "PitchBook (commercial database)", checked: 2026-10-16}
+    - {rel: invested in by, name: "Lavrock Ventures", kind: company, evidence: "https://pitchbook.com/profiles/company/61096-24", evidence_label: "PitchBook (commercial database)", checked: 2026-10-16}
+    - {rel: invested in by, name: "First In", kind: company, evidence: "https://pitchbook.com/profiles/company/61096-24", evidence_label: "PitchBook (commercial database)", checked: 2026-10-16}
+    - {rel: invested in by, name: "Social Media Enterprises", kind: company, evidence: "https://pitchbook.com/profiles/company/61096-24", evidence_label: "PitchBook (commercial database)", checked: 2026-10-16}
+
+SK/ESET:
+  wikipedia: "ESET"
+  ownership:
+    disclosure: named
+    evidence: "https://en.wikipedia.org/wiki/ESET"
+    checked: 2026-10-16
+    note: "A privately owned limited company (spol. s r.o.) founded in 1992 by Miroslav Trnka, Peter Paško and Rudolf Hrubý; its owners are its founders and managers (Wikidata lists Trnka, Hrubý, Paško, Richard Marko – chief executive since 2011 – Maroš Grund, Anton Zajac, Ján Hrubý); stakes are not published."
+  clients:
+    disclosure: none
+    evidence: "https://www.eset.com/int/about/"
+    checked: 2026-10-16
+  methods:
+    authors: named
+    methodology: null
+    evidence: "https://www.welivesecurity.com/en/threat-reports/"
+    checked: 2026-10-16
+    note: "Reports name ESET researchers and rest on ESET's own telemetry; no separate method published."
+
+US/Microsoft:
+  wikipedia: "Microsoft"
+  ownership:
+    disclosure: listed
+    evidence: "https://www.microsoft.com/en-us/investor"
+    checked: 2026-10-16
+    note: "Listed on Nasdaq (MSFT); its large shareholders file with the US SEC (13F). The Digital Defense Report is written by Microsoft Threat Intelligence about attacks on Microsoft's own customers and services – the company also sells the defences."
+  us_awards: ["MICROSOFT CORPORATION"]
+
+DE/Allianz Commercial:
+  wikipedia: "Allianz"
+  ownership:
+    disclosure: listed
+    evidence: "https://www.allianz.com/en/investor_relations.html"
+    checked: 2026-10-16
+    note: "Part of Allianz SE, listed on the Frankfurt Stock Exchange. The site refuses automated requests."
+
+DE/Munich Re:
+  wikipedia: "Munich Re"
+  ownership:
+    disclosure: listed
+    evidence: "https://www.munichre.com/en/company/investors.html"
+    checked: 2026-10-16
+    note: "Listed on the Frankfurt Stock Exchange. The site refuses automated requests."
