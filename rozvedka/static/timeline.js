@@ -3,13 +3,17 @@
    as a shaded background and a thin row of the library's reports per year under it (each year opens its list).
    At every zoom a lane draws only its heaviest events that fit and says how many it hides – nothing is merged.
    The whole view (lanes, period, selection, wall mode) lives in the address, so a view can be opened on a big screen
-   as it is. Keys: F full screen, W wall mode, 0 fit, + / − zoom, ← / → move. */
+   as it is. Clicking an event draws its chain: the relations a source states (Wikidata, or written by hand with their
+   evidence), up to DEPTH steps to its causes and its effects, as arrows between the events on screen.
+   Keys: F full screen, W wall mode, 0 fit, + / − zoom, ← / → move, Esc clears the chain. */
 (function () {
   "use strict";
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const num = (n) => Number(n || 0).toLocaleString("en");
-  const DAY = 864e5;
+  const DAY = 864e5, DEPTH = 3, PARTS = 20;     // a whole with more parts shows its heaviest PARTS, the rest as a count
+  const REL = { caused: { color: "--warn", line: 0 }, "immediately caused": { color: "--err", line: 0 },
+                "response to": { color: "--accent", line: 0 }, "followed by": { color: "--muted", line: 1 } };
   const wrap = $("#tl-wrap"), panel = $("#tl-panel");
   const SOURCE = { wikidata: "Wikidata", eurepoc: "EuRepoC", ucdp: "UCDP", library: "library" };
 
@@ -18,7 +22,8 @@
   let lanes = url.searchParams.getAll("lane");
   const state = { start: url.searchParams.get("start"), end: url.searchParams.get("end"), sel: url.searchParams.get("sel"),
                   wall: url.searchParams.get("wall") === "1" };
-  let data = null, all = [], timeline = null, forced = new Set();
+  let data = null, all = [], timeline = null, forced = new Set(), arrows = null;
+  let chain = { keys: new Set(), parts: new Set(), used: [] };
   const items = new vis.DataSet(), groups = new vis.DataSet();
 
   function save() {
@@ -39,6 +44,8 @@
   const day = (s) => new Date((String(s) + "-01-01").slice(0, 10) + "T00:00:00Z");
   function span(it) {
     const start = day(it.start);
+    // known only to the year: a bar over the whole year ("some time in 2024"), not a point on 1 January
+    if (String(it.start).length === 4 && (!it.end || it.end === it.start)) return { start, end: day(Number(it.start) + 1), year: true };
     const end = it.end && it.end !== it.start ? new Date(day(it.end).getTime() + DAY) : null;
     return { start, end: end && end - start > DAY ? end : null };
   }
@@ -57,8 +64,9 @@
   }
 
   function itemOf(it, min) {
-    const { start, end: full } = span(it), end = full && full - start >= min ? full : null;
-    const year = String(it.start).length === 4, cls = `src-${it.source}${it.preliminary ? " prelim" : ""}`;
+    const sp = span(it), start = sp.start, end = sp.year || (sp.end && sp.end - start >= min) ? sp.end : null;
+    const year = String(it.start).length === 4;
+    const cls = `src-${it.source}${it.preliminary ? " prelim" : ""}${sp.year ? " tl-year" : ""}${chain.keys.has(it.key) ? " tl-chain" : chain.parts.has(it.key) ? " tl-part" : ""}`;
     const label = it.label.length > 70 ? it.label.slice(0, 68) + "…" : it.label;
     const title = `${esc(it.label)}<br><span class="muted">${esc(it.start)}${it.end && it.end !== it.start ? " – " + esc(it.end) : ""}${year ? " (year only)" : ""}
       · ${esc(it.kind)} · ${SOURCE[it.source]}${it.deaths ? ` · ${num(it.deaths)} deaths` : ""}${it.preliminary ? " · preliminary" : ""}</span>`;
@@ -95,6 +103,7 @@
       items.remove([...now].filter((id) => !ids.has(id)));
       items.update(all.filter((it) => ids.has(it.id)).map((it) => itemOf(it, min)));     // new ones, and bar or point for this zoom
       groups.update(data.lanes.map((l) => ({ id: l.id, content: laneLabel(l, hidden[l.id] || 0) })));
+      drawArrows();
       save();
     }, 80);
   }
@@ -122,6 +131,82 @@
     return out;
   }
 
+  // ── chains: the stated relations around one event ──
+  function chainOf(key) {
+    const fwd = {}, back = {};
+    for (const l of data.links || []) {
+      if (l.rel === "part of") continue;
+      (fwd[l.src] = fwd[l.src] || []).push(l);
+      (back[l.dst] = back[l.dst] || []).push(l);
+    }
+    const keys = new Set([key]), used = new Set(), steps = { up: [], down: [] };
+    const walk = (map, end, dir) => {
+      let front = [key];
+      for (let depth = 1; depth <= DEPTH && front.length; depth++) {
+        const next = [];
+        for (const k of front) for (const l of map[k] || []) {
+          used.add(l);
+          const other = l[end];
+          if (!keys.has(other)) { keys.add(other); next.push(other); steps[dir].push({ key: other, depth, link: l }); }
+        }
+        front = next;
+      }
+    };
+    walk(back, "src", "up");
+    walk(fwd, "dst", "down");
+    const wholes = [], members = [], rank = (k) => Math.max(0, ...all.filter((it) => it.key === k).map((it) => it.rank));
+    for (const l of data.links || []) {
+      if (l.rel !== "part of") continue;
+      if (l.src === key) wholes.push(l);
+      if (l.dst === key) members.push(l);
+    }
+    members.sort((a, b) => rank(b.src) - rank(a.src));
+    const parts = new Set([...wholes.map((l) => l.dst), ...members.slice(0, PARTS).map((l) => l.src)]);
+    return { keys, parts, used: [...used], steps, wholes, members };
+  }
+  // the timeline item of an event: in the selected item's lane if it is there, else in the first lane that has it
+  function instance(key, lane) {
+    const found = all.filter((it) => it.key === key);
+    return (found.find((it) => it.lane === lane) || found[0] || {}).id;
+  }
+  function drawArrows() {
+    if (!window.RzArrow || !timeline) return;
+    if (!arrows) arrows = new window.RzArrow(timeline, [], { followRelationships: true, strokeWidth: state.wall ? 3 : 2, hideWhenItemsNotVisible: false });
+    for (const id of arrows.getIdArrows()) arrows.removeArrow(id);
+    if (!chain.used.length) return;
+    const css = getComputedStyle(document.documentElement), lane = chain.lane;
+    for (const l of chain.used) {
+      const a = instance(l.src, lane), b = instance(l.dst, lane);
+      if (!a || !b || !items.get(a) || !items.get(b)) continue;
+      const r = REL[l.rel] || REL.caused;
+      // straight from the middle of the cause to the middle of the effect, the head always at the effect (the default
+      // curve joins the facing ends and can put the head on the cause when the effect is a bar that starts earlier)
+      arrows.addArrow({ id: `${l.src}>${l.rel}>${l.dst}`, id_item_1: a, id_item_2: b, direction: 1, line: r.line, type: 1,
+                        color: css.getPropertyValue(r.color).trim() || "#e69f00",
+                        title: `${l.src_label} – ${l.rel} – ${l.dst_label} (${l.stated_by === "hand" ? "written by hand" : "Wikidata " + l.property})` });
+    }
+  }
+  function setChain(it) {
+    const c = it && it.key ? chainOf(it.key) : null;
+    chain = c && (c.used.length || c.parts.size) ? { ...c, lane: it.lane } : { keys: new Set(), parts: new Set(), used: [] };
+    wrap.classList.toggle("tl-focus", !!chain.used.length || !!chain.parts.size);
+    forced = new Set([it && it.id, ...[...chain.keys, ...chain.parts].map((k) => instance(k, chain.lane))].filter(Boolean));
+    items.update(all.filter((x) => items.get(x.id)).map((x) => itemOf(x, minSpan())));
+    refresh();
+  }
+  function chainList(c) {
+    const row = (s, arrow) => {
+      const id = instance(s.key, chain.lane), label = s.link.src === s.key ? s.link.src_label : s.link.dst_label;
+      const name = id ? `<a href="#" data-focus="${esc(s.key)}">${esc(label)}</a>` : `${esc(label)} <span class="muted">(not in these lanes)</span>`;
+      return `<li><span class="muted">${arrow.repeat(s.depth)}</span> ${name} <span class="muted small">${esc(s.link.rel)}${s.link.stated_by === "hand" ? `, <a href="${esc(s.link.evidence)}" target="_blank" rel="noopener">by hand</a>` : ""}</span></li>`;
+    };
+    if (!c || !(c.steps.up.length || c.steps.down.length || c.wholes.length || c.members.length)) return '<p class="muted small">No chain: no source states a cause, effect or sequence for this event.</p>';
+    return `${c.steps.up.length ? `<h3 class="tl-ph3">Back to its causes</h3><ul class="tl-list tl-chainlist small">${c.steps.up.map((s) => row(s, "←")).join("")}</ul>` : ""}
+      ${c.steps.down.length ? `<h3 class="tl-ph3">Forward to its effects</h3><ul class="tl-list tl-chainlist small">${c.steps.down.map((s) => row(s, "→")).join("")}</ul>` : ""}
+      ${c.wholes.length ? `<h3 class="tl-ph3">Part of</h3><ul class="tl-list small">${c.wholes.map((l) => `<li>${instance(l.dst, chain.lane) ? `<a href="#" data-focus="${esc(l.dst)}">${esc(l.dst_label)}</a>` : esc(l.dst_label)}</li>`).join("")}</ul>` : ""}
+      ${c.members.length ? `<h3 class="tl-ph3">Its parts <span class="muted">${c.members.length > PARTS ? `– the ${PARTS} heaviest of ${c.members.length} highlighted` : ""}</span></h3><ul class="tl-list small">${c.members.map((l) => `<li>${instance(l.src, chain.lane) ? `<a href="#" data-focus="${esc(l.src)}">${esc(l.src_label)}</a>` : esc(l.src_label)}</li>`).join("")}</ul>` : ""}`;
+  }
+
   // ── the detail panel ──
   const fmtDate = (e) => esc(e.start) + (e.end && e.end !== e.start ? " – " + esc(e.end) : "");
   function showRecord(it) {
@@ -143,12 +228,14 @@
       return `<li>${out ? `→ ${esc(l.rel)} ${link}` : `← ${link} ${esc(l.rel)} this`} <span class="muted small">(Wikidata ${esc(l.property)})</span></li>`;
     }).join("");
     panel.addEventListener("error", flagFallback, true);
+    const c = chain.used.length || chain.parts.size ? chain : null;
     panel.innerHTML = `<h2 class="tl-ph">${esc(e.label)}${e.preliminary ? ' <span class="muted" title="preliminary">◌</span>' : ""}</h2>
       <p class="small">${fmtDate(e)} · ${esc(e.kind)}${e.deaths != null ? ` · <b>${num(e.deaths)}</b> deaths` : ""}</p>
       ${e.description ? `<p class="small">${esc(e.description)}</p>` : ""}
       ${e.countries.length ? `<p class="small">${e.countries.map((c) => `<img class="flag-sm" src="/static/flags/${esc(c.toLowerCase())}.svg" alt="${esc(c)}" title="${esc(c)}" width="18" height="13" data-code="${esc(c)}">`).join(" ")}</p>` : ""}
       ${actors ? `<h3 class="tl-ph3">Who</h3><ul class="tl-list small">${actors}</ul>` : ""}
-      ${rel ? `<h3 class="tl-ph3">Stated relations</h3><ul class="tl-list small">${rel}</ul>` : ""}
+      <div class="tl-chainbox">${chainList(c)}</div>
+      ${rel ? `<details class="small"><summary>All stated relations (${e.links.length})</summary><ul class="tl-list small">${rel}</ul></details>` : ""}
       <p class="small">Source: <a href="${esc(e.url)}" target="_blank" rel="noopener">${SOURCE[e.source]}</a> ·
         <a href="/events?q=${encodeURIComponent(e.label.slice(0, 40))}">in the event list</a></p>`;
   }
@@ -169,8 +256,8 @@
     if (String(id).startsWith("rp|")) { const [, lane, y] = String(id).split("|"); const r = data.strips[lane].reports[y]; if (r) window.location.href = r.url; return; }
     const it = all.find((x) => x.id === id);
     if (!it) return;
-    forced = new Set([id]);
     state.sel = it.key || null;
+    setChain(it);
     if (it.key) showEvent(it.key); else showRecord(it);
     save();
   }
@@ -202,13 +289,19 @@
         end: state.end ? new Date(state.end) : new Date(Date.now() + 60 * DAY),
       });
       timeline.on("rangechanged", refresh);
-      timeline.on("select", (p) => select(p.items[0]));
+      timeline.on("select", (p) => (p.items.length ? select(p.items[0]) : clearChain()));
     }
     if (state.sel) {
       const it = all.find((x) => x.key === state.sel);
       if (it) { forced.add(it.id); setTimeout(() => { timeline.setSelection([it.id]); select(it.id); }, 200); }
     }
     refresh();
+  }
+
+  function clearChain() {
+    if (!chain.used.length && !chain.parts.size) return;
+    state.sel = null;
+    setChain(null);
   }
 
   function addLane(l) { if (l && !lanes.includes(l)) { lanes.push(l); load(); } }
@@ -257,6 +350,7 @@
     else if (ev.key === "-" || ev.key === "_") timeline.zoomOut(0.4);
     else if (ev.key === "ArrowLeft") timeline.setWindow(w.start - step, w.end - step);
     else if (ev.key === "ArrowRight") timeline.setWindow(+w.start + step, +w.end + step);
+    else if (ev.key === "Escape") { timeline.setSelection([]); clearChain(); return; }
     else return;
     ev.preventDefault();
   });

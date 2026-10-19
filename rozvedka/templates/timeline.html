@@ -41,10 +41,15 @@
       <li>Library records: the actor's sanctions listings, terrorist designations, official attributions and the state's threat-level
         changes, each with its source. The thin row under a lane counts the library's reports naming the subject per year – each year opens that list.</li>
       <li>The shaded background of a state's lane: deaths in organised violence per month (UCDP; the newest months are preliminary).</li>
+      <li>Chains: clicking an event draws the relations that a source states – Wikidata's has cause / has effect, immediate cause, follows /
+        followed by, and relations written by hand with their evidence (<code>sources/events.yaml</code>, <code>relations</code>) – up to three
+        steps back to its causes and forward to its effects, as arrows between the events on screen; the rest is dimmed. "Part of" is shown
+        by highlighting the whole and its parts, not by arrows. Nothing is inferred: an event without a stated relation has no chain.</li>
       <li>Weight: events are compared only with events of their own source – Wikipedia language editions with an article (Wikidata), weighted
         intensity (EuRepoC), deaths (UCDP). At each zoom a lane shows its heaviest events that fit; nothing is merged or estimated.</li>
     </ul></details>
 </div>
 <script src="{{ asset('vendor/vis-timeline/vis-timeline-graph2d.min.js') }}"></script>
+<script type="module">import Arrow from "{{ asset('vendor/timeline-arrows/arrow.js') }}"; window.RzArrow = Arrow;</script>
 <script src="{{ asset('timeline.js') }}"></script>
 {% endblock %}

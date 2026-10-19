@@ -1449,3 +1449,10 @@ body.tl-page main { max-width: none; padding-bottom: 12px; }
                font-family: var(--sans) !important; font-size: 12px !important; max-width: 420px; white-space: normal !important; }
 .tl .vis-labelset .vis-label .vis-inner { max-width: 230px; }
 .tl-wall .tl .vis-labelset .vis-label .vis-inner { max-width: 320px; }
+/* chains: the selected event's causes and effects stand out, the rest is dimmed */
+.tl-focus .tl .vis-item:not(.tl-chain):not(.tl-part):not(.vis-selected):not(.vis-background):not(.tl-rp) { opacity: .25; }
+.tl .vis-item.tl-chain { border-color: var(--warn); font-weight: 600; }
+.tl .vis-item.tl-chain .vis-dot { border-color: var(--warn); background: var(--warn); }
+.tl .vis-item.tl-part { outline: 1px dashed var(--warn); outline-offset: 1px; }
+.tl-chainlist li { list-style: none; margin-left: -14px; }
+.tl .vis-item.vis-range.tl-year { border-style: dashed; background: transparent !important; }

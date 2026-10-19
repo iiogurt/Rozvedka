@@ -26,6 +26,13 @@ classes:
 - {qid: Q8065, label: natural disaster}        # 797
 - {qid: Q12184, label: pandemic}               # 36
 
+# `relations` (written by hand, since 0.73.0): links between stored events that no source states, drawn as chains on
+# the timeline – each with the URL of the source that says so. `from` and `to` are event keys as /events shows them
+# (a Wikidata QID, eurepoc:<id>, ucdp:<id>); `rel` is one of: caused, immediately caused, followed by, part of,
+# response to. Example (not active):
+#   - {from: Q30340012, rel: caused, to: Q99999999, evidence: "https://…", note: "the official report, p. 12"}
+relations: []
+
 events:
 - wikipedia: September 11 attacks
   label: 9/11 attacks

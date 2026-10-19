@@ -179,3 +179,35 @@ def test_timeline_lanes_and_strips(library):
     assert client.get("/api/timeline/event/Q999").status_code == 404
     t = client.get("/timeline").text
     assert "vis-timeline-graph2d.min.js" in t and "timeline.js" in t and 'data-lanes="country:UA,country:RU' in t
+
+
+def test_chains_stated_and_written_by_hand(library, tmp_path, monkeypatch):
+    t = lambda d: {"_type": "time", "time": f"+{d}T00:00:00Z", "precision": 11}
+    a = events.parse_item("Q60", _item(P585=[t("2024-07-31")], P1536=["Q61"]), "assassination", 30)   # immediate cause of Q61
+    b = events.parse_item("Q61", _item(P585=[t("2024-10-01")]), "bombing", 20)
+    c = events.parse_item("Q62", _item(P585=[t("2024-10-26")]), "bombing", 10)
+    for e in (a, b, c):
+        e["countries"] = ["UA"]
+        e["actors"] = []
+        for l in e["links"]:
+            l["src_label"], l["dst_label"] = l["src"], l["dst"]
+    with db.session() as con:
+        events._store(con, [a, b, c], "wikidata")
+    yml = tmp_path / "events.yaml"
+    yml.write_text("""relations:
+- {from: Q61, rel: caused, to: Q62, evidence: "https://example.org/report", note: "p. 3"}
+- {from: Q61, rel: caused, to: Q99, evidence: "not a url"}
+- {from: Q61, rel: invented, to: Q62, evidence: "https://example.org"}
+events: []
+""")
+    monkeypatch.setattr(events, "CLASSES", yml)
+    events._hand["mtime"] = None
+    assert events.sync_hand(yml) == 1                                        # without evidence or a known relation: ignored
+    assert events.sync_hand(yml) == 0                                        # unchanged file: nothing to do
+    links = {(l["src"], l["rel"], l["dst"], l["stated_by"]) for l in events.timeline([("country", "UA")])["links"]}
+    assert links == {("Q60", "immediately caused", "Q61", "Q60"), ("Q61", "caused", "Q62", "hand")}
+    hand = next(l for l in events.timeline([("country", "UA")])["links"] if l["stated_by"] == "hand")
+    assert hand["evidence"] == "https://example.org/report" and hand["property"] == "written by hand: p. 3"
+    events._hand["mtime"] = None
+    t = TestClient(app_module.app).get("/timeline").text
+    assert "timeline-arrows/arrow.js" in t and "Nothing is inferred" in t
