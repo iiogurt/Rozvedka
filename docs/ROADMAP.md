@@ -157,7 +157,7 @@ combined timeline · C4 ✅ (0.58.1) the other pages in the panel style.
 4. **Design tokens** – spacing/type scale, one categorical palette in CSS read by the charts, an SVG icon sprite (Lucide or Tabler, about 8 KB). · patch
 5. **Overview dashboard** – sparkline tiles instead of the 30/90-day tiles, official/think-tank stacked years, dumbbell for rising topics. · minor
 6. ✅ (0.59.0) **Topic matrix** – a reference column of all reports and an over-emphasis (lift) mode. · minor
-7. **Annotated actor timeline** – dated events and the country grid on one year axis. · minor
+7. → H1 **Annotated actor timeline** – dated events and the country grid on one year axis; covered by the timeline of events (H1). · minor
 8. ✅ (0.60.0) **Threat-level small multiples** – one step chart per state on its own scale. · minor
 9. ◐ (0.61.0: chord diagram between agency types) **Citations** – still open: an agency × agency matrix. · minor
 10. **ATT&CK tactic grid and CVE lag plot.** · minor
@@ -216,6 +216,27 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
 9. **Company registries and leaks** – GLEIF (ownership, CC0), UK Companies House (persons with significant control), ICIJ
    Offshore Leaks (ODbL; journalistic, marked as non-official) for the companies and people already in the network. · minor
 
+### H. Timeline, books and country ratings (owner's topics, 2026-10-19 – researched, not started)
+
+1. **Timeline of events with chains** ([design](TIMELINE.md)) – swimlanes on one time axis, full screen and a wall mode
+   for large screens, sharp at 4K; typed arrows only for stated relations (Wikidata cause / effect / follows / part of,
+   hand-written chains with evidence), a clicked event highlights its chain. Data: Wikidata events (CC0), UCDP GED
+   (CC BY 4.0), EuRepoC cyber incidents (CC BY-NC 4.0), the library's own dated records. Joined to reports by event names
+   in the gazetteer (counted) and by actors within a time window (context, not counted); events become a network layer.
+   Library: vis-timeline + timeline-arrows (vendored), ECharts as the fallback. Replaces F7. Steps H1a–H1d. · 4 × minor
+2. **Local book library** ([what it would take](BOOKS.md)) – about 100 PDFs (EPUB cheaper) in `data/books/`, never committed:
+   metadata by ISBN (Open Library, Wikidata), authors and publishers as subjects, chapters, printed page numbers, the
+   book's own index; actors, topics and search as for reports, a fourth kind "book" marked apart. Meanings without a
+   language model: distinctive terms, key sentences quoted with page, dated statements (→ timeline), stated relations
+   with the sentence as evidence. About +20 % of the indexed words; OCR is the slow part if the books are scans.
+   Steps H2a–H2d. · 4 × minor
+3. **Country ratings beyond democracy** ([design](COUNTRY_RATINGS.md)) – groups Security (WGI political stability,
+   UNODC homicides, UCDP conflict deaths, SIPRI military spending, threat levels), Governance (WGI rule of law,
+   corruption, effectiveness, regulatory quality; TI CPI), Media (RSF), Cyber (ITU GCI, NCSI, EuRepoC incidents) and
+   Disaster risk (INFORM, WorldRiskIndex, ND-GAIN); small multiples per country, a measure switch on the map, no
+   composite score. Left out: IEP's Global Peace and Terrorism indices (request form only). Steps H3a–H3d; H3a needs
+   only configuration. · minor
+
 ### E. Engineering and operations
 
 1. ✅ (0.48.0: optional, tested, **not activated** – the owner does not want it) **The portal starts after a reboot** – install `deploy/rozvedka-web.service` as a user service with
@@ -243,6 +264,11 @@ backups and exchange (0.27–0.28), home page and search console (0.22), Update 
 5. Then **B2 / B3** (count per report, by document type) and **C1** (a page per report).
 
 ## 5. Scope questions for the owner
+
+- **Books (H2):** born-digital PDFs or scans? EPUB too? Which languages? Are extractive meanings (quoted key sentences,
+  dated statements, stated relations with page) enough, or may a trained parser such as spaCy be used?
+- **Ratings (H3):** non-commercial and no-derivatives licences (EuRepoC CC BY-NC, TI CPI CC BY-ND) fit a personal
+  library that commits no data – confirm.
 
 - **Wider scope?** Candidates that fit "official and reliable": EU candidate and partner states (Moldova, Georgia,
   Serbia, Bosnia and Herzegovina, Kosovo), Israel, India, South Africa, Uruguay, Costa Rica, Singapore. Each adds
