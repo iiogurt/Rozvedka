@@ -11,6 +11,9 @@
     {%- elif r.layer == 'attack' %}<a href="{{ e.url }}" rel="noopener">MITRE ATT&amp;CK</a>{% if e.retrieved %}, retrieved {{ e.retrieved }}{% endif %}
     {%- elif r.layer == 'wikipedia' %}<a href="{{ e.url }}" rel="noopener">Wikipedia: {{ e.source.article }}</a>, infobox “{{ e.source.field }}”, rev. {{ e.source.revision }}, retrieved {{ e.source.retrieved }}
     {%- elif r.layer == 'wikitext' %}<a href="{{ e.url }}" rel="noopener">Wikipedia: {{ e.article }}</a>{% if e.section %}, section “{{ e.section }}”{% endif %}, rev. {{ e.revision }}, retrieved {{ e.retrieved }}{% if e.word %} · relation from the word “{{ e.word }}”{% else %} · no relation word{% endif %}
+    {%- elif r.layer == 'publishers' %}<a href="{{ e.url }}" rel="noopener">{{ e.label }}</a>{% for m in e.more %}, <a href="{{ m.url }}" rel="noopener">{{ m.label }}</a>{% endfor %}
+      · {{ {'profile': 'researched by hand', 'funding': 'its funding disclosure', 'usaspending': 'USAspending.gov', 'wikidata': 'Wikidata'}[e.origin] }}{% if e.amount %} · {{ e.amount if e.amount is string else '$' ~ '{:,.0f}'.format(e.amount) }}{% if e.period %} {{ e.period[0][:4] }}–{{ e.period[1][:4] }}{% endif %}{% endif %}{% if e.checked %}, checked {{ e.checked }}{% endif %}
+      · <a href="{{ e.profile }}">publisher profile</a>{% if e.note %}<br>{{ e.note }}{% endif %}
     {%- elif r.layer == 'wikidata' %}<a href="{{ e.url }}" rel="noopener">Wikidata {{ e.source.property }}</a>{% if e.source.ref %} · <a href="{{ e.source.ref }}" rel="noopener">cited source</a>{% endif %}, retrieved {{ e.source.retrieved }}
     {%- endif %}{% if e.role %} · {{ e.role }}{% endif %}{% if r.date %} · {{ r.date }}{% endif %}</span>
   {%- endif -%}

@@ -136,8 +136,9 @@ MIGRATIONS = {
     "sources": {"name_local": "TEXT", "name_en": "TEXT", "homepage": "TEXT", "description": "TEXT",
                 "logo_url": "TEXT", "logo_path": "TEXT", "hq_address": "TEXT", "lat": "REAL", "lon": "REAL",
                 "hq_precision": "TEXT", "domains": "TEXT",
-                "publisher": "TEXT DEFAULT 'official'"},   # official (run by a state or states) | independent (think tank)
-    "pages": {"follow": "TEXT"},                  # regex: publication pages to open from a list page (think tanks)
+                "publisher": "TEXT DEFAULT 'official'"},   # official (run by a state or states) | independent (think tank) | commercial (company)
+    "pages": {"follow": "TEXT",                   # regex: publication pages to open from a list page (think tanks)
+              "follow_limit": "INTEGER"},         # sub-pages followed from it, when not config.FOLLOW_LIMIT (a sitemap)
 }
 
 

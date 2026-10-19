@@ -36,7 +36,7 @@ GROUPS = [
     ]),
     ("sources", "Sources", "/sources", [
         ("Agencies", "/sources", (), "The official agencies the library follows, by country."),
-        ("Think tanks", "/publishers", ("/publisher",), "Independent publishers with their credibility profile."),
+        ("Think tanks & analysts", "/publishers", ("/publisher",), "Think tanks and commercial analysts with their credibility profile."),
         ("Map", "/map", (), "Where the agencies are."),
         ("Democracy map", "/map/democracy", (), "Regime ratings of the states, over time."),
         ("Who reports on which country", "/map/mentions", (), "Where agencies' reports point."),

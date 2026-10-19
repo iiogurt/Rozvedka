@@ -62,7 +62,9 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
                             args).fetchone()[0]
         pg = paging.paginate(total, page, size, "/documents", params)
         independent = con.execute(f"""SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
-                                      WHERE {sql_where} AND NOT {trends.OFFICIAL}""", args).fetchone()[0]
+                                      WHERE {sql_where} AND {trends.THINK_TANK}""", args).fetchone()[0]
+        commercial = con.execute(f"""SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
+                                     WHERE {sql_where} AND {trends.COMMERCIAL}""", args).fetchone()[0]
         # other language versions and summaries of the reports listed (one file per report is listed by default)
         every_file = doclist.build(**fargs, doc_type=doc_type, all_types=all_types, all_files=1)
         other_files = con.execute(f"""SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
@@ -118,7 +120,7 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
 
     return tpl.TemplateResponse(request, "index.html", {"year_conflicts": len(dating.conflicts()),
         "type_counts": type_counts, "DOC_TYPES": doctypes.TYPES, "NOT_REPORTS": doctypes.NOT_REPORTS,
-        "other_files": other_files, "independent": independent, "expansions": flt["expansions"],
+        "other_files": other_files, "independent": independent, "commercial": commercial, "expansions": flt["expansions"],
         "docs": docs, "total": total, "pg": pg,
         "facets": facets, "f": params, "counts": counts, "qs": qs,
         "TOPICS": tax, "CATEGORIES": topics.taxonomy()["categories"], "topic_counts": topic_counts,

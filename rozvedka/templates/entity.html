@@ -11,6 +11,10 @@
 {% elif e.kind == 'case' %}
 <p class="lede">A wanted notice about several people at once{% if d.wanted %} ({{ 'the FBI' if d.wanted[0].source == 'FBI' else 'Europe’s Most Wanted' }}){% endif %}: the people,
   units and groups its text names are linked to it, so the notice joins them. An allegation, not a conviction.</p>
+{% elif d.publisher %}
+<p class="lede">{{ e.kind_name }}: {{ 'a company selling political-risk or threat analysis to clients' if d.publisher.kind == 'commercial' else 'an independent publisher, not run by a state' }}.
+  Its owners, sponsors, founders and partners are linked below, each with its evidence – see its <a href="/publisher/{{ d.publisher.source }}">credibility profile</a>
+  and <a href="/documents?source={{ d.publisher.source }}">its reports</a>.</p>
 {% elif d.named_by %}
 <p class="lede">Named by {{ d.named_by }} UK list entries as their parent company, subsidiary or ship owner/operator, and
   {{ 'not found as an entry of its own' if not d.candidates else 'matching ' ~ d.candidates ~ ' entries by name – which one is unclear' }}.</p>
@@ -36,6 +40,7 @@
     {% if d.addresses %}<tr><th>Addresses</th><td>{% for a in d.addresses %}{{ a.street }}{{ ', ' ~ a.city if a.city }}{{ ', ' ~ a.country if a.country }}{{ '; ' if not loop.last }}{% endfor %}</td></tr>{% endif %}
     {% if d.description %}<tr><th>Description</th><td>{{ d.description }}</td></tr>{% endif %}
     {% if d.attack %}<tr><th>ATT&amp;CK</th><td><a href="{{ d.url }}" rel="noopener">{{ d.attack }}</a>{% if d.aliases %} · also {{ d.aliases|join(', ') }}{% endif %}{% if d.first %} · active {{ d.first }} – {{ d.last }}{% endif %}</td></tr>{% endif %}
+    {% if d.publisher and d.url %}<tr><th>Wikidata</th><td><a href="{{ d.url }}" rel="noopener">{{ e.id }}</a></td></tr>{% endif %}
     {% if e.origin == 'wikidata' %}<tr><th>Wikidata</th><td><a href="{{ d.url }}" rel="noopener">{{ e.id }}</a>{% if d.wikipedia %} · <a href="{{ d.wikipedia }}" rel="noopener">Wikipedia</a>{% endif %}</td></tr>{% endif %}
   </table>
 </section>

@@ -24,6 +24,7 @@ TYPE_NAMES = {
     "intelligence-civil": "Civil intelligence", "intelligence-military": "Military / foreign intelligence",
     "cyber": "Cyber security", "civil-protection": "Civil protection & crisis", "police-ct": "Police / counter-terrorism",
     "eu-body": "EU body", "nato": "NATO", "other": "Other", "think-tank": "Think tank (independent)",
+    "commercial": "Commercial analysis (company)",
 }
 FLAGS = {p.stem for p in (HERE / "static" / "flags").glob("*.svg")}
 
@@ -76,29 +77,37 @@ tpl.env.globals["ico"] = ico
 tpl.env.globals["menu"] = nav.menu
 tpl.env.filters["num"] = lambda n: f"{n or 0:,}"
 
-_independent: dict = {"at": None, "ids": frozenset(), "levels": {}}     # at=None: not loaded yet
+_independent: dict = {"at": None, "ids": frozenset(), "levels": {}, "kinds": {}}     # at=None: not loaded yet
 
 
 def independent_ids() -> frozenset:
-    """Sources not run by a state (think tanks), with their credibility rating – refreshed every minute; few rows."""
+    """Sources not run by a state – think tanks and commercial analysts – with their kind and credibility rating;
+    refreshed every minute; few rows."""
     if _independent["at"] is None or time.monotonic() - _independent["at"] > 60:
         with db.session() as con:
-            rows = con.execute("SELECT id, key FROM sources WHERE COALESCE(publisher, 'official') = 'independent'").fetchall()
+            rows = con.execute("SELECT id, key, publisher FROM sources WHERE COALESCE(publisher, 'official') != 'official'").fetchall()
         _independent["ids"] = frozenset(r[0] for r in rows)
-        _independent["levels"] = {r[0]: publishers.profile(r[1]) for r in rows}
+        _independent["kinds"] = {r[0]: r[2] if r[2] in publishers.KINDS else "independent" for r in rows}
+        _independent["levels"] = {r[0]: publishers.profile(r[1], _independent["kinds"][r[0]]) for r in rows}
         _independent["at"] = time.monotonic()
     return _independent["ids"]
 
 
+def pub_kind(source_id) -> dict | None:
+    """{name, plural, mark, type, about} of a source that is not a state agency, else None."""
+    return publishers.KINDS[_independent["kinds"][source_id]] if source_id in independent_ids() else None
+
+
 def pub_mark(source_id, compact: bool = False) -> Markup:
-    """The badge that marks an independent publisher next to its name, wherever a source or report is shown – coloured
-    and labelled by its credibility rating, and opening its profile. Compact (narrow rows): the coloured ◆ alone, the
-    label in its tooltip."""
+    """The badge that marks a publisher that is not a state agency next to its name, wherever a source or report is shown –
+    its kind by the symbol (◆ think tank, ■ commercial analyst) and class, its credibility rating by the colour, opening its
+    profile. Compact (narrow rows): the coloured symbol alone, the label in its tooltip."""
     if source_id in independent_ids():
-        p = _independent["levels"][source_id]
-        text = "" if compact else f"think tank · {escape(p['label'])}"
-        return Markup(f'<a class="pub-ind pub-lv-{p["level"]}{" pub-compact" if compact else ""}" href="/publisher/{int(source_id)}" '
-                      f'title="Independent publisher – a think tank, not run by a state. Credibility: {escape(p["label"])} – '
+        p, k = _independent["levels"][source_id], pub_kind(source_id)
+        text = "" if compact else f"{k['name']} · {escape(p['label'])}"
+        cls = "pub-ind" if k["type"] == "think-tank" else "pub-ind pub-com"
+        return Markup(f'<a class="{cls} pub-lv-{p["level"]}{" pub-compact" if compact else ""}" href="/publisher/{int(source_id)}" '
+                      f'title="{escape(k["about"][0].upper() + k["about"][1:])}. Credibility: {escape(p["label"])} – '
                       f'{escape(p["about"])}. Open its profile">{text}</a>')
     return Markup("")
 
@@ -107,9 +116,9 @@ def pub_profile(source_id):
     return _independent["levels"].get(source_id) if source_id in independent_ids() else None
 
 
-tpl.env.globals.update(pub_mark=pub_mark, is_independent=lambda sid: sid in independent_ids(),
+tpl.env.globals.update(pub_mark=pub_mark, is_independent=lambda sid: sid in independent_ids(), pub_kind=pub_kind,
                        rating=ratings.profile, REGIMES=ratings.REGIMES, pub_profile=pub_profile,
-                       PUB_LEVELS=publishers.LEVELS)
+                       PUB_LEVELS=publishers.LEVELS, PUB_KINDS=publishers.KINDS)
 
 
 def asset(path: str) -> str:

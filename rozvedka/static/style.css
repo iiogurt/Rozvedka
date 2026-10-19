@@ -491,6 +491,8 @@ blockquote.p-text mark { background: #fde68a; color: #1d2126; padding: 0 2px; bo
 /* kinds beyond the 8 palette slots get a shape instead of a ninth hue */
 .kind-party { background: transparent; box-shadow: inset 0 0 0 2px var(--ink); }
 .kind-org { background: var(--muted); border-radius: 2px; }
+.kind-think-tank { background: var(--indep); border-radius: 1px; transform: rotate(45deg) scale(.85); }
+.kind-commercial { background: var(--com); border-radius: 1px; }
 .kind-filter { border: 0; padding: 0; margin: -4px 0 10px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .kind-filter legend { float: left; margin-right: 6px; }
 .kind-chip { display: inline-flex; align-items: center; gap: 2px; font-size: 12.5px; padding: 3px 8px; border: 1px solid var(--line);
@@ -937,6 +939,21 @@ table.yc td.ev { max-width: 420px; }
 .card.card-ind { border-left: 4px solid var(--indep); }
 .pub-count { color: var(--indep); }
 h2.region.region-ind { color: var(--indep); border-color: var(--indep); } .flag-ind { align-self: center; }
+/* commercial analysts (companies selling analysis): a third kind – ■ instead of ◆, a dashed badge, a square on the map,
+   reddish purple (Okabe–Ito) for their sections and counts; the badge colour still shows the credibility rating */
+:root { --com: #a4527f; } :root[data-theme="dark"] { --com: #cc79a7; }
+.pub-ind.pub-com { border-style: dashed; }
+.pub-ind.pub-com::before { content: "■ "; }
+.pub-ind.pub-com.pub-compact::before { content: "■"; }
+.pin-dot.square { border-radius: 1px; }
+.type-dot-commercial { --c: var(--com); }
+.card.card-com { border-left: 4px dashed var(--com); }
+.pub-count-com { color: var(--com); }
+h2.region.region-com { color: var(--com); border-color: var(--com); }
+.h-bars .seg.com { background: var(--com); } .key-com::before { content: ""; display: inline-block; width: 9px; height: 9px;
+  border-radius: 2px; margin-right: 4px; background: var(--com); }
+.kpis .kpi-com span, .kpis .kpi-com b { color: var(--com); }
+.pc-info { color: var(--muted); }
 
 /* cross-language search: what a search word was expanded to, and where the names come from */
 .xl-box { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 4px; padding: 6px 10px; margin: 6px 0 10px; font-size: 13px; }
@@ -982,6 +999,7 @@ a.pub-ind { text-decoration: none; }
 .h-srcw .h-src { min-width: 0; }
 .pub-ind.pub-compact { padding: 0 3px; margin-left: 3px; }
 .pub-ind.pub-compact::before { content: "◆"; }
+.pub-ind.pub-com.pub-compact::before { content: "■"; }
 
 /* Democracy map (/map/democracy) */
 .dm-year { display: flex; align-items: center; gap: 8px; margin: 10px 0 6px; }

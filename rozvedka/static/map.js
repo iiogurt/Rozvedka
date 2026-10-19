@@ -9,8 +9,10 @@
     "intelligence-civil": "#5aa9ff", "intelligence-military": "#9ccc65", "cyber": "#c792ea",
     "civil-protection": "#ffab40", "police-ct": "#ff6b6b", "eu-body": "#82b1ff", "nato": "#4dd0e1", "other": "#b0bec5",
     "think-tank": "#f0e442",   // independent publishers: also a diamond instead of a dot, so shape tells them apart too
+    "commercial": "#cc79a7",   // commercial analysts: a square
   };
-  // a think tank's diamond takes the colour of its credibility rating (rozvedka/publishers.py)
+  const PUB_SHAPE = { "think-tank": " diamond", "commercial": " square" };
+  // a think tank's diamond and a commercial analyst's square take the colour of its credibility rating (rozvedka/publishers.py)
   const CREDIBILITY = { transparent: "#2ec4a0", partial: "#f0e442", concerns: "#e69f00", redflag: "#ff7a3d", unassessed: "#9aa1ab" };
   const PRECISION = { address: "exact building address", street: "street-level (house not matched)",
                       city: "city only – exact address not published" };
@@ -81,7 +83,7 @@
     const hollow = a.hq_precision !== "address";
     return L.divIcon({
       className: "pin",
-      html: `<span class="pin-dot${hollow ? " hollow" : ""}${a.type === "think-tank" ? " diamond" : ""}" style="--c:${(a.type === "think-tank" && CREDIBILITY[a.credibility]) || TYPE_COLORS[a.type] || TYPE_COLORS.other}"></span>`,
+      html: `<span class="pin-dot${hollow ? " hollow" : ""}${PUB_SHAPE[a.type] || ""}" style="--c:${(PUB_SHAPE[a.type] && CREDIBILITY[a.credibility]) || TYPE_COLORS[a.type] || TYPE_COLORS.other}"></span>`,
       iconSize: [18, 18], iconAnchor: [9, 9], popupAnchor: [0, -8], tooltipAnchor: [0, -10],
     });
   }
@@ -102,6 +104,7 @@
       <div class="hc-type" style="--c:${TYPE_COLORS[a.type] || "#aaa"}"><span class="dot solid"></span>${esc(a.type_name)} · ${esc(a.country_name)}</div>
       ${(() => { const r = regimeOf(a.country); return r ? `<div class="hc-regime"><span class="rt-dot" style="background:${REGIME[r.v]}"></span>${esc(ratingsData.regimes[r.v])} <span class="muted">(V-Dem ${r.year})</span></div>` : ""; })()}
       ${a.type === "think-tank" ? `<div class="pub-note">◆ Independent think tank – not run by a state · credibility: ${esc(a.credibility_label || "not assessed")}</div>` : ""}
+      ${a.type === "commercial" ? `<div class="pub-note">■ Commercial analyst – a company, not run by a state · credibility: ${esc(a.credibility_label || "not assessed")}</div>` : ""}
       ${a.coalitions.length ? `<div class="hc-coal">${coalitionChips(a)}</div>` : ""}
       <p class="hc-desc">${esc(firstSentence(a.description))}</p>
       <div class="hc-foot"><span><b>${a.n_docs}</b> documents${years(a)}</span>

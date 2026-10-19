@@ -52,3 +52,45 @@ profile shows why – nothing disappears silently.
 1. `sources/publishers.yaml` + checks for the 17 current think tanks (one evening of research, with links and dates).
 2. Profile display on Sources, report pages and the ◆ badge tooltip.
 3. Fetched checks: Wikidata identity facts; EU Transparency Register lookup; after D1, sanctions matching.
+
+## 5. Commercial analysts (owner's decision 2026-10-16, implemented in 0.69.0)
+
+Companies that sell political-risk, security or threat analysis to clients and publish part of it openly (Eurasia Group's
+Top Risks, ESET's threat reports, Microsoft's Digital Defense Report, Graphika's influence-operations investigations) are a
+**third kind of publisher**: registry `publisher: commercial`, `type: commercial`. They are neither states nor think tanks,
+so they are marked **■** (a dashed badge, a square on the map, reddish purple sections and counts) next to official agencies
+and **◆** think tanks, and every count says how many of its reports come from them.
+
+A company does not live on donations, so "who funds it" becomes **who owns it** and **for whom it works**:
+
+| Check | ✓ / ◐ / ✗ / – / $ | Evidence | How it is found |
+|---|---|---|---|
+| **Ownership** | ✓ listed company (shareholders in public filings) or owners named with stakes · ◐ owners named without stakes · ✗ not disclosed, or a stake held by the state of an autocracy (V-Dem) | company page, register, Wikipedia | by hand |
+| **Clients** | ✓ named · ◐ some clients or partners named · – not disclosed (usual; does not change the rating) | company page, announcements | by hand |
+| **People and methods** | ✓ authors named and a method published · ◐ one of the two | the reports, method page | by hand (also for think tanks) |
+| **US federal contracts and grants** | $ information only – the amount by awarding agency since FY2008 | USAspending.gov, only recipients whose registered name the profile gives exactly | tool (also for think tanks) |
+| **Official registers, sanctions** | as for think tanks | EU Transparency Register, US FARA, US/UK/EU/UN lists | tool |
+
+Rating: **red flag** (sanctions, active FARA registration) · **concerns** (owners not disclosed, or owned by an autocracy's state) ·
+**partly transparent** (owners without stakes, or no authors / method) · **transparent ownership** (listed, or owners with stakes).
+
+Admission: regular reports free on its own domain **without registration**; owners identifiable or recorded as undisclosed;
+on no sanctions list; not owned by the state of an autocracy. Excluded on these grounds (2026-10-16): Kaspersky (its
+leadership designated by US OFAC in 2024), Positive Technologies (OFAC SDN since 2021); left out for access: Verisk
+Maplecroft (robots.txt), Control Risks, EIU, Dragos, Mandiant M-Trends, CrowdStrike (registration forms), Swiss Re sigma
+(PDFs only through scripts); collected by hand: Allianz Risk Barometer, Munich Re natural catastrophe figures (HTTP 403).
+
+## 6. Owners, sponsors and influence as links of the network
+
+Every think tank and commercial analyst is a subject of the network (layer **"Publisher profiles"**, `ties.py`): the actor of
+its Wikidata item when the gazetteer has it, else a node of its own that opens its profile. Its links, each with evidence:
+
+- `ties` in `sources/publishers.yaml` – owners, founders, leaders, investors, partners, related foundations, researched by hand;
+- a think tank's donor governments → the countries' actors;
+- the US federal agencies that gave it contracts or grants (USAspending.gov) → the agency's actor when one is named so;
+- owner, parent organisation, founder, funder, chair, director and chief executive on its Wikidata item (with the revision) –
+  only the statements that hold today (deprecated ones never; only the preferred ones when some are; none with an end
+  time), each with its year, amount and purpose when Wikidata records them (a grant per year) and the URL its reference cites.
+
+So the network can answer "who stands behind the publisher of this report" with the same path search and evidence as for the
+actors the reports name; the publisher page lists the same ties in a table.

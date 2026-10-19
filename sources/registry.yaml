@@ -2,12 +2,15 @@
 #
 # Per source:
 #   type:   intelligence-civil | intelligence-military | cyber | civil-protection | police-ct | eu-body | nato | other
+#           | think-tank (with publisher: independent) | commercial (with publisher: commercial – a company selling analysis)
+#   publisher: official (default) | independent (think tank) | commercial (company); both need a profile in publishers.yaml
 #   access: auto (plain fetch) | browser-ua (needs browser headers) | tls-lenient (server sends incomplete cert chain)
 #           | browser-js (content rendered by JavaScript) | manual (bot-protected; add documents by hand in portal)
 #   pages:  one entry per language version / archive page
 #     lang: ISO 639-1 code; "cs+en" = one page listing reports in several languages
 #     kind: current (latest edition / main list) | archive (older editions) | series (page of one report series)
 #     verified: false = URL taken from official search results but could not be fetched from here (bot-protected)
+#     follow: regex of the publication pages to open from a list page or an XML sitemap; follow_limit: how many (default 25)
 #   url_pattern: predictable direct-PDF URLs the downloader can generate ({year}, {lang})
 #
 # Last verified: 2026-09-29
@@ -2833,3 +2836,123 @@
   pages:
     - {lang: en, kind: archive, url: "https://www.jpcert.or.jp/english/ir/report.html"}
     - {lang: ja, kind: archive, url: "https://www.jpcert.or.jp/ir/report.html"}
+
+# ════════════════════════ COMMERCIAL ANALYSTS – COMPANIES ════════════════════════
+# Added 2026-10-16 (owner's decision): companies that sell political-risk, security or threat analysis to clients and publish
+# some of it openly, on their own domains. Marked ■ and kept apart from agencies and think tanks everywhere; each needs an
+# ownership profile in publishers.yaml. Admission: regular reports free on its own domain without registration, owners
+# identifiable or disclosed as not, on no sanctions list, not owned by the state of an autocracy.
+# Checked and left out (2026-10-16): Verisk Maplecroft (robots.txt disallows), Swiss Re Institute sigma (PDFs offered by
+# script only), Control Risks RiskMap, EIU Democracy Index, Dragos, Google/Mandiant M-Trends, CrowdStrike (registration forms),
+# Recorded Future (pages built by script; candidate for browser rendering), Kaspersky (Russian; its leadership designated by
+# US OFAC in 2024, its products banned in the US) and Positive Technologies (OFAC SDN since 2021) – sanctions.
+# Eurasia Group: Top Risks 2024–2026 need registration ("Please Register"), so only 2016–2023 are collected; 2019 is gone.
+
+- country: US
+  agency: Eurasia Group
+  name_local: "Eurasia Group"
+  name_en: "Eurasia Group"
+  homepage: "https://www.eurasiagroup.net/"
+  description: "Political-risk consultancy founded by Ian Bremmer in 1998. Its annual Top Risks report names the ten geopolitical risks of the coming year (conflicts, great-power rivalry, technology, elections)."
+  hq: {address: "New York City, New York, United States", lat: 40.71277, lon: -74.00597, precision: city}
+  type: commercial
+  publisher: commercial
+  access: auto
+  frequency: annual
+  report_types: [Top Risks]
+  notes: "Top Risks 2024–2026 are offered only after registration; 2016–2023 are open PDFs, listed directly (the edition pages link them among their risk pages: www.eurasiagroup.net/issues/top-risks-<year>)."
+  pages:
+    - {lang: en, kind: current, url: "https://www.eurasiagroup.net/files/upload/EurasiaGroup_TopRisks2023.pdf", note: "Top Risks 2023"}
+    - {lang: en, kind: archive, url: "https://www.eurasiagroup.net/files/upload/EurasiaGroup_TopRisks2022.pdf", note: "Top Risks 2022"}
+    - {lang: en, kind: archive, url: "https://www.eurasiagroup.net/files/upload/top-risks-2021-full-report.pdf", note: "Top Risks 2021"}
+    - {lang: en, kind: archive, url: "https://www.eurasiagroup.net/files/upload/top_risks_2020_coronavirus_edition_1.pdf", note: "Top Risks 2020: coronavirus edition"}
+    - {lang: en, kind: archive, url: "https://www.eurasiagroup.net/files/upload/Top_Risks_2020_Report_1.pdf", note: "Top Risks 2020"}
+    - {lang: en, kind: archive, url: "https://www.eurasiagroup.net/files/upload/Top_Risks_2018_Report.pdf", note: "Top Risks 2018"}
+    - {lang: en, kind: archive, url: "https://www.eurasiagroup.net/files/upload/Top_Risks_2017_Report.pdf", note: "Top Risks 2017"}
+    - {lang: en, kind: archive, url: "https://www.eurasiagroup.net/siteFiles/Issues/1512_Top_Risks_2016.pdf", note: "Top Risks 2016"}
+
+- country: US
+  agency: Graphika
+  name_local: "Graphika"
+  name_en: "Graphika"
+  homepage: "https://www.graphika.com/"
+  description: "Network-analysis company that maps online communities; its public reports expose state-linked influence operations and disinformation campaigns (Russia, China, Iran) and AI-generated propaganda."
+  hq: {address: "New York City, New York, United States", lat: 40.71277, lon: -74.00597, precision: city}
+  type: commercial
+  publisher: commercial
+  access: auto
+  frequency: periodic
+  report_types: [investigation reports]
+  notes: "Recent reports are web pages; the reports with their own PDF (mostly 2019–2024) are collected, from the site's sitemap of report pages."
+  domains: [graphika.com]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.graphika.com/sitemap.xml", follow: "graphika\\.com/reports/[\\w-]+$", follow_limit: 150}
+
+- country: SK
+  agency: ESET
+  name_local: "ESET, spol. s r.o."
+  name_en: "ESET"
+  homepage: "https://www.eset.com/"
+  description: "Slovak IT-security company. ESET Research publishes the half-yearly Threat Report and the APT Activity Report on state-aligned groups (Russia, China, Iran, North Korea) on its WeLiveSecurity site."
+  hq: {address: "Bratislava, Slovakia", lat: 48.14816, lon: 17.10674, precision: city}
+  type: commercial
+  publisher: commercial
+  access: auto
+  frequency: semiannual
+  report_types: [threat report, APT activity report]
+  domains: [welivesecurity.com, esetstatic.com, eset.com]
+  pages:
+    - {lang: en, kind: current, url: "https://www.welivesecurity.com/en/threat-reports/"}
+    - {lang: en, kind: archive, url: "https://www.welivesecurity.com/en/threat-reports/?page=2"}
+    - {lang: en, kind: archive, url: "https://www.welivesecurity.com/en/threat-reports/?page=3"}
+
+- country: US
+  agency: Microsoft
+  name_local: "Microsoft Corporation"
+  name_en: "Microsoft – Digital Defense Report"
+  homepage: "https://www.microsoft.com/en-us/security/security-insider"
+  description: "Microsoft's annual Digital Defense Report: nation-state cyber operations, influence operations, cybercrime and AI threats as seen by Microsoft Threat Intelligence across its customers' systems."
+  hq: {address: "Redmond, Washington, United States", lat: 47.67399, lon: -122.12151, precision: city}
+  type: commercial
+  publisher: commercial
+  access: auto
+  frequency: annual
+  report_types: [Digital Defense Report]
+  notes: "The landing pages link the reports through redirect links; the PDFs are listed directly."
+  domains: [microsoft.com]
+  pages:
+    - {lang: en, kind: current, url: "https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/msc/documents/presentations/CSR/Microsoft-Digital-Defense-Report-2025.pdf", note: "Microsoft Digital Defense Report 2025"}
+    - {lang: en, kind: archive, url: "https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft%20Digital%20Defense%20Report%202024%20%281%29.pdf", note: "Microsoft Digital Defense Report 2024"}
+
+- country: DE
+  agency: Allianz Commercial
+  name_local: "Allianz Commercial"
+  name_en: "Allianz Commercial – Allianz Risk Barometer"
+  homepage: "https://commercial.allianz.com/"
+  description: "The commercial-insurance arm of Allianz. Its annual Allianz Risk Barometer surveys some 3,000 risk experts in about 100 countries on the top business risks: cyber incidents, business interruption, natural catastrophes, political risks and violence."
+  hq: {address: "Munich, Germany", lat: 48.13743, lon: 11.57549, precision: city}
+  type: commercial
+  publisher: commercial
+  access: manual
+  frequency: annual
+  report_types: [Allianz Risk Barometer]
+  notes: "The site refuses automated requests (HTTP 403); collect the yearly PDF by hand."
+  pages:
+    - {lang: en, kind: current, url: "https://commercial.allianz.com/news-and-insights/reports/allianz-risk-barometer.html", verified: false}
+    - {lang: de, kind: current, url: "https://commercial.allianz.com/news-and-insights/reports/allianz-risk-barometer/de.html", verified: false}
+
+- country: DE
+  agency: Munich Re
+  name_local: "Münchener Rückversicherungs-Gesellschaft (Munich Re)"
+  name_en: "Munich Re – natural catastrophe reports"
+  homepage: "https://www.munichre.com/"
+  description: "Reinsurer whose NatCatSERVICE records natural disasters worldwide since 1980; yearly figures and analyses of losses from storms, floods, earthquakes and wildfires."
+  hq: {address: "Munich, Germany", lat: 48.13743, lon: 11.57549, precision: city}
+  type: commercial
+  publisher: commercial
+  access: manual
+  frequency: annual
+  report_types: [natural catastrophe figures]
+  notes: "The site refuses automated requests (HTTP 403); collect the yearly figures by hand."
+  pages:
+    - {lang: en, kind: current, url: "https://www.munichre.com/en/insights/natural-disaster-and-climate-change.html", verified: false}

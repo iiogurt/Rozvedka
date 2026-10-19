@@ -1,6 +1,6 @@
 """Topics, sources, think tanks and democracy ratings."""
 from fastapi import APIRouter, HTTPException, Request
-from .. import actors, db, home, publishers, ratings, series, topics, trends
+from .. import actors, db, home, publishers, ratings, series, ties, topics, trends
 from ..web import COUNTRY_NAMES, _independent, independent_ids, region_of, tpl
 
 router = APIRouter()
@@ -31,9 +31,10 @@ def sources(request: Request):
         for p in con.execute("SELECT * FROM pages WHERE active=1 ORDER BY lang, kind"):
             pages.setdefault(p["source_id"], []).append(p)
     # countries by region (EU members first), alphabetically by name within a region
-    # official agencies by region (EU members first); independent publishers (think tanks) in a section of their own
+    # official agencies by region (EU members first); think tanks and commercial analysts each in a section of their own
     official = [r for r in rows if (r["publisher"] or "official") == "official"]
     independent = [r for r in rows if (r["publisher"] or "official") == "independent"]
+    commercial = [r for r in rows if r["publisher"] == "commercial"]
 
     def by_country(items):
         groups: dict[str, list] = {}
@@ -41,46 +42,52 @@ def sources(request: Request):
             groups.setdefault(r["country"], []).append(r)
         return sorted(groups.items(), key=lambda kv: (region_of(kv[0])[0], COUNTRY_NAMES.get(kv[0], kv[0])))
     ordered = by_country(official)
-    regions: list[tuple[str, list, bool]] = []
+    regions: list[tuple[str, list, str]] = []     # (heading, countries, kind of publisher: "" = official agencies)
     for country, items in ordered:
         name = region_of(country)[1]
         if not regions or regions[-1][0] != name:
-            regions.append((name, [], False))
+            regions.append((name, [], ""))
         regions[-1][1].append((country, items))
     if independent:
-        regions.append(("Independent publishers – think tanks", by_country(independent), True))
+        regions.append(("Independent publishers – think tanks", by_country(independent), "independent"))
+    if commercial:
+        regions.append(("Commercial analysts – companies", by_country(commercial), "commercial"))
     return tpl.TemplateResponse(request, "sources.html", {"sources": rows, "groups": ordered, "regions": regions,
                                                          "n_official": len(official), "n_independent": len(independent),
+                                                         "n_commercial": len(commercial),
                                                          "pages": pages, "series_by": series.by_source()})
 
 
 @router.get("/publishers")
 def publishers_page(request: Request):
-    """Every independent publisher with its credibility rating and checks."""
+    """Every publisher that is not a state – think tanks, then commercial analysts – with its credibility rating and checks."""
     independent_ids()
     with db.session() as con:
         rows = [dict(r) for r in con.execute(
             f"""SELECT src.id, src.key, src.country, src.agency, src.name_en, src.homepage, src.access,
                        (SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
-                        WHERE {trends.LISTED} AND d.source_id=src.id) n
-                FROM sources src WHERE src.active=1 AND COALESCE(src.publisher, 'official')='independent'""")]
+                        WHERE {trends.LISTED} AND d.source_id=src.id) n,
+                       src.publisher
+                FROM sources src WHERE src.active=1 AND COALESCE(src.publisher, 'official') != 'official'""")]
     order = list(publishers.LEVELS)
     for r in rows:
-        r["profile"] = _independent["levels"].get(r["id"]) or publishers.profile(r["key"])
+        r["profile"] = _independent["levels"].get(r["id"]) or publishers.profile(r["key"], r["publisher"])
     rows.sort(key=lambda r: (order.index(r["profile"]["level"]), r["agency"]))
-    return tpl.TemplateResponse(request, "publishers.html", {"rows": rows, "docs_url": home.docs_url,
+    kinds = [(k, spec, [r for r in rows if r["publisher"] == k]) for k, spec in publishers.KINDS.items()]
+    return tpl.TemplateResponse(request, "publishers.html", {"rows": rows, "kinds": kinds, "docs_url": home.docs_url,
                                                            "meta": publishers.load()})
 
 
 @router.get("/publisher/{source_id}")
 def publisher_page(request: Request, source_id: int):
-    """One think tank: credibility checks with evidence, identity, registers, its state, and its reports here."""
+    """One think tank or commercial analyst: credibility checks with evidence, identity, registers, owners and sponsors,
+    its state, and its reports here."""
     with db.session() as con:
         topics.init()
         actors.init()
         s = con.execute("SELECT * FROM sources WHERE id=?", (source_id,)).fetchone()
-        if s is None or (s["publisher"] or "official") != "independent":
-            raise HTTPException(404, "not an independent publisher")
+        if s is None or s["publisher"] not in publishers.KINDS:
+            raise HTTPException(404, "not a think tank or commercial analyst")
         s = dict(s)
         base = f"FROM documents d JOIN sources s ON s.id=d.source_id WHERE {trends.LISTED} AND d.source_id=?"
         n = con.execute(f"SELECT COUNT(*) {base}", (source_id,)).fetchone()[0]
@@ -101,7 +108,8 @@ def publisher_page(request: Request, source_id: int):
             f"SELECT d.id, d.title, d.year, d.lang {base} ORDER BY d.year DESC NULLS LAST, d.id DESC LIMIT 10", (source_id,))]
         pages = [dict(r) for r in con.execute("SELECT * FROM pages WHERE source_id=? AND active=1", (source_id,))]
     return tpl.TemplateResponse(request, "publisher.html", {
-        "s": s, "p": publishers.profile(s["key"]), "n": n, "by_year": by_year, "top_topics": top_topics,
+        "s": s, "p": publishers.profile(s["key"], s["publisher"]), "kind": publishers.KINDS[s["publisher"]],
+        "ties": ties.publisher_node(s["key"]), "n": n, "by_year": by_year, "top_topics": top_topics,
         "top_actors": top_actors, "latest": latest, "pages": pages, "docs_url": home.docs_url,
         "max_year": max((c for _, c in by_year), default=1), "kinds": actors.KINDS})
 

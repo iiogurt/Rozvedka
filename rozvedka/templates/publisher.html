@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% from "_ratings.html" import strip, badges %}
-{% macro status(st) %}<span class="pc-st pc-{{ st }}">{{ {'ok': '✓', 'partial': '◐', 'concern': '✗', 'redflag': '⚑', 'unknown': '–'}[st] }}</span>{% endmacro %}
-{% block title %}{{ s.agency }} · Think tank profile · Rozvedka{% endblock %}
+{% macro status(st) %}<span class="pc-st pc-{{ st }}">{{ {'ok': '✓', 'partial': '◐', 'concern': '✗', 'redflag': '⚑', 'unknown': '–', 'info': '$'}[st] }}</span>{% endmacro %}
+{% set com = s.publisher == 'commercial' %}
+{% block title %}{{ s.agency }} · {{ kind.name|capitalize }} profile · Rozvedka{% endblock %}
 {% block main %}
-<p class="small"><a href="/publishers">← All think tanks</a> · <a href="/sources#s-{{ s.id }}">on Sources</a> · <a href="{{ docs_url(source=s.id) }}">its reports</a></p>
+<p class="small"><a href="/publishers#{{ s.publisher }}">← All {{ kind.plural }}</a> · <a href="/sources#s-{{ s.id }}">on Sources</a> · <a href="{{ docs_url(source=s.id) }}">its reports</a></p>
 <h1 class="page-h"><img class="flag-sm" src="{{ flag_url(s.country) }}" alt="" width="20" height="15"> {{ s.name_en or s.agency }} {{ pub_mark(s.id) }}</h1>
 {% if s.name_local and s.name_local != s.name_en %}<p class="muted">{{ s.name_local }}</p>{% endif %}
-<p class="pub-banner pub-lv-{{ p.level }}"><b>◆ Independent publisher – {{ p.label }}.</b> {{ s.agency }} is a think tank, not a state agency.
+<p class="pub-banner pub-lv-{{ p.level }}"><b>{{ kind.mark }} {{ 'Commercial analyst' if com else 'Independent publisher' }} – {{ p.label }}.</b> {{ s.agency }} is {{ kind.about }}.
   Rating: <b>{{ p.label }}</b>{% if p.reasons %}, because – {{ p.reasons|join('; ') }}{% else %} – {{ p.about }}{% endif %}.
   It follows from the checks below, each with its evidence; there is no score.</p>
 <p class="small">{{ s.description }}{% if s.homepage %} · <a href="{{ s.homepage }}" target="_blank" rel="noopener">{{ s.homepage }}</a>{% endif %}
@@ -18,7 +19,8 @@
     <thead><tr><th></th><th>Check</th><th>Finding</th><th>Evidence</th><th>Checked</th></tr></thead>
     {% for c in p.checks %}<tr>
       <td>{{ status(c.status) }}</td><th>{{ c.name }}</th>
-      <td>{{ c.text }}{% if c.stars %} <span class="muted">({{ '★' * c.stars }}{{ '☆' * (5 - c.stars) }} on Transparify's scale)</span>{% endif %}
+      <td>{{ c.text }}{% if c.agencies %}<details><summary class="muted">by agency since FY2008</summary>
+          <ul>{% for a in c.agencies %}<li>{{ a.name }} – ${{ '{:,.0f}'.format(a.amount) }}</li>{% endfor %}</ul></details>{% endif %}{% if c.stars %} <span class="muted">({{ '★' * c.stars }}{{ '☆' * (5 - c.stars) }} on Transparify's scale)</span>{% endif %}
         {% if c.note %}<div class="muted">{{ c.note }}</div>{% endif %}
         {% if c.entry and c.entry.eu_grants %}<details><summary class="muted">EU grants {{ c.entry.year[0] if c.entry.year }} – {{ c.entry.year[1] if c.entry.year }}</summary>
           <ul>{% for g in c.entry.eu_grants %}<li>{{ g.source }} – €{{ '{:,.0f}'.format(g.amount) }}</li>{% endfor %}</ul></details>{% endif %}</td>
@@ -29,9 +31,29 @@
   {% if p.former %}<p class="small"><span class="muted">Former ratings:</span>
     {% for r in p.former %}<a href="{{ r.source }}" target="_blank" rel="noopener">{{ r.by }} {{ r.year }}</a>: {{ r.rating }}{{ '; ' if not loop.last }}{% endfor %}</p>{% endif %}
   <p class="muted small">How the rating follows from the checks:
-    {% for k, (label, about) in PUB_LEVELS.items() %}<span class="pub-ind pub-lv-{{ k }}">{{ label }}</span> {{ about }}{{ ' · ' if not loop.last }}{% endfor %}.
-    Hand-researched: funding and government donors (<code>sources/publishers.yaml</code>); fetched {{ p.retrieved or '–' }}: EU Transparency Register,
-    US FARA, sanctions lists of the US, UK, EU and UN, Wikidata. See <a href="https://github.com/iiogurt/Rozvedka/blob/main/docs/PUBLISHER_PROFILES.md">the design</a>.</p>
+    {% for k, (label, about) in p.levels.items() %}<span class="pub-ind{{ ' pub-com' if com }} pub-lv-{{ k }}">{{ label }}</span> {{ about }}{{ ' · ' if not loop.last }}{% endfor %}.
+    US federal contracts ($) are information, not a fault. Hand-researched: {{ 'ownership, clients' if com else 'funding and government donors' }},
+    people and methods, owners and sponsors (<code>sources/publishers.yaml</code>); fetched {{ p.retrieved or '–' }}: EU Transparency Register,
+    US FARA, USAspending.gov, sanctions lists of the US, UK, EU and UN, Wikidata. See <a href="https://github.com/iiogurt/Rozvedka/blob/main/docs/PUBLISHER_PROFILES.md">the design</a>.</p>
+</section>
+
+<section class="viz-card" id="ties">
+  <h2 class="viz-title">Owners, sponsors and ties <span class="muted small">{{ p.ties|length }}</span>
+    {% if ties %}<span class="small"> · <a href="{{ ties.href }}#network">in the network</a> · <a href="/graph/path?a={{ ties.id }}">find a connection</a></span>{% endif %}</h2>
+  {% if p.ties %}
+  <table class="pc-table small">
+    <thead><tr><th>{{ s.agency }} …</th><th>Whom</th><th>Evidence</th><th>Checked</th></tr></thead>
+    {% for t in p.ties|sort(attribute='origin') %}<tr>
+      <td>{{ t.rel }}</td>
+      <td><i class="kdot kind-{{ t.kind }}"></i>{{ t.name }}{% if t.amount %} <span class="muted">– {{ t.amount if t.amount is string else '$' ~ '{:,.0f}'.format(t.amount) }}{% if t.period %} ({{ t.period[0][:4] }}–{{ t.period[1][:4] }}){% endif %}</span>{% endif %}
+        {% if t.note %}<div class="muted">{{ t.note }}</div>{% endif %}</td>
+      <td>{% for e in t.evidence %}<a href="{{ e.url }}" {% if e.url and e.url.startswith('http') %}target="_blank" rel="noopener"{% endif %}>{{ e.label }}</a>{{ ', ' if not loop.last }}{% endfor %}
+        <span class="muted">· {{ {'profile': 'researched by hand', 'funding': 'funding disclosure', 'usaspending': 'USAspending.gov', 'wikidata': 'Wikidata'}[t.origin] }}</span></td>
+      <td class="muted">{{ t.checked }}</td></tr>{% endfor %}
+  </table>
+  <p class="muted small">Each line is something a source states – the publisher itself, an official register or Wikidata; nothing is inferred.
+    The same ties are links of the network (layer “Publisher profiles”), where they meet the actors, sanctions lists and other sources.</p>
+  {% else %}<p class="muted small">None recorded yet – add <code>ties</code> to its entry in <code>sources/publishers.yaml</code>.</p>{% endif %}
 </section>
 
 <div class="pp-grid">
@@ -52,7 +74,7 @@
   <h2 class="viz-title">The state it works in</h2>
   {% set rp = rating(s.country) %}
   {% if rp %}<p class="small rt-row">{{ strip(rp, width=180, height=16) }}{{ badges(rp) }}</p>
-    <p class="muted small">{{ COUNTRY_NAMES.get(s.country, s.country) }} – democracy ratings since 1990 (<a href="/ratings">all states</a>). The think tank is not the state; its
+    <p class="muted small">{{ COUNTRY_NAMES.get(s.country, s.country) }} – democracy ratings since 1990 (<a href="/ratings">all states</a>). The {{ kind.name }} is not the state; its
       host state's freedoms shape what it can publish.</p>
   {% else %}<p class="muted small">No rating for {{ s.country }}.</p>{% endif %}
 </section>

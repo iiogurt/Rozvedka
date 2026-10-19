@@ -116,13 +116,13 @@
     if (!form.sources.checked) return;
     const max = Math.max(1, ...agencies.map((a) => a.n_docs));
     dots = L.layerGroup(agencies.filter((a) => a.lat != null).map((a) => {
-      const tt = a.type === "think-tank";
+      const tt = a.type === "think-tank" || a.type === "commercial";
       return L.circleMarker([a.lat, a.lon], {
         radius: 2.5 + 9 * Math.sqrt(a.n_docs / max), weight: 1.2, color: tt ? (CRED[a.credibility] || "#f0e442") : "#ffffff",
         fillColor: tt ? (CRED[a.credibility] || "#f0e442") : "#0d1117", fillOpacity: tt ? 0.55 : 0.75, dashArray: tt ? "2 2" : null,
       }).bindTooltip(`<div class="tip-h"><b>${esc(a.agency)}</b><span class="muted">${esc(a.country_name || "")}</span></div>
           ${a.name_en && a.name_en !== a.agency ? `<div class="tip-sub">${esc(a.name_en)}</div>` : ""}
-          <div class="small" style="color:${tt ? CRED[a.credibility] || CRED.unassessed : "#9aa1ab"}">${tt ? `◆ think tank · ${esc(a.credibility_label || "not assessed")}` : esc(a.type_name || "")}</div>
+          <div class="small" style="color:${tt ? CRED[a.credibility] || CRED.unassessed : "#9aa1ab"}">${tt ? `${a.type === "commercial" ? "■ commercial analyst" : "◆ think tank"} · ${esc(a.credibility_label || "not assessed")}` : esc(a.type_name || "")}</div>
           <div class="tip-foot">${a.n_docs} report${a.n_docs === 1 ? "" : "s"} in the library${a.y0 ? ` · ${a.y0}–${a.y1}` : ""}
             <span class="hint">click for ${tt ? "its profile" : "its reports"}</span></div>`,
                      { className: "hq-tip country-tip", direction: "top", offset: [0, -6] })

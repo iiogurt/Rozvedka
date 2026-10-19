@@ -22,7 +22,7 @@ import re
 
 from collections import Counter
 
-from . import actors, db, identity, paging, sanctions, techniques, trends, vendors, wanted, wikitext
+from . import actors, db, identity, paging, publishers, ratings, sanctions, techniques, trends, vendors, wanted, wikitext
 from .actors import PAIR_FOUNDED
 
 log = logging.getLogger("rozvedka.ties")
@@ -50,6 +50,9 @@ LAYERS = {
                "about": "groups and campaigns using malware and tools; campaigns attributed to groups"},
     "misp": {"name": "MISP threat-actor galaxy", "group": "reference",
              "about": "the community catalogue of threat groups (CC0) states that two groups are similar or overlap"},
+    "publishers": {"name": "Publisher profiles", "group": "reference",
+                   "about": "the owners, sponsors, founders, leaders and partners of the library's think tanks and commercial analysts – "
+                            "from their own disclosures, USAspending.gov and Wikidata, each with its evidence (publishers.py)"},
     "reports": {"name": "Named together in the reports", "group": "reports",
                 "about": "two actors named in one passage (600 characters) of at least two reports – a co-mention, not a stated tie"},
 }
@@ -63,7 +66,8 @@ LIST_LAYER = {"US": "us", "UK": "uk", "UN": "un", "EU": "eu"}
 SHAPES = {"Individual": "person", "Entity": "org", "Vessel": "vessel", "Ship": "vessel", "Aircraft": "aircraft"}
 KINDS = {**actors.KINDS, "person": "Person", "org": "Company or organisation", "vessel": "Vessel", "aircraft": "Aircraft",
          "malware": "Malware", "tool": "Tool", "campaign": "Campaign", "address": "Address", "email": "E-mail address",
-         "website": "Website", "phone": "Telephone number", "wallet": "Crypto wallet", "case": "Wanted notice (several people)"}
+         "website": "Website", "phone": "Telephone number", "wallet": "Crypto wallet", "case": "Wanted notice (several people)",
+         "think-tank": "Think tank (a publisher of this library)", "commercial": "Commercial analyst (a publisher of this library)"}
 LABEL_ORDER = ("UK", "EU", "UN", "US", "FBI", "EUMW")
 DETAIL_BACK = {"address": "address of", "email": "e-mail address of", "website": "website of", "phone": "telephone number of",
                "wallet": "crypto wallet of"}
@@ -604,6 +608,65 @@ def _from_reports(g: _Graph, con) -> None:
               {"docs": r["n"], "link": f"/actors/{r['a']}/with/{r['b']}"}, str(r["y0"] or ""), r["n"])
 
 
+def _slug(name: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", sanctions.normalise(name)).strip("-")
+
+
+def _from_publishers(g: _Graph, con) -> dict:
+    """The think tanks and commercial analysts of the library with their owners, sponsors, founders, leaders and partners
+    (publishers.influence): a publisher is the actor of its Wikidata item when the gazetteer has it, else a node of its own;
+    a donor government is its country's actor; a Wikidata subject is its item (so it meets the gazetteer's links); a US
+    federal agency is the actor of that name when there is one."""
+    a2to3 = ratings.load().get("iso2to3", {})
+    country = {a2to3.get(json.loads(a["data"] or "{}").get("iso") or ""): k for k, a in g.actors.items() if a["kind"] == "country"}
+    by_label = {sanctions.normalise(a["label"]): k for k, a in g.actors.items() if a["kind"] != "country"}
+    stats = {"publishers": 0, "ties": 0, "by_origin": {}}
+    for src in con.execute("""SELECT id, key, agency, name_en, publisher FROM sources
+                              WHERE active=1 AND publisher IN ('independent', 'commercial')"""):
+        kind = "commercial" if src["publisher"] == "commercial" else "think-tank"
+        qid = ((publishers.load()["identity"].get(src["key"]) or {}).get("qid"))
+        info = {"publisher": {"source": src["id"], "key": src["key"], "kind": src["publisher"]}}
+        if qid and qid in g.actors:
+            a = g.actor(qid)
+        else:
+            a = qid or f"pub:{src['key']}"
+            g.entities[a] = (kind, src["name_en"] or src["agency"], None, "publishers",
+                             json.dumps({**info, **({"url": f"https://www.wikidata.org/wiki/{qid}"} if qid else {})}, ensure_ascii=False))
+        stats["publishers"] += 1
+        for t in publishers.influence(src["key"]):
+            if t["kind"] == "country":
+                b = country.get(t.get("iso3"))
+                if not b:
+                    continue
+                g.actor(b)
+            elif t.get("qid") and t["qid"] in g.actors:
+                b = g.actor(t["qid"])
+            elif t.get("qid"):
+                b = g.node(t["qid"], t["kind"], t["name"], "wikidata", {"url": f"https://www.wikidata.org/wiki/{t['qid']}"})
+            elif t["origin"] == "usaspending" and (k := by_label.get(sanctions.normalise("United States " + t["name"][3:]))):
+                b = g.actor(k)
+            else:
+                b = g.node(f"pub-ref:{_slug(t['name'])}", t["kind"], t["name"], "publishers", {})
+            ev = t["evidence"][0] if t["evidence"] else {}
+            g.tie(a, b, t["rel"], t["back"], "publishers",
+                  {"url": ev.get("url"), "label": ev.get("label"), "more": t["evidence"][1:], "origin": t["origin"],
+                   "checked": t["checked"], "amount": t.get("amount"), "period": t.get("period"), "note": t.get("note"),
+                   "profile": f"/publisher/{src['id']}"})
+            stats["ties"] += 1
+            stats["by_origin"][t["origin"]] = stats["by_origin"].get(t["origin"], 0) + 1
+    return stats
+
+
+def publisher_node(source_key: str) -> dict | None:
+    """The network node of a publisher (think tank or commercial analyst) and its page, once the network is built."""
+    qid = (publishers.load()["identity"].get(source_key) or {}).get("qid")
+    with db.session() as con:
+        init()
+        r = con.execute("SELECT id, actor FROM entities WHERE id IN (?, ?) ORDER BY id = ? DESC LIMIT 1",
+                        (qid or "", f"pub:{source_key}", qid or "")).fetchone()
+    return {"id": r["id"], "href": entity_url(r["id"], r["actor"])} if r else None
+
+
 def build() -> dict:
     """Rebuild entities and ties from the stored lists, gazetteer, ATT&CK catalog and actor index."""
     init()
@@ -616,6 +679,7 @@ def build() -> dict:
         stats["wikitext"] = _from_wikitext(g, con)
         stats["attack"] = {"relations": _from_attack(g)}
         stats["misp"] = _from_misp(g)
+        stats["publishers"] = _from_publishers(g, con)
         _from_reports(g, con)
         con.execute("DELETE FROM ties")
         con.execute("DELETE FROM entities")
@@ -625,7 +689,7 @@ def build() -> dict:
         meta = {"built": dt.datetime.now().isoformat(timespec="seconds"), "stats": stats,
                 "retrieved": {**{LIST_LAYER[k]: v for k, v in (sanctions.data().get("retrieved") or {}).items()},
                               "attack": cat.get("retrieved"),
-                              "wikitext": (wikitext.stored()["meta"] or {}).get("retrieved"), "wanted": (wanted.stored()["meta"] or {}).get("retrieved"), "misp": (vendors.stored()["meta"] or {}).get("retrieved"), **dict.fromkeys(("wikidata", "wikipedia"), actors.stamp().get("gazetteer_retrieved"))}}
+                              "wikitext": (wikitext.stored()["meta"] or {}).get("retrieved"), "wanted": (wanted.stored()["meta"] or {}).get("retrieved"), "misp": (vendors.stored()["meta"] or {}).get("retrieved"), "publishers": publishers.load().get("retrieved"), **dict.fromkeys(("wikidata", "wikipedia"), actors.stamp().get("gazetteer_retrieved"))}}
         con.execute("INSERT OR REPLACE INTO ties_meta VALUES ('meta', ?)", (json.dumps(meta),))
     counts: dict[str, int] = {}
     for t in g.ties.values():

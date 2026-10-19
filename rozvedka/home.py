@@ -282,11 +282,15 @@ def dashboard(today: dt.date | None = None) -> dict:
         totals = {
             "reports": {"n": listed, "url": DOCS},
             "agencies": {"n": one(f"SELECT COUNT(DISTINCT s.id) {base} AND {trends.OFFICIAL}")[0], "url": "/sources"},
-            # independent publishers (think tanks): counted apart from the official agencies, always marked ◆
-            "think_tanks": {"n": one(f"SELECT COUNT(DISTINCT s.id) {base} AND NOT {trends.OFFICIAL}")[0],
+            # think tanks (◆) and commercial analysts (■): counted apart from the official agencies and from each other
+            "think_tanks": {"n": one(f"SELECT COUNT(DISTINCT s.id) {base} AND {trends.THINK_TANK}")[0],
                             "url": "/sources#independent",
-                            "reports": one(f"SELECT COUNT(*) {base} AND NOT {trends.OFFICIAL}")[0],
+                            "reports": one(f"SELECT COUNT(*) {base} AND {trends.THINK_TANK}")[0],
                             "reports_url": docs_url(type="think-tank")},
+            "commercial": {"n": one(f"SELECT COUNT(DISTINCT s.id) {base} AND {trends.COMMERCIAL}")[0],
+                           "url": "/sources#commercial",
+                           "reports": one(f"SELECT COUNT(*) {base} AND {trends.COMMERCIAL}")[0],
+                           "reports_url": docs_url(type="commercial")},
             "countries": {"n": one(f"SELECT COUNT(DISTINCT s.country) {base} AND s.country NOT IN ('EU','NATO','OTHER')")[0],
                           "url": "/map"},
             "languages": {"n": one(f"SELECT COUNT(DISTINCT d.lang) {base} AND d.lang != ''")[0], "url": DOCS},
@@ -320,14 +324,18 @@ def dashboard(today: dt.date | None = None) -> dict:
         first_added = (one(f"SELECT MIN(d.discovered_at) {base}")[0] or "")[:10] or None
         # reports by publication year: the last 15 years, older ones and undated ones – together all listed reports
         y0 = year_now - 14
-        per_year = {r[0]: (r[1], r[2]) for r in con.execute(
-            f"SELECT d.year, COUNT(*), SUM(CASE WHEN {trends.OFFICIAL} THEN 0 ELSE 1 END) {base} AND d.year BETWEEN ? AND ? GROUP BY d.year",
+        per_year = {r[0]: (r[1], r[2] or 0, r[3] or 0) for r in con.execute(
+            f"""SELECT d.year, COUNT(*), SUM(CASE WHEN {trends.THINK_TANK} THEN 1 ELSE 0 END),
+                       SUM(CASE WHEN {trends.COMMERCIAL} THEN 1 ELSE 0 END) {base} AND d.year BETWEEN ? AND ? GROUP BY d.year""",
             (y0, year_now))}
-        # each year's bar is two links: the official agencies' reports and the think tanks' (together the year's count)
-        years = [{"year": y, "n": per_year.get(y, (0, 0))[0], "n_ind": per_year.get(y, (0, 0))[1],
-                  "n_off": per_year.get(y, (0, 0))[0] - per_year.get(y, (0, 0))[1], "url": docs_url(year=y),
-                  "url_off": docs_url(year=y, type="official"), "url_ind": docs_url(year=y, type="think-tank"),
-                  "partial": y == year_now} for y in range(year_now, y0 - 1, -1)]
+        # each year's bar is three links: the official agencies' reports, the think tanks' and the commercial analysts'
+        # (together the year's count)
+        years = []
+        for y in range(year_now, y0 - 1, -1):
+            n, n_ind, n_com = per_year.get(y, (0, 0, 0))
+            years.append({"year": y, "n": n, "n_ind": n_ind, "n_com": n_com, "n_off": n - n_ind - n_com, "url": docs_url(year=y),
+                          "url_off": docs_url(year=y, type="official"), "url_ind": docs_url(year=y, type="think-tank"),
+                          "url_com": docs_url(year=y, type="commercial"), "partial": y == year_now})
         older = {"n": one(f"SELECT COUNT(*) {base} AND d.year < ?", (y0,))[0], "url": docs_url(year_to=y0 - 1), "before": y0}
         later = one(f"SELECT COUNT(*) {base} AND d.year > ?", (year_now,))[0]     # misdated into the future
         undated = {"n": one(f"SELECT COUNT(*) {base} AND d.year IS NULL")[0], "url": docs_url(undated=1)}
@@ -377,12 +385,14 @@ def figures(d: dict) -> list[tuple[str, int, str]]:
     out = [("reports", d["totals"]["reports"]["n"], d["totals"]["reports"]["url"]),
            ("searchable", d["totals"]["searchable"]["n"], d["totals"]["searchable"]["url"]),
            ("think-tank reports", d["totals"]["think_tanks"]["reports"], d["totals"]["think_tanks"]["reports_url"]),
+           ("commercial reports", d["totals"]["commercial"]["reports"], d["totals"]["commercial"]["reports_url"]),
            ("newest year", d["newest_n"], d["newest_url"]),
            ("before", d["older"]["n"], d["older"]["url"]), ("undated", d["undated"]["n"], d["undated"]["url"])]
     out += [(f"added {a['days']} days", a["n"], a["url"]) for a in d["added"]]
     out += [(f"year {y['year']}", y["n"], y["url"]) for y in d["years"]]
     out += [(f"year {y['year']} official", y["n_off"], y["url_off"]) for y in d["years"]]
     out += [(f"year {y['year']} think tanks", y["n_ind"], y["url_ind"]) for y in d["years"]]
+    out += [(f"year {y['year']} commercial", y["n_com"], y["url_com"]) for y in d["years"]]
     out += [(f"added {x['day']}", x["n"], x["url"]) for x in d["daily"]]
     out += [(f"type {t['key']}", t["n"], t["url"]) for t in d["by_type"]]
     out += [(f"actor {a['label']}", a["n"], a["url"]) for a in d["top_actors"]]

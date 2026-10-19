@@ -62,9 +62,9 @@ The start page (`/`): an ASCII radar and word mark, one search box for the whole
   countries, each with the number of reports it lists. <kbd>↑</kbd>/<kbd>↓</kbd> choose, <kbd>Enter</kbd> opens,
   <kbd>Tab</kbd> puts the suggestion into the query as a filter, <kbd>/</kbd> jumps to the box. Recent searches
   are remembered in your browser only.
-- **Key numbers** – a strip under the search: reports, official agencies, ◆ think tanks, countries, languages and editions to collect.
+- **Key numbers** – a strip under the search: reports, official agencies, ◆ think tanks, ■ commercial analysts, countries, languages and editions to collect.
 - **Dashboards** – one grid of panels: newest editions; reports added lately, with a column for each of the last 30 days (a column opens
-  that day's additions); reports per publication year, each bar split into official agencies and ◆ think tanks (every
+  that day's additions); reports per publication year, each bar split into official agencies, ◆ think tanks and ■ commercial analysts (every
   report in one row, undated ones included); rising topics as a dumbbell – each topic's share in the earlier and the
   recent period, both dots opening their reports; the actors most named in last year's reports; the library by
   agency type (bars in the type's colour) and download state, with the editions still to collect; the threat watch (the CVE numbers and
@@ -195,11 +195,18 @@ home, What's new, Watchlist, Compare, Series, actor pages), have their own secti
 instead of a dot on the map, and every count can leave them out with **“Official agencies only”**; the Trends notes
 and the Documents summary say how many think-tank reports a count includes.
 
+**■ Commercial analysts** are a third kind: companies that sell political-risk, security or threat analysis to clients
+and publish part of it openly – Eurasia Group (Top Risks), ESET (Threat Reports, APT Activity Reports), Graphika
+(influence-operations investigations) and Microsoft's Digital Defense Report; the Allianz Risk Barometer and Munich Re's
+natural catastrophe figures are collected by hand. They are marked ■ (a dashed badge, a square on the map), have a
+section of their own on Sources and on the credibility page, and are counted apart from both agencies and think tanks
+on the home page, in Documents, in Trends and in every year bar.
+
 One card per agency: flag, logo, official name in the original language and in English, home page, a short
 description of what its reports cover, coalition tags with the year each country joined, the report pages it is
 crawled from (with language and current/archive), and a link to its headquarters on the map.
 
-### ◆ Think tanks – credibility profiles
+### ◆ ■ Think tanks and commercial analysts – credibility profiles
 
 <img src="docs/images/think-tanks.png" alt="Think tanks: each with its credibility rating and the checks behind it" width="900">
 
@@ -212,6 +219,15 @@ The result – *transparent funding*, *partly transparent*, *concerns*, *red fla
 think tank appears and its diamond on the map, with the reason in words. Each think tank has a **profile page**: the
 checks and their evidence, former Transparify ratings, identity from Wikidata and Wikipedia, its state's democracy
 ratings, and its reports here – per year, main subjects, actors named most, latest reports.
+
+A **commercial analyst** is rated by **who owns it** – a listed company or owners named with their stakes (*transparent
+ownership*), owners named without stakes (*partly transparent*), owners not disclosed or a stake held by an autocracy's
+state (*concerns*) – and whether it names clients; for both kinds, whether **authors and a method** are published, and the
+**US federal contracts and grants** it received by awarding agency since FY2008 (USAspending.gov, counted only for the
+exact recipient names in its profile; information, not a fault). Every profile lists the publisher's **owners, sponsors and
+ties** – founders, leaders, investors, partners, donor governments, the US agencies that paid it and the owner, funder and
+leaders on its Wikidata item – each with its evidence; the same ties are links of the **network** (layer “Publisher
+profiles”), so a path search can show who stands behind the publisher of a report.
 
 ### 🗳️ Democracy ratings of the reporting states
 
@@ -887,7 +903,7 @@ flowchart LR
 | `rozvedka/report.py` | the report page: provenance, series edition and changes, topics with terms, actors with passages |
 | `rozvedka/doctypes.py`, `works.py`, `dating.py` | document types; language versions and summaries grouped into one report; years from the text and year conflicts |
 | `rozvedka/concepts.py` | cross-language search: concept names in every language from Wikidata |
-| `rozvedka/ratings.py`, `publishers.py` | democracy ratings of states over time; think-tank credibility checks (EU register, FARA, sanctions lists) |
+| `rozvedka/ratings.py`, `publishers.py` | democracy ratings of states over time; credibility checks of think tanks and commercial analysts (funding or ownership, EU register, FARA, USAspending, sanctions lists) and their owners and sponsors |
 | `rozvedka/app.py`, `web.py`, `routes/`, `templates/`, `static/` | the server-rendered portal: the app and its middleware, what the pages share (templates, helpers, request guard), one route module per area (actors, documents, trends, maps, data, update, …) |
 
 ## Database
