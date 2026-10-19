@@ -27,6 +27,22 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.72.0] – 2026-10-19
+
+### Added
+- **Timeline** (roadmap H1b) – *Actors & threats → Timeline*, `/timeline`: states and actors as lanes on one time axis.
+  - Each lane holds its events (Wikidata, EuRepoC cyber incidents, UCDP organised violence) and the library's dated
+    records (sanctions listings, designations, official attributions, threat-level changes).
+  - A state's lane is shaded by UCDP's deaths in organised violence per month, and a thin row under each lane counts the
+    library's reports per year naming the subject (each year opens that list).
+  - At every zoom a lane draws only its heaviest events that fit (compared within their own source) and says how many it
+    hides; clicking an event shows its date, deaths, participants, sources and the relations its Wikidata item states.
+  - Add a state or an actor as a lane, remove one with ×; the whole view – lanes, period, selected event, wall mode – is
+    kept in the address.
+  - Full screen (`F`) and a wall mode (`W`) with larger type for big screens; drawn sharp at 4K. Keys: `0` fit, `+` / `−`
+    zoom, `←` / `→` move.
+  - Uses [vis-timeline](https://visjs.github.io/vis-timeline/) 8.5.4 (Apache-2.0 or MIT), vendored like the other libraries.
+
 ## [0.71.0] – 2026-10-19
 
 ### Added
@@ -1383,7 +1399,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.71.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.72.0...HEAD
+[0.72.0]: https://github.com/iiogurt/Rozvedka/compare/v0.71.0...v0.72.0
 [0.71.0]: https://github.com/iiogurt/Rozvedka/compare/v0.70.0...v0.71.0
 [0.70.0]: https://github.com/iiogurt/Rozvedka/compare/v0.69.1...v0.70.0
 [0.69.1]: https://github.com/iiogurt/Rozvedka/compare/v0.69.0...v0.69.1

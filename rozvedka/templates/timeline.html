@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Timeline · Rozvedka{% endblock %}
+{% block body_class %}tl-page{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ asset('vendor/vis-timeline/vis-timeline-graph2d.min.css') }}">{% endblock %}
+{% block main %}
+<div id="tl-wrap" class="tl-wrap" data-lanes="{{ default_lanes|join(',') }}">
+  <div class="tl-bar">
+    <h1 class="tl-h">Timeline</h1>
+    <form id="tl-add" class="tl-add" onsubmit="return false" aria-label="Add a lane">
+      <select name="country" aria-label="Add a state">
+        <option value="">+ state…</option>
+        {% for c, name in COUNTRY_NAMES|dictsort(by='value') if c not in ('EU', 'NATO', 'OTHER') %}<option value="{{ c }}">{{ name }}</option>{% endfor %}
+      </select>
+      <input name="actor" list="tl-actors" placeholder="+ actor…" autocomplete="off" aria-label="Add an actor">
+      <datalist id="tl-actors"></datalist>
+    </form>
+    <span class="tl-tools">
+      <span class="tl-key small" aria-label="Sources">
+        <span><i class="tl-dot src-wikidata"></i>Wikidata</span><span><i class="tl-dot src-eurepoc"></i>EuRepoC cyber incident</span>
+        <span><i class="tl-dot src-ucdp"></i>UCDP organised violence</span><span><i class="tl-dot src-library"></i>library record</span>
+        <span><i class="tl-heat"></i>UCDP deaths per month</span>
+      </span>
+      <button type="button" id="tl-fit" title="Show the whole period (0)">Fit</button>
+      <button type="button" id="tl-wall" title="Wall mode: larger type for a big screen (W)" aria-pressed="false">Wall</button>
+      <button type="button" id="tl-full" title="Full screen (F)">⛶ Full screen</button>
+    </span>
+  </div>
+  <div class="tl-body">
+    <div id="tl" class="tl" role="region" aria-label="Timeline of events, one lane per state or actor"></div>
+    <aside id="tl-panel" class="tl-panel" aria-live="polite">
+      <p class="muted small">Click an event for its details and sources. Drag to move in time, scroll or <kbd>+</kbd>/<kbd>−</kbd> to zoom,
+        <kbd>←</kbd>/<kbd>→</kbd> to move; <kbd>F</kbd> full screen, <kbd>W</kbd> wall mode. Lanes: add a state or an actor above, remove one with ×.
+        At a coarse zoom each lane shows only its heaviest events and says how many are hidden – zoom in to see them.</p>
+    </aside>
+  </div>
+  <details class="how tl-how"><summary>How this is drawn</summary>
+    <ul class="prov-list muted small">
+      <li>A state's lane holds the events in that state and those it took part in; an actor's lane the events that name it (as participant,
+        perpetrator, initiator or side). Events come from {% for k, m in meta.items() %}<a href="{{ m.url }}" target="_blank" rel="noopener">{{ m.name }}</a>
+        ({{ m.license }}, retrieved {{ m.retrieved }}){{ ', ' if not loop.last }}{% endfor %} – the list is on <a href="/events">Events</a>.</li>
+      <li>Library records: the actor's sanctions listings, terrorist designations, official attributions and the state's threat-level
+        changes, each with its source. The thin row under a lane counts the library's reports naming the subject per year – each year opens that list.</li>
+      <li>The shaded background of a state's lane: deaths in organised violence per month (UCDP; the newest months are preliminary).</li>
+      <li>Weight: events are compared only with events of their own source – Wikipedia language editions with an article (Wikidata), weighted
+        intensity (EuRepoC), deaths (UCDP). At each zoom a lane shows its heaviest events that fit; nothing is merged or estimated.</li>
+    </ul></details>
+</div>
+<script src="{{ asset('vendor/vis-timeline/vis-timeline-graph2d.min.js') }}"></script>
+<script src="{{ asset('timeline.js') }}"></script>
+{% endblock %}
