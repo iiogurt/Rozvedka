@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.69.1] – 2026-10-19
+
+### Added
+- **Roadmap H – research and designs** for three of the owner's topics, with the data checked on 2026-10-19:
+  a full-screen timeline of events with chains of stated causes and effects, joined to reports and subjects
+  ([docs/TIMELINE.md](docs/TIMELINE.md)); what a local library of about 100 books would take, and which "meanings" can be
+  shown without a language model ([docs/BOOKS.md](docs/BOOKS.md)); country ratings beyond democracy – security,
+  governance, media, cyber and disaster risk – with each candidate's licence and access
+  ([docs/COUNTRY_RATINGS.md](docs/COUNTRY_RATINGS.md)).
+
 ## [0.69.0] – 2026-10-19
 
 ### Added
@@ -1341,7 +1351,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.69.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.69.1...HEAD
+[0.69.1]: https://github.com/iiogurt/Rozvedka/compare/v0.69.0...v0.69.1
 [0.69.0]: https://github.com/iiogurt/Rozvedka/compare/v0.68.1...v0.69.0
 [0.68.1]: https://github.com/iiogurt/Rozvedka/compare/v0.68.0...v0.68.1
 [0.68.0]: https://github.com/iiogurt/Rozvedka/compare/v0.67.0...v0.68.0
