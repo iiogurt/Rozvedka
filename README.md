@@ -378,6 +378,13 @@ column; <i>over-emphasis</i> shows how much more or less often a row carries a t
 
 <img src="docs/images/timeline-event.png" alt="Timeline with the full-scale Russo-Ukrainian war selected: date, deaths, participants and the causes its Wikidata item states" width="900">
 
+Clicking an event draws its **chain**: the relations a source states – Wikidata's *has cause / has effect*, *immediate
+cause*, *follows / followed by*, or a relation written by hand with its evidence (`relations` in `sources/events.yaml`) –
+up to three steps back to its causes and forward to its effects, as arrows between the events on screen, across lanes;
+everything else is dimmed, and *part of* highlights the whole and its parts. An event without a stated relation has no chain.
+
+<img src="docs/images/timeline-chain.png" alt="Timeline chain: the assassination of Ismail Haniyeh, the Iranian strikes on Israel, the Israeli strikes on Iran and the Twelve-Day War, linked by arrows across the Iran and Israel lanes" width="900">
+
 - **Events** (`/events`) – dated events from Wikidata (14 classes, from terrorist attacks and cyberattacks to coups, wars and
   natural disasters, since 2000), EuRepoC's cyber incidents and UCDP's organised violence (single events with at least 50 deaths;
   deaths per country and month), each with its source: date, place, deaths, participants and perpetrators linked to the actor
@@ -1175,6 +1182,7 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | Event dates | Wikidata via `tools/build_events.py` | CC0 |
 | Charts | [Apache ECharts](https://echarts.apache.org) 6.1.0, vendored | Apache-2.0 |
 | Timeline | [vis-timeline](https://visjs.github.io/vis-timeline/) 8.5.4, vendored (`static/vendor/vis-timeline/`) | Apache-2.0 or MIT ([`LICENSE.md`](rozvedka/static/vendor/vis-timeline/LICENSE.md)) |
+| Timeline arrows | [timeline-arrows](https://github.com/javdome/timeline-arrows) 4.8.0, vendored (`static/vendor/timeline-arrows/`) | Apache-2.0 or MIT ([`LICENSE`](rozvedka/static/vendor/timeline-arrows/LICENSE)) |
 | Map | [Leaflet](https://leafletjs.com) 1.9.4, Leaflet.markercluster 1.5.3, [Natural Earth](https://www.naturalearthdata.com) outlines | BSD-2, MIT, public domain |
 | Home-page font | [DejaVu Sans Mono](https://dejavu-fonts.github.io), a subset vendored in `rozvedka/static/vendor/fonts/` | Bitstream Vera licence ([`LICENSE-DejaVu.txt`](rozvedka/static/vendor/fonts/LICENSE-DejaVu.txt)); DejaVu changes public domain |
 | Street tiles | [OpenStreetMap](https://www.openstreetmap.org/copyright), loaded in the viewer's browser | ODbL, © OpenStreetMap contributors; OSM tile usage policy |

@@ -27,6 +27,22 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.73.0] – 2026-10-19
+
+### Added
+- **Chains of events on the timeline** (roadmap H1c). Clicking an event draws the relations a source states, up to three
+  steps back to its causes and forward to its effects, as arrows between the events on screen (also across lanes):
+  Wikidata's *has cause / has effect*, *immediate cause* and *follows / followed by*. Everything else is dimmed, *part of*
+  highlights the whole and its parts, and the panel lists the chain step by step. `Esc` or a click on empty space clears
+  it. An event without a stated relation has no chain – nothing is inferred.
+- **Relations written by hand** – `relations` in `sources/events.yaml` (from, rel, to, evidence URL): for chains no
+  source states (e.g. "response to"), each drawn with its evidence. Uses timeline-arrows 4.8.0 (Apache-2.0 or MIT),
+  vendored.
+
+### Changed
+- An event known only to its year is drawn as a dashed bar over the whole year, not as a point on 1 January (where it
+  could stand before its own cause).
+
 ## [0.72.0] – 2026-10-19
 
 ### Added
@@ -1399,7 +1415,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.72.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.73.0...HEAD
+[0.73.0]: https://github.com/iiogurt/Rozvedka/compare/v0.72.0...v0.73.0
 [0.72.0]: https://github.com/iiogurt/Rozvedka/compare/v0.71.0...v0.72.0
 [0.71.0]: https://github.com/iiogurt/Rozvedka/compare/v0.70.0...v0.71.0
 [0.70.0]: https://github.com/iiogurt/Rozvedka/compare/v0.69.1...v0.70.0

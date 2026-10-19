@@ -59,7 +59,7 @@ def main() -> None:
     ap.add_argument("--refresh", action="store_true")
     a = ap.parse_args()
     text = EVENTS.read_text(encoding="utf-8")
-    header = text[:text.index("events:")]
+    header = text[:text.index("\nevents:\n") + 1]           # comments, `classes` and `relations` are kept as written
     data = yaml.safe_load(text)
     today = dt.date.today().isoformat()
     for ev in data["events"]:

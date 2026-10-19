@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS event_actors (            -- who took part: matched t
 CREATE INDEX IF NOT EXISTS ix_event_actors_actor ON event_actors(actor_key);
 CREATE TABLE IF NOT EXISTS event_links (             -- relations an item states: cause → effect, earlier → later, part → whole
     src TEXT NOT NULL, rel TEXT NOT NULL, dst TEXT NOT NULL, src_label TEXT, dst_label TEXT, stated_by TEXT,
-    property TEXT, PRIMARY KEY (src, rel, dst));
+    property TEXT, evidence TEXT, PRIMARY KEY (src, rel, dst));
 CREATE TABLE IF NOT EXISTS event_months (            -- UCDP deaths in organised violence per country and month
     iso TEXT NOT NULL, month TEXT NOT NULL, deaths INTEGER, events INTEGER, state INTEGER, nonstate INTEGER,
     onesided INTEGER, preliminary INTEGER DEFAULT 0, PRIMARY KEY (iso, month));
@@ -91,6 +91,41 @@ META = {
 def init() -> None:
     with db.session() as con:
         con.executescript(SCHEMA)
+        if "evidence" not in {r["name"] for r in con.execute("PRAGMA table_info(event_links)")}:
+            con.execute("ALTER TABLE event_links ADD COLUMN evidence TEXT")
+    sync_hand()
+
+
+# ── hand-written relations (sources/events.yaml `relations`), for chains the sources do not state ──
+HAND_RELS = {"caused", "immediately caused", "followed by", "part of", "response to"}
+_hand = {"mtime": None}
+
+
+def hand_relations(path: Path | None = None) -> list[dict]:
+    """[{from, rel, to, evidence, note?}] – each with the evidence URL that states it; the others are ignored."""
+    rows = (yaml.safe_load((path or CLASSES).read_text(encoding="utf-8")) or {}).get("relations") or []
+    return [r for r in rows if r.get("rel") in HAND_RELS and r.get("from") and r.get("to")
+            and str(r.get("evidence", "")).startswith("http")]
+
+
+def sync_hand(path: Path | None = None) -> int:
+    """Write the hand-written relations into event_links (stated_by 'hand') when the file has changed."""
+    path = path or CLASSES
+    mtime = (str(path), path.stat().st_mtime) if path.exists() else None
+    if mtime == _hand["mtime"]:
+        return 0
+    rels = hand_relations(path) if mtime else []
+    with db.session() as con:
+        con.execute("DELETE FROM event_links WHERE stated_by='hand'")
+        labels = {r["key"]: r["label"] for r in con.execute(
+            f"SELECT key, label FROM events WHERE key IN ({','.join('?' * len({x for r in rels for x in (r['from'], r['to'])}))})",
+            [x for x in {x for r in rels for x in (r['from'], r['to'])}])} if rels else {}
+        for r in rels:
+            con.execute("INSERT OR REPLACE INTO event_links VALUES(?,?,?,?,?,?,?,?)",
+                        (r["from"], r["rel"], r["to"], labels.get(r["from"], r["from"]), labels.get(r["to"], r["to"]),
+                         "hand", "written by hand" + (f": {r['note']}" if r.get("note") else ""), r["evidence"]))
+    _hand["mtime"] = mtime
+    return len(rels)
 
 
 def classes(path: Path | None = None) -> list[dict]:
@@ -375,8 +410,9 @@ def _store(con, events: list[dict], source: str) -> None:
             con.execute("INSERT OR IGNORE INTO event_actors VALUES(?,?,?,?,?,?)",
                         (e["key"], a["role"], a["name"], a.get("qid"), key, a.get("reason")))
         for l in e["links"]:
-            con.execute("INSERT OR IGNORE INTO event_links VALUES(?,?,?,?,?,?,?)",
-                        (l["src"], l["rel"], l["dst"], l["src_label"], l["dst_label"], l["stated_by"], l["property"]))
+            con.execute("INSERT OR IGNORE INTO event_links VALUES(?,?,?,?,?,?,?,?)",
+                        (l["src"], l["rel"], l["dst"], l["src_label"], l["dst_label"], l["stated_by"], l["property"],
+                         f"https://www.wikidata.org/wiki/{l['stated_by']}#{l['property']}"))
     log.info("events %s: %d", source, len(keys))
 
 
@@ -582,6 +618,17 @@ def timeline(lanes: list[tuple[str, str]]) -> dict:
                 for r in con.execute("SELECT month, deaths, preliminary FROM event_months WHERE iso=? AND deaths > 0 ORDER BY month", (iso,)):
                     strip["deaths"][r["month"]] = {"n": r["deaths"], "preliminary": r["preliminary"]}
             out["strips"][lane] = strip
+        # the stated relations between stored events that touch these lanes – the chains the timeline draws
+        keys = sorted({i["key"] for i in out["items"] if i["key"]})
+        links, seen = [], set()
+        for chunk in (keys[i:i + 500] for i in range(0, len(keys), 500)):
+            marks = ",".join("?" * len(chunk))
+            for r in con.execute(f"""SELECT l.* FROM event_links l JOIN events a ON a.key=l.src JOIN events b ON b.key=l.dst
+                                     WHERE l.src IN ({marks}) OR l.dst IN ({marks})""", chunk + chunk):
+                if (r["src"], r["rel"], r["dst"]) not in seen:
+                    seen.add((r["src"], r["rel"], r["dst"]))
+                    links.append(dict(r))
+        out["links"] = links
     return out
 
 
