@@ -1,4 +1,4 @@
-"""Democracy ratings of states over time – the context in which a state's reports were written.
+"""Ratings of states over time – democracy, security and governance: the context in which a state's reports were written.
 
 A report from 2015 reads differently if its state was a liberal democracy then and an electoral autocracy now. Three
 independent measurements, each with its own method, are kept per country and year:
@@ -10,6 +10,13 @@ independent measurements, each with its own method, are kept per country and yea
     from the World Bank API.
 V-Dem and Freedom House also publish reports in this library (think tanks); the World Bank measure is the official,
 intergovernmental third view. The EIU Democracy Index is a commercial product and is not used.
+
+Security and governance (since 0.70.0, roadmap H3a): the other five World Bank governance indicators (political
+stability and absence of violence/terrorism, rule of law, control of corruption, government effectiveness, regulatory
+quality), intentional homicides (UNODC), military expenditure (SIPRI) and the Corruption Perceptions Index
+(Transparency International, CC BY-ND – shown unaltered), the last three as republished by Our World in Data. Each
+measure keeps its own scale, source and direction (`better`: which end is the safer or better one; none for military
+spending, which is context, not a grade) – there is no composite score.
 
 `fetch-ratings` stores everything in data/ratings/ratings.json with the retrieval date and each source's citation."""
 import csv
@@ -34,26 +41,82 @@ WB_API = "https://api.worldbank.org/v2"
 REGIMES = {0: "closed autocracy", 1: "electoral autocracy", 2: "electoral democracy", 3: "liberal democracy"}
 
 MEASURES = {
-    "vdem_libdem": {"name": "Liberal Democracy Index", "by": "V-Dem", "short": "V-Dem LDI", "scale": (0, 1), "fmt": "{:.2f}",
+    "vdem_libdem": {"name": "Liberal Democracy Index", "group": "democracy", "better": "high", "by": "V-Dem", "short": "V-Dem LDI", "scale": (0, 1), "fmt": "{:.2f}",
                     "slug": "liberal-democracy-index", "column": "libdem_vdem__estimate_best",
                     "license": "CC BY-SA 4.0", "home": "https://www.v-dem.net/",
                     "about": "Expert-coded extent of liberal democracy: free and fair elections, freedoms of association "
                              "and expression, civil liberties, rule of law, constraints on the executive (0 = none, 1 = full)."},
-    "vdem_regime": {"name": "Regimes of the World", "by": "V-Dem", "short": "V-Dem RoW", "scale": (0, 3), "fmt": "{}",
+    "vdem_regime": {"name": "Regimes of the World", "group": "democracy", "better": "high", "by": "V-Dem", "short": "V-Dem RoW", "scale": (0, 3), "fmt": "{}",
                     "slug": "political-regime", "column": "regime_row_owid", "license": "CC BY-SA 4.0",
                     "home": "https://www.v-dem.net/",
                     "about": "Classification from V-Dem data: closed autocracy, electoral autocracy, electoral democracy, "
                              "liberal democracy (Lührmann, Tannenberg & Lindberg 2018)."},
-    "fh_score": {"name": "Freedom in the World score", "by": "Freedom House", "short": "FH", "scale": (0, 100), "fmt": "{:.0f}",
+    "fh_score": {"name": "Freedom in the World score", "group": "democracy", "better": "high", "by": "Freedom House", "short": "FH", "scale": (0, 100), "fmt": "{:.0f}",
                  "slug": "freedom-score-fh", "column": "total_score",
                  "license": "Freedom House content: non-commercial use with attribution",
                  "home": "https://freedomhouse.org/report/freedom-world",
                  "about": "Political rights (0–40) and civil liberties (0–60) assessed by analysts; 100 = most free."},
-    "wgi_va": {"name": "Voice and Accountability", "by": "World Bank (WGI)", "short": "WGI VA", "scale": (-2.5, 2.5), "fmt": "{:+.2f}",
+    "wgi_va": {"name": "Voice and Accountability", "group": "democracy", "better": "high", "by": "World Bank (WGI)", "short": "WGI VA", "scale": (-2.5, 2.5), "fmt": "{:+.2f}",
                "indicator": "GOV_WGI_VA.EST", "license": "CC BY 4.0", "home": "https://www.worldbank.org/en/publication/worldwide-governance-indicators",
                "about": "Perceptions of citizens' ability to choose their government, freedom of expression and "
                         "association, and a free media; standard units, about −2.5 to +2.5."},
+    # ── security ──
+    "wgi_pv": {"group": "security", "better": "high", "name": "Political Stability and Absence of Violence/Terrorism",
+               "by": "World Bank (WGI)", "short": "WGI PV", "scale": (-2.5, 2.5), "fmt": "{:+.2f}", "topic": "terrorism",
+               "indicator": "GOV_WGI_PV.EST", "license": "CC BY 4.0", "home": "https://www.worldbank.org/en/publication/worldwide-governance-indicators",
+               "about": "Perceptions of the likelihood of political instability and politically motivated violence, "
+                        "including terrorism; standard units, about −2.5 to +2.5."},
+    "homicide": {"group": "security", "better": "low", "name": "Intentional homicides per 100,000", "by": "UNODC",
+                 "short": "Homicides", "scale": (0, 10), "fmt": "{:.1f}", "topic": "organised-crime",
+                 "slug": "homicide-rate-unodc",
+                 "column": "value__category_total__sex_total__age_total__unit_of_measurement_rate_per_100_000_population",
+                 "license": "UNODC data as republished by Our World in Data", "home": "https://dataunodc.un.org/",
+                 "about": "Unlawful deaths intentionally inflicted on a person, per 100,000 inhabitants, from police and "
+                          "public-health records; the colour scale saturates at 10."},
+    "milex": {"group": "security", "better": None, "name": "Military expenditure, % of GDP", "by": "SIPRI",
+              "short": "Military %GDP", "scale": (0, 5), "fmt": "{:.1f} %", "topic": "military-threat",
+              "slug": "military-spending-as-a-share-of-gdp-sipri", "column": "share_gdp",
+              "license": "SIPRI data as republished by Our World in Data", "home": "https://www.sipri.org/databases/milex",
+              "about": "Military spending as a share of gross domestic product (SIPRI definition, which can differ from "
+                       "NATO's and national budgets). Context, not a grade: neither end is better; the colour scale "
+                       "saturates at 5 %."},
+    # ── governance ──
+    "wgi_rl": {"group": "governance", "better": "high", "name": "Rule of Law", "by": "World Bank (WGI)", "short": "WGI RL",
+               "scale": (-2.5, 2.5), "fmt": "{:+.2f}", "indicator": "GOV_WGI_RL.EST", "license": "CC BY 4.0",
+               "home": "https://www.worldbank.org/en/publication/worldwide-governance-indicators",
+               "about": "Perceptions of confidence in and abiding by the rules of society: contract enforcement, "
+                        "property rights, the police and the courts, and the likelihood of crime and violence."},
+    "wgi_cc": {"group": "governance", "better": "high", "name": "Control of Corruption", "by": "World Bank (WGI)",
+               "short": "WGI CC", "scale": (-2.5, 2.5), "fmt": "{:+.2f}", "topic": "money-laundering-corruption",
+               "indicator": "GOV_WGI_CC.EST", "license": "CC BY 4.0",
+               "home": "https://www.worldbank.org/en/publication/worldwide-governance-indicators",
+               "about": "Perceptions of the extent to which public power is exercised for private gain, including "
+                        "petty and grand corruption and the capture of the state by elites."},
+    "wgi_ge": {"group": "governance", "better": "high", "name": "Government Effectiveness", "by": "World Bank (WGI)",
+               "short": "WGI GE", "scale": (-2.5, 2.5), "fmt": "{:+.2f}", "indicator": "GOV_WGI_GE.EST", "license": "CC BY 4.0",
+               "home": "https://www.worldbank.org/en/publication/worldwide-governance-indicators",
+               "about": "Perceptions of the quality of public services and the civil service, its independence from "
+                        "political pressure, and the credibility of the government's policies."},
+    "wgi_rq": {"group": "governance", "better": "high", "name": "Regulatory Quality", "by": "World Bank (WGI)",
+               "short": "WGI RQ", "scale": (-2.5, 2.5), "fmt": "{:+.2f}", "indicator": "GOV_WGI_RQ.EST", "license": "CC BY 4.0",
+               "home": "https://www.worldbank.org/en/publication/worldwide-governance-indicators",
+               "about": "Perceptions of the government's ability to formulate and implement sound policies and "
+                        "regulations that permit and promote private-sector development."},
+    "cpi": {"group": "governance", "better": "high", "name": "Corruption Perceptions Index", "by": "Transparency International",
+            "short": "CPI", "scale": (0, 100), "fmt": "{:.0f}", "topic": "money-laundering-corruption",
+            "slug": "ti-corruption-perception-index", "column": "cpi_score",
+            "license": "CC BY-ND 4.0 (shown unaltered)", "home": "https://www.transparency.org/en/cpi",
+            "about": "Perceived corruption in the public sector, from 13 expert and business surveys; "
+                     "0 = highly corrupt, 100 = very clean."},
 }
+# the groups of /ratings, in order: (name, what it covers)
+GROUPS = {"democracy": ("Democracy", "how free and democratic the state is"),
+          "security": ("Security", "political violence and terrorism, homicides, military spending"),
+          "governance": ("Governance", "rule of law, corruption, effectiveness and regulation")}
+
+
+def of_group(group: str) -> dict[str, dict]:
+    return {k: m for k, m in MEASURES.items() if m["group"] == group}
 
 
 def _get(url: str) -> bytes:
@@ -113,6 +176,7 @@ def fetch(out: Path | None = None) -> dict:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(store), encoding="utf-8")
     load.cache_clear()
+    ranks.cache_clear()
     missing = sorted(c for c in names if c not in store["iso3"] and c not in ("EU", "NATO", "OTHER"))
     log.info("ratings: %s; library countries without ratings: %s", {k: v["rows"] for k, v in store["measures"].items()}, missing)
     return {"measures": {k: v["rows"] for k, v in store["measures"].items()}, "countries": len(store["iso3"]),
@@ -149,6 +213,16 @@ def at(country: str, key: str, year: int | None) -> tuple[int, float] | None:
     return y, s[y]
 
 
+@lru_cache(maxsize=64)
+def ranks(key: str) -> dict[str, tuple[int, int]]:
+    """{library country: (place, of how many)} by the latest value of a measure, the better end first (higher first
+    for a measure without a better end, such as military spending – a position, not a grade). Ties share a place."""
+    better = MEASURES[key]["better"]
+    latest = {c: v[1] for c in load()["iso3"] if (v := at(c, key, None))}
+    order = sorted(latest.values(), reverse=better != "low")
+    return {c: (order.index(v) + 1, len(order)) for c, v in latest.items()}
+
+
 def source_url(country: str, key: str) -> str:
     """Where a reader checks the value: the chart for that country, or the World Bank indicator page."""
     m = MEASURES[key]
@@ -170,7 +244,8 @@ def profile(country: str, year: int | None = None) -> dict | None:
         latest, then = at(country, key, None), at(country, key, year) if year else None
         out["measures"][key] = {**m, "key": key, "latest": latest, "then": then,
                                 "spark": [(y, v) for y, v in s.items() if y >= 1990],
-                                "url": source_url(country, key), "citation": load()["measures"].get(key, {}).get("citation")}
+                                "url": source_url(country, key), "citation": load()["measures"].get(key, {}).get("citation"),
+                                "rank": ranks(key).get(country)}
     reg = out["measures"].get("vdem_regime")
     if reg:
         reg["latest_label"] = REGIMES.get(int(reg["latest"][1]))
@@ -202,7 +277,8 @@ def map_data() -> dict:
         vals = d["values"].get(a3, {})
         countries[a2] = {"iso3": a3, "name": d.get("names", {}).get(a3, a2), "library": a2 in d.get("iso3", {}),
                          "values": {k: [vals.get(k, {}).get(str(y)) for y in years] for k in MEASURES}}
-    measures = {k: {**{f: m[f] for f in ("name", "by", "short", "scale", "license", "about", "home")},
+    measures = {k: {**{f: m[f] for f in ("name", "by", "short", "scale", "license", "about", "home", "group", "better", "fmt")},
                     "citation": d["measures"].get(k, {}).get("citation"), "source": d["measures"].get(k, {}).get("source")}
                 for k, m in MEASURES.items()}
-    return {"years": years, "countries": countries, "measures": measures, "regimes": REGIMES, "retrieved": d["retrieved"]}
+    return {"years": years, "countries": countries, "measures": measures, "regimes": REGIMES, "retrieved": d["retrieved"],
+            "groups": {g: name for g, (name, _) in GROUPS.items()}}

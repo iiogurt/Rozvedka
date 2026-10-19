@@ -13,8 +13,10 @@ STORE = {"retrieved": "2026-10-07", "iso3": {"HU": "HUN", "CZ": "CZE"},
                                       "citation": "V-Dem (2026)", "retrieved": "2026-10-07", "rows": 4}},
          "values": {"HUN": {"vdem_libdem": {"2008": 0.70, "2010": 0.68, "2018": 0.40, "2025": 0.32},
                             "vdem_regime": {"2008": 3, "2010": 2, "2018": 1, "2025": 1},
-                            "wgi_va": {"2010": 0.89, "2025": -0.04}},
-                    "CZE": {"vdem_libdem": {"2010": 0.80, "2025": 0.78}, "vdem_regime": {"2010": 3, "2025": 3}}}}
+                            "wgi_va": {"2010": 0.89, "2025": -0.04},
+                            "homicide": {"2015": 2.1, "2023": 0.8}, "wgi_pv": {"2025": 0.8}, "milex": {"2025": 2.1}},
+                    "CZE": {"vdem_libdem": {"2010": 0.80, "2025": 0.78}, "vdem_regime": {"2010": 3, "2025": 3},
+                            "homicide": {"2023": 0.6}, "wgi_pv": {"2025": 0.9}, "milex": {"2025": 1.3}}}}
 
 
 @pytest.fixture
@@ -23,8 +25,10 @@ def store(tmp_path, monkeypatch):
     p.write_text(json.dumps(STORE))
     monkeypatch.setattr(ratings, "STORE", p)
     ratings.load.cache_clear()
+    ratings.ranks.cache_clear()
     yield p
     ratings.load.cache_clear()
+    ratings.ranks.cache_clear()
 
 
 def test_values_by_year(store):
@@ -84,3 +88,35 @@ def test_democracy_map(library):
     t = client.get("/map/democracy").text
     assert 'value="change"' in t and "map_democracy.js" in t
     assert 'href="/map/democracy"' in client.get("/map").text             # reachable from the other map views
+
+
+def test_security_and_governance_measures(store):
+    # every measure belongs to a group and says which end is better (none for military spending: context, not a grade)
+    assert set(ratings.GROUPS) == {m["group"] for m in ratings.MEASURES.values()}
+    assert ratings.MEASURES["homicide"]["better"] == "low" and ratings.MEASURES["milex"]["better"] is None
+    assert {"wgi_pv", "wgi_rl", "wgi_cc", "wgi_ge", "wgi_rq"} <= set(ratings.MEASURES)
+    # places among the library's states: fewer homicides first, more stability first, more spending first (a position)
+    assert ratings.ranks("homicide") == {"CZ": (1, 2), "HU": (2, 2)}
+    assert ratings.ranks("wgi_pv") == {"CZ": (1, 2), "HU": (2, 2)}
+    assert ratings.ranks("milex") == {"HU": (1, 2), "CZ": (2, 2)}
+    assert ratings.profile("HU")["measures"]["homicide"]["rank"] == (2, 2)
+    assert ratings.at("HU", "homicide", None) == (2023, 0.8)
+
+
+def test_group_pages_and_country_card(library):
+    client = TestClient(app_module.app)
+    t = client.get("/ratings?group=security").text
+    assert "Intentional homicides per 100,000" in t and "↓ lower is better" in t and "neither end is better" in t
+    assert t.index("Czechia") < t.index("Hungary")                         # sorted by the first measure's place
+    t = client.get("/ratings?group=security&sort=milex").text
+    assert t.index("Hungary") < t.index("Czechia")
+    assert "Liberal Democracy Index" not in client.get("/ratings?group=governance").text.split("Where the ratings")[1]
+    card = client.get("/ratings/hu")
+    assert card.status_code == 200
+    t = card.text
+    assert "2. of 2" in t and 'href="/documents?country=HU&amp;topic=organised-crime&amp;type=official"' in t
+    assert client.get("/ratings/EU").status_code == 404                     # international bodies are not rated
+    assert 'href="/ratings/HU"' in client.get("/ratings").text              # every state opens its card
+    d = ratings.map_data()
+    assert d["measures"]["homicide"]["better"] == "low" and d["groups"]["security"] == "Security"
+    assert '<optgroup label="Security">' in client.get("/map/democracy").text

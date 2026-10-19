@@ -54,6 +54,8 @@ SHOTS = {
                                                        ".forEach((e) => e.style.display = 'none'); 1")], None),
     "think-tanks": ("/publishers", 1000, [], None),
     "ratings": ("/ratings?sort=change", 900, [], None),
+    "ratings-security": ("/ratings?group=security", 900, [], None),      # security measures with their places
+    "ratings-country": ("/ratings/DE", 1300, [], None),                  # one state: a chart per measure
     "series": ("/series/e64e96b2", 1200, [], None),
     "collect": ("/collect", 1100, [], None),
     "topics": ("/topics", 1100, [], None),
@@ -90,6 +92,7 @@ SHOTS = {
     "graph-path": ("/graph/path?a=Evil+Corp&b=Federal+Security+Service", 1300, [], None),     # chains of stated links between two actors
     "map": ("/map", 800, [("sleep", 5)], None),
     "democracy-map": ("/map/democracy?measure=vdem_regime&year=2025", 900, [("sleep", 6)], None),
+    "homicide-map": ("/map/democracy?measure=homicide&year=2023", 900, [("sleep", 6)], None),
     "democracy-change": ("/map/democracy?measure=change&year=2025", 900, [("sleep", 6)], None),
     "mentions": (f"/map/mentions?mode=about&about={CHINA}", 800, [("sleep", 6)], None),
     "mindmap": ("/topics/map", 1000, [("sleep", 4)], None),

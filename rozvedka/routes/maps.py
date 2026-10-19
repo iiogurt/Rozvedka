@@ -8,12 +8,12 @@ router = APIRouter()
 
 @router.get("/map/democracy")
 def democracy_map_page(request: Request):
-    return tpl.TemplateResponse(request, "map_democracy.html", {"MEASURES": ratings.MEASURES})
+    return tpl.TemplateResponse(request, "map_democracy.html", {"MEASURES": ratings.MEASURES, "GROUPS": ratings.GROUPS})
 
 
 @router.get("/api/ratings/map")
 def api_ratings_map():
-    """Democracy ratings of every country per year, plus the library's official reports per country and year (each
+    """The ratings of every country per year (democracy, security, governance), plus the library's official reports per country and year (each
     count is the Documents list /documents?country=…&year=…&type=official)."""
     data = ratings.map_data()
     with db.session() as con:
