@@ -244,6 +244,42 @@ def us_awards(names: dict[str, list[str]], today: str | None = None) -> dict[str
     return out
 
 
+CURRENCIES = {"Q4917": "US$", "Q4916": "€", "Q25224": "£", "Q25344": "CHF ", "Q8146": "¥"}
+
+
+def _current(claims: list[dict]) -> list[dict]:
+    """The statements that hold today, by Wikidata's own conventions: deprecated ones never; when some are marked
+    preferred (the current chief executive among all past ones), only those; and none with an end time (P582)."""
+    claims = [c for c in claims if c.get("rank") != "deprecated" and "P582" not in (c.get("qualifiers") or {})]
+    preferred = [c for c in claims if c.get("rank") == "preferred"]
+    return preferred or claims
+
+
+def _qualifiers(claim: dict) -> dict:
+    """When, how much and why of one Wikidata statement (a grant to the publisher is one statement per year), and
+    the URL its reference cites: {when?, amount?, purpose?, ref?}."""
+    from . import actor_sources as src
+    q = claim.get("qualifiers") or {}
+    val = lambda p: next((x["datavalue"]["value"] for x in q.get(p, []) if x.get("datavalue")), None)
+    out = {}
+    if val("P585"):                         # a point in time (a grant of one year)
+        out["when"] = src._time(val("P585"))
+    elif val("P580"):                       # a start time (in office since)
+        out["when"] = "since " + src._time(val("P580"))
+    amount = val("P2121") or val("P2130") or val("P1114")
+    if amount:
+        unit = CURRENCIES.get(amount.get("unit", "").rsplit("/", 1)[-1], "")
+        out["amount"] = f"{unit}{float(amount['amount']):,.0f}"
+    purpose = val("P6208")
+    if purpose:
+        out["purpose"] = purpose["text"] if isinstance(purpose, dict) else str(purpose)
+    ref = next((s["datavalue"]["value"] for r in claim.get("references") or [] for s in r["snaks"].get("P854", [])
+                if s.get("datavalue")), None)
+    if ref:
+        out["ref"] = ref
+    return out
+
+
 def identity(titles: dict[str, str]) -> dict[str, dict]:
     """Wikidata facts and the Wikipedia lead of each publisher, with revision and links."""
     from . import actor_sources as src
@@ -264,13 +300,14 @@ def identity(titles: dict[str, str]) -> dict[str, dict]:
         facts: dict[str, list[str]] = {}
         subjects: dict[str, list[dict]] = {}      # facts that name another subject, with its Wikidata item
         for prop, label in WIKIDATA_PROPS.items():
-            for c in src._claims(e, prop) if e else []:
+            for c in _current(src._claims(e, prop) if e else []):
                 v = c["mainsnak"]["datavalue"]
                 if v["type"] == "wikibase-entityid":
                     ref = v["value"]["id"]
-                    facts.setdefault(label, []).append(labels.get(ref, ref))
+                    if labels.get(ref, ref) not in facts.get(label, []):
+                        facts.setdefault(label, []).append(labels.get(ref, ref))
                     subjects.setdefault(label, []).append({"qid": ref, "label": labels.get(ref, ref), "property": prop,
-                                                           "person": ref in humans})
+                                                           "person": ref in humans, **_qualifiers(c)})
                 elif v["type"] == "time":
                     facts.setdefault(label, []).append(src._time(v["value"]))
                 elif v["type"] == "quantity":
@@ -476,7 +513,9 @@ def influence(source_key: str) -> list[dict]:
         rel, back = WIKIDATA_TIES[fact]
         for x in subjects:
             out.append({"rel": rel, "back": back, "name": x["label"], "kind": "person" if x.get("person") else "org",
-                        "qid": x["qid"],
-                        "evidence": [{"label": f"Wikidata {x['property']} (revision {idn.get('revision')})", "url": idn.get("wikidata")}],
+                        "qid": x["qid"], "amount": " ".join(v for v in (x.get("amount"), f"({x['when']})" if x.get("when") else None) if v) or None,
+                        "note": x.get("purpose"),
+                        "evidence": [{"label": f"Wikidata {x['property']} (revision {idn.get('revision')})", "url": idn.get("wikidata")}]
+                                    + ([{"label": "its reference", "url": x["ref"]}] if x.get("ref") else []),
                         "checked": f["retrieved"] or "", "origin": "wikidata"})
     return out

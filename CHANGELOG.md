@@ -27,6 +27,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.69.0] – 2026-10-19
+
 ### Added
 - **Commercial analysts – a third kind of publisher.** Companies that sell political-risk, security or threat analysis and
   publish part of it openly are marked ■ (a dashed badge, a square on the map, their own section on Sources and on the
@@ -41,9 +43,15 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
   FY2008, from USAspending.gov (only the exact recipient names count – the API's search is loose).
 - **Owners, sponsors and influence in the network:** each think tank and company is a subject of the network (layer
   "Publisher profiles") linked to its owners, founders, leaders, investors and partners, its donor governments, the US
-  agencies that paid it and the owner, funder and leaders on its Wikidata item – each link with its evidence – and its
+  agencies that paid it and the current owner, funder and leaders on its Wikidata item (past chief executives are left
+  out; a grant shows its year, amount, purpose and the reference Wikidata cites) – each link with its evidence – and its
   profile page lists the same ties.
 - The crawler reads XML sitemaps as lists of publication pages, and a page can follow more than 25 of them (`follow_limit`).
+
+### Fixed
+- Link titles: entities left as text (`&hairsp;`), soft hyphens and typographic spaces become plain text, a hair space
+  inside a label is closed up ("T1 2021", not "T 1 2021"), the `download` attribute names a file behind a bare
+  "Download" link, and a PDF cited inside a sentence keeps its own name instead of the page's heading.
 
 ## [0.68.1] – 2026-10-16
 
@@ -1333,7 +1341,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.68.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.69.0...HEAD
+[0.69.0]: https://github.com/iiogurt/Rozvedka/compare/v0.68.1...v0.69.0
 [0.68.1]: https://github.com/iiogurt/Rozvedka/compare/v0.68.0...v0.68.1
 [0.68.0]: https://github.com/iiogurt/Rozvedka/compare/v0.67.0...v0.68.0
 [0.67.0]: https://github.com/iiogurt/Rozvedka/compare/v0.66.0...v0.67.0

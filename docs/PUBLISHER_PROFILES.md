@@ -88,7 +88,9 @@ its Wikidata item when the gazetteer has it, else a node of its own that opens i
 - `ties` in `sources/publishers.yaml` – owners, founders, leaders, investors, partners, related foundations, researched by hand;
 - a think tank's donor governments → the countries' actors;
 - the US federal agencies that gave it contracts or grants (USAspending.gov) → the agency's actor when one is named so;
-- owner, parent organisation, founder, funder, chair, director and chief executive on its Wikidata item (with the revision).
+- owner, parent organisation, founder, funder, chair, director and chief executive on its Wikidata item (with the revision) –
+  only the statements that hold today (deprecated ones never; only the preferred ones when some are; none with an end
+  time), each with its year, amount and purpose when Wikidata records them (a grant per year) and the URL its reference cites.
 
 So the network can answer "who stands behind the publisher of this report" with the same path search and evidence as for the
 actors the reports name; the publisher page lists the same ties in a table.

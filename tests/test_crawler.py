@@ -225,7 +225,7 @@ def test_a_download_attribute_names_the_file():
     a = BeautifulSoup('<a href="/p/annual-2025.pdf" download="annual-2025.pdf">Download</a>', "html.parser").a
     assert _title_for(a) == "annual 2025"
     a = BeautifulSoup('<a href="/p/t1.pdf" download="ESET Threat Report T&amp;hairsp;1 2022">Download</a>', "html.parser").a
-    assert _title_for(a) == "ESET Threat Report T 1 2022"
+    assert _title_for(a) == "ESET Threat Report T1 2022"
     a = BeautifulSoup('<a href="/p/q4.pdf">ESET APT Activity Report Q4 2022\u00ad–Q1\u200a2023</a>', "html.parser").a
     assert _title_for(a) == "ESET APT Activity Report Q4 2022–Q1 2023"
 

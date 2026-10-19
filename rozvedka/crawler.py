@@ -164,11 +164,15 @@ def _title_for(a) -> str:
 
 _INVISIBLE = re.compile("[\u00ad\u200b-\u200d\u2060\ufeff]")      # soft hyphen, zero-width characters
 _ODD_SPACE = re.compile("[\u00a0\u2000-\u200a\u202f\u205f\u3000]")
+_LABEL_GAP = re.compile(r"(?<!\w)([^\W\d_])[\u2009\u200a](?=\d)")    # a lone letter, a thin or hair space, a number
 
 
 def clean_spaces(text: str) -> str:
-    """Entities a parser left as text ("T&hairsp;1"), invisible characters and typographic spaces → plain text."""
+    """Entities a parser left as text ("T&hairsp;1"), invisible characters and typographic spaces → plain text. A thin or
+    hair space between a lone letter and a number is a typographic gap inside a label ("T 1" → "T1"); elsewhere it
+    separates words ("Q1 2023")."""
     text = _INVISIBLE.sub("", unescape(text))
+    text = _LABEL_GAP.sub(r"\1", text)
     return " ".join(_ODD_SPACE.sub(" ", text).split())
 
 

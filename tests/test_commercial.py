@@ -174,3 +174,26 @@ def test_network_layer(library):
     assert ("pub:US/Freedom House", "Q30", "funded by the government of") in t          # a donor government = its country
     ev = json.loads(t[("Q3274136", "Q11209", "received US federal contracts or grants from")])
     assert ev["origin"] == "usaspending" and ev["amount"] == 3444793.69 and ev["profile"] == "/publisher/3"
+
+
+def _claim(qid, rank="normal", **qualifiers):
+    return {"rank": rank, "mainsnak": {"datavalue": {"type": "wikibase-entityid", "value": {"id": qid}}},
+            "qualifiers": {p: [{"datavalue": {"value": v}}] for p, v in qualifiers.items()}}
+
+
+def test_wikidata_ties_hold_today():
+    # past chief executives carry an end time, the current one is preferred: only that one is a tie
+    claims = [_claim("Q1", "preferred", P580={"time": "+2015-05-07T00:00:00Z", "precision": 11}),
+              _claim("Q2", P582={"time": "+2015-05-06T00:00:00Z", "precision": 11}), _claim("Q3"), _claim("Q4", "deprecated")]
+    assert [c["mainsnak"]["datavalue"]["value"]["id"] for c in publishers._current(claims)] == ["Q1"]
+    # without a preferred one: every statement that has not ended
+    assert [c["mainsnak"]["datavalue"]["value"]["id"] for c in publishers._current(claims[1:])] == ["Q3"]
+
+
+def test_wikidata_grant_keeps_year_amount_purpose_and_reference():
+    grant = _claim("Q786194", P585={"time": "+2023-00-00T00:00:00Z", "precision": 9},
+                   P2121={"amount": "+425000", "unit": "http://www.wikidata.org/entity/Q4917"},
+                   P6208={"text": "to measure impunity", "language": "en"})
+    grant["references"] = [{"snaks": {"P854": [{"datavalue": {"value": "https://www.opensocietyfoundations.org/grants/x"}}]}}]
+    assert publishers._qualifiers(grant) == {"when": "2023", "amount": "US$425,000", "purpose": "to measure impunity",
+                                             "ref": "https://www.opensocietyfoundations.org/grants/x"}
