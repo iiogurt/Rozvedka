@@ -367,6 +367,12 @@ column; <i>over-emphasis</i> shows how much more or less often a row carries a t
   Spain, Austria, Sweden, Latvia), each on the state's own scale and with the page it comes from. Hand-curated; every quote is
   checked (`fetch-threat-levels` for the announcement pages, the library's stored text for the reports).
 
+- **Events** (`/events`) – dated events from Wikidata (14 classes, from terrorist attacks and cyberattacks to coups, wars and
+  natural disasters, since 2000), EuRepoC's cyber incidents and UCDP's organised violence (single events with at least 50 deaths;
+  deaths per country and month), each with its source: date, place, deaths, participants and perpetrators linked to the actor
+  index where they match unambiguously, and the relations the Wikidata items state (cause and effect, what followed, what was
+  part of what). The data behind the coming timeline (`fetch-events`).
+
 - **Who cites whom** (`/citations`) – a chord diagram of citations between agency types (each ribbon opens its reports) and the web addresses in the reports resolved against the library: which agencies other
   agencies link to, which library reports are cited by other reports, which outside hosts (news, academic, law …) the reports rely
   on. Report pages list what a report links to and which reports link to it; every count links to the reports it counts.
@@ -750,6 +756,7 @@ failure. Starting it after a reboot with nobody logged in needs `loginctl enable
 | `fetch-kev` · `index-cves` | download CISA's Known Exploited Vulnerabilities catalog (CC0; network) · find CVE numbers in the report texts and the actors named near them (`update` runs the second) |
 | `fetch-attack` · `index-techniques` | download MITRE ATT&CK (techniques, groups, software, campaigns and their relations; Enterprise, Mobile, ICS; network) · find technique numbers in the report texts (`update` runs the second) |
 | `fetch-wanted` | read the FBI's and Europe's Most Wanted notices about security (network, ~3 min; then `build-graph`) |
+| `fetch-events [--source wikidata\|eurepoc\|ucdp]` | dated events for the timeline: Wikidata items of the classes in `sources/events.yaml`, EuRepoC cyber incidents, UCDP organised violence (network, ~10 min) |
 | `fetch-wikitext` | read the English Wikipedia articles of the actors the reports name and keep the sentences that link to another known subject (network, ~5 min; then `build-graph`) |
 | `fetch-misp` | download the MISP threat-actor galaxy (CC0): security vendors' names of threat groups and which groups it holds similar (network; then `index-actors` and `build-graph`) |
 | `build-graph` | rebuild the network of links from what is stored: sanctions lists, Wikidata and Wikipedia connections, ATT&CK, the actor index (no network; `update` runs it last) |
@@ -1149,6 +1156,9 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | Actor pictures | [Wikimedia Commons](https://commons.wikimedia.org) – the Wikipedia article image or the Wikidata flag / logo / image (`data/gazetteer/actor_images/`, not committed) | free licences only (CC BY, CC BY-SA, public domain …); author, licence and file page shown with each picture |
 | Threat groups | [MITRE ATT&CK®](https://attack.mitre.org) | © The MITRE Corporation, reproduced with permission |
 | Vendors' names of threat groups | [MISP threat-actor galaxy](https://github.com/MISP/misp-galaxy) | CC0 1.0 |
+| Cyber incidents | [EuRepoC Global Dataset of Cyber Incidents](https://zenodo.org/records/14965395) | CC BY-NC 4.0 |
+| Organised violence | [UCDP Georeferenced Event Dataset and Candidate Events](https://ucdp.uu.se/downloads/) | CC BY 4.0 |
+| Country ratings | V-Dem, Freedom House, World Bank WGI, UNODC, SIPRI, Transparency International (via [Our World in Data](https://ourworldindata.org) and the World Bank API) | each measure's licence is shown with it on `/ratings` |
 | Sanctions lists | EU (FPI), UK (FCDO), UN Security Council, US Treasury (OFAC) – official XML files | public official data |
 | Wanted notices | [FBI Wanted API](https://api.fbi.gov/wanted/v1/list), [Europe's Most Wanted](https://eumostwanted.eu/) (ENFAST, supported by Europol) – text, names, dates of birth and charges only, no photographs (`data/gazetteer/wanted.json`, not committed) | public official notices, linked on each page |
 | Event dates | Wikidata via `tools/build_events.py` | CC0 |

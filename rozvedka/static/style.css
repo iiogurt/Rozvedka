@@ -1372,3 +1372,8 @@ table.rank .barcell { width: 35%; } table.rank .bar { display: block; height: 8p
 .rc-v { margin: var(--s2) 0 2px; font-size: var(--fs-l); }
 .rc-rank { margin-left: var(--s2); font-size: var(--fs-s); padding: 1px 6px; border-radius: 999px; background: var(--chip); }
 .rc-about { margin: var(--s2) 0 0; }
+
+/* ── Events (/events) ── */
+.ev-table td { vertical-align: top; }
+.ev-date { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ev-link { font-size: var(--fs-xs); margin-top: 2px; }

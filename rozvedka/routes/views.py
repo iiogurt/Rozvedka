@@ -1,7 +1,7 @@
 """All views: every page of the portal, grouped as in the menu, with a live count where there is one."""
 from fastapi import APIRouter, Request
 
-from .. import attributions, cves, db, doclist, nav, techniques, threat_levels
+from .. import attributions, cves, db, doclist, events, nav, techniques, threat_levels
 from ..web import tpl
 
 router = APIRouter()
@@ -20,6 +20,7 @@ def counts() -> dict[str, str]:
     out["/cves"] = f"{cves.overview()['total']:,} CVE numbers"
     out["/techniques"] = f"{techniques.overview()['total']:,} techniques"
     out["/threat-levels"] = f"{len(threat_levels.load())} statements"
+    out["/events"] = f"{sum(n for _, n in events.facets()['sources']):,} events"
     out["/actors/attributions"] = f"{len(attributions.load())} statements"
     return out
 
