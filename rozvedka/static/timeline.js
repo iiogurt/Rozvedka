@@ -179,7 +179,9 @@
       const a = instance(l.src, lane), b = instance(l.dst, lane);
       if (!a || !b || !items.get(a) || !items.get(b)) continue;
       const r = REL[l.rel] || REL.caused;
-      arrows.addArrow({ id: `${l.src}>${l.rel}>${l.dst}`, id_item_1: a, id_item_2: b, direction: 1, line: r.line,
+      // straight from the middle of the cause to the middle of the effect, the head always at the effect (the default
+      // curve joins the facing ends and can put the head on the cause when the effect is a bar that starts earlier)
+      arrows.addArrow({ id: `${l.src}>${l.rel}>${l.dst}`, id_item_1: a, id_item_2: b, direction: 1, line: r.line, type: 1,
                         color: css.getPropertyValue(r.color).trim() || "#e69f00",
                         title: `${l.src_label} – ${l.rel} – ${l.dst_label} (${l.stated_by === "hand" ? "written by hand" : "Wikidata " + l.property})` });
     }
