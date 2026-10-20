@@ -2,7 +2,7 @@
 
 The owner asked on 2026-10-19 to extend the country democracy ratings to other ratings, such as security.
 
-**Status:** H3a built in 0.70.0 (`/ratings?group=security|governance`, `/ratings/<country>`, the ratings map); H3b (UCDP conflict deaths per 100,000, EuRepoC cyber incidents, a Cyber group) built in 0.79.0; H3c (INFORM Risk Index via its API, WorldRiskIndex; ND-GAIN not used – bot-protected download) in 0.80.0; H3d open. The owner confirmed on 2026-10-19 that non-commercial and no-derivatives licences are fine for this personal library.
+**Status:** H3a built in 0.70.0 (`/ratings?group=security|governance`, `/ratings/<country>`, the ratings map); H3b (UCDP conflict deaths per 100,000, EuRepoC cyber incidents, a Cyber group) built in 0.79.0; H3c (INFORM Risk Index via its API, WorldRiskIndex; ND-GAIN not used – bot-protected download) in 0.80.0; H3d (RSF World Press Freedom Index since its 2022 method, kept locally; ITU GCI 2024 tiers read from the report's annex; NCSI not used – its terms prohibit reproduction) in 0.81.0. The owner confirmed on 2026-10-19 that non-commercial and no-derivatives licences are fine for this personal library.
 
 ## 1. What exists
 
@@ -28,9 +28,9 @@ one table (`MEASURES`), so a new measure from the same two services is a configu
 | | Global Organized Crime Index | GI-TOC | 2019, 2021, 2023, 2025 | not stated | web and PDF | check the terms first |
 | **Governance** | Rule of Law, Control of Corruption, Government Effectiveness, Regulatory Quality | World Bank WGI (`GOV_WGI_RL/CC/GE/RQ.EST`) | 1996–2025 | CC BY 4.0 | World Bank API | **Yes** – configuration only |
 | | Corruption Perceptions Index | Transparency International (OWID copy for 2012–2024; 2025 from TI) | 2012–2025 | CC BY-ND 4.0 – shown unaltered | OWID / TI results file | **Yes** |
-| **Media** | World Press Freedom Index | RSF | 2002–2025 | not stated on RSF's site; the OWID copy ends in 2021 | RSF yearly files | check the terms first |
-| **Cyber** | National Cyber Security Index | e-Governance Academy (funded by the Estonian foreign ministry) | 2016– | not stated; "all underlying data public", evidence-based | per-country web pages, no bulk download found | check the terms and robots.txt first |
-| | Global Cybersecurity Index 2024 (5 tiers, 194 states) | ITU | 2015–2024 (5 editions) | ITU publication | only in the report PDF | **Yes**, extracted by a tool from the report's annex |
+| **Media** | World Press Freedom Index | RSF | 2022–2026 (the method changed in 2022; earlier scores not comparable) | © RSF – the legal notice asks for written permission to reproduce | RSF yearly CSV files | **Yes, locally only** – shown in this private library with a link to RSF, not redistributed (the ratings file is not in datasets) |
+| **Cyber** | National Cyber Security Index | e-Governance Academy (funded by the Estonian foreign ministry) | 2016– | the site's terms: "reproduction is prohibited other than in accordance with the copyright notice" | per-country web pages, no bulk download | **No** – the terms prohibit reproduction |
+| | Global Cybersecurity Index 2024 (5 tiers, 194 states) | ITU | 2024 (earlier editions ranked by another method) | CC BY-NC-SA 3.0 IGO | only in the report PDF | **Yes** – `fetch-ratings` reads the annex "Tier performance: Global" (pp. 24–25); 194 states, all matched |
 | | Cyber incidents with targets in the state | EuRepoC 1.3 | 2000–2024 | CC BY-NC 4.0 | Zenodo CSV | **Yes** – a count, shared with H1 |
 | **Disaster risk** | INFORM Risk Index | EU JRC | yearly | not stated on the page (Commission reuse policy, normally CC BY 4.0) | JSON API | **Yes** after confirming the licence |
 | | WorldRiskIndex | Bündnis Entwicklung Hilft / IFHV | yearly | CC BY (per HDX) | HDX / weltrisikobericht.de | **Yes** |
@@ -60,5 +60,4 @@ Left out on purpose: Global Firepower (no published method) and the Global Healt
 2. **H3b – conflict and cyber counts:** UCDP deaths and EuRepoC incidents per state (they share the loader with H1a).
    · minor
 3. **H3c – disaster risk:** INFORM, WorldRiskIndex and ND-GAIN, after the licence checks. · minor
-4. **H3d – cyber indices and press freedom:** ITU GCI (extracted from the PDF), NCSI and RSF, after the licence checks.
-   · patch / minor
+4. ✅ **H3d – cyber indices and press freedom:** ITU GCI (extracted from the PDF) and RSF; NCSI not used. · minor

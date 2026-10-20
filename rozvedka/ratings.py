@@ -18,6 +18,11 @@ quality), intentional homicides (UNODC), military expenditure (SIPRI) and the Co
 measure keeps its own scale, source and direction (`better`: which end is the safer or better one; none for military
 spending, which is context, not a grade) – there is no composite score.
 
+Disaster risk (0.80.0): INFORM Risk Index and WorldRiskIndex. Media and cyber (0.81.0, roadmap H3d): RSF's World
+Press Freedom Index since its 2022 method (kept in this library only – RSF's terms ask for permission to reproduce) and
+the ITU Global Cybersecurity Index 2024 tiers, read from the annex of the report's PDF. The National Cyber Security
+Index is not used: its terms prohibit reproduction.
+
 `fetch-ratings` stores everything in data/ratings/ratings.json with the retrieval date and each source's citation."""
 import csv
 import datetime as dt
@@ -132,7 +137,24 @@ MEASURES = {
                    "home": "https://weltrisikobericht.de/en/",
                    "about": "Disaster risk from extreme natural events: exposure combined with vulnerability (susceptibility, "
                             "lack of coping and of adaptive capacity); higher = more risk. The colour scale saturates at 40."},
+    # ── media ──
+    "rsf": {"group": "media", "better": "high", "name": "World Press Freedom Index", "by": "Reporters Without Borders (RSF)",
+            "short": "RSF", "scale": (0, 100), "fmt": "{:.1f}", "topic": "disinformation", "rsf": True,
+            "license": "© RSF – kept in this library only, not redistributed (RSF's terms ask for permission to reproduce)",
+            "home": "https://rsf.org/en/index",
+            "about": "Press freedom from political, economic, legal, social and safety indicators; 0–100, higher = freer. "
+                     "Only the editions since 2022: RSF changed its method then and earlier scores are not comparable. "
+                     "The year is the edition's (the 2026 index describes 2025)."},
     # ── cyber ──
+    "gci_tier": {"group": "cyber", "better": "low", "name": "Global Cybersecurity Index tier", "by": "ITU",
+                 "short": "GCI tier", "scale": (1, 5), "fmt": "T{:.0f}", "topic": "state-cyber",
+                 "gci": "https://www.itu.int/dms_pub/itu-d/opb/hdb/D-HDB-GCI.01-2024-PDF-E.pdf",
+                 "license": "CC BY-NC-SA 3.0 IGO", "home": "https://www.itu.int/en/ITU-D/Cybersecurity/Pages/global-cybersecurity-index.aspx",
+                 "about": "The state's legal, technical, organisational, capacity-building and cooperation measures for "
+                          "cybersecurity, as the state reported and ITU checked them; five tiers – T1 role-modelling "
+                          "(score 95–100), T2 advancing (85–95), T3 establishing (55–85), T4 evolving (20–55), "
+                          "T5 building (0–20). One edition (GCI 2024, 5th) – earlier editions ranked by another method. "
+                          "Read from the report's annex (pp. 24–25); Taiwan is not covered (ITU covers UN members)."},
     "cyber_incidents": {"group": "cyber", "better": None, "name": "Cyber incidents reported against the state", "by": "EuRepoC",
                         "short": "Cyber incidents", "scale": (0, 60), "fmt": "{:.0f}", "topic": "state-cyber", "derived": "eurepoc",
                         "license": "CC BY-NC 4.0", "home": "https://eurepoc.eu/",
@@ -144,7 +166,8 @@ MEASURES = {
 GROUPS = {"democracy": ("Democracy", "how free and democratic the state is"),
           "security": ("Security", "political violence and terrorism, homicides, military spending"),
           "governance": ("Governance", "rule of law, corruption, effectiveness and regulation"),
-          "cyber": ("Cyber", "cyber incidents reported against the state"),
+          "media": ("Media", "press freedom"),
+          "cyber": ("Cyber", "cybersecurity commitment and cyber incidents reported against the state"),
           "disaster": ("Disaster risk", "risk of disasters and humanitarian crises")}
 
 
@@ -161,16 +184,98 @@ def _get(url: str, attempts: int = 3) -> bytes:
             with urllib.request.urlopen(req, timeout=120) as r:
                 return r.read()
         except (OSError, urllib.error.URLError) as e:
-            if attempt + 1 == attempts:
+            if attempt + 1 == attempts or (isinstance(e, urllib.error.HTTPError) and e.code < 500):   # an answer, not a dropped line
                 raise
             log.warning("retry %s: %s", url[:90], e)
             time.sleep(10 * (attempt + 1))
 
 
+@lru_cache(maxsize=1)
+def _wb_countries() -> tuple:
+    return tuple(json.loads(_get(f"{WB_API}/country?format=json&per_page=400"))[1])
+
+
 def _iso3_map() -> dict[str, str]:
     """ISO 3166 alpha-2 → alpha-3 from the World Bank's official country list (Taiwan, absent there, by name)."""
-    data = json.loads(_get(f"{WB_API}/country?format=json&per_page=400"))
-    return {c["iso2Code"]: c["id"] for c in data[1] if c.get("iso2Code")}
+    return {c["iso2Code"]: c["id"] for c in _wb_countries() if c.get("iso2Code")}
+
+
+def _norm(name: str) -> str:
+    import unicodedata
+    name = unicodedata.normalize("NFKD", name.replace("’", "'")).encode("ascii", "ignore").decode().lower()
+    return re.sub(r"[^a-z]+", " ", name).strip()
+
+
+# the ITU's spellings that neither the World Bank nor Our World in Data use
+ITU_NAMES = {"Korea (Republic of)": "KOR", "Dem. People's Rep. of Korea": "PRK", "Congo (Rep. of the)": "COG",
+             "Dem. Rep. of the Congo": "COD", "Lao P.D.R.": "LAO", "State of Palestine": "PSE", "Dominican Rep.": "DOM",
+             "Central African Rep.": "CAF", "Micronesia": "FSM", "Vatican": "VAT", "Iran (Islamic Republic of)": "IRN",
+             "Bolivia (Plurinational State of)": "BOL", "Russian Federation": "RUS", "Viet Nam": "VNM",
+             "Türkiye": "TUR", "Czech Republic": "CZE", "Netherlands (Kingdom of the)": "NLD", "Nepal (Republic of)": "NPL"}
+GCI_TIERS = {"Role-modelling": 1, "Advancing": 2, "Establishing": 3, "Evolving": 4, "Building": 5}
+
+
+def parse_gci_tiers(text: str) -> dict[str, int]:
+    """{country name: tier} from the GCI 2024 annex "Tier performance: Global" (pdftotext -layout): four columns of
+    names under each tier's heading, a name that does not fit continued on the next line of its column ("Netherlands
+    (Kingdom" / "of the)", "Saint Vincent and" / "the Grenadines")."""
+    head = re.search(r"^Tier performance: Global\s*$", text, re.M)      # the heading, not its line in the contents
+    if not head:
+        raise ValueError("GCI annex not found")
+    start = head.start()
+    end = text.find("Tier Performance:", start + 10)
+    tier, out = None, {}
+    cols: dict[int, list[str]] = {}                   # column start → names in reading order, per tier and page
+
+    def flush():
+        for names in cols.values():
+            for n in names:
+                out[n] = tier
+        cols.clear()
+
+    for line in text[start:end if end > 0 else None].replace("\f", "\n<page>\n").split("\n"):
+        head = re.match(r"\s*Tier (\d) – (\S+)", line)
+        if head:
+            flush()
+            tier = int(head.group(1))
+            if GCI_TIERS.get(head.group(2)) != tier:
+                raise ValueError(f"unexpected tier heading: {line.strip()}")
+            continue
+        if line == "<page>":
+            flush()                                    # a new page lays its columns out anew
+            continue
+        if tier is None or not line.strip() or re.fullmatch(r"\s*(\d+|\(continued\)|Global Cybersecurity Index 2024)\s*", line):
+            continue
+        for m in re.finditer(r"\S+(?: \S+)*", line):
+            col = next((c for c in cols if abs(c - m.start()) <= 3), m.start())
+            names = cols.setdefault(col, [])
+            cell = m.group()
+            prev = names[-1] if names else ""
+            if prev and (prev.count("(") > prev.count(")") or re.search(r" (of|and)$", prev) or cell[0].islower()):
+                names[-1] = f"{prev} {cell}"
+            else:
+                names.append(cell)
+    flush()
+    return out
+
+
+def parse_rsf(raw: bytes) -> tuple[int | None, dict[str, float]]:
+    """(edition year, {ISO3: score}) from one of RSF's yearly index files (semicolons, decimal commas; UTF-8 or
+    Windows-1252, depending on the year)."""
+    try:
+        text = raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        text = raw.decode("cp1252", "replace")
+    rows = list(csv.DictReader(io.StringIO(text), delimiter=";"))
+    if not rows:
+        return None, {}
+    score_col = next(c for c in rows[0] if re.fullmatch(r"Score( \d{4})?", c.strip()))
+    out, year = {}, None
+    for r in rows:
+        if r.get("ISO") and (r.get(score_col) or "").strip():
+            out[r["ISO"].strip()] = float(r[score_col].replace(",", "."))
+            year = year or int(r["Year (N)"])
+    return year, out
 
 
 def fetch(out: Path | None = None) -> dict:
@@ -182,6 +287,50 @@ def fetch(out: Path | None = None) -> dict:
     owid_names: dict[str, str] = {}
     for key, m in MEASURES.items():
         if m.get("derived"):        # from the library's own event data (events.py), after the downloads
+            continue
+        if m.get("gci"):             # tiers read from the report's annex: names → alpha-3 by the official country lists
+            import subprocess
+            import tempfile
+            with tempfile.NamedTemporaryFile(suffix=".pdf") as f:
+                f.write(_get(m["gci"]))
+                f.flush()
+                text = subprocess.run(["pdftotext", "-q", "-layout", "-enc", "UTF-8", f.name, "-"],
+                                      capture_output=True, timeout=300).stdout.decode("utf-8", "replace")
+            lookup = {_norm(c["name"]): c["id"] for c in _wb_countries()}
+            lookup.update({_norm(k): v for k, v in owid_names.items()})
+            lookup.update({_norm(k): v for k, v in ITU_NAMES.items()})
+            tiers, unmatched = parse_gci_tiers(text), []
+            for name, t in tiers.items():
+                a3 = lookup.get(_norm(name)) or lookup.get(_norm(re.sub(r"\(.*?\)", "", name)))
+                if a3:
+                    store["values"].setdefault(a3, {}).setdefault(key, {})["2024"] = float(t)
+                else:
+                    unmatched.append(name)
+            if unmatched:
+                log.warning("GCI names without a country code: %s", unmatched)
+            store["measures"][key] = {"source": m["gci"], "unmatched": unmatched,
+                                      "citation": "ITU, Global Cybersecurity Index 2024, 5th edition – annex "
+                                                  "'Tier performance: Global', pp. 24–25",
+                                      "retrieved": today, "rows": len(tiers) - len(unmatched)}
+            continue
+        if m.get("rsf"):             # one file per edition, since the 2022 method
+            import time
+            n, editions = 0, []
+            for y in range(2022, dt.date.today().year + 1):
+                time.sleep(2)
+                try:
+                    year, scores = parse_rsf(_get(f"https://rsf.org/sites/default/files/import_classement/{y}.csv"))
+                except urllib.error.HTTPError as e:
+                    if e.code == 404:        # this year's edition not out yet
+                        continue
+                    raise
+                for a3, v in scores.items():
+                    store["values"].setdefault(a3, {}).setdefault(key, {})[str(year or y)] = v
+                    n += 1
+                editions.append(year or y)
+            store["measures"][key] = {"source": "https://rsf.org/en/index",
+                                      "citation": f"Reporters Without Borders, World Press Freedom Index {min(editions)}–{max(editions)} (RSF's yearly data files)",
+                                      "retrieved": today, "rows": n}
             continue
         if m.get("inform"):          # the INFORM API: the release's countries, then each country's trend (every year alike)
             import time
@@ -372,6 +521,10 @@ def source_url(country: str, key: str) -> str:
         return "https://drmkc.jrc.ec.europa.eu/inform-index/INFORM-Risk/Results-and-data"
     if m.get("csv"):
         return "https://data.humdata.org/dataset/worldriskindex"
+    if m.get("gci"):
+        return m["gci"] + "#page=34"
+    if m.get("rsf"):
+        return "https://rsf.org/en/index"
     if m.get("derived") == "eurepoc":
         return f"/events?source=eurepoc&country={country}"
     if m.get("derived") == "ucdp":

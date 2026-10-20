@@ -175,3 +175,90 @@ def test_disaster_risk_measures_are_read(tmp_path, monkeypatch):
     assert store["values"]["JPN"]["world_risk"] == {"2023": 9.5}                     # NA left out
     assert any("Trends" in c and "iso3=DEU" in c for c in calls) and ratings.MEASURES["inform_risk"]["better"] == "low"
     ratings.load.cache_clear()
+
+
+GCI_ANNEX = """Contents
+        Tier performance: Global .......................... 24
+        Tier Performance: Africa .......................... 26
+\fAnnexes
+
+Tier performance: Global
+
+Tier 1 – Role-modelling (score of 95–100)
+
+Australia            Ghana                         Netherlands (Kingdom   Singapore
+
+Bahrain              Greece                        of the)                Slovenia
+
+Tier 2 – Advancing (score of 85–95)
+
+Albania              Ecuador                       Mexico                 Switzerland
+
+                                                  24
+\f                                    Global Cybersecurity Index 2024
+
+(continued)
+Cameroon                 Jamaica                      Saint Vincent and       Ukraine
+
+Chile                    Kiribati                     the Grenadines
+
+Tier 5 – Building (score of 0–20)
+
+Afghanistan              Dem. People’s Rep. of        Maldives
+
+Burundi                  Korea                        Vatican
+\f
+Tier Performance: Africa
+T5                T4                 T3                  T2             T1
+Burundi           Angola             Botswana            Benin          Ghana
+"""
+
+
+def test_gci_tiers_are_read_from_the_annex():
+    t = ratings.parse_gci_tiers(GCI_ANNEX)
+    assert t["Netherlands (Kingdom of the)"] == 1 and t["Slovenia"] == 1 and t["Bahrain"] == 1   # a name over two lines
+    assert t["Switzerland"] == 2 and t["Ukraine"] == 2 and t["Saint Vincent and the Grenadines"] == 2   # the next page
+    assert t["Dem. People’s Rep. of Korea"] == 5 and t["Vatican"] == 5
+    assert "Angola" not in t and len(t) == 22                                    # regional tables are not read
+    assert ratings._norm("Türkiye") == "turkiye" and ratings.ITU_NAMES["Korea (Republic of)"] == "KOR"
+
+
+def test_rsf_files_are_read():
+    new = "ISO;Score 2026;Rank;Country_EN;Country_PT;Year (N)\r\nFIN;86,22;6;Finland;Finlândia;2026\r\nERI;;180;Eritrea;Eritreia;2026\r\n"
+    assert ratings.parse_rsf(new.encode("cp1252")) == (2026, {"FIN": 86.22})      # Windows-1252, empty score left out
+    old = "﻿ISO;Score;Rank;Country_EN;Year (N)\r\nNOR;92,65;1;Norway;2022\r\n"
+    assert ratings.parse_rsf(old.encode("utf-8")) == (2022, {"NOR": 92.65})
+
+
+def test_gci_and_rsf_are_fetched(tmp_path, monkeypatch):
+    import urllib.error
+    calls = []
+
+    def fake_get(url, attempts=3):
+        calls.append(url)
+        if url.endswith(".pdf"):
+            return b"%PDF"
+        if "import_classement/2022" in url:
+            return "ISO;Score;Year (N)\nDEU;82,0;2022\n".encode()
+        if "import_classement" in url:
+            raise urllib.error.HTTPError(url, 404, "not found", {}, None)
+        if "/country?" in url:
+            return json.dumps([{}, [{"id": "DEU", "iso2Code": "DE", "name": "Germany"}]]).encode()
+        return json.dumps([{}, []]).encode()
+    monkeypatch.setattr(ratings, "_get", fake_get)
+    ratings._wb_countries.cache_clear()
+    monkeypatch.setattr(ratings, "MEASURES", {k: ratings.MEASURES[k] for k in ("gci_tier", "rsf")})
+    monkeypatch.setattr(ratings, "event_measures", lambda store, today: {})
+    monkeypatch.setattr(ratings.countries, "names", lambda: {"DE": "Germany"})
+    import subprocess
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(a, 0, (
+        "Tier performance: Global\n\nTier 1 – Role-modelling (score of 95–100)\n\nGermany     Atlantis\n").encode(), b""))
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    out = tmp_path / "r.json"
+    ratings.fetch(out)
+    store = json.loads(out.read_text())
+    ratings._wb_countries.cache_clear()
+    ratings.load.cache_clear()
+    assert store["values"]["DEU"]["gci_tier"] == {"2024": 1.0} and store["measures"]["gci_tier"]["unmatched"] == ["Atlantis"]
+    assert store["values"]["DEU"]["rsf"] == {"2022": 82.0} and "2022–2022" in store["measures"]["rsf"]["citation"]
+    assert ratings.MEASURES["gci_tier"]["fmt"].format(1.0) == "T1" and store["iso3"] == {"DE": "DEU"}
