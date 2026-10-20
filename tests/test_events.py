@@ -285,3 +285,18 @@ def test_reports_naming_an_event(library):
     with db.session() as con:
         st = ties._from_events(g, con)
     assert st["actor_ties"] == 1 and ("event:Q70", "Q2", "perpetrator", "events") in g.ties
+
+
+def test_timeline_shows_what_books_say(library):
+    from rozvedka import books, meanings
+    meanings.init()
+    with db.session() as con:
+        con.execute("INSERT INTO sources(id,key,country,agency,type,publisher,active) VALUES(9,'BOOK/X','OTHER','X','book','book',1)")
+        con.execute("INSERT INTO documents(id,source_id,url,title,status,doc_type) VALUES(90,9,'book:x','The Shadow War','downloaded','book')")
+        con.execute("INSERT INTO books(doc_id,file,format,title,year) VALUES(90,'b.pdf','pdf','The Shadow War',2021)")
+        for start, date, prec in ((10, "2015-12-23", "day"), (20, "2016-01", "month"), (30, "2017", "year")):
+            con.execute("INSERT INTO book_statements VALUES(90,?,12,?,?,?,?)", (start, date, prec, f"Sandworm did something ({date}).", '["Q2"]'))
+    items = [i for i in events.timeline([("actor", "Q2")])["items"] if i["source"] == "book"]
+    assert [i["start"] for i in items] == ["2015-12-23", "2016-01"]                 # a year alone is not drawn
+    assert items[0]["by"] == "The Shadow War (2021), p. 12" and items[0]["url"] == "/doc/90#page=12"
+    assert items[0]["rank"] > items[1]["rank"]                                     # a day is shown before a month

@@ -224,7 +224,7 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
    (CC BY 4.0), EuRepoC cyber incidents (CC BY-NC 4.0), the library's own dated records. Joined to reports by event names
    in the gazetteer (counted) and by actors within a time window (context, not counted); events become a network layer.
    Library: vis-timeline + timeline-arrows (vendored), ECharts as the fallback. Replaces F7. Steps H1a–H1d. · 4 × minor
-2. ◐ (0.75.0: H2a – `import-books`, `/books`, metadata from books.yaml / Open Library / the file; 0.76.0: H2b – chapters, printed pages, the book's index; 0.77.0: H2c – terms, key sentences, dated statements, relations) **Local book library** ([what it would take](BOOKS.md)) – about 100 PDFs (EPUB cheaper) in `data/books/`, never committed:
+2. ✅ (0.75.0: H2a – `import-books`, `/books`, metadata from books.yaml / Open Library / the file; 0.76.0: H2b – chapters, printed pages, the book's index; 0.77.0: H2c – terms, key sentences, dated statements, relations; 0.78.0: H2d – books on the timeline) **Local book library** ([what it would take](BOOKS.md)) – about 100 PDFs (EPUB cheaper) in `data/books/`, never committed:
    metadata by ISBN (Open Library, Wikidata), authors and publishers as subjects, chapters, printed page numbers, the
    book's own index; actors, topics and search as for reports, a fourth kind "book" marked apart. Meanings without a
    language model: distinctive terms, key sentences quoted with page, dated statements (→ timeline), stated relations

@@ -108,7 +108,7 @@ Decide by measuring with the real data in step H1b.
 3. **H1c – chains.** Typed arrows, chain highlight, "part of" spans, hand-written relations in `events.yaml`. · minor
 4. **H1d – joined to reports and subjects.** Event names in the gazetteer with a precision sample, context reports, the
    "events" network layer, events on actor, country and topic pages. · minor
-5. Later: dated statements from the book library (see [BOOKS.md](BOOKS.md)), drawn as "according to <book>, p. n".
+5. ✅ (0.78.0) Dated statements from the book library (see [BOOKS.md](BOOKS.md)), drawn as "a book says" with the book and page.
 
 ## 7. Reports naming an event – as built (0.74.0) and measured
 

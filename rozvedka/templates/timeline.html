@@ -17,7 +17,7 @@
     <span class="tl-tools">
       <span class="tl-key small" aria-label="Sources">
         <span><i class="tl-dot src-wikidata"></i>Wikidata</span><span><i class="tl-dot src-eurepoc"></i>EuRepoC cyber incident</span>
-        <span><i class="tl-dot src-ucdp"></i>UCDP organised violence</span><span><i class="tl-dot src-library"></i>library record</span>
+        <span><i class="tl-dot src-ucdp"></i>UCDP organised violence</span><span><i class="tl-dot src-library"></i>library record</span><span><i class="tl-dot src-book"></i>a book says</span>
         <span><i class="tl-heat"></i>UCDP deaths per month</span>
       </span>
       <button type="button" id="tl-fit" title="Show the whole period (0)">Fit</button>
@@ -40,6 +40,8 @@
         ({{ m.license }}, retrieved {{ m.retrieved }}){{ ', ' if not loop.last }}{% endfor %} – the list is on <a href="/events">Events</a>.</li>
       <li>Library records: the actor's sanctions listings, terrorist designations, official attributions and the state's threat-level
         changes, each with its source. The thin row under a lane counts the library's reports naming the subject per year – each year opens that list.</li>
+      <li>A book says (▲): a sentence of a book of the local library that names the lane's actor and a day or a month – the book's statement as of
+        its publication, quoted with its page; not an event of the sources (<a href="/books">Books</a>).</li>
       <li>The shaded background of a state's lane: deaths in organised violence per month (UCDP; the newest months are preliminary).</li>
       <li>Chains: clicking an event draws the relations that a source states – Wikidata's has cause / has effect, immediate cause, follows /
         followed by, and relations written by hand with their evidence (<code>sources/events.yaml</code>, <code>relations</code>) – up to three
