@@ -230,7 +230,7 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
    language model: distinctive terms, key sentences quoted with page, dated statements (→ timeline), stated relations
    with the sentence as evidence. About +20 % of the indexed words; OCR is the slow part if the books are scans.
    Steps H2a–H2d. · 4 × minor
-3. ◐ (0.70.0: H3a – five WGI dimensions, homicides, military spending, CPI, a page per state, the ratings map; 0.79.0: H3b – UCDP conflict deaths, EuRepoC cyber incidents) **Country ratings beyond democracy** ([design](COUNTRY_RATINGS.md)) – groups Security (WGI political stability,
+3. ◐ (0.70.0: H3a – five WGI dimensions, homicides, military spending, CPI, a page per state, the ratings map; 0.79.0: H3b – UCDP conflict deaths, EuRepoC cyber incidents; 0.80.0: H3c – INFORM, WorldRiskIndex) **Country ratings beyond democracy** ([design](COUNTRY_RATINGS.md)) – groups Security (WGI political stability,
    UNODC homicides, UCDP conflict deaths, SIPRI military spending, threat levels), Governance (WGI rule of law,
    corruption, effectiveness, regulatory quality; TI CPI), Media (RSF), Cyber (ITU GCI, NCSI, EuRepoC incidents) and
    Disaster risk (INFORM, WorldRiskIndex, ND-GAIN); small multiples per country, a measure switch on the map, no

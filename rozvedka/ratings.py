@@ -24,6 +24,8 @@ import datetime as dt
 import io
 import json
 import logging
+import re
+import urllib.error
 import urllib.parse
 import urllib.request
 from functools import lru_cache
@@ -114,6 +116,22 @@ MEASURES = {
             "license": "CC BY-ND 4.0 (shown unaltered)", "home": "https://www.transparency.org/en/cpi",
             "about": "Perceived corruption in the public sector, from 13 expert and business surveys; "
                      "0 = highly corrupt, 100 = very clean."},
+    # ── disaster risk ──
+    "inform_risk": {"group": "disaster", "better": "low", "name": "INFORM Risk Index", "by": "EU JRC (INFORM)", "short": "INFORM",
+                    "scale": (0, 10), "fmt": "{:.1f}", "topic": "crisis-management", "inform": "INFORM2026",
+                    "license": "European Commission data – reuse with acknowledgement (Commission Decision 2011/833/EU)",
+                    "home": "https://drmkc.jrc.ec.europa.eu/inform-index",
+                    "about": "Risk of humanitarian crises and disasters that would overwhelm national capacity: hazard and "
+                             "exposure, vulnerability, lack of coping capacity; 0–10, higher = more risk. One release "
+                             "(INFORM Risk 2026) with every year recomputed by the same method, from the INFORM API; "
+                             "the year shown is the year of the data (INFORM Risk 2026 = data of 2025)."},
+    "world_risk": {"group": "disaster", "better": "low", "name": "WorldRiskIndex", "by": "Bündnis Entwicklung Hilft / IFHV",
+                   "short": "WorldRiskIndex", "scale": (0, 40), "fmt": "{:.1f}", "topic": "floods-storms",
+                   "csv": "https://data.humdata.org/dataset/1efb6ee7-051a-440f-a2cf-e652fecccf73/resource/3a2320fa-41b4-4dda-a847-3f397d865378/download/worldriskindex-trend.csv",
+                   "csv_cols": ("ISO3.Code", "Year", "W"), "license": "CC BY (Humanitarian Data Exchange)",
+                   "home": "https://weltrisikobericht.de/en/",
+                   "about": "Disaster risk from extreme natural events: exposure combined with vulnerability (susceptibility, "
+                            "lack of coping and of adaptive capacity); higher = more risk. The colour scale saturates at 40."},
     # ── cyber ──
     "cyber_incidents": {"group": "cyber", "better": None, "name": "Cyber incidents reported against the state", "by": "EuRepoC",
                         "short": "Cyber incidents", "scale": (0, 60), "fmt": "{:.0f}", "topic": "state-cyber", "derived": "eurepoc",
@@ -126,17 +144,27 @@ MEASURES = {
 GROUPS = {"democracy": ("Democracy", "how free and democratic the state is"),
           "security": ("Security", "political violence and terrorism, homicides, military spending"),
           "governance": ("Governance", "rule of law, corruption, effectiveness and regulation"),
-          "cyber": ("Cyber", "cyber incidents reported against the state")}
+          "cyber": ("Cyber", "cyber incidents reported against the state"),
+          "disaster": ("Disaster risk", "risk of disasters and humanitarian crises")}
 
 
 def of_group(group: str) -> dict[str, dict]:
     return {k: m for k, m in MEASURES.items() if m["group"] == group}
 
 
-def _get(url: str) -> bytes:
+def _get(url: str, attempts: int = 3) -> bytes:
+    """A download, tried again after a dropped connection or a timeout (10 s, then 20 s)."""
+    import time
     req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=120) as r:
-        return r.read()
+    for attempt in range(attempts):
+        try:
+            with urllib.request.urlopen(req, timeout=120) as r:
+                return r.read()
+        except (OSError, urllib.error.URLError) as e:
+            if attempt + 1 == attempts:
+                raise
+            log.warning("retry %s: %s", url[:90], e)
+            time.sleep(10 * (attempt + 1))
 
 
 def _iso3_map() -> dict[str, str]:
@@ -154,6 +182,37 @@ def fetch(out: Path | None = None) -> dict:
     owid_names: dict[str, str] = {}
     for key, m in MEASURES.items():
         if m.get("derived"):        # from the library's own event data (events.py), after the downloads
+            continue
+        if m.get("inform"):          # the INFORM API: the release's countries, then each country's trend (every year alike)
+            import time
+            api = "https://drmkc.jrc.ec.europa.eu/inform-index/API/InformAPI"
+            flows = json.loads(_get(f"{api}/workflows/GetByWorkflowGroup/{m['inform']}"))
+            latest = max((w for w in flows if " - " not in (w.get("Name") or "")), key=lambda w: w["WorkflowId"])
+            n = 0
+            for c in json.loads(_get(f"{api}/Countries/Scores/?WorkflowId={latest['WorkflowId']}&IndicatorId=INFORM")):
+                if not c.get("Iso3"):
+                    continue
+                time.sleep(1)                # politely: one request per country
+                for r in json.loads(_get(f"{api}/Countries/Trends/?workflowid={latest['WorkflowId']}&iso3={c['Iso3']}&indicatorid=INFORM")):
+                    # (the answer also holds the sub-indices – hazard, vulnerability, coping capacity – of each year)
+                    if r.get("IndicatorId") == "INFORM" and r.get("IndicatorScore") is not None and r.get("GNAYear"):
+                        # the year of the data: INFORM Risk 2026 holds the data of 2025
+                        store["values"].setdefault(c["Iso3"], {}).setdefault(key, {})[str(r["GNAYear"])] = float(r["IndicatorScore"])
+                        n += 1
+            store["measures"][key] = {"source": "https://drmkc.jrc.ec.europa.eu/inform-index/INFORM-Risk/Results-and-data",
+                                      "citation": f"{latest['Name']} (INFORM API, every year recomputed alike), European Commission Joint Research Centre",
+                                      "retrieved": today, "rows": n}
+            continue
+        if m.get("csv"):             # a CSV file: ISO3 code, year, value
+            iso_c, year_c, val_c = m["csv_cols"]
+            n = 0
+            for r in csv.DictReader(io.StringIO(_get(m["csv"]).decode("utf-8-sig"))):
+                if r.get(iso_c) and r.get(year_c) and r.get(val_c) not in (None, "", "NA"):
+                    store["values"].setdefault(r[iso_c], {}).setdefault(key, {})[str(int(float(r[year_c])))] = float(r[val_c])
+                    n += 1
+            store["measures"][key] = {"source": "https://data.humdata.org/dataset/worldriskindex",
+                                      "citation": "WorldRiskReport / WorldRiskIndex trend data, Bündnis Entwicklung Hilft and IFHV",
+                                      "retrieved": today, "rows": n}
             continue
         if "slug" in m:
             url = OWID.format(slug=m["slug"]) + ".csv?v=1&csvType=full&useColumnShortNames=true"
@@ -309,6 +368,10 @@ def source_url(country: str, key: str) -> str:
     """Where a reader checks the value: the chart for that country, or the World Bank indicator page."""
     m = MEASURES[key]
     a3 = load()["iso3"].get(country, "")
+    if m.get("inform"):
+        return "https://drmkc.jrc.ec.europa.eu/inform-index/INFORM-Risk/Results-and-data"
+    if m.get("csv"):
+        return "https://data.humdata.org/dataset/worldriskindex"
     if m.get("derived") == "eurepoc":
         return f"/events?source=eurepoc&country={country}"
     if m.get("derived") == "ucdp":

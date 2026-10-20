@@ -250,7 +250,8 @@ Effectiveness* and *Regulatory Quality*, and Transparency International's **Corr
 shows the state's course since 1990 on the measure's own scale, its latest value and year and its place among the
 library's states, and says which end is better. Nothing is combined into a score. From the library's own event data
 come UCDP **deaths in organised violence** per 100,000 (security) and EuRepoC **cyber incidents** reported against each
-state (a *Cyber* group; each count opens those incidents).
+state (a *Cyber* group; each count opens those incidents). *Disaster risk*: the EU JRC's **INFORM Risk Index** (one release with
+every year recomputed alike) and the **WorldRiskIndex**.
 
 <img src="docs/images/ratings-country.png" alt="Germany's ratings: one small chart per measure with the latest value, its place among the states, the source and the official reports on the matching topic" width="900">
 
@@ -1198,7 +1199,7 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | Cyber incidents | [EuRepoC Global Dataset of Cyber Incidents](https://zenodo.org/records/14965395) | CC BY-NC 4.0 |
 | Book metadata | [Open Library](https://openlibrary.org/developers/api) by ISBN | catalogue data CC0; the books themselves stay on this machine |
 | Organised violence | [UCDP Georeferenced Event Dataset and Candidate Events](https://ucdp.uu.se/downloads/) | CC BY 4.0 |
-| Country ratings | V-Dem, Freedom House, World Bank WGI, UNODC, SIPRI, Transparency International (via [Our World in Data](https://ourworldindata.org) and the World Bank API) | each measure's licence is shown with it on `/ratings` |
+| Country ratings | V-Dem, Freedom House, World Bank WGI, UNODC, SIPRI, Transparency International (via [Our World in Data](https://ourworldindata.org) and the World Bank API), [INFORM](https://drmkc.jrc.ec.europa.eu/inform-index) (EU JRC), [WorldRiskIndex](https://data.humdata.org/dataset/worldriskindex) | each measure's licence is shown with it on `/ratings` |
 | Sanctions lists | EU (FPI), UK (FCDO), UN Security Council, US Treasury (OFAC) – official XML files | public official data |
 | Wanted notices | [FBI Wanted API](https://api.fbi.gov/wanted/v1/list), [Europe's Most Wanted](https://eumostwanted.eu/) (ENFAST, supported by Europol) – text, names, dates of birth and charges only, no photographs (`data/gazetteer/wanted.json`, not committed) | public official notices, linked on each page |
 | Event dates | Wikidata via `tools/build_events.py` | CC0 |
