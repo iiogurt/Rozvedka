@@ -373,6 +373,10 @@ column; <i>over-emphasis</i> shows how much more or less often a row carries a t
   file itself, each field with its origin (`import-books`). A book's page lists its chapters (bookmarks, EPUB table of
   contents or the printed contents page) with the actors named most in each, and its own index from the back, headwords
   linked to actors; passages are cited by the page number printed in the book (`index-books`).
+  *What it says*, read from its text: each chapter's distinctive terms and three key sentences quoted with their page, every
+  dated statement naming an actor (`/books/<id>/statements`), and – with the optional spaCy parser (`pip install -r
+  requirements-books.txt`) – the relations its sentences state between actors, each with its sentence
+  (`/books/<id>/relations`).
 
 - **Timeline** (`/timeline`) – states and actors as lanes on one time axis: their events (Wikidata, EuRepoC, UCDP) and the library's
   dated records (sanctions listings, designations, official attributions, threat-level changes), UCDP's deaths per month as the lane's

@@ -1468,3 +1468,4 @@ body.tl-page main { max-width: none; padding-bottom: 12px; }
 .bk-meta { font-size: var(--fs-xs); color: var(--muted); }
 .bk-index { columns: 3 260px; column-gap: var(--s5); }
 .bk-index > div { break-inside: avoid; margin-bottom: 2px; }
+.bk-quote { margin: 0 0 var(--s2); padding-left: var(--s2); border-left: 2px solid var(--line); }

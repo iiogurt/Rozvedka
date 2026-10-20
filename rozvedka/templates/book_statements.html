@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}Dated statements · {{ b.title }} · Books · Rozvedka{% endblock %}
+{% block main %}
+<p class="small"><a href="/report/{{ b.doc_id }}">← {{ b.title }}</a> · <a href="/books">all books</a></p>
+<h1 class="page-h">Dated statements <span class="pub-book">book</span></h1>
+<p class="lede">{{ pg.total|num }} sentences of <i>{{ b.title }}</i>{% if b.year %} ({{ b.year }}){% endif %} that name an actor and a date – by date.</p>
+<p class="muted small">A sentence counts when the actor index finds an actor in it and it names a day ("12 March 2014"), a month ("March 2014")
+  or a year; the date it names first is kept ("In 2022, … by June 2024" is dated 2022). Source citations, tables and figure captions are left
+  out. The sentence is quoted as the book writes it – the book's statement as of its publication,
+  not a fact checked here.{% if f.actor %} Only those naming <a href="/actors/{{ f.actor }}">this actor</a> – <a href="/books/{{ b.doc_id }}/statements">all</a>.{% endif %}</p>
+{{ pager(pg, "statements") }}
+<table class="pc-table small">
+  <thead><tr><th>Date</th><th>The book says</th><th>Actors</th><th>Page</th></tr></thead>
+  {% for r in rows %}<tr><td class="ev-date">{{ r.date }}<div class="muted">{{ r.precision }}</div></td>
+    <td>{{ r.sentence }}</td>
+    <td>{% for k, label in r.actors %}<a class="topic-chip" href="/books/{{ b.doc_id }}/statements?actor={{ k }}" title="only the statements naming {{ label }}">{{ label }}</a> {% endfor %}</td>
+    <td class="ev-date"><a href="/doc/{{ b.doc_id }}#page={{ r.page }}" target="_blank">{{ page_name(b.doc_id, r.page) }}</a></td></tr>{% endfor %}
+</table>
+{{ pager(pg, "statements") }}
+{% endblock %}

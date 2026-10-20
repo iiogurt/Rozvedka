@@ -1,7 +1,17 @@
 # A local library of books: what it would take (roadmap H2)
 
 **Status:** H2a (import, metadata with its origin, search, topics and actors, the book kind) built in 0.75.0; H2b (chapters,
-printed page numbers, the book's own index) in 0.76.0; H2c–H2d open.
+printed page numbers, the book's own index) in 0.76.0; H2c (distinctive terms, key sentences, dated statements, stated
+relations with spaCy) in 0.77.0; H2d open.
+
+**H2c as built and measured (0.77.0)** on three test texts (*On War*, the CCDCOE's case-law book, and the USCC's
+793-page 2024 report imported as a stand-in book):
+- dated statements: 30 of 30 random ones are statements of the text that name an actor and a date. The rules that got
+  there: source citations, tables, figure captions and contents pages left out; endnote numbers glued to a full stop
+  split; the first date a sentence names kept.
+- stated relations (spaCy en_core_web_sm): strict – only a verb's own subject and object; 2 found, both correct. Report
+  text rarely says "X did Y to Z" in one clause; history and journalism should more often. Measure precision on the
+  owner's books when they are in.
 
 The owner asked on 2026-10-19: how hard would it be to add a local library of about 100 e-books (PDF) of journalism and
 history, linked into the database? It should extract not only keywords but also basic meanings.

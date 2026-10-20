@@ -27,6 +27,26 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.77.0] – 2026-10-20
+
+### Added
+- **What a book says** (roadmap H2c), read from its text and never written anew – on the book's page and two pages of
+  their own:
+  - **Distinctive terms** per chapter (or block of 25 pages): the words it uses far more than the library's other
+    documents (tf–idf against the full-text index).
+  - **Key sentences** per chapter: the three most central (TextRank on the words sentences share), quoted with their
+    printed page and the distinctive terms they hold ("why").
+  - **Dated statements** (`/books/<id>/statements`): every sentence that names an actor and a day, month or year,
+    dated by the date it names first, filterable by actor. Source citations, tables, figure captions and contents
+    pages are left out, and endnote numbers glued to a full stop no longer join two sentences. Measured on a 793-page
+    report: 30 of 30 random statements are statements of the text with an actor and its date.
+  - **Stated relations** (`/books/<id>/relations`), optional with spaCy (`requirements-books.txt`): two actors joined
+    by a verb from a published list – the verb's own subject and its direct object (or the "by …" of a passive, the
+    object of "against"). Demonyms and possessors do not stand for a country. A negated verb ("cannot attack") is
+    kept and marked, and every relation shows its sentence. They are rare and strict by design: on the three test texts
+    2 relations, both correct ("Russia invaded Ukraine").
+  - `index-books` builds it all; `import-books` runs it too.
+
 ## [0.76.0] – 2026-10-20
 
 ### Added
@@ -1489,7 +1509,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.76.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.77.0...HEAD
+[0.77.0]: https://github.com/iiogurt/Rozvedka/compare/v0.76.0...v0.77.0
 [0.76.0]: https://github.com/iiogurt/Rozvedka/compare/v0.75.1...v0.76.0
 [0.75.1]: https://github.com/iiogurt/Rozvedka/compare/v0.75.0...v0.75.1
 [0.75.0]: https://github.com/iiogurt/Rozvedka/compare/v0.74.0...v0.75.0

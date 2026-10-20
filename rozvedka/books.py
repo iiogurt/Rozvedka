@@ -353,6 +353,8 @@ def import_books(folder: Path | None = None, lookup: bool = True, index: bool = 
         if (DATA / "gazetteer").exists():
             stats["index-actors"] = actors.index()
         stats["structure"] = structure()
+        from . import meanings
+        stats["meanings"] = meanings.build()
     log.info("books: %s", {k: v if not isinstance(v, list) else len(v) for k, v in stats.items()})
     return stats
 
