@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.76.0] – 2026-10-20
+
+### Added
+- **The structure of a book** (roadmap H2b), on its page in the library:
+  - **Chapters**, from the PDF's bookmarks, the EPUB's table of contents (EPUB 3 or 2), or else a printed table of
+    contents ("Title …… 123"), each with the actors named most in it.
+  - **Printed page numbers:** a PDF's page labels ("i", "ii", "1" …), so every passage of a book is cited by the page
+    as printed ("p. 123"); an EPUB is cited by section.
+  - **The book's own index**, read from its back: headwords with their pages – with or without a comma, page lists
+    wrapped onto their own line, stopping where the book goes on – each linked to an actor when exactly one actor has
+    that name (also turned round: "Putin, Vladimir").
+  - `python -m rozvedka index-books` rebuilds it; `import-books` runs it too.
+
 ## [0.75.1] – 2026-10-20
 
 ### Fixed
@@ -1476,7 +1489,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.75.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.76.0...HEAD
+[0.76.0]: https://github.com/iiogurt/Rozvedka/compare/v0.75.1...v0.76.0
 [0.75.1]: https://github.com/iiogurt/Rozvedka/compare/v0.75.0...v0.75.1
 [0.75.0]: https://github.com/iiogurt/Rozvedka/compare/v0.74.0...v0.75.0
 [0.74.0]: https://github.com/iiogurt/Rozvedka/compare/v0.73.0...v0.74.0

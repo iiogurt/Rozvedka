@@ -352,6 +352,7 @@ def import_books(folder: Path | None = None, lookup: bool = True, index: bool = 
         stats["index-topics"] = topics.index()
         if (DATA / "gazetteer").exists():
             stats["index-actors"] = actors.index()
+        stats["structure"] = structure()
     log.info("books: %s", {k: v if not isinstance(v, list) else len(v) for k, v in stats.items()})
     return stats
 
@@ -386,3 +387,258 @@ def book_ids() -> frozenset:
     """Sources of the kind "book" (publishing houses of the local library)."""
     with db.session() as con:
         return frozenset(r[0] for r in con.execute("SELECT id FROM sources WHERE publisher='book'"))
+
+
+# ── structure (roadmap H2b): chapters, printed page numbers, the book's own index ──
+STRUCTURE = """
+CREATE TABLE IF NOT EXISTS book_index (              -- the book's own index at the back: headword → pages, matched to an actor
+    doc_id INTEGER NOT NULL, headword TEXT NOT NULL, pages TEXT, actor_key TEXT, reason TEXT,
+    PRIMARY KEY (doc_id, headword));
+"""
+BOOK_COLUMNS = {"chapters": "TEXT", "chapters_from": "TEXT", "page_labels": "TEXT", "index_from": "INTEGER"}
+CONTENTS_HEADINGS = re.compile(r"^\s*(contents|table of contents|inhalt|inhaltsverzeichnis|sommaire|table des matières|índice|indice|"
+                               r"sisällys|innehåll|inhoud|obsah|spis treści|sadržaj)\s*$", re.I | re.M)
+INDEX_HEADINGS = re.compile(r"^\s*(index|general index|subject index|index of names|name index|register|personenregister|"
+                            r"sachregister|índice (?:onomástico|analítico)|indice analitico|hakemisto|rejstřík)\s*$", re.I | re.M)
+CONTENTS_LINE = re.compile(r"^(?P<title>\S.{2,140}?)[\s.·…_\-–]{2,}(?P<page>[0-9]{1,4}|[ivxlc]{1,8})\s*$", re.I)
+PAGE_REF = r"(?:\d{1,4}(?:[–-]\d{1,4})?(?:n\d+)?f{0,2}|[ivxlc]{1,6})"
+# 'Espionage, 504, 518' or 'Espionage 504, 518' (some indexes print no comma)
+INDEX_LINE = re.compile(rf"^(?P<head>[^\d\s][^\n]{{1,90}}?)[,\s]\s*(?P<pages>{PAGE_REF}(?:,\s*{PAGE_REF})*),?\s*$")
+PAGES_ONLY = re.compile(rf"^{PAGE_REF}(?:,\s*{PAGE_REF})*,?\s*$")             # a page list wrapped onto its own line
+
+
+def init_structure() -> None:
+    init()
+    with db.session() as con:
+        con.executescript(STRUCTURE)
+        have = {r["name"] for r in con.execute("PRAGMA table_info(books)")}
+        for col, t in BOOK_COLUMNS.items():
+            if col not in have:
+                con.execute(f"ALTER TABLE books ADD COLUMN {col} {t}")
+
+
+def pdf_outline(path: Path) -> tuple[list[dict], list[str] | None]:
+    """A PDF's bookmarks as chapters [{level, title, page}] (page: 1-based in the file) and its page labels – the
+    numbers printed on the pages ('i', 'ii', '1' …) – when they are not simply 1, 2, 3."""
+    from pypdf import PdfReader
+    r = PdfReader(str(path))
+    chapters: list[dict] = []
+
+    def walk(items, level):
+        for x in items:
+            if isinstance(x, list):
+                walk(x, level + 1)
+                continue
+            try:
+                page = r.get_destination_page_number(x) + 1
+            except Exception:  # noqa: BLE001 - a bookmark to nowhere
+                continue
+            if (x.title or "").strip():
+                chapters.append({"level": level, "title": " ".join(x.title.split()), "page": page})
+    try:
+        walk(r.outline, 0)
+    except Exception:  # noqa: BLE001
+        chapters = []
+    try:
+        labels = list(r.page_labels)
+    except Exception:  # noqa: BLE001
+        labels = None
+    if labels and labels == [str(i + 1) for i in range(len(labels))]:
+        labels = None
+    return chapters, labels
+
+
+def epub_toc(path: Path) -> list[dict]:
+    """An EPUB's table of contents (EPUB 3 nav document or EPUB 2 toc.ncx) as chapters [{level, title, page}], page
+    being the spine section where the entry starts."""
+    from bs4 import BeautifulSoup
+    with zipfile.ZipFile(path) as z:
+        container = _xml(z, "META-INF/container.xml")
+        opf_path = next(e.get("full-path") for e in container.iter() if _local(e.tag) == "rootfile")
+        base = opf_path.rsplit("/", 1)[0] + "/" if "/" in opf_path else ""
+        opf = _xml(z, opf_path)
+        items = {e.get("id"): e for e in opf.iter() if _local(e.tag) == "item"}
+        spine = [items[e.get("idref")].get("href") for e in opf.iter() if _local(e.tag) == "itemref" and e.get("idref") in items]
+        sections = [h for h in spine]                              # the same order epub_read keeps (sections with text)
+        nav = next((i.get("href") for i in items.values() if "nav" in (i.get("properties") or "")), None)
+        ncx = next((i.get("href") for i in items.values() if i.get("media-type") == "application/x-dtbncx+xml"), None)
+        entries: list[tuple[int, str, str]] = []
+        if nav:
+            soup = BeautifulSoup(z.read(base + nav), "html.parser")
+            toc = soup.find("nav", attrs={"epub:type": "toc"}) or soup.find("nav")
+            for a in (toc.find_all("a") if toc else []):
+                entries.append((len(a.find_parents("ol")) - 1, a.get_text(" ", strip=True), a.get("href") or ""))
+        elif ncx:
+            root = _xml(z, base + ncx)
+
+            def walk(el, level):
+                for np in [c for c in el if _local(c.tag) == "navPoint"]:
+                    label = next((t.text for t in np.iter() if _local(t.tag) == "text"), "") or ""
+                    src = next((c.get("src") for c in np.iter() if _local(c.tag) == "content"), "") or ""
+                    entries.append((level, " ".join(label.split()), src))
+                    walk(np, level + 1)
+            for nm in [c for c in root.iter() if _local(c.tag) == "navMap"]:
+                walk(nm, 0)
+    with_text = [s["href"] for s in epub_read(path)["sections"]]
+    out = []
+    for level, title, href in entries:
+        h = href.split("#")[0].rsplit("/", 1)[-1]
+        n = next((i + 1 for i, s in enumerate(with_text) if s.rsplit("/", 1)[-1] == h), None)
+        if title and n:
+            out.append({"level": max(level, 0), "title": title, "page": n})
+    return out
+
+
+def _roman(s: str) -> int | None:
+    vals = {"i": 1, "v": 5, "x": 10, "l": 50, "c": 100}
+    s = s.lower()
+    if not s or any(c not in vals for c in s):
+        return None
+    total = 0
+    for i, c in enumerate(s):
+        v = vals[c]
+        total += -v if i + 1 < len(s) and vals[s[i + 1]] > v else v
+    return total
+
+
+def printed_contents(pages: list[str], labels: list[str] | None) -> list[dict]:
+    """Chapters from a printed table of contents among the first 20 pages: lines 'Title …… 123'. A printed page
+    number is turned into the file's page through the page labels; without them it is taken as the file's page."""
+    by_label = {lab: i + 1 for i, lab in enumerate(labels or [])}
+    for text in pages[:20]:
+        if not CONTENTS_HEADINGS.search(text):
+            continue
+        out = []
+        for line in text.splitlines():
+            m = CONTENTS_LINE.match(line.strip())
+            if not m or len(m["title"].strip(" .·…_-–")) < 3:
+                continue
+            p = m["page"]
+            page = by_label.get(p) or (int(p) if p.isdigit() and not labels else None)
+            if page:
+                out.append({"level": 0, "title": " ".join(m["title"].strip(" .·…_-–").split()), "page": page, "printed": p})
+        if len(out) >= 3:
+            return out
+    return []
+
+
+def parse_index(pages: list[str], first: int) -> list[dict]:
+    """The book's own index: from the page whose heading is 'Index' (within the last fifth of the book) on, as long as
+    most lines of a page read as index lines, every line 'Headword, 12, 45–47, 210n3' (also without the comma) →
+    {headword, pages: ['12', '45–47', '210n3']}. A page list wrapped onto its own line continues the entry above."""
+    out: list[dict] = []
+    pending = ""
+    split = lambda refs: [p.strip(" .") for p in re.split(r",\s*", refs) if p.strip(" .")]
+    for n, text in enumerate(pages[first - 1:]):
+        lines = [" ".join(x.split()) for x in text.splitlines() if x.strip()]
+        fit = sum(1 for x in lines if INDEX_LINE.match(x) or PAGES_ONLY.match(x) or re.fullmatch(r"[A-ZÄÖÜÅ]", x))
+        if n and lines and fit / len(lines) < 0.5:     # the index has ended: the book goes on (an appendix, the next volume)
+            break
+        for raw in text.splitlines():
+            line = " ".join(raw.split())
+            if not line or INDEX_HEADINGS.fullmatch(line) or re.fullmatch(r"[A-ZÄÖÜÅ]", line):   # a letter heading
+                continue
+            if PAGES_ONLY.match(line):
+                if out and "," in line:              # the continuation of the entry above (a single number is a page number)
+                    out[-1]["pages"] = list(dict.fromkeys(out[-1]["pages"] + split(line)))   # two columns repeat pages
+                pending = ""
+                continue
+            m = INDEX_LINE.match(line) or (INDEX_LINE.match(f"{pending} {line}") if pending else None)
+            if m and not m["head"].strip().isdigit():
+                out.append({"headword": m["head"].strip(" ,"), "pages": list(dict.fromkeys(split(m["pages"])))})
+                pending = ""
+            else:
+                pending = line if len(line) < 90 else ""
+    return out
+
+
+def _actor_for(headword: str, names: dict) -> tuple[str | None, str | None]:
+    """A headword matched to one gazetteer actor: as written, without a qualifier in brackets, or turned round
+    ('Putin, Vladimir' → 'Vladimir Putin')."""
+    from .sanctions import normalise
+    tries = [headword, re.sub(r"\s*\([^)]*\)", "", headword)]
+    if ", " in headword:
+        last, first = headword.split(", ", 1)
+        tries.append(f"{first} {last}")
+    for t in tries:
+        keys = {k for k, *_ in names.get(normalise(t), [])}
+        if len(keys) == 1:
+            return keys.pop(), None
+        if len(keys) > 1:
+            return None, f"{len(keys)} actors have this name"
+    return None, "no actor of this name"
+
+
+def structure(doc_id: int | None = None) -> dict:
+    """Chapters, page labels and the book's own index of every book (or one), from its file and its stored text."""
+    from . import topics
+    from .sanctions import _actor_names
+    init_structure()
+    stats = {"books": 0, "chapters": {}, "with_labels": 0, "with_index": 0, "index_entries": 0, "index_actors": 0}
+    with db.session() as con:
+        topics.init()
+        names = _actor_names(con)
+        rows = con.execute(f"""SELECT b.doc_id, b.format, d.local_path, t.body, i.pages FROM books b JOIN documents d ON d.id=b.doc_id
+                               LEFT JOIN doc_text t ON t.rowid=b.doc_id LEFT JOIN doc_index i ON i.doc_id=b.doc_id
+                               {'WHERE b.doc_id=?' if doc_id else ''}""", (doc_id,) if doc_id else ()).fetchall()
+        for r in rows:
+            stats["books"] += 1
+            path = FILES / r["local_path"]
+            offsets = json.loads(r["pages"]) if r["pages"] else []
+            body = r["body"] or ""
+            pages = [body[a:b] for a, b in zip(offsets, offsets[1:] + [len(body)])] if offsets else []
+            labels = None
+            if r["format"] == "epub":
+                chapters, source = epub_toc(path), "the EPUB's table of contents"
+            else:
+                chapters, labels = pdf_outline(path)
+                source = "the PDF's bookmarks"
+                if not chapters:
+                    chapters, source = printed_contents(pages, labels), "the printed table of contents"
+            if not chapters:
+                source = None
+            stats["chapters"][source or "none"] = stats["chapters"].get(source or "none", 0) + 1
+            stats["with_labels"] += 1 if labels else 0
+            # the index: a page headed "Index" in the last fifth
+            first = next((i + 1 for i, t in enumerate(pages) if i >= len(pages) * 0.8 and INDEX_HEADINGS.search(t[:300])), None)
+            entries = parse_index(pages, first) if first else []
+            con.execute("DELETE FROM book_index WHERE doc_id=?", (r["doc_id"],))
+            for e in entries:
+                key, reason = _actor_for(e["headword"], names)
+                stats["index_actors"] += 1 if key else 0
+                con.execute("INSERT OR IGNORE INTO book_index VALUES(?,?,?,?,?)",
+                            (r["doc_id"], e["headword"], json.dumps(e["pages"]), key, None if key else reason))
+            stats["with_index"] += 1 if entries else 0
+            stats["index_entries"] += len(entries)
+            con.execute("UPDATE books SET chapters=?, chapters_from=?, page_labels=?, index_from=? WHERE doc_id=?",
+                        (json.dumps(chapters, ensure_ascii=False), source, json.dumps(labels) if labels else None, first, r["doc_id"]))
+    _labels.clear()
+    log.info("book structure: %s", stats)
+    return stats
+
+
+_labels: dict = {}
+
+
+def page_name(doc_id: int, page: int | None) -> str:
+    """How a passage's page is cited: the number printed on the page of a book ('p. 123', 'p. xiv'), 'section 4' of
+    an EPUB, else the page of the file ('p. 7')."""
+    if not page:
+        return ""
+    v = db.version()
+    if _labels.get("_v") != v:              # re-read after any write (another process may have rebuilt the structure)
+        _labels.clear()
+        _labels["_v"] = v
+    if doc_id not in _labels:
+        try:
+            with db.session() as con:
+                r = con.execute("SELECT format, page_labels FROM books WHERE doc_id=?", (doc_id,)).fetchone()
+        except Exception:  # noqa: BLE001 - no books table yet
+            r = None
+        _labels[doc_id] = (r["format"], json.loads(r["page_labels"]) if r["page_labels"] else None) if r else (None, None)
+    fmt, labels = _labels[doc_id]
+    if fmt == "epub":
+        return f"section {page}"
+    if labels and 0 < page <= len(labels):
+        return f"p. {labels[page - 1]}"
+    return f"p. {page}"
