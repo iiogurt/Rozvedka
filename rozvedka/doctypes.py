@@ -28,6 +28,7 @@ TYPES = {   # key → (label, counted as a report)
     "legal": ("Law / regulation", False),
     "finance": ("Budget / accounts table", False),
     "form": ("Form", False),
+    "book": ("Book (local library)", False),     # rozvedka/books.py: searched and matched, never counted as a report
 }
 NOT_REPORTS = tuple(k for k, (_, counted) in TYPES.items() if not counted)
 # SQL: a file counted as a report (untyped files count, so nothing disappears before typing has run)
@@ -90,6 +91,8 @@ def text_of(title: str, url: str) -> str:
 
 def classify(title: str, url: str, pages: int | None, series_per_year: int | None = None) -> tuple[str, str]:
     """(type, why) for one file."""
+    if (url or "").startswith("book:"):
+        return "book", "a book of the local library"
     text = text_of(title, url)
     for key, rx in _RULES:
         m = rx.search(text)

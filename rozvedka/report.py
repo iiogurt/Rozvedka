@@ -75,4 +75,18 @@ def detail(doc_id: int) -> dict | None:
             "edition": ed, "series": sdetail["series"] if sdetail else None, "this": this, "prev": prev, "next": nxt,
             "other_langs": other_langs, "year_conflict": dating.conflict_of(doc_id), "conflict_kinds": dating.CONFLICT_KINDS,
             "doc_types": doctypes.TYPES, "files": files, "cves": cves.of_doc(doc_id), "cites": citations.of_doc(doc_id),
-            "techniques": techniques.of_doc(doc_id)}
+            "techniques": techniques.of_doc(doc_id), "book": _book(doc_id) if (d["url"] or "").startswith("book:") else None}
+
+
+def _book(doc_id: int) -> dict | None:
+    """A book of the local library: its metadata and where every field came from (rozvedka/books.py)."""
+    import json
+    from . import books
+    books.init()
+    with db.session() as con:
+        b = con.execute("SELECT * FROM books WHERE doc_id=?", (doc_id,)).fetchone()
+    if not b:
+        return None
+    b = dict(b)
+    b["authors"], b["meta"] = json.loads(b["authors"] or "[]"), json.loads(b["meta"] or "{}")
+    return b

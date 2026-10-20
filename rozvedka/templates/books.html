@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "_pager.html" import pager %}
+{% block title %}Books · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Books <span class="pub-book" title="the mark of a book wherever it appears">book</span></h1>
+<p class="lede">{{ pg.total|num }} book{{ '' if pg.total == 1 else 's' }} of the local library – searched and matched to actors and topics
+  like the reports, with their pages, but never counted as reports.</p>
+<details class="how"><summary>How books are read</summary>
+<ul class="prov-list muted small">
+  <li>Put PDFs and EPUBs into <code>{{ folder }}</code> and run <code>python -m rozvedka import-books</code>. Each file is copied into the library;
+    the original stays where it is. Encrypted (DRM) files cannot be read and are listed by the import.</li>
+  <li>Metadata, in this order: <code>books.yaml</code> in that folder, written by hand (<code>- {file: …, title: …, authors: [...], publisher: …,
+    year: …, isbn: …}</code>); <a href="https://openlibrary.org/developers/api" target="_blank" rel="noopener">Open Library</a> by ISBN (CC0), which
+    also links authors to Wikidata; the EPUB's or PDF's own metadata. The ISBN comes from the EPUB metadata or the copyright page (check digit
+    verified). Every field below says where it came from.</li>
+  <li>A book is a secondary source as of its publication year. It is of the document type "Book" – choose that type on
+    <a href="/documents?doc_type=book">Documents</a> to search them. A publishing house is a source of the kind "book" (▲).</li>
+  <li>Book text stays on this machine: the dataset <code>export</code> leaves book files and text out. Pages show passages, never the whole text.</li>
+</ul></details>
+
+<form class="filters" method="get" action="/books">
+  <input type="search" name="q" value="{{ f.q }}" placeholder="Title, author or publisher…" aria-label="Title, author or publisher">
+  <button>Filter</button> <a href="/books">Reset</a>
+</form>
+{% if pg.total %}
+{{ pager(pg, "books") }}
+<table class="pc-table small bk-table">
+  <thead><tr><th>Book</th><th>Authors</th><th>Published</th><th class="n">Pages</th><th>Named most</th><th>Topics</th></tr></thead>
+  {% for b in rows %}<tr>
+    <td><a href="/report/{{ b.doc_id }}"><b>{{ b.title }}</b></a> {{ pub_mark(b.source_id, compact=True) }}
+      <div class="bk-meta">{{ b.format|upper }} · {{ b.file }}{% if b.isbn %} · ISBN {% if b.meta.open_library %}<a href="{{ b.meta.open_library.value }}" target="_blank" rel="noopener">{{ b.isbn }}</a>{% else %}{{ b.isbn }}{% endif %}{% endif %}</div>
+      <div class="bk-meta">{% for k in ('title', 'authors', 'publisher', 'year') %}{% if b.meta.get(k, {}).get('from') %}{{ k }} from {{ b.meta[k]['from'] }}{{ ' · ' if not loop.last }}{% endif %}{% endfor %}</div></td>
+    <td>{% for a in b.authors %}<div>{% if a.wikidata %}<a href="https://www.wikidata.org/wiki/{{ a.wikidata }}" target="_blank" rel="noopener">{{ a.name }}</a>{% else %}{{ a.name }}{% endif %}
+      {% if a.ol %}<a class="muted small" href="{{ a.ol }}" target="_blank" rel="noopener">OL</a>{% endif %}</div>{% else %}<span class="muted">–</span>{% endfor %}</td>
+    <td>{{ b.year or '–' }}<div class="bk-meta">{{ b.publisher or 'publisher not known' }}{% if b.lang %} · {{ b.lang }}{% endif %}</div></td>
+    <td class="n">{{ b.pages_count or '–' }}{% if b.format == 'epub' %}<div class="bk-meta">sections</div>{% endif %}</td>
+    <td>{% if not b.indexed %}<span class="muted">not read yet</span>{% endif %}{% for a in b.actors %}<a class="topic-chip" href="/actors/{{ a.key }}" title="{{ a.hits }} mentions">{{ a.label }} <span class="muted">{{ a.hits }}</span></a> {% endfor %}</td>
+    <td>{% for t in b.topics %}<a class="topic-chip" href="/documents?doc_type=book&amp;topic={{ t.topic }}">{{ TOPICS[t.topic].name if t.topic in TOPICS else t.topic }}</a> {% endfor %}</td>
+  </tr>{% endfor %}
+</table>
+{{ pager(pg, "books") }}
+{% else %}
+<p class="muted">No books yet. Put PDFs or EPUBs into <code>{{ folder }}</code> and run <code>python -m rozvedka import-books</code>.</p>
+{% endif %}
+{% endblock %}

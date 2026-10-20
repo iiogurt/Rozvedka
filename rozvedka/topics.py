@@ -175,10 +175,10 @@ def _clean(page: str) -> str:
     return re.sub(r"\n\s*\n+", "\n", page).strip("\n")
 
 
-def extract_pages(path: Path) -> tuple[str, list[int]]:
+def extract_pages(path: Path, max_pages: int = MAX_PAGES, max_chars: int = MAX_CHARS) -> tuple[str, list[int]]:
     """Text of a PDF plus the offset where each page starts in it (page n starts at offsets[n-1])."""
     if PDFTOTEXT:
-        out = subprocess.run([PDFTOTEXT, "-q", "-enc", "UTF-8", "-l", str(MAX_PAGES), str(path), "-"],
+        out = subprocess.run([PDFTOTEXT, "-q", "-enc", "UTF-8", "-l", str(max_pages), str(path), "-"],
                              capture_output=True, timeout=300)
         pages = out.stdout.decode("utf-8", "replace").split("\f")    # pdftotext ends every page with a form feed
         if pages and not pages[-1].strip():
@@ -186,14 +186,26 @@ def extract_pages(path: Path) -> tuple[str, list[int]]:
     else:   # slower pure-Python fallback
         from pypdf import PdfReader
         reader = PdfReader(str(path))
-        pages = [(p.extract_text() or "") for p in reader.pages[:MAX_PAGES]]
+        pages = [(p.extract_text() or "") for p in reader.pages[:max_pages]]
     text, offsets = "", []
     for page in pages:
-        if len(text) >= MAX_CHARS:
+        if len(text) >= max_chars:
             break
         offsets.append(len(text))
         text += _clean(page) + "\n"
-    return text[:MAX_CHARS], offsets
+    return text[:max_chars], offsets
+
+
+def extract_document(local_path: str) -> tuple[str, list[int]]:
+    """Text and page offsets of a stored file: a report up to MAX_PAGES; a book of the local library (books/…) whole,
+    an EPUB section by section (rozvedka/books.py)."""
+    path = FILES / local_path
+    if local_path.startswith("books/"):
+        from . import books
+        if path.suffix.lower() == ".epub":
+            return books.epub_pages(path)
+        return extract_pages(path, books.MAX_PAGES, books.MAX_CHARS)
+    return extract_pages(path)
 
 
 def extract_text(path: Path) -> str:
@@ -237,7 +249,7 @@ def init() -> None:
 def _process(doc: dict) -> dict:
     """Worker (separate process): extract a PDF's text and classify it."""
     try:
-        text, pages = extract_pages(FILES / doc["local_path"])
+        text, pages = extract_document(doc["local_path"])
     except Exception as e:  # noqa: BLE001 - one broken PDF must not stop the run
         return {"id": doc["id"], "text": None, "pages": None, "error": f"{type(e).__name__}: {e}"[:300], "found": []}
     return {"id": doc["id"], "text": text, "pages": pages, "error": None, "found": classify(text, doc["title"] or "")}

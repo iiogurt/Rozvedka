@@ -1457,3 +1457,12 @@ body.tl-page main { max-width: none; padding-bottom: 12px; }
 .tl-chainlist li { list-style: none; margin-left: -14px; }
 .tl .vis-item.vis-range.tl-year { border-style: dashed; background: transparent !important; }
 .kind-event { background: var(--warn); border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+
+/* ── Books of the local library (rozvedka/books.py): ▲, never a source of reports ── */
+.pub-book { display: inline-block; font-size: 10.5px; line-height: 1.4; padding: 0 5px; margin-left: 5px; border-radius: 3px;
+            border: 1px dotted var(--muted); color: var(--muted); text-decoration: none; white-space: nowrap; vertical-align: middle; }
+.pub-book::before { content: "▲ "; }
+.pub-book.pub-compact { padding: 0 3px; margin-left: 3px; }
+.pub-book.pub-compact::before { content: "▲"; }
+.bk-table td { vertical-align: top; }
+.bk-meta { font-size: var(--fs-xs); color: var(--muted); }
