@@ -120,3 +120,26 @@ def test_group_pages_and_country_card(library):
     d = ratings.map_data()
     assert d["measures"]["homicide"]["better"] == "low" and d["groups"]["security"] == "Security"
     assert '<optgroup label="Security">' in client.get("/map/democracy").text
+
+
+def test_conflict_deaths_and_cyber_incidents_from_the_event_data(library):
+    from rozvedka import events
+    events.init()
+    with db.session() as con:
+        con.execute("INSERT INTO event_months VALUES('UA','2023-05',1000,3,1000,0,0,0)")
+        con.execute("INSERT INTO event_months VALUES('UA','2023-06',500,2,500,0,0,0)")
+        con.execute("INSERT INTO event_months VALUES('UA','2024-01',900,2,900,0,0,1)")     # preliminary: left out
+        for k, y in (("eurepoc:1", 2022), ("eurepoc:2", 2023), ("eurepoc:3", 2023)):
+            con.execute("INSERT INTO events(key,source,kind,label,start,year,url) VALUES(?,'eurepoc','cyber incident','x',?,?,'u')",
+                        (k, f"{y}-01-01", y))
+            con.execute("INSERT INTO event_countries VALUES(?, 'HU')", (k,))
+    store = {"values": {}, "measures": {}, "iso2to3_all": {"UA": "UKR", "HU": "HUN"},
+             "population": {"UKR": {"2023": 40_000_000}, "HUN": {"2023": 9_600_000}}}
+    rows = ratings.event_measures(store, "2026-10-20")
+    assert store["values"]["UKR"]["ucdp_deaths"]["2023"] == 1500 / 40_000_000 * 1e5         # per 100,000
+    assert store["values"]["HUN"]["ucdp_deaths"]["2023"] == 0                                # no recorded death: 0
+    assert "2024" not in store["values"]["UKR"]["ucdp_deaths"]                               # only preliminary months
+    assert store["values"]["HUN"]["cyber_incidents"] == {"2022": 1.0, "2023": 2.0}
+    assert store["values"]["UKR"]["cyber_incidents"] == {"2022": 0.0, "2023": 0.0}
+    assert rows["cyber_incidents"] == 4 and ratings.MEASURES["cyber_incidents"]["better"] is None
+    assert ratings.source_url("HU", "cyber_incidents") == "/events?source=eurepoc&country=HU"   # each count opens its incidents

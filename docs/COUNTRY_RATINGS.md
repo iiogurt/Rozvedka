@@ -2,7 +2,7 @@
 
 The owner asked on 2026-10-19 to extend the country democracy ratings to other ratings, such as security.
 
-**Status:** H3a built in 0.70.0 (`/ratings?group=security|governance`, `/ratings/<country>`, the ratings map); H3b–H3d open. The owner confirmed on 2026-10-19 that non-commercial and no-derivatives licences are fine for this personal library.
+**Status:** H3a built in 0.70.0 (`/ratings?group=security|governance`, `/ratings/<country>`, the ratings map); H3b (UCDP conflict deaths per 100,000, EuRepoC cyber incidents, a Cyber group) built in 0.79.0; H3c–H3d open. The owner confirmed on 2026-10-19 that non-commercial and no-derivatives licences are fine for this personal library.
 
 ## 1. What exists
 

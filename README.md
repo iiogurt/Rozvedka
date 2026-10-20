@@ -248,7 +248,9 @@ Violence/Terrorism*, UNODC's **intentional homicides** per 100,000 and SIPRI's *
 (context, not a grade). **Governance**: the World Bank's *Rule of Law*, *Control of Corruption*, *Government
 Effectiveness* and *Regulatory Quality*, and Transparency International's **Corruption Perceptions Index**. Every column
 shows the state's course since 1990 on the measure's own scale, its latest value and year and its place among the
-library's states, and says which end is better. Nothing is combined into a score.
+library's states, and says which end is better. Nothing is combined into a score. From the library's own event data
+come UCDP **deaths in organised violence** per 100,000 (security) and EuRepoC **cyber incidents** reported against each
+state (a *Cyber* group; each count opens those incidents).
 
 <img src="docs/images/ratings-country.png" alt="Germany's ratings: one small chart per measure with the latest value, its place among the states, the source and the official reports on the matching topic" width="900">
 

@@ -29,7 +29,7 @@ import urllib.request
 from functools import lru_cache
 from pathlib import Path
 
-from . import countries
+from . import countries, db
 from .config import DATA
 
 log = logging.getLogger("rozvedka.ratings")
@@ -80,6 +80,12 @@ MEASURES = {
               "about": "Military spending as a share of gross domestic product (SIPRI definition, which can differ from "
                        "NATO's and national budgets). Context, not a grade: neither end is better; the colour scale "
                        "saturates at 5 %."},
+    "ucdp_deaths": {"group": "security", "better": "low", "name": "Deaths in organised violence per 100,000", "by": "UCDP",
+                    "short": "Conflict deaths", "scale": (0, 10), "fmt": "{:.2f}", "topic": "military-threat", "derived": "ucdp",
+                    "license": "CC BY 4.0", "home": "https://ucdp.uu.se/",
+                    "about": "Deaths in state-based and non-state conflict and one-sided violence in the state, per year and "
+                             "100,000 inhabitants (UCDP Georeferenced Event Dataset, best estimates; population: World Bank). "
+                             "No recorded death counts as 0. The colour scale saturates at 10."},
     # ── governance ──
     "wgi_rl": {"group": "governance", "better": "high", "name": "Rule of Law", "by": "World Bank (WGI)", "short": "WGI RL",
                "scale": (-2.5, 2.5), "fmt": "{:+.2f}", "indicator": "GOV_WGI_RL.EST", "license": "CC BY 4.0",
@@ -108,11 +114,19 @@ MEASURES = {
             "license": "CC BY-ND 4.0 (shown unaltered)", "home": "https://www.transparency.org/en/cpi",
             "about": "Perceived corruption in the public sector, from 13 expert and business surveys; "
                      "0 = highly corrupt, 100 = very clean."},
+    # ── cyber ──
+    "cyber_incidents": {"group": "cyber", "better": None, "name": "Cyber incidents reported against the state", "by": "EuRepoC",
+                        "short": "Cyber incidents", "scale": (0, 60), "fmt": "{:.0f}", "topic": "state-cyber", "derived": "eurepoc",
+                        "license": "CC BY-NC 4.0", "home": "https://eurepoc.eu/",
+                        "about": "Incidents that EuRepoC's Global Dataset of Cyber Incidents records with the state among their "
+                                 "receivers, by the year they began. Context, not a grade: it counts what was reported and "
+                                 "attributed, which depends on openness as much as on attacks. Each year opens its incidents."},
 }
 # the groups of /ratings, in order: (name, what it covers)
 GROUPS = {"democracy": ("Democracy", "how free and democratic the state is"),
           "security": ("Security", "political violence and terrorism, homicides, military spending"),
-          "governance": ("Governance", "rule of law, corruption, effectiveness and regulation")}
+          "governance": ("Governance", "rule of law, corruption, effectiveness and regulation"),
+          "cyber": ("Cyber", "cyber incidents reported against the state")}
 
 
 def of_group(group: str) -> dict[str, dict]:
@@ -139,6 +153,8 @@ def fetch(out: Path | None = None) -> dict:
     store = {"retrieved": today, "measures": {}, "iso3": {}, "values": {}, "names": {}}
     owid_names: dict[str, str] = {}
     for key, m in MEASURES.items():
+        if m.get("derived"):        # from the library's own event data (events.py), after the downloads
+            continue
         if "slug" in m:
             url = OWID.format(slug=m["slug"]) + ".csv?v=1&csvType=full&useColumnShortNames=true"
             meta = json.loads(_get(OWID.format(slug=m["slug"]) + ".metadata.json"))
@@ -165,6 +181,13 @@ def fetch(out: Path | None = None) -> dict:
             store["measures"][key] = {"source": f"https://data.worldbank.org/indicator/{m['indicator']}",
                                       "citation": f"World Bank, Worldwide Governance Indicators ({data[0].get('lastupdated', '')})",
                                       "retrieved": today, "rows": n}
+    pop = json.loads(_get(f"{WB_API}/country/all/indicator/SP.POP.TOTL?format=json&per_page=20000"))
+    store["population"] = {}
+    for r in pop[1] or []:
+        if r["value"] and r.get("countryiso3code"):
+            store["population"].setdefault(r["countryiso3code"], {})[r["date"]] = r["value"]
+    store["iso2to3_all"] = {a2: a3 for a2, a3 in iso3.items()}
+    event_measures(store, today)
     store["names"] = {code: name for name, code in owid_names.items()}      # alpha-3 → country name (any country)
     store["iso2to3"] = {a2: a3 for a2, a3 in iso3.items() if a3 in store["values"]}   # every country, for the map
     # library countries → alpha-3 (World Bank list; else the country's name as Our World in Data spells it)
@@ -181,6 +204,65 @@ def fetch(out: Path | None = None) -> dict:
     log.info("ratings: %s; library countries without ratings: %s", {k: v["rows"] for k, v in store["measures"].items()}, missing)
     return {"measures": {k: v["rows"] for k, v in store["measures"].items()}, "countries": len(store["iso3"]),
             "without_ratings": missing}
+
+
+def event_measures(store: dict, today: str) -> dict:
+    """The measures computed from the library's event data (events.py): UCDP deaths per year and 100,000 inhabitants
+    (preliminary candidate months left out; a state with no recorded death has 0) and EuRepoC incidents per year with
+    the state among their receivers. Written into `store`; returns the rows per measure."""
+    from . import events
+    rows = {"ucdp_deaths": 0, "cyber_incidents": 0}
+    try:
+        events.init()
+        with db.session() as con:
+            deaths, last = {}, 0
+            for iso, month, n in con.execute("SELECT iso, month, deaths FROM event_months WHERE preliminary=0"):
+                y = int(month[:4])
+                deaths.setdefault(iso, {}).setdefault(y, 0)
+                deaths[iso][y] += n
+                last = max(last, y)
+            incidents = {}
+            for iso, y, n in con.execute("""SELECT c.iso, e.year, COUNT(*) FROM events e JOIN event_countries c ON c.event_key=e.key
+                                            WHERE e.source='eurepoc' GROUP BY c.iso, e.year"""):
+                incidents.setdefault(iso, {})[y] = n
+            first_i = min((y for v in incidents.values() for y in v), default=None)
+            last_i = max((y for v in incidents.values() for y in v), default=None)
+    except Exception as e:  # noqa: BLE001 - no events fetched yet
+        log.info("no event data for the ratings (%s) – run fetch-events", e)
+        return rows
+    for a2, a3 in (store.get("iso2to3_all") or {}).items():
+        pop = store.get("population", {}).get(a3) or {}
+        if pop and last:
+            years = sorted(int(y) for y in pop)
+            for y in range(2000, last + 1):
+                p = pop.get(str(y)) or pop.get(str(max(yy for yy in years if yy <= y) if any(yy <= y for yy in years) else years[0]))
+                if p:
+                    store["values"].setdefault(a3, {}).setdefault("ucdp_deaths", {})[str(y)] = deaths.get(a2, {}).get(y, 0) / p * 1e5
+                    rows["ucdp_deaths"] += 1
+        if first_i:
+            for y in range(first_i, last_i + 1):
+                store["values"].setdefault(a3, {}).setdefault("cyber_incidents", {})[str(y)] = float(incidents.get(a2, {}).get(y, 0))
+                rows["cyber_incidents"] += 1
+    store["measures"]["ucdp_deaths"] = {"source": "https://ucdp.uu.se/downloads/", "retrieved": today, "rows": rows["ucdp_deaths"],
+                                        "citation": "UCDP Georeferenced Event Dataset (via fetch-events); population: World Bank SP.POP.TOTL"}
+    store["measures"]["cyber_incidents"] = {"source": "https://zenodo.org/records/14965395", "retrieved": today,
+                                            "rows": rows["cyber_incidents"],
+                                            "citation": "EuRepoC Global Dataset of Cyber Incidents 1.3 (via fetch-events)"}
+    return rows
+
+
+def refresh_event_measures() -> dict:
+    """Recompute the event measures in the stored ratings (after fetch-events) without downloading the ratings again."""
+    if not STORE.exists():
+        return {}
+    store = json.loads(STORE.read_text(encoding="utf-8"))
+    if "iso2to3_all" not in store:
+        return {}
+    rows = event_measures(store, dt.date.today().isoformat())
+    STORE.write_text(json.dumps(store), encoding="utf-8")
+    load.cache_clear()
+    ranks.cache_clear()
+    return rows
 
 
 @lru_cache(maxsize=1)
@@ -227,6 +309,10 @@ def source_url(country: str, key: str) -> str:
     """Where a reader checks the value: the chart for that country, or the World Bank indicator page."""
     m = MEASURES[key]
     a3 = load()["iso3"].get(country, "")
+    if m.get("derived") == "eurepoc":
+        return f"/events?source=eurepoc&country={country}"
+    if m.get("derived") == "ucdp":
+        return "https://ucdp.uu.se/downloads/"
     if "slug" in m:
         return OWID.format(slug=m["slug"]) + "?" + urllib.parse.urlencode({"tab": "chart", "country": a3})
     return f"https://data.worldbank.org/indicator/{m['indicator']}?locations={country}"
