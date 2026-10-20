@@ -367,6 +367,11 @@ column; <i>over-emphasis</i> shows how much more or less often a row carries a t
   Spain, Austria, Sweden, Latvia), each on the state's own scale and with the page it comes from. Hand-curated; every quote is
   checked (`fetch-threat-levels` for the announcement pages, the library's stored text for the reports).
 
+- **Books** (`/books`) – a local library of PDFs and EPUBs (`data/books/`, never committed or exported), read whole and
+  matched to actors and topics like the reports, with their passages and pages – but of their own kind (▲ book) and never
+  counted as reports. Metadata from a hand-written `books.yaml`, Open Library by ISBN (authors linked to Wikidata) or the
+  file itself, each field with its origin (`import-books`).
+
 - **Timeline** (`/timeline`) – states and actors as lanes on one time axis: their events (Wikidata, EuRepoC, UCDP) and the library's
   dated records (sanctions listings, designations, official attributions, threat-level changes), UCDP's deaths per month as the lane's
   shaded background, and a row of the library's reports per year naming the subject (each year opens its list). At every zoom a lane
@@ -776,6 +781,7 @@ failure. Starting it after a reboot with nobody logged in needs `loginctl enable
 | `fetch-kev` · `index-cves` | download CISA's Known Exploited Vulnerabilities catalog (CC0; network) · find CVE numbers in the report texts and the actors named near them (`update` runs the second) |
 | `fetch-attack` · `index-techniques` | download MITRE ATT&CK (techniques, groups, software, campaigns and their relations; Enterprise, Mobile, ICS; network) · find technique numbers in the report texts (`update` runs the second) |
 | `fetch-wanted` | read the FBI's and Europe's Most Wanted notices about security (network, ~3 min; then `build-graph`) |
+| `import-books [FOLDER] [--no-lookup] [--no-index]` | read the PDFs and EPUBs of the local book library (`data/books/`) into the library: metadata from `books.yaml`, Open Library by ISBN or the file; text, topics and actors like a report; never counted as reports, never exported |
 | `index-events` | find the reports that name each event (its Wikidata names, in its year or later; no download – `fetch-events` runs it too) |
 | `fetch-events [--source wikidata\|eurepoc\|ucdp]` | dated events for the timeline: Wikidata items of the classes in `sources/events.yaml`, EuRepoC cyber incidents, UCDP organised violence (network, ~10 min) |
 | `fetch-wikitext` | read the English Wikipedia articles of the actors the reports name and keep the sentences that link to another known subject (network, ~5 min; then `build-graph`) |
@@ -1178,6 +1184,7 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | Threat groups | [MITRE ATT&CK®](https://attack.mitre.org) | © The MITRE Corporation, reproduced with permission |
 | Vendors' names of threat groups | [MISP threat-actor galaxy](https://github.com/MISP/misp-galaxy) | CC0 1.0 |
 | Cyber incidents | [EuRepoC Global Dataset of Cyber Incidents](https://zenodo.org/records/14965395) | CC BY-NC 4.0 |
+| Book metadata | [Open Library](https://openlibrary.org/developers/api) by ISBN | catalogue data CC0; the books themselves stay on this machine |
 | Organised violence | [UCDP Georeferenced Event Dataset and Candidate Events](https://ucdp.uu.se/downloads/) | CC BY 4.0 |
 | Country ratings | V-Dem, Freedom House, World Bank WGI, UNODC, SIPRI, Transparency International (via [Our World in Data](https://ourworldindata.org) and the World Bank API) | each measure's licence is shown with it on `/ratings` |
 | Sanctions lists | EU (FPI), UK (FCDO), UN Security Council, US Treasury (OFAC) – official XML files | public official data |

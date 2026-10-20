@@ -77,7 +77,7 @@ tpl.env.globals["ico"] = ico
 tpl.env.globals["menu"] = nav.menu
 tpl.env.filters["num"] = lambda n: f"{n or 0:,}"
 
-_independent: dict = {"at": None, "ids": frozenset(), "levels": {}, "kinds": {}}     # at=None: not loaded yet
+_independent: dict = {"at": None, "ids": frozenset(), "levels": {}, "kinds": {}, "books": frozenset()}   # at=None: not loaded yet
 
 
 def independent_ids() -> frozenset:
@@ -85,7 +85,8 @@ def independent_ids() -> frozenset:
     refreshed every minute; few rows."""
     if _independent["at"] is None or time.monotonic() - _independent["at"] > 60:
         with db.session() as con:
-            rows = con.execute("SELECT id, key, publisher FROM sources WHERE COALESCE(publisher, 'official') != 'official'").fetchall()
+            rows = con.execute("SELECT id, key, publisher FROM sources WHERE COALESCE(publisher, 'official') NOT IN ('official', 'book')").fetchall()
+            _independent["books"] = frozenset(r[0] for r in con.execute("SELECT id FROM sources WHERE publisher='book'"))
         _independent["ids"] = frozenset(r[0] for r in rows)
         _independent["kinds"] = {r[0]: r[2] if r[2] in publishers.KINDS else "independent" for r in rows}
         _independent["levels"] = {r[0]: publishers.profile(r[1], _independent["kinds"][r[0]]) for r in rows}
@@ -109,6 +110,9 @@ def pub_mark(source_id, compact: bool = False) -> Markup:
         return Markup(f'<a class="{cls} pub-lv-{p["level"]}{" pub-compact" if compact else ""}" href="/publisher/{int(source_id)}" '
                       f'title="{escape(k["about"][0].upper() + k["about"][1:])}. Credibility: {escape(p["label"])} – '
                       f'{escape(p["about"])}. Open its profile">{text}</a>')
+    if source_id in _independent["books"]:          # a publishing house of the local book library: not a source of reports
+        return Markup(f'<a class="pub-book{" pub-compact" if compact else ""}" href="/books" title="A book of the local library – '
+                      f'a secondary source as of its publication, never counted as a report">{"" if compact else "book"}</a>')
     return Markup("")
 
 

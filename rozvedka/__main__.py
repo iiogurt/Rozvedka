@@ -65,6 +65,10 @@ def main():
     ev = sub.add_parser("fetch-events", help="dated events for the timeline: Wikidata, EuRepoC cyber incidents, UCDP organised violence")
     ev.add_argument("--source", action="append", choices=["wikidata", "eurepoc", "ucdp"], help="only this source (repeatable)")
     sub.add_parser("index-events", help="find the reports that name each event (its Wikidata names, in its year or later) – no download")
+    bk = sub.add_parser("import-books", help="read the PDFs and EPUBs of the local book library (data/books/) into the library")
+    bk.add_argument("folder", nargs="?", help="the folder with the books (default data/books/)")
+    bk.add_argument("--no-lookup", action="store_true", help="do not ask Open Library for the metadata")
+    bk.add_argument("--no-index", action="store_true", help="skip extracting the text and matching topics and actors")
     sub.add_parser("build-graph", help="rebuild the network of links (sanctions lists, Wikidata, ATT&CK, reports) – no download")
     sub.add_parser("fetch-threat-levels", help="check the official threat-level announcements (sources/threat_levels.yaml) against their pages")
     sub.add_parser("index-citations", help="resolve the web addresses in the report texts: other reports, other agencies, outside sources")
@@ -150,6 +154,10 @@ def main():
     elif a.cmd == "fetch-wikitext":
         from . import wikitext
         print(wikitext.fetch())
+    elif a.cmd == "import-books":
+        from . import books
+        r = books.import_books(a.folder, lookup=not a.no_lookup, index=not a.no_index)
+        print({k: v for k, v in r.items() if not isinstance(v, dict)})
     elif a.cmd == "index-events":
         from . import events
         print(events.index_reports())

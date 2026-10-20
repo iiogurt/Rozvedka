@@ -56,7 +56,7 @@ def sync(path=REGISTRY) -> dict:
                      p.get("follow"), p.get("follow_limit")))
                 seen_pages.add(con.execute("SELECT id FROM pages WHERE source_id=? AND url=?", (sid, p["url"])).fetchone()["id"])
         # deactivate things removed from the YAML (documents are kept)
-        for (sid,) in con.execute("SELECT id FROM sources").fetchall():
+        for (sid,) in con.execute("SELECT id FROM sources WHERE COALESCE(publisher, '') != 'book'").fetchall():   # books: not from the YAML
             if sid not in seen_sources:
                 con.execute("UPDATE sources SET active=0 WHERE id=?", (sid,))
         for (pid,) in con.execute("SELECT id FROM pages").fetchall():

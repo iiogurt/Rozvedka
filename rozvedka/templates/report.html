@@ -14,8 +14,8 @@
   {{ d.agency }} is a think tank, not a state agency – its reports are analysis by a non-governmental institute, listed beside the
   official reports and marked as such.{% endif %} Credibility: {{ pp.reasons|join('; ') if pp.reasons else pp.about }} – <a href="/publisher/{{ d.source_id }}">see its profile</a>.</p>{% endif %}
 <p class="rp-actions">
-  {% if d.local_path %}<a class="rp-btn rp-primary" href="/doc/{{ d.id }}" target="_blank">Open the PDF</a>{% endif %}
-  <a class="rp-btn" href="{{ d.url }}" target="_blank" rel="noopener">Official address ↗</a>
+  {% if d.local_path %}<a class="rp-btn rp-primary" href="/doc/{{ d.id }}" target="_blank">Open the {{ 'EPUB' if (d.local_path or '').endswith('.epub') else 'PDF' }}</a>{% endif %}
+  {% if not book %}<a class="rp-btn" href="{{ d.url }}" target="_blank" rel="noopener">Official address ↗</a>{% endif %}
   {% if d.hidden %}<span class="badge-warn">hidden from lists and counts</span>{% endif %}</p>
 
 <div class="rp-grid">
@@ -24,7 +24,10 @@
   <table class="kv small">
     <tr><th>Publisher</th><td><a href="/sources#s-{{ d.source_id }}">{{ d.agency }}</a>{{ pub_mark(d.source_id) }}{% if d.name_en %} – {{ d.name_en }}{% endif %}
       <span class="muted">({{ d.country }}, {{ d.type }})</span></td></tr>
-    <tr><th>Year</th><td>{{ d.year or '—' }}{% if d.year_source %} <span class="muted">– {{ 'set by hand' if d.year_source == 'set by hand' else 'estimated from ' ~ d.year_source }}</span>
+    {% if book %}<tr><th>Authors</th><td>{% for a in book.authors %}{% if a.wikidata %}<a href="https://www.wikidata.org/wiki/{{ a.wikidata }}" target="_blank" rel="noopener">{{ a.name }}</a>{% else %}{{ a.name }}{% endif %}{{ ', ' if not loop.last }}{% else %}<span class="muted">not known</span>{% endfor %}
+      {% if book.meta.authors and book.meta.authors['from'] %}<span class="muted">– from {{ book.meta.authors['from'] }}</span>{% endif %}</td></tr>
+    <tr><th>ISBN</th><td>{% if book.isbn %}{% if book.meta.open_library %}<a href="{{ book.meta.open_library.value }}" target="_blank" rel="noopener">{{ book.isbn }}</a> <span class="muted">– Open Library</span>{% else %}{{ book.isbn }}{% endif %}{% else %}<span class="muted">none found on its first pages or in its metadata</span>{% endif %}</td></tr>{% endif %}
+    <tr><th>Year</th><td>{{ d.year or '—' }}{% if book %}{% if book.meta.year and book.meta.year['from'] %} <span class="muted">– from {{ book.meta.year['from'] }} (the edition's year; a book speaks as of its publication)</span>{% endif %}{% elif d.year_source %} <span class="muted">– {{ 'set by hand' if d.year_source == 'set by hand' else 'estimated from ' ~ d.year_source }}</span>
       {% elif d.year %} <span class="muted">– from the title or address</span>{% endif %}
       {% if year_conflict %}<div class="badge-warn small">{{ conflict_kinds[year_conflict.kind] }} says <b>{{ year_conflict.found }}</b>: {{ year_conflict.evidence }}
         – <a href="/years?source={{ d.source_id }}">review</a></div>{% endif %}</td></tr>
@@ -40,14 +43,14 @@
         {% for k, (label, _) in doc_types.items() %}<option value="{{ k }}" {{ 'selected' if d.doc_type == k }}>{{ label }}</option>{% endfor %}</select>
         <button title="Set the type by hand – written to sources/doc_types.yaml">Set</button></form></td></tr>
     <tr><th>Language</th><td>{{ d.lang or '?' }}</td></tr>
-    <tr><th>Official address</th><td class="mono brk"><a href="{{ d.url }}" target="_blank" rel="noopener">{{ d.url }}</a></td></tr>
+    {% if not book %}<tr><th>Official address</th><td class="mono brk"><a href="{{ d.url }}" target="_blank" rel="noopener">{{ d.url }}</a></td></tr>{% endif %}
     {% if d.page_url %}<tr><th>Found on</th><td class="mono brk"><a href="{{ d.page_url }}" target="_blank" rel="noopener">{{ d.page_url }}</a>
       <span class="muted">({{ d.page_lang or '?' }}{{ ', ' ~ d.page_kind if d.page_kind }})</span></td></tr>{% endif %}
-    <tr><th>How</th><td>{% if upload %}added by hand on {{ upload.added_at[:10] }}{{ ' from ' ~ upload.original_name if upload.original_name }}{% if not upload.official %} <span class="badge-warn">address not on the agency’s official domains</span>{% endif %}
+    <tr><th>How</th><td>{% if book %}imported from the local book library – <code>{{ book.file }}</code> ({{ book.format|upper }}){% elif upload %}added by hand on {{ upload.added_at[:10] }}{{ ' from ' ~ upload.original_name if upload.original_name }}{% if not upload.official %} <span class="badge-warn">address not on the agency’s official domains</span>{% endif %}
       {% else %}{{ {'crawl': 'found by the crawler', 'pattern': 'found by an address pattern', 'manual': 'listed in the registry'}.get(d.origin, d.origin) }}{% endif %}</td></tr>
     <tr><th>Listed</th><td>{{ (d.discovered_at or '')[:16] }}</td></tr>
     <tr><th>Downloaded</th><td>{{ (d.downloaded_at or '—')[:16] }} <span class="st st-{{ d.status }}">{{ d.status }}</span>{% if d.error %} <span class="err">{{ d.error }}</span>{% endif %}</td></tr>
-    {% if d.size %}<tr><th>File</th><td>{{ (d.size / 1048576)|round(1) }} MB{% if d.pages_count %} · {{ d.pages_count }} pages{% endif %}{% if d.mime %} · {{ d.mime }}{% endif %}</td></tr>{% endif %}
+    {% if d.size %}<tr><th>File</th><td>{{ (d.size / 1048576)|round(1) }} MB{% if d.pages_count %} · {{ d.pages_count }} {{ 'sections' if (d.local_path or '').endswith('.epub') else 'pages' }}{% endif %}{% if d.mime %} · {{ d.mime }}{% endif %}</td></tr>{% endif %}
     {% if d.sha256 %}<tr><th>SHA-256</th><td class="mono brk">{{ d.sha256 }}</td></tr>{% endif %}
     {% if index %}<tr><th>Text</th><td>{{ index.chars|num }} characters{% if ocr %} · <span class="badge-ocr">{{ ocr }}</span>{% endif %}</td></tr>{% endif %}
   </table>

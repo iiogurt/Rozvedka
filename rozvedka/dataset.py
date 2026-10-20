@@ -186,6 +186,25 @@ def _sha256(path: Path, phase: str = "", offset: int = 0, total: int = 0) -> str
 
 # ------------------------------------------------------------------ export
 
+def _drop_books(con) -> None:
+    """Remove the local book library from an exported copy of the database: the books, their text, index rows and
+    publishers (rozvedka/books.py) – a dataset never carries book text."""
+    ids = [r[0] for r in con.execute("SELECT id FROM documents WHERE url LIKE 'book:%'")]
+    if ids:
+        marks = ",".join("?" * len(ids))
+        tables = {r[0] for r in con.execute("SELECT name FROM sqlite_master WHERE type IN ('table', 'view')")}
+        if "doc_text" in tables:
+            con.execute(f"DELETE FROM doc_text WHERE rowid IN ({marks})", ids)
+        for table in sorted(tables):       # every table keyed by a document: index rows, topics, actors, events, CVEs …
+            cols = {r[1] for r in con.execute(f"PRAGMA table_info({table})")}
+            for col in cols & {"doc_id", "target_doc"}:
+                con.execute(f"DELETE FROM {table} WHERE {col} IN ({marks})", ids)
+        con.execute(f"DELETE FROM documents WHERE id IN ({marks})", ids)
+    con.execute("DELETE FROM sources WHERE publisher='book'")
+    con.commit()
+    con.execute("VACUUM")
+
+
 def export(out_dir: str | Path, files: bool = True, since: str | None = None, part_size: int = PART_SIZE,
            name: str = "") -> dict:
     """Write a dataset into out_dir; returns its manifest."""
@@ -204,11 +223,12 @@ def export(out_dir: str | Path, files: bool = True, since: str | None = None, pa
             ps = src.execute("PRAGMA page_size").fetchone()[0]
             src.backup(dst, pages=4096,           # a consistent copy while the portal may be running
                        progress=lambda status, remaining, total: _tick("Copying the database", (total - remaining) * ps, total * ps))
+            _drop_books(dst)               # book text stays on this machine (copyright; a personal reading list)
             dst.close()
             fresh = freshness(src)
             docs = [dict(r) for r in src.execute(
                 """SELECT d.id, d.local_path, d.sha256, d.size, d.discovered_at, d.downloaded_at FROM documents d
-                   WHERE d.local_path IS NOT NULL AND d.status='downloaded'""")]
+                   WHERE d.local_path IS NOT NULL AND d.status='downloaded' AND d.url NOT LIKE 'book:%'""")]
             logo_rows = [dict(r) for r in src.execute("SELECT key, logo_path FROM sources WHERE logo_path IS NOT NULL")]
         finally:
             src.close()

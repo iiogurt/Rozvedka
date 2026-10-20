@@ -10,6 +10,7 @@ GROUPS = [
         ("Documents", "/documents", ("/report", "/doc", "/search"), "Every report, with filters, full-text search and the file."),
         ("What's new", "/new", ("/feed.atom",), "Reports added to the library, by day."),
         ("Series", "/series", (), "Report series and their editions: what is out, what is missing."),
+        ("Books", "/books", (), "The local book library: books searched and matched like the reports, never counted as reports."),
         ("Watchlist", "/watch", (), "Searches you follow: new reports that match."),
     ]),
     ("topics", "Topics & trends", "/topics", [

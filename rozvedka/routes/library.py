@@ -74,6 +74,8 @@ def open_doc(doc_id: int):
     path = (FILES / d["local_path"]).resolve()
     if not path.is_relative_to(FILES.resolve()) or not path.exists():
         raise HTTPException(404, "file missing")
+    if path.suffix.lower() == ".epub":       # a book of the local library: saved, browsers do not show EPUBs
+        return FileResponse(path, media_type="application/epub+zip", filename=path.name)
     return FileResponse(path, media_type="application/pdf", filename=path.name, content_disposition_type="inline")
 
 

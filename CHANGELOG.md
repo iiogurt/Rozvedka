@@ -27,6 +27,22 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.75.0] – 2026-10-20
+
+### Added
+- **The local book library** (roadmap H2a) – *Library → Books*, `/books`, and `python -m rozvedka import-books`.
+  - Put PDFs and EPUBs into `data/books/` (never committed). Each is copied into the library and read whole: an EPUB
+    section by section, a PDF page by page. Each book gets full-text search, topics and actors with their passages and
+    pages, like a report.
+  - **Metadata with its origin:** `data/books/books.yaml` written by hand first, then Open Library by ISBN (CC0, also
+    linking authors to Wikidata), then the file's own EPUB or PDF metadata. The ISBN comes from the EPUB metadata or the
+    copyright page, with its check digit verified. The book's page says where every field came from.
+  - **Never counted as a report:** a book is of the new document type "Book" (choose it on Documents to search books),
+    and its publishing house is a source of the kind "book", marked ▲ wherever it appears. No report count includes
+    books – the home page's numbers are the same with and without them.
+  - **Stays on this machine:** the dataset export leaves book files and text out. Encrypted (DRM) files are reported
+    as unreadable.
+
 ## [0.74.0] – 2026-10-20
 
 ### Added
@@ -1439,7 +1455,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.74.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.75.0...HEAD
+[0.75.0]: https://github.com/iiogurt/Rozvedka/compare/v0.74.0...v0.75.0
 [0.74.0]: https://github.com/iiogurt/Rozvedka/compare/v0.73.0...v0.74.0
 [0.73.0]: https://github.com/iiogurt/Rozvedka/compare/v0.72.0...v0.73.0
 [0.72.0]: https://github.com/iiogurt/Rozvedka/compare/v0.71.0...v0.72.0
