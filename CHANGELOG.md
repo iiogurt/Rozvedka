@@ -27,6 +27,27 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.75.1] – 2026-10-20
+
+### Fixed
+- **Topics: false friends from other languages no longer count in English text.** Every language's keywords apply to
+  every report, because reports mix languages. A few single words of one language read as different English words,
+  and they gave English reports topics they do not have:
+  - Latvian `ķīn*` ("China") matched "kingdom", "kind" and "king" (in 2,394 reports);
+  - Czech `munic*` ("ammunition") matched "municipal" and "Munich";
+  - Czech `búrk*` ("storm") matched "Burkina Faso";
+  - Spanish `temporal*` ("storm") matched "temporal", French `crue*` ("flood") "cruel", German `personal` ("staff")
+    "personal", Czech `čín*` ("China") "cinema".
+
+  Now such a word counts only in a text that is not English. A text counts as English by its English function words,
+  not by its language tag, which is sometimes wrong (Europol's Greek and Latvian TE-SAT summaries are tagged "en").
+  Cognates that share their stem with the topic's English terms (`militar*` ~ military, `russ*` ~ Russia) and
+  acronyms written in capitals (CTIVD, ＡＩ) still count everywhere.
+  - Effect: 1,251 of 33,152 topic assignments (3.8 %) are removed, none added.
+  - A random sample of 40 removals: about 27 were wrong (the floods topic in the Global Terrorism Index via
+    "Burkina"), about 8 borderline, and the rest were mostly caused by acronyms, now exempt.
+  - Every report is re-classified by the next `index-topics` (also part of `update`).
+
 ## [0.75.0] – 2026-10-20
 
 ### Added
@@ -1455,7 +1476,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.75.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.75.1...HEAD
+[0.75.1]: https://github.com/iiogurt/Rozvedka/compare/v0.75.0...v0.75.1
 [0.75.0]: https://github.com/iiogurt/Rozvedka/compare/v0.74.0...v0.75.0
 [0.74.0]: https://github.com/iiogurt/Rozvedka/compare/v0.73.0...v0.74.0
 [0.73.0]: https://github.com/iiogurt/Rozvedka/compare/v0.72.0...v0.73.0

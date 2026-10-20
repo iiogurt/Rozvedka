@@ -65,6 +65,66 @@ def term_tokens(term: str) -> list[tuple[str, bool]]:
     return [(tok.rstrip("*"), tok.endswith("*")) for tok in re.findall(r"\w+\*?", normalize(term))]
 
 
+RULES = "5"     # the matching rules' version, part of the taxonomy hash: changing a rule re-classifies every document
+
+
+def _compile(terms: list[str]) -> dict:
+    exact, stems, phrases, cjk = {}, {}, [], []
+    for t in terms:
+        if _CJK.search(normalize(t)):
+            cjk.append(normalize(t))
+            continue
+        toks = term_tokens(t)
+        if len(toks) == 1:
+            word, stem = toks[0]
+            (stems if stem else exact)[word] = t
+        elif toks:
+            phrases.append((tuple(toks), t))
+    alternatives = sorted({term_regex(t) for t in terms}, key=len, reverse=True)
+    return {"exact": exact, "stems": stems, "phrases": phrases, "cjk": cjk, "stem_lens": sorted({len(k) for k in stems}),
+            "regex": re.compile("|".join(alternatives) or r"(?!x)x")}
+
+
+# words common in English and rare elsewhere ('in', 'an', 'is', 'to', 'for', 'was' are words of other languages too)
+ENGLISH_WORDS = frozenset("the and of that which with from this have has were been their would should these".split())
+ENGLISH_SHARE = 0.05     # English text: these words are about a fifth of all words; French, Greek or Latvian text: ~0–1 %
+
+
+def is_english(tokens: list[str]) -> bool:
+    """Whether a text is written in English, by its share of English function words – not by its language tag, which
+    is sometimes wrong (a Greek or Latvian summary tagged "en")."""
+    return bool(tokens) and sum(1 for t in tokens if t in ENGLISH_WORDS) / len(tokens) >= ENGLISH_SHARE
+
+
+def _false_friend(term: str, english: list[str]) -> bool:
+    """A single Latin-script word of another language that reads as a different English word: Latvian ķīn* 'China' as
+    'kingdom', Czech munic* 'ammunition' as 'municipal', Spanish temporal* 'storm', French crue* 'flood' as 'cruel',
+    German personal 'staff' as 'personal'. A cognate – a word sharing its stem with one of the topic's English terms
+    (militar* ~ military, russ* ~ Russia, irán ~ Iran) – is not; neither is a phrase or a word in another script."""
+    n = normalize(term).rstrip("*")
+    if " " in n or not re.fullmatch(r"[a-z0-9'.-]+", n):
+        return False
+    if term.rstrip("*").isupper():          # written in capitals: a name or an acronym (CTIVD, SIUN, ＡＩ), not a word
+        return False
+    for e in english:
+        e = normalize(e).rstrip("*")
+        if n == e or (min(len(n), len(e)) >= 4 and (e.startswith(n) or n.startswith(e))):
+            return False
+    return True
+
+
+@lru_cache(maxsize=512)
+def scoped(key: str, english_text: bool) -> dict:
+    """A topic's terms for one text. In an English text, the false friends of other languages are left out
+    (_false_friend); every other text – French, Greek, a Dutch report quoting German – keeps every language's terms."""
+    tp = taxonomy()["topics"][key]
+    if not english_text:
+        return tp
+    english = tp["by_lang"].get("en", [])
+    terms = [t for l, ts in tp["by_lang"].items() for t in ts if l == "en" or not _false_friend(t, english)]
+    return {**tp, **_compile(terms)}
+
+
 @lru_cache(maxsize=1)
 def taxonomy() -> dict:
     """Topics with their terms compiled for fast word-based matching.
@@ -78,28 +138,16 @@ def taxonomy() -> dict:
     for ckey, cat in data["categories"].items():
         for tkey, tp in cat["topics"].items():
             terms = [t for lang_terms in tp["terms"].values() for t in lang_terms]
-            exact, stems, phrases, cjk = {}, {}, [], []
-            for t in terms:
-                if _CJK.search(normalize(t)):
-                    cjk.append(normalize(t))
-                    continue
-                toks = term_tokens(t)
-                if len(toks) == 1:
-                    word, stem = toks[0]
-                    (stems if stem else exact)[word] = t
-                elif toks:
-                    phrases.append((tuple(toks), t))
-            alternatives = sorted({term_regex(t) for t in terms}, key=len, reverse=True)
             topics[tkey] = {"key": tkey, "name": tp["name"], "category": ckey, "category_name": cat["name"],
-                            "terms": terms, "exact": exact, "stems": stems, "phrases": phrases, "cjk": cjk,
-                            "stem_lens": sorted({len(k) for k in stems}), "meta": bool(tp.get("meta")),
-                            "regex": re.compile("|".join(alternatives))}
+                            "terms": terms, "by_lang": {lang: list(ts) for lang, ts in tp["terms"].items()},
+                            "meta": bool(tp.get("meta")), **_compile(terms)}
     return {"categories": {k: {"name": c["name"], "topics": list(c["topics"])} for k, c in data["categories"].items()},
-            "topics": topics, "hash": hashlib.sha256(raw).hexdigest()[:16]}
+            "topics": topics, "hash": hashlib.sha256(raw + RULES.encode()).hexdigest()[:16]}
 
 
 def reload() -> None:
     taxonomy.cache_clear()
+    scoped.cache_clear()
 
 
 def _token_matches(word: str, tok: tuple[str, bool]) -> bool:
@@ -141,8 +189,10 @@ def count_terms(body: str, tp: dict, tokens: list[str], vocab: dict[str, int],
     return counts
 
 
-def classify(text: str, title: str = "") -> list[dict]:
-    """Topics found in a text, best first. Each: key, score, hits, distinct, title_hit, terms (most frequent)."""
+def classify(text: str, title: str = "", lang: str | None = None) -> list[dict]:
+    """Topics found in a text, best first. Each: key, score, hits, distinct, title_hit, terms (most frequent).
+    Every language's terms are applied, except other languages' false friends in an English text (scoped). (`lang`,
+    the document's tag, is not used for that: is_english reads the text itself.)"""
     body = normalize(text)
     head = normalize(title or "")
     tokens = _WORD.findall(body)
@@ -154,7 +204,9 @@ def classify(text: str, title: str = "") -> list[dict]:
         positions.setdefault(w, []).append(i)
     needed = max(3, math.ceil(words / 15_000))
     found = []
-    for key, tp in taxonomy()["topics"].items():
+    english_text = is_english(tokens)
+    for key in taxonomy()["topics"]:
+        tp = scoped(key, english_text)
         counts = count_terms(body, tp, tokens, vocab, positions)
         title_hit = bool(head and tp["regex"].search(head))
         hits, distinct = sum(counts.values()), len(counts)
@@ -252,13 +304,13 @@ def _process(doc: dict) -> dict:
         text, pages = extract_document(doc["local_path"])
     except Exception as e:  # noqa: BLE001 - one broken PDF must not stop the run
         return {"id": doc["id"], "text": None, "pages": None, "error": f"{type(e).__name__}: {e}"[:300], "found": []}
-    return {"id": doc["id"], "text": text, "pages": pages, "error": None, "found": classify(text, doc["title"] or "")}
+    return {"id": doc["id"], "text": text, "pages": pages, "error": None, "found": classify(text, doc["title"] or "", doc.get("lang"))}
 
 
-def _classify_only(item: tuple[int, str, str]) -> dict:
-    """Worker: re-classify stored text (after the taxonomy changed)."""
-    doc_id, body, title = item
-    return {"id": doc_id, "found": classify(body or "", title or "")}
+def _classify_only(item: tuple) -> dict:
+    """Worker: re-classify stored text (after the taxonomy or its rules changed)."""
+    doc_id, body, title, lang = item
+    return {"id": doc_id, "found": classify(body or "", title or "", lang)}
 
 
 def _write_topics(con, doc_id: int, found: list[dict], tax_hash: str, now: str) -> None:
@@ -281,7 +333,7 @@ def index(reextract: bool = False, limit: int | None = None, workers: int = 4, b
     stats = {"extracted": 0, "extract_errors": 0, "classified": 0}
     now = lambda: datetime.now().isoformat(timespec="seconds")  # noqa: E731
     with db.session() as con:
-        q = """SELECT d.id, d.local_path, d.title FROM documents d LEFT JOIN doc_index i ON i.doc_id = d.id
+        q = """SELECT d.id, d.local_path, d.title, d.lang FROM documents d LEFT JOIN doc_index i ON i.doc_id = d.id
                WHERE d.status = 'downloaded' AND d.local_path IS NOT NULL"""
         if not reextract:   # new downloads, and text extracted before page offsets were recorded
             q += " AND (i.extracted_at IS NULL OR (i.pages IS NULL AND i.error IS NULL))"
@@ -321,7 +373,7 @@ def index(reextract: bool = False, limit: int | None = None, workers: int = 4, b
             con.commit()
 
             # documents extracted earlier but classified with an older taxonomy version
-            stale = con.execute("""SELECT i.doc_id, t.body, d.title FROM doc_index i JOIN doc_text t ON t.rowid=i.doc_id
+            stale = con.execute("""SELECT i.doc_id, t.body, d.title, d.lang FROM doc_index i JOIN doc_text t ON t.rowid=i.doc_id
                                    JOIN documents d ON d.id=i.doc_id
                                    WHERE i.taxonomy_hash IS NULL OR i.taxonomy_hash != ?""", (tax_hash,)).fetchall()
             for n, r in enumerate(ex.map(_classify_only, [tuple(x) for x in stale], chunksize=8), 1):
