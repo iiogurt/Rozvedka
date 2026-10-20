@@ -6,7 +6,10 @@
 #   stem*       word starting with the stem         e.g.  extremis*   → extremism, extremist, extremistische
 #   two words   phrase; tokens may carry *          e.g.  "far right", "pravicov* extremis*"
 #   CJK terms (Japanese/Chinese/Korean) match as plain substrings.
-# All languages are applied to every document (reports mix languages; English terms appear everywhere).
+# Every language's terms are applied to every document (reports mix languages), except in an English text: there a single
+# word of another language that reads as a different English word is left out – Latvian ķīn* 'China' as 'kingdom',
+# Czech munic* 'ammunition' as 'municipal'. A cognate sharing its stem with the topic's English terms (militar* ~ military)
+# still counts (rozvedka/topics.py: _false_friend).
 #
 # Assignment (rozvedka/topics.py): a topic is assigned when the title matches, or the text contains at least
 # 2 different terms and enough hits for its length. Editing this file and running `index-topics` re-classifies
@@ -1652,11 +1655,11 @@ categories:
         terms:
           en: ["oversight committee", "parliamentary oversight", "judicial authorisation", "legal basis", "bulk interception", "surveillance powers", "data retention", "investigatory powers", "accountability", "complaints", "privacy"]
           de: ["parlamentarisches kontrollgremium", "g 10", "kontrolle der nachrichtendienste", "datenschutz", "rechtsgrundlage"]
-          fr: ["contrôle parlementaire", "cnctr", "techniques de renseignement", "délégation parlementaire au renseignement"]
-          nl: ["ctivd", "wiv", "toezicht", "toetsingscommissie"]
+          fr: ["contrôle parlementaire", "CNCTR", "techniques de renseignement", "délégation parlementaire au renseignement"]
+          nl: ["CTIVD", "WIV", "toezicht", "toetsingscommissie"]
           cs: ["kontrol* zpravodajsk*", "parlamentní kontrol*", "stálá komise"]
           pl: ["kontrol* parlamentarn*", "komisj* do spraw służb specjalnych"]
-          sv: ["siun", "säkerhets- och integritetsskyddsnämnden", "tillsyn"]
+          sv: ["SIUN", "säkerhets- och integritetsskyddsnämnden", "tillsyn"]
           nb: ["eos-utvalget", "kontroll med etterretning"]
           fi: ["tiedusteluvalvon*", "tiedusteluvaltuutet*"]
           ro: ["control parlamentar", "comisia comună permanentă"]
