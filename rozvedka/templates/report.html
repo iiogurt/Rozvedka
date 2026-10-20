@@ -99,6 +99,23 @@
   {% else %}<p class="muted small">No chapters found: the file has no bookmarks or table of contents the library can read.</p>{% endif %}
 </section>
 
+<section class="viz-card" id="meanings">
+  <h2 class="viz-title">What it says <span class="small"> · <a href="/books/{{ d.id }}/statements">{{ book.meanings.n_statements|num }} dated statements</a>
+    · <a href="/books/{{ d.id }}/relations">{{ book.meanings.n_relations|num }} stated relations</a></span></h2>
+  <p class="muted small">Read from the text, never written anew. Per {{ 'chapter' if book.chapters|length >= 2 else 'block of 25 pages' }}: its
+    <b>distinctive terms</b> – words it uses far more than the library's other documents (tf–idf) – and its <b>key sentences</b>, the three most
+    central (TextRank on the words sentences share), quoted with their page; "why" lists the distinctive terms a sentence holds.</p>
+  {% if book.meanings.units %}<table class="pc-table small">
+    <thead><tr><th>Part</th><th>Distinctive terms</th><th>Key sentences</th></tr></thead>
+    {% for u in book.meanings.units if u.terms or u.sentences %}<tr>
+      <td>{{ u.title }}<div class="muted">{{ page_name(d.id, u.page_from) }}</div></td>
+      <td>{% for t in u.terms %}<span class="topic-chip" title="{{ t.n }} times; tf–idf {{ t.score }}">{{ t.term }}</span> {% endfor %}</td>
+      <td>{% for s in u.sentences %}<blockquote class="bk-quote">{{ s.sentence }}
+        <span class="muted">– <a href="/doc/{{ d.id }}#page={{ s.page }}" target="_blank">{{ page_name(d.id, s.page) }}</a>{% if s.why %} · why: {{ s.why|join(', ') }}{% endif %}</span></blockquote>{% endfor %}</td>
+    </tr>{% endfor %}
+  </table>{% else %}<p class="muted small">Not read yet – run <code>python -m rozvedka index-books</code>.</p>{% endif %}
+</section>
+
 <section class="viz-card" id="book-index">
   <h2 class="viz-title">The book's own index <span class="muted small">{{ book.index|length }} headwords{% if book.index %} · {{ book.index|selectattr('actor_key')|list|length }} matched to actors{% endif %}</span></h2>
   {% if book.index %}

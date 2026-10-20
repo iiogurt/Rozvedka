@@ -111,4 +111,6 @@ def _book(doc_id: int) -> dict | None:
                         per.setdefault(i, {}).setdefault(r["actor_key"], [r["label"], 0])[1] += 1
         for i, c in enumerate(b["chapters"]):
             c["actors"] = sorted(([k, v[0], v[1]] for k, v in per.get(i, {}).items()), key=lambda x: -x[2])[:6]
+    from . import meanings
+    b["meanings"] = meanings.of_book(doc_id)
     return b
