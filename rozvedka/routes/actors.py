@@ -1,7 +1,7 @@
 """Actors: list, review, pairs, sanctions, attributions, timeline and actor pages."""
 from fastapi import APIRouter, Form, HTTPException, Query, Request
 from fastapi.responses import FileResponse, RedirectResponse
-from .. import actor_events, actor_profiles, actors, attributions, cves, db, graphs, paging, leads, review, sanctions, ties, timeline, topics, trends, twins
+from .. import actor_events, actor_profiles, actors, attributions, cves, db, events, graphs, paging, leads, review, sanctions, ties, timeline, topics, trends, twins
 from ..web import _years_desc, tpl
 
 router = APIRouter()
@@ -133,6 +133,7 @@ def actor_page(request: Request, key: str, page: str = "1", per_page: str = ""):
                                                        "reviewed_out": review.of_actor(key),
                                                        "sanctions": sanctions.of_actor(key),
                                                        "attributions": attributions.of_actor(key),
+                                                       "events_of": events.of_actor(key),
                                                        "cve_rows": cves.of_actor(key),
                                                        "network": ties.neighbours(key, skip=("wikidata", "wikipedia", "reports")),
                                                        "net_layers": ties.layer_counts(key),

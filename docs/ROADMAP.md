@@ -218,7 +218,7 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
 
 ### H. Timeline, books and country ratings (owner's topics, 2026-10-19 – researched, not started)
 
-1. ◐ (0.71.0: H1a – events from Wikidata, EuRepoC and UCDP, `/events`; 0.72.0: H1b – `/timeline`, full screen and wall mode; 0.73.0: H1c – chains) **Timeline of events with chains** ([design](TIMELINE.md)) – swimlanes on one time axis, full screen and a wall mode
+1. ✅ (0.71.0: H1a – events from Wikidata, EuRepoC and UCDP, `/events`; 0.72.0: H1b – `/timeline`, full screen and wall mode; 0.73.0: H1c – chains; 0.74.0: H1d – reports naming an event, 96.7 % precision) **Timeline of events with chains** ([design](TIMELINE.md)) – swimlanes on one time axis, full screen and a wall mode
    for large screens, sharp at 4K; typed arrows only for stated relations (Wikidata cause / effect / follows / part of,
    hand-written chains with evidence), a clicked event highlights its chain. Data: Wikidata events (CC0), UCDP GED
    (CC BY 4.0), EuRepoC cyber incidents (CC BY-NC 4.0), the library's own dated records. Joined to reports by event names

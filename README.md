@@ -389,7 +389,9 @@ everything else is dimmed, and *part of* highlights the whole and its parts. An 
   natural disasters, since 2000), EuRepoC's cyber incidents and UCDP's organised violence (single events with at least 50 deaths;
   deaths per country and month), each with its source: date, place, deaths, participants and perpetrators linked to the actor
   index where they match unambiguously, and the relations the Wikidata items state (cause and effect, what followed, what was
-  part of what). The data behind the coming timeline (`fetch-events`).
+  part of what), and the reports that name it – by its Wikidata names in the library's languages, in its year or later, under
+  transparent rules shown with every event (96.7 % precision on a random sample); each count opens `/documents?event=…`.
+  Actor pages list their events, and the network has an *Events* layer (`fetch-events`, `index-events`).
 
 - **Who cites whom** (`/citations`) – a chord diagram of citations between agency types (each ribbon opens its reports) and the web addresses in the reports resolved against the library: which agencies other
   agencies link to, which library reports are cited by other reports, which outside hosts (news, academic, law …) the reports rely
@@ -774,6 +776,7 @@ failure. Starting it after a reboot with nobody logged in needs `loginctl enable
 | `fetch-kev` · `index-cves` | download CISA's Known Exploited Vulnerabilities catalog (CC0; network) · find CVE numbers in the report texts and the actors named near them (`update` runs the second) |
 | `fetch-attack` · `index-techniques` | download MITRE ATT&CK (techniques, groups, software, campaigns and their relations; Enterprise, Mobile, ICS; network) · find technique numbers in the report texts (`update` runs the second) |
 | `fetch-wanted` | read the FBI's and Europe's Most Wanted notices about security (network, ~3 min; then `build-graph`) |
+| `index-events` | find the reports that name each event (its Wikidata names, in its year or later; no download – `fetch-events` runs it too) |
 | `fetch-events [--source wikidata\|eurepoc\|ucdp]` | dated events for the timeline: Wikidata items of the classes in `sources/events.yaml`, EuRepoC cyber incidents, UCDP organised violence (network, ~10 min) |
 | `fetch-wikitext` | read the English Wikipedia articles of the actors the reports name and keep the sentences that link to another known subject (network, ~5 min; then `build-graph`) |
 | `fetch-misp` | download the MISP threat-actor galaxy (CC0): security vendors' names of threat groups and which groups it holds similar (network; then `index-actors` and `build-graph`) |

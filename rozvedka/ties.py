@@ -53,6 +53,9 @@ LAYERS = {
     "publishers": {"name": "Publisher profiles", "group": "reference",
                    "about": "the owners, sponsors, founders, leaders and partners of the library's think tanks and commercial analysts – "
                             "from their own disclosures, USAspending.gov and Wikidata, each with its evidence (publishers.py)"},
+    "events": {"name": "Events (Wikidata, EuRepoC, UCDP)", "group": "reference",
+               "about": "an event names the actor as participant, perpetrator, initiator or side; one event is stated to cause, "
+                        "follow or be part of another (events.py) – each with its source"},
     "reports": {"name": "Named together in the reports", "group": "reports",
                 "about": "two actors named in one passage (600 characters) of at least two reports – a co-mention, not a stated tie"},
 }
@@ -67,7 +70,8 @@ SHAPES = {"Individual": "person", "Entity": "org", "Vessel": "vessel", "Ship": "
 KINDS = {**actors.KINDS, "person": "Person", "org": "Company or organisation", "vessel": "Vessel", "aircraft": "Aircraft",
          "malware": "Malware", "tool": "Tool", "campaign": "Campaign", "address": "Address", "email": "E-mail address",
          "website": "Website", "phone": "Telephone number", "wallet": "Crypto wallet", "case": "Wanted notice (several people)",
-         "think-tank": "Think tank (a publisher of this library)", "commercial": "Commercial analyst (a publisher of this library)"}
+         "think-tank": "Think tank (a publisher of this library)", "commercial": "Commercial analyst (a publisher of this library)",
+         "event": "Event"}
 LABEL_ORDER = ("UK", "EU", "UN", "US", "FBI", "EUMW")
 DETAIL_BACK = {"address": "address of", "email": "e-mail address of", "website": "website of", "phone": "telephone number of",
                "wallet": "crypto wallet of"}
@@ -667,6 +671,45 @@ def publisher_node(source_key: str) -> dict | None:
     return {"id": r["id"], "href": entity_url(r["id"], r["actor"])} if r else None
 
 
+EVENT_ROLES = {"participant": ("participant", "took part in"), "perpetrator": ("perpetrator", "carried out"),
+               "initiator": ("initiator", "initiated"), "initiator state": ("initiator (a state)", "initiated"),
+               "side A": ("side", "a side in"), "side B": ("side", "a side in")}
+EVENT_RELS = {"caused": "caused by", "immediately caused": "immediately caused by", "followed by": "follows",
+              "part of": "has part", "response to": "answered by"}
+
+
+def _from_events(g: _Graph, con) -> dict:
+    """Every stored event that names a gazetteer actor (events.py), as a node tied to those actors by their role, and
+    the stated relations between such events. Its evidence is the event's source page."""
+    from . import events
+    events.init()
+    src_name = {"wikidata": "Wikidata", "eurepoc": "EuRepoC", "ucdp": "UCDP"}
+    rows = {r["key"]: dict(r) for r in con.execute(
+        "SELECT key, label, start, source, kind, url FROM events WHERE key IN (SELECT event_key FROM event_actors WHERE actor_key IS NOT NULL)")}
+    stats = {"events": 0, "actor_ties": 0, "event_ties": 0}
+
+    def node(k: str) -> str:
+        e = rows[k]
+        return g.node(f"event:{k}", "event", e["label"], "events",
+                      {"url": e["url"], "date": e["start"], "source": e["source"], "kind": e["kind"],
+                       "timeline": f"/timeline?sel={k}", "events": f"/events?q={e['label'][:40]}"})
+    for r in con.execute("SELECT event_key, role, actor_key FROM event_actors WHERE actor_key IS NOT NULL"):
+        if r["event_key"] not in rows or r["actor_key"] not in g.actors or r["role"] not in EVENT_ROLES:
+            continue
+        e = rows[r["event_key"]]
+        rel, back = EVENT_ROLES[r["role"]]
+        g.tie(node(r["event_key"]), g.actor(r["actor_key"]), rel, back, "events",
+              {"url": e["url"], "label": f"{src_name[e['source']]}: {e['label'][:80]}", "date": e["start"]}, date=e["start"])
+        stats["actor_ties"] += 1
+    for l in con.execute("SELECT src, rel, dst, stated_by, property, evidence FROM event_links"):
+        if l["src"] in rows and l["dst"] in rows and l["rel"] in EVENT_RELS:
+            g.tie(node(l["src"]), node(l["dst"]), l["rel"], EVENT_RELS[l["rel"]], "events",
+                  {"url": l["evidence"], "label": "written by hand" if l["stated_by"] == "hand" else f"Wikidata {l['property']}"})
+            stats["event_ties"] += 1
+    stats["events"] = sum(1 for k in g.entities if k.startswith("event:"))
+    return stats
+
+
 def build() -> dict:
     """Rebuild entities and ties from the stored lists, gazetteer, ATT&CK catalog and actor index."""
     init()
@@ -680,6 +723,7 @@ def build() -> dict:
         stats["attack"] = {"relations": _from_attack(g)}
         stats["misp"] = _from_misp(g)
         stats["publishers"] = _from_publishers(g, con)
+        stats["events"] = _from_events(g, con)
         _from_reports(g, con)
         con.execute("DELETE FROM ties")
         con.execute("DELETE FROM entities")

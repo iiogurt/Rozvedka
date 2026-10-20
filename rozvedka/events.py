@@ -71,6 +71,12 @@ CREATE TABLE IF NOT EXISTS event_links (             -- relations an item states
 CREATE TABLE IF NOT EXISTS event_months (            -- UCDP deaths in organised violence per country and month
     iso TEXT NOT NULL, month TEXT NOT NULL, deaths INTEGER, events INTEGER, state INTEGER, nonstate INTEGER,
     onesided INTEGER, preliminary INTEGER DEFAULT 0, PRIMARY KEY (iso, month));
+CREATE TABLE IF NOT EXISTS event_names (            -- an event's names (Wikidata label and aliases) and whether reports are searched for them
+    event_key TEXT NOT NULL, name TEXT NOT NULL, lang TEXT, status TEXT, reason TEXT, docs INTEGER DEFAULT 0,
+    PRIMARY KEY (event_key, name));
+CREATE TABLE IF NOT EXISTS event_docs (             -- reports that name the event (one of its used names, in the event's year or later)
+    event_key TEXT NOT NULL, doc_id INTEGER NOT NULL, names TEXT, PRIMARY KEY (event_key, doc_id));
+CREATE INDEX IF NOT EXISTS ix_event_docs_doc ON event_docs(doc_id);
 CREATE TABLE IF NOT EXISTS event_meta (
     source TEXT PRIMARY KEY, name TEXT, retrieved TEXT, url TEXT, data_url TEXT, license TEXT, citation TEXT,
     rows INTEGER, note TEXT);
@@ -218,6 +224,9 @@ def _date(v: dict | None) -> str | None:
 
 
 LABEL_LANGS = ["en", "mul", "uk", "ru", "de", "fr", "es", "pl", "it", "pt", "nl", "ja", "ar", "he", "tr"]
+# the languages of the library's reports: an event's label and aliases in these are searched for in the reports
+NAME_LANGS = ["en", "mul", "es", "de", "fr", "hr", "et", "cs", "sq", "ja", "ro", "nl", "nb", "pl", "bg", "lv", "sl", "tr",
+              "sv", "sk", "it", "ru", "uk", "pt", "fi", "da", "is", "hu", "el", "mk"]
 
 
 def _label(ent: dict, field: str = "labels") -> str | None:
@@ -238,6 +247,8 @@ def parse_item(qid: str, ent: dict, kind: str, sitelinks: int) -> dict:
             links.append({"src": a, "rel": rel, "dst": b, "stated_by": qid, "property": prop})
     return {"key": qid, "source": "wikidata", "kind": kind,
             "label": _label(ent) or qid, "description": _label(ent, "descriptions"),
+            "names": sorted({(v["value"], lang) for lang, v in ent.get("labels", {}).items() if lang in NAME_LANGS} |
+                            {(a["value"], lang) for lang, vs in ent.get("aliases", {}).items() if lang in NAME_LANGS for a in vs}),
             "start": point or start, "end": point or end,
             "lat": coord["latitude"] if coord else None, "lon": coord["longitude"] if coord else None,
             "deaths": int(float(deaths["amount"])) if deaths else None, "weight": sitelinks,
@@ -259,7 +270,7 @@ def fetch_wikidata(con, scope: set[str]) -> dict:
         for r in rows:
             found.setdefault(src._qid(r["e"]["value"]), (c["label"], int(r["links"]["value"])))
         log.info("wikidata %s: %d items", c["label"], len(rows))
-    ents = src.entities(list(found), "labels|descriptions|claims", LABEL_LANGS)
+    ents = src.entities(list(found), "labels|descriptions|claims|aliases", sorted(set(LABEL_LANGS) | set(NAME_LANGS)))
     events = []
     for qid, ent in ents.items():
         e = parse_item(qid, ent, *found[qid])
@@ -394,6 +405,8 @@ def _candidate_url() -> str | None:
 def _store(con, events: list[dict], source: str) -> None:
     keys = [e["key"] for e in events]
     con.execute("DELETE FROM event_countries WHERE event_key IN (SELECT key FROM events WHERE source=?)", (source,))
+    con.execute("DELETE FROM event_names WHERE event_key IN (SELECT key FROM events WHERE source=?)", (source,))
+    con.execute("DELETE FROM event_docs WHERE event_key IN (SELECT key FROM events WHERE source=?)", (source,))
     con.execute("DELETE FROM event_actors WHERE event_key IN (SELECT key FROM events WHERE source=?)", (source,))
     con.execute("DELETE FROM event_links WHERE stated_by IN (SELECT key FROM events WHERE source=?)", (source,))
     con.execute("DELETE FROM events WHERE source=?", (source,))
@@ -405,6 +418,8 @@ def _store(con, events: list[dict], source: str) -> None:
                      int(e["start"][:4]), e.get("lat"), e.get("lon"), e.get("deaths"), e.get("weight"), e["url"],
                      e.get("preliminary", 0), json.dumps(e.get("data") or {}, ensure_ascii=False)))
         con.executemany("INSERT OR IGNORE INTO event_countries VALUES(?,?)", [(e["key"], c) for c in e["countries"]])
+        con.executemany("INSERT OR IGNORE INTO event_names(event_key, name, lang) VALUES(?,?,?)",
+                        [(e["key"], n, lang) for n, lang in e.get("names") or []])
         for a in e["actors"]:
             key = a.get("actor_key") or (country_key.get(a["country"]) if a.get("country") else None)
             con.execute("INSERT OR IGNORE INTO event_actors VALUES(?,?,?,?,?,?)",
@@ -476,6 +491,7 @@ def fetch(sources: tuple[str, ...] = ("wikidata", "eurepoc", "ucdp")) -> dict:
                   data_url=UCDP_GED + (" · " + cand_url if cand_url else ""))
             out["ucdp"] = len(evs)
             out["ucdp_months"] = len(months)
+    out["named_in_reports"] = index_reports()
     return out
 
 
@@ -525,10 +541,29 @@ def listing(offset: int, limit: int, **filters) -> tuple[int, list[dict]]:
             for r in con.execute(f"SELECT * FROM event_links WHERE src IN ({marks}) OR dst IN ({marks})", keys + keys):
                 for k in {r["src"], r["dst"]} & set(keys):
                     links.setdefault(k, []).append(dict(r))
+        reports = report_counts(con, keys)
+        names = {}
+        if keys:
+            for r in con.execute(f"SELECT * FROM event_names WHERE event_key IN ({marks}) ORDER BY status DESC, docs DESC, name", keys):
+                names.setdefault(r["event_key"], []).append(dict(r))
     for r in rows:
         r["countries"], r["actors"], r["links"] = ctry.get(r["key"], []), acts.get(r["key"], []), links.get(r["key"], [])
         r["data"] = json.loads(r["data"] or "{}")
+        r["reports"], r["names"] = reports.get(r["key"], 0), names.get(r["key"], [])
     return total, rows
+
+
+def report_counts(con, keys: list[str]) -> dict[str, int]:
+    """{event key: reports naming it} – counted as the Documents list /documents?event=… counts (its default filters)."""
+    from . import doclist
+    if not keys:
+        return {}
+    f = doclist.build()
+    marks = ",".join("?" * len(keys))
+    return dict(con.execute(f"""SELECT ed.event_key, COUNT(*) FROM event_docs ed JOIN documents d ON d.id=ed.doc_id
+                                JOIN sources s ON s.id=d.source_id
+                                WHERE ed.event_key IN ({marks}) AND {' AND '.join(f['where'])} GROUP BY ed.event_key""",
+                            [*keys, *f["args"]]).fetchall())
 
 
 def facets() -> dict:
@@ -637,3 +672,183 @@ def detail(key: str) -> dict | None:
     init()
     total, rows = listing(0, 1, key=key)
     return rows[0] if rows else None
+
+
+
+# ── which reports name an event ──
+CASELESS = re.compile(r"[\u0590-\u06ff\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]")   # Hebrew, Arabic, Japanese, Chinese, Korean
+
+
+MONTHS = {m.casefold() for m in (
+    "january february march april may june july august september october november december "
+    "januar februar märz april mai juni juli august september oktober november dezember "
+    "janvier février mars avril mai juin juillet août septembre octobre novembre décembre "
+    "enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre "
+    "januari februari maart april mei juni juli augustus september oktober november december "
+    "gennaio febbraio marzo aprile maggio giugno luglio agosto settembre ottobre novembre dicembre "
+    "styczeń luty marzec kwiecień maj czerwiec lipiec sierpień wrzesień październik listopad grudzień").split()}
+
+
+OPERATION = {w.casefold() for w in "operation operazione operación opération operação operatie operacja operasjon operaatio "
+             "operace operácia operacija operaţiunea operațiunea operationen операция операція операция".split()}
+
+
+def name_rule(name: str, actor_names: set[str], ignored: dict[str, str] | None = None) -> str | None:
+    """Why a name is not searched for, or None when it is. General rules first: at least two words; a word of three
+    letters or more (not a code such as '11-M'); not only a date ('October 7'); not a one-word code name ('Operation
+    Domino' – reused by many forces); something specific after the first
+    word – a capitalised word, an acronym (COVID) or a year – so a phrase like 'Lucha contra el terrorismo' (the fight
+    against terrorism), capitalised only at its start, is not taken for a name; not an actor's name (the actor index
+    finds those); a script the full-text index splits into words. Then the names excluded by hand, with their reason."""
+    from .sanctions import normalise
+    words = re.findall(r"\w+", name)
+    if CASELESS.search(name):
+        return "script not split into words by the full-text index"
+    if len(words) < 2:
+        return "one word – too ambiguous"
+    if all(w.isdigit() or len(w) <= 2 for w in words):
+        return "a code or abbreviation – too ambiguous"
+    if all(w.isdigit() or w.casefold() in MONTHS for w in words):
+        return "a date, not a name"
+    if len(words) == 2 and words[0].casefold() in OPERATION:
+        return "a one-word code name – police and armed forces reuse them"
+    year = any(re.fullmatch(r"(1[89]|20)\d\d", w) for w in words)
+    acronym = any(len(w) >= 3 and w.isupper() for w in words)
+    if not (year or acronym or any(w[0].isupper() for w in words[1:])):
+        return "no proper name or year in it"
+    if normalise(name) in actor_names:
+        return "an actor's name"
+    if ignored and normalise(name) in ignored:
+        return f"excluded by hand: {ignored[normalise(name)]}"
+    return None
+
+
+def ignored_names(path: Path | None = None) -> dict[str, str]:
+    """Names excluded by hand (sources/events.yaml `ignore_names`): normalised name → reason."""
+    from .sanctions import normalise
+    rows = (yaml.safe_load((path or CLASSES).read_text(encoding="utf-8")) or {}).get("ignore_names") or []
+    return {normalise(r["name"]): r.get("reason", "") for r in rows if r.get("name")}
+
+
+def _fts_phrase(name: str) -> str:
+    return '"' + " ".join(re.findall(r"\w+", name)) + '"'
+
+
+NEAR = 80        # characters on either side of a name in which an earlier year means the passage speaks of something earlier
+
+
+def _occurrence_regex(name: str) -> re.Pattern:
+    from . import topics
+    words = re.findall(r"\w+", topics.normalize(name))
+    return re.compile(r"(?<!\w)" + r"\W+".join(map(re.escape, words)) + r"(?!\w)")
+
+
+def clean_occurrences(body: str, rx: re.Pattern, year: int) -> tuple[int, int]:
+    """(occurrences, those without an earlier year beside them – within NEAR characters and the sentence) of a name in a
+    normalised text. A generic
+    name of the 2022 invasion also describes 2014 ("Russia's invasion of Ukraine in 2014", "since 2014"): an occurrence
+    next to a year before the event's start year speaks of something earlier."""
+    n = clean = 0
+    for m in rx.finditer(body):
+        n += 1
+        # within NEAR characters, and within the sentence: a year in the sentence before speaks of something else
+        # (a line break is no sentence end: PDF text breaks lines mid-sentence; an empty line is)
+        left = re.split(r"[.!?;]\s|\n\s*\n", body[max(0, m.start() - NEAR):m.start()])[-1]
+        right = re.split(r"[.!?;]\s|\n\s*\n", body[m.end():m.end() + NEAR])[0]
+        window = left + right
+        if not any(int(y) < year for y in re.findall(r"(?<!\d)((?:19|20)\d\d)(?!\d)", window)):
+            clean += 1
+    return n, clean
+
+
+def index_reports() -> dict:
+    """Find the reports that name each Wikidata event, by its used names (rules: name_rule; a name shared by two
+    events is not used), in the event's start year or later – a report cannot name an event that had not happened –
+    and with at least one occurrence that has no earlier year beside it (clean_occurrences).
+    Writes event_names.status/reason/docs and event_docs."""
+    from . import topics
+    from .sanctions import normalise
+    init()
+    with db.session() as con:
+        actor_names = {normalise(r[0]) for r in con.execute("SELECT name FROM actor_names WHERE status='used'")}
+        ignored = ignored_names()
+        rows = con.execute("""SELECT n.event_key, n.name, e.year FROM event_names n JOIN events e ON e.key=n.event_key
+                              WHERE e.source='wikidata'""").fetchall()
+        owners: dict[str, set] = {}
+        for r in rows:
+            owners.setdefault(normalise(r["name"]), set()).add(r["event_key"])
+        con.execute("DELETE FROM event_docs")
+        candidates: dict[int, list] = {}                 # doc → [(event, name, year)] found by the full-text index
+        status = {}
+        stats = {"names": len(rows), "used": 0, "events": 0, "matches": 0, "only_beside_an_earlier_year": 0}
+        for r in rows:
+            reason = name_rule(r["name"], actor_names, ignored)
+            if not reason and len(owners[normalise(r["name"])]) > 1:
+                reason = f"also the name of {len(owners[normalise(r['name'])]) - 1} other event(s)"
+            status[(r["event_key"], r["name"])] = reason
+            if reason:
+                continue
+            stats["used"] += 1
+            for (d,) in con.execute("""SELECT t.rowid FROM doc_text t JOIN documents d ON d.id=t.rowid
+                                       WHERE doc_text MATCH ? AND (d.year IS NULL OR d.year >= ?)""",
+                                    (_fts_phrase(r["name"]), r["year"])):
+                candidates.setdefault(d, []).append((r["event_key"], r["name"], r["year"]))
+        found: dict[tuple, set] = {}
+        docs_of: dict[tuple, int] = {}
+        for d, cands in candidates.items():
+            row = con.execute("SELECT title, body FROM doc_text WHERE rowid=?", (d,)).fetchone()
+            body = topics.normalize(f"{row['title'] or ''}\n{row['body'] or ''}")
+            for key, name, year in cands:
+                n, clean = clean_occurrences(body, _occurrence_regex(name), year)
+                if clean:
+                    found.setdefault((key, d), set()).add(name)
+                    docs_of[(key, name)] = docs_of.get((key, name), 0) + 1
+                elif n:
+                    stats["only_beside_an_earlier_year"] += 1
+        for (key, name), reason in status.items():
+            con.execute("UPDATE event_names SET status=?, reason=?, docs=? WHERE event_key=? AND name=?",
+                        ("ignored" if reason else "used", reason, docs_of.get((key, name), 0), key, name))
+        con.executemany("INSERT INTO event_docs VALUES(?,?,?)", [(k, d, json.dumps(sorted(n), ensure_ascii=False)) for (k, d), n in found.items()])
+        stats["matches"] = len(found)
+        stats["events"] = len({k for k, _ in found})
+    log.info("events named in reports: %s", stats)
+    return stats
+
+
+def sample(n: int = 50, seed: int = 1) -> list[dict]:
+    """Random matches with the passage around the name – for measuring the precision by reading them."""
+    import random
+    init()
+    with db.session() as con:
+        pairs = con.execute("SELECT event_key, doc_id, names FROM event_docs").fetchall()
+        out = []
+        for r in random.Random(seed).sample(pairs, min(n, len(pairs))):
+            name = json.loads(r["names"])[0]
+            snip = con.execute("SELECT snippet(doc_text, 1, '[', ']', '…', 24) FROM doc_text WHERE rowid=? AND doc_text MATCH ?",
+                               (r["doc_id"], _fts_phrase(name))).fetchone()
+            ev = con.execute("SELECT label, start FROM events WHERE key=?", (r["event_key"],)).fetchone()
+            out.append({"event": r["event_key"], "label": ev["label"], "start": ev["start"], "doc_id": r["doc_id"], "name": name,
+                        "passage": snip[0] if snip else None})
+        return out
+
+
+def of_actor(key: str, limit: int = 8) -> dict:
+    """The events an actor is linked to (participant, perpetrator, initiator, side – or, for a state, held in it): how
+    many, by source, and the heaviest few – for the actor page."""
+    init()
+    rk = ranks()
+    with db.session() as con:
+        iso = (con.execute("SELECT iso FROM actors WHERE key=? AND kind='country'", (key,)).fetchone() or [None])[0]
+        rows = con.execute("""SELECT DISTINCT e.key, e.label, e.start, e.source, e.kind FROM events e
+                              WHERE e.key IN (SELECT event_key FROM event_actors WHERE actor_key=?)
+                                 OR e.key IN (SELECT event_key FROM event_countries WHERE iso=?)""", (key, iso or "")).fetchall()
+        rows = [dict(r) for r in rows]
+        by_source: dict[str, int] = {}
+        for r in rows:
+            by_source[r["source"]] = by_source.get(r["source"], 0) + 1
+        top = sorted(rows, key=lambda r: -rk.get(r["key"], 0))[:limit]
+        reports = report_counts(con, [r["key"] for r in top])
+    for r in top:
+        r["reports"] = reports.get(r["key"], 0)
+    return {"total": len(rows), "by_source": by_source, "top": sorted(top, key=lambda r: r["start"], reverse=True),
+            "lane": f"country:{iso}" if iso else f"actor:{key}", "iso": iso}

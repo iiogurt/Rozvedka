@@ -64,6 +64,7 @@ def main():
     sub.add_parser("fetch-wanted", help="wanted notices of the FBI and Europe's Most Wanted about security (network)")
     ev = sub.add_parser("fetch-events", help="dated events for the timeline: Wikidata, EuRepoC cyber incidents, UCDP organised violence")
     ev.add_argument("--source", action="append", choices=["wikidata", "eurepoc", "ucdp"], help="only this source (repeatable)")
+    sub.add_parser("index-events", help="find the reports that name each event (its Wikidata names, in its year or later) – no download")
     sub.add_parser("build-graph", help="rebuild the network of links (sanctions lists, Wikidata, ATT&CK, reports) – no download")
     sub.add_parser("fetch-threat-levels", help="check the official threat-level announcements (sources/threat_levels.yaml) against their pages")
     sub.add_parser("index-citations", help="resolve the web addresses in the report texts: other reports, other agencies, outside sources")
@@ -149,6 +150,9 @@ def main():
     elif a.cmd == "fetch-wikitext":
         from . import wikitext
         print(wikitext.fetch())
+    elif a.cmd == "index-events":
+        from . import events
+        print(events.index_reports())
     elif a.cmd == "fetch-events":
         from . import events
         print(events.fetch(tuple(a.source) if a.source else ("wikidata", "eurepoc", "ucdp")))

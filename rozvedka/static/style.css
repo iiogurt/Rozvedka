@@ -1456,3 +1456,4 @@ body.tl-page main { max-width: none; padding-bottom: 12px; }
 .tl .vis-item.tl-part { outline: 1px dashed var(--warn); outline-offset: 1px; }
 .tl-chainlist li { list-style: none; margin-left: -14px; }
 .tl .vis-item.vis-range.tl-year { border-style: dashed; background: transparent !important; }
+.kind-event { background: var(--warn); border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }

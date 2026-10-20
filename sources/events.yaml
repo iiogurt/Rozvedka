@@ -33,6 +33,12 @@ classes:
 #   - {from: Q30340012, rel: caused, to: Q99999999, evidence: "https://…", note: "the official report, p. 12"}
 relations: []
 
+# `ignore_names` (written by hand, since 0.74.0): names of events that the reports use for something else – not searched
+# for in the reports. General rules come first (rozvedka/events.py: name_rule); this list is for what they cannot see.
+ignore_names:
+- {name: Black Friday, reason: "the name of the shopping day; an alias of the 2015 'Bloody Friday' attacks"}
+- {name: Deterrence of Aggression, reason: "an everyday phrase in defence writing; the name of the 2024 Syrian opposition offensive"}
+
 events:
 - wikipedia: September 11 attacks
   label: 9/11 attacks

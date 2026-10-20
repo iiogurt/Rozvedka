@@ -154,6 +154,19 @@
   </table>
 </section>
 {% endif %}
+{% if events_of and events_of.total %}
+<section class="viz-card" id="events">
+  <h2 class="viz-title">Events <span class="muted small">{{ events_of.total|num }}</span>
+    <span class="small"> · <a href="/timeline?lane={{ events_of.lane }}">on the timeline</a>{% if not events_of.iso %} · <a href="/events?actor={{ a.key }}">all of them</a>{% else %} · <a href="/events?country={{ events_of.iso }}">in the state</a>{% endif %}</span></h2>
+  <p class="muted small">{% if events_of.iso %}Events in the state or with it as a participant{% else %}Events that name it as participant, perpetrator, initiator or side{% endif %}:
+    {% for s, n in events_of.by_source.items() %}{{ n|num }} from {{ {'wikidata': 'Wikidata', 'eurepoc': 'EuRepoC', 'ucdp': 'UCDP'}[s] }}{{ ', ' if not loop.last }}{% endfor %}.
+    The heaviest of them (compared within their own source), newest first:</p>
+  <table class="pc-table small">
+    {% for e in events_of.top %}<tr><td class="ev-date">{{ e.start }}</td><td><a href="/timeline?lane={{ events_of.lane }}&amp;sel={{ e.key }}">{{ e.label }}</a> <span class="muted">{{ e.kind }}</span></td>
+      <td class="n">{% if e.reports %}<a href="/documents?event={{ e.key }}" title="reports naming the event">{{ e.reports|num }} reports</a>{% endif %}</td></tr>{% endfor %}
+  </table>
+</section>
+{% endif %}
 {% if attributions %}
 <section class="viz-card" id="attributions">
   <h2 class="viz-title">Official attributions <span class="muted small">{{ attributions|length }}</span></h2>
