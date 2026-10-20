@@ -645,6 +645,23 @@ def timeline(lanes: list[tuple[str, str]]) -> dict:
                                              "key": None, "label": r["title"], "kind": r["kind"], "source": "library",
                                              "start": str(r["date"]), "end": None, "rank": 1, "url": r.get("source_url"),
                                              "detail": r.get("detail"), "by": r.get("source")})
+                # what the local library's books say happened, dated to a day or a month (a year alone would be a
+                # bar over the whole year): "according to <book>, p. n" – a book's statement, not an event of the sources
+                try:
+                    from . import books as _books, meanings
+                    meanings.init()
+                    for st in con.execute("""SELECT s.doc_id, s.start, s.page, s.date, s.precision, s.sentence, b.title, b.year
+                                             FROM book_statements s JOIN books b ON b.doc_id=s.doc_id
+                                             WHERE s.precision IN ('day', 'month') AND s.actors LIKE ?""", (f'%"{actor_key}"%',)):
+                        page = _books.page_name(st["doc_id"], st["page"])
+                        book = f"{st['title']} ({st['year']})" if st["year"] else st["title"]
+                        out["items"].append({"id": f"{lane}|book|{st['doc_id']}|{st['start']}", "lane": lane, "key": None,
+                                             "label": st["sentence"][:90], "kind": f"book, {page}", "source": "book",
+                                             "start": st["date"], "end": None, "rank": 0.3 if st["precision"] == "day" else 0.2,
+                                             "url": f"/doc/{st['doc_id']}#page={st['page']}", "detail": st["sentence"],
+                                             "by": f"{book}, {page}"})
+                except Exception as e:  # noqa: BLE001 - no book tables yet
+                    log.debug("no book statements: %s", e)
                 f = doclist.build(actor=actor_key, indexed=1)
                 for y, n in con.execute(f"""SELECT d.year, COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
                                             WHERE {' AND '.join(f['where'])} AND d.year IS NOT NULL GROUP BY d.year""", f["args"]):

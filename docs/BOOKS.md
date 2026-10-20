@@ -2,7 +2,7 @@
 
 **Status:** H2a (import, metadata with its origin, search, topics and actors, the book kind) built in 0.75.0; H2b (chapters,
 printed page numbers, the book's own index) in 0.76.0; H2c (distinctive terms, key sentences, dated statements, stated
-relations with spaCy) in 0.77.0; H2d open.
+relations with spaCy) in 0.77.0; H2d (dated statements on the timeline) in 0.78.0.
 
 **H2c as built and measured (0.77.0)** on three test texts (*On War*, the CCDCOE's case-law book, and the USCC's
 793-page 2024 report imported as a stand-in book):

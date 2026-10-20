@@ -27,6 +27,14 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.78.0] – 2026-10-20
+
+### Added
+- **What the books say, on the timeline** (roadmap H2d): a book's dated statements that name a lane's actor or state
+  – dated to a day or a month – appear in that lane as "a book says" (in italics, grey). Clicking one shows the
+  sentence, the book, its year and the printed page, with a link into the book; it is the book's statement as of its
+  publication, not an event of the sources. A statement dated only to a year is not drawn (it would cover the year).
+
 ## [0.77.0] – 2026-10-20
 
 ### Added
@@ -1509,7 +1517,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.77.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.78.0...HEAD
+[0.78.0]: https://github.com/iiogurt/Rozvedka/compare/v0.77.0...v0.78.0
 [0.77.0]: https://github.com/iiogurt/Rozvedka/compare/v0.76.0...v0.77.0
 [0.76.0]: https://github.com/iiogurt/Rozvedka/compare/v0.75.1...v0.76.0
 [0.75.1]: https://github.com/iiogurt/Rozvedka/compare/v0.75.0...v0.75.1

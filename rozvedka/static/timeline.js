@@ -15,7 +15,7 @@
   const REL = { caused: { color: "--warn", line: 0 }, "immediately caused": { color: "--err", line: 0 },
                 "response to": { color: "--accent", line: 0 }, "followed by": { color: "--muted", line: 1 } };
   const wrap = $("#tl-wrap"), panel = $("#tl-panel");
-  const SOURCE = { wikidata: "Wikidata", eurepoc: "EuRepoC", ucdp: "UCDP", library: "library" };
+  const SOURCE = { wikidata: "Wikidata", eurepoc: "EuRepoC", ucdp: "UCDP", library: "library", book: "a book of the local library" };
 
   // ── state in the address ──
   const url = new URL(window.location);
@@ -219,6 +219,13 @@
   // ── the detail panel ──
   const fmtDate = (e) => esc(e.start) + (e.end && e.end !== e.start ? " – " + esc(e.end) : "");
   function showRecord(it) {
+    if (it.source === "book") {          // a dated statement of a book: the book's words, as of its publication
+      panel.innerHTML = `<h2 class="tl-ph">According to a book</h2><p class="small">${esc(it.start)} · ${esc(it.by)}</p>
+        <blockquote class="bk-quote small">${esc(it.detail)}</blockquote>
+        <p class="small muted">A statement of the book, not an event of the sources – the book speaks as of its publication.</p>
+        <p class="small"><a href="${esc(it.url)}" target="_blank">open the book at that page</a></p>`;
+      return;
+    }
     panel.innerHTML = `<h2 class="tl-ph">${esc(it.label)}</h2><p class="small">${esc(it.start)} · ${esc(it.kind)} · library record</p>
       ${it.detail ? `<p class="small">${esc(it.detail)}</p>` : ""}
       <p class="small">Source: ${it.url ? `<a href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.by || it.url)}</a>` : esc(it.by || "")}</p>`;
