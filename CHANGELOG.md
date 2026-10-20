@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.79.0] – 2026-10-20
+
+### Added
+- **Conflict deaths and cyber incidents as ratings of the states** (roadmap H3b), computed from the event data that
+  `fetch-events` already stores:
+  - *Security:* UCDP deaths in organised violence per year and 100,000 inhabitants (population from the World Bank).
+    Preliminary candidate months are left out, and a state with no recorded death has 0.
+  - A new group *Cyber:* the EuRepoC cyber incidents with the state among their receivers, per year – context, not a
+    grade, since it counts what was reported. Each count opens the incidents of that state and year on `/events`.
+  - Both are on `/ratings`, each state's page and the ratings map. `fetch-ratings` computes them, and `fetch-events`
+    refreshes them.
+
 ## [0.78.0] – 2026-10-20
 
 ### Added
@@ -1517,7 +1529,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.78.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.79.0...HEAD
+[0.79.0]: https://github.com/iiogurt/Rozvedka/compare/v0.78.0...v0.79.0
 [0.78.0]: https://github.com/iiogurt/Rozvedka/compare/v0.77.0...v0.78.0
 [0.77.0]: https://github.com/iiogurt/Rozvedka/compare/v0.76.0...v0.77.0
 [0.76.0]: https://github.com/iiogurt/Rozvedka/compare/v0.75.1...v0.76.0

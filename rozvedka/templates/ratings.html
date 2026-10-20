@@ -19,15 +19,15 @@
     {% for k, label in (('ldi', 'most democratic'), ('change', 'largest decline in ten years'), ('name', 'name')) %}
       {% if sort == k %}<b>{{ label }}</b>{% else %}<a href="/ratings?group=democracy&amp;sort={{ k }}">{{ label }}</a>{% endif %}{{ ' · ' if not loop.last }}{% endfor %}</p>
   <table class="rt-table small">
-    <thead><tr><th>State</th><th>1990 → {{ rows[0].measures.vdem_regime.latest[0] if rows and rows[0].measures.vdem_regime }}</th>
+    <thead><tr><th>State</th><th>1990 → {{ (rows[0].measures.get('vdem_regime') or {}).get('latest', ['–'])[0] if rows }}</th>
       {% for key in ('vdem_libdem', 'fh_score', 'wgi_va') %}<th class="n" title="{{ MEASURES[key].about }}">{{ MEASURES[key].by }}<br><span class="muted">{{ MEASURES[key].name }}</span></th>{% endfor %}
       <th>Regime changes</th><th class="n">Official reports</th></tr></thead>
     {% for r in rows %}<tr>
       <th><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="" width="20" height="15"> <a href="/ratings/{{ r.country }}">{{ r.name }}</a></th>
       <td>{{ strip(r, width=220, height=18) }}</td>
       {% for key in ('vdem_libdem', 'fh_score', 'wgi_va') %}{% set m = r.measures.get(key) %}
-      <td class="n">{% if m and m.latest %}<a href="{{ m.url }}" target="_blank" rel="noopener" title="{{ m.latest[0] }} · {{ m.citation }} · {{ m.license }}">{{ m.fmt.format(m.latest[1]) }}</a> <span class="muted">{{ "’" ~ (m.latest[0]|string)[-2:] }}</span>{% else %}<span class="muted">–</span>{% endif %}</td>{% endfor %}
-      <td class="rt-changes">{% for c in r.measures.vdem_regime.changes if r.measures.vdem_regime %}<span title="{{ c.from }} → {{ c.to }}"><b>{{ c.year }}</b> <span class="rt-dot rt-r{{ REGIMES.items()|selectattr(1, 'equalto', c.to)|map(attribute=0)|first }}"></span>{{ c.to }}</span>{% endfor %}</td>
+      <td class="n">{% if m and m.latest %}<a href="{{ m.url ~ ('&year=' ~ m.latest[0] if m.derived == 'eurepoc' else '') }}"{% if not m.derived == 'eurepoc' %} target="_blank" rel="noopener"{% endif %} title="{{ m.latest[0] }} · {{ m.citation }} · {{ m.license }}">{{ m.fmt.format(m.latest[1]) }}</a> <span class="muted">{{ "’" ~ (m.latest[0]|string)[-2:] }}</span>{% else %}<span class="muted">–</span>{% endif %}</td>{% endfor %}
+      <td class="rt-changes">{% for c in (r.measures.get('vdem_regime') or {}).get('changes', []) %}<span title="{{ c.from }} → {{ c.to }}"><b>{{ c.year }}</b> <span class="rt-dot rt-r{{ REGIMES.items()|selectattr(1, 'equalto', c.to)|map(attribute=0)|first }}"></span>{{ c.to }}</span>{% endfor %}</td>
       <td class="n">{% if r.n_docs %}<a href="{{ docs_url(country=r.country, type='official') }}">{{ r.n_docs|num }}</a>{% else %}<span class="muted">0</span>{% endif %}</td>
     </tr>{% endfor %}
   </table>
@@ -49,7 +49,7 @@
     {% for r in rows %}<tr>
       <th><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="" width="20" height="15"> <a href="/ratings/{{ r.country }}">{{ r.name }}</a></th>
       {% for k, m0 in measures.items() %}{% set m = r.measures.get(k) %}
-      <td class="n">{% if m and m.latest %}{{ spark(m) }} <a href="{{ m.url }}" target="_blank" rel="noopener" title="{{ m.latest[0] }} · {{ m.citation }} · {{ m.license }}">{{ m.fmt.format(m.latest[1]) }}</a>
+      <td class="n">{% if m and m.latest %}{{ spark(m) }} <a href="{{ m.url ~ ('&year=' ~ m.latest[0] if m.derived == 'eurepoc' else '') }}"{% if not m.derived == 'eurepoc' %} target="_blank" rel="noopener"{% endif %} title="{{ m.latest[0] }} · {{ m.citation }} · {{ m.license }}">{{ m.fmt.format(m.latest[1]) }}</a>
         <span class="muted">{{ "’" ~ (m.latest[0]|string)[-2:] }}{% if m.rank %} · {{ m.rank[0] }}.{% endif %}</span>{% else %}<span class="muted">–</span>{% endif %}</td>{% endfor %}
       <td class="n">{% if r.n_docs %}<a href="{{ docs_url(country=r.country, type='official') }}">{{ r.n_docs|num }}</a>{% else %}<span class="muted">0</span>{% endif %}</td>
     </tr>{% endfor %}

@@ -492,6 +492,8 @@ def fetch(sources: tuple[str, ...] = ("wikidata", "eurepoc", "ucdp")) -> dict:
             out["ucdp"] = len(evs)
             out["ucdp_months"] = len(months)
     out["named_in_reports"] = index_reports()
+    from . import ratings
+    out["ratings"] = ratings.refresh_event_measures()        # conflict deaths and cyber incidents per state
     return out
 
 
