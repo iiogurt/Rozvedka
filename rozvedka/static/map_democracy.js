@@ -47,6 +47,14 @@
     const i = idx(y);
     return arr && i >= 0 && i < arr.length ? arr[i] : null;
   }
+  // the latest year in which any country has a value (measures end in different years: RSF 2026, GCI 2024 …)
+  function lastYear(key) {
+    const k = key === "change" ? "vdem_libdem" : key;
+    for (let i = data.years.length - 1; i >= 0; i--)
+      if (Object.values(data.countries).some((c) => (c.values[k] || [])[i] != null)) return data.years[i];
+    return data.years.at(-1);
+  }
+  const hasYear = (key, y) => Object.values(data.countries).some((c) => val(c, key, y) != null);
   function colour(key, v) {
     if (v == null) return NODATA;
     if (key === "vdem_regime") return REGIME[Math.round(v)];
@@ -60,13 +68,13 @@
     }
     return RAMP[Math.max(0, Math.min(RAMP.length - 1, Math.round(t * (RAMP.length - 1))))];
   }
-  // the measure's own format ("{:+.2f}", "{:.1f} %" …, as on the server)
+  // the measure's own format ("{:+.2f}", "{:.1f} %", "T{:.0f}" …, as on the server)
   function fmt(key, v) {
     if (v == null) return "–";
     if (key === "vdem_regime") return data.regimes[Math.round(v)];
     if (key === "change") return (v >= 0 ? "+" : "") + v.toFixed(2);
     const f = (data.measures[key] || {}).fmt || "{:.2f}", dec = /\.(\d)f/.exec(f);
-    return (f.includes("+") && v >= 0 ? "+" : "") + v.toFixed(dec ? Number(dec[1]) : 0) + (f.endsWith(" %") ? " %" : "");
+    return f.split("{")[0] + (f.includes("+") && v >= 0 ? "+" : "") + v.toFixed(dec ? Number(dec[1]) : 0) + (f.endsWith(" %") ? " %" : "");
   }
   const groupOf = (key) => key === "change" ? "democracy" : (data.measures[key] || {}).group;
   // best first: the better end of the measure (higher first when it has none)
@@ -231,9 +239,13 @@
                                      fetch("/api/ratings/map").then((r) => r.json())]);
     form.year.min = data.years[0];
     form.year.max = data.years[data.years.length - 1];
-    if (!url.searchParams.get("year")) form.year.value = form.year.max;
+    if (!url.searchParams.get("year")) form.year.value = lastYear(measure());
     form.addEventListener("input", (e) => { if (e.target.name === "year") redraw(); });
-    form.addEventListener("change", (e) => { if (e.target.name === "sources") drawSources(); redraw(); });
+    form.addEventListener("change", (e) => {
+      if (e.target.name === "sources") drawSources();
+      if (e.target.name === "measure" && !hasYear(measure(), year())) form.year.value = lastYear(measure());   // not an empty map
+      redraw();
+    });
     redraw();
     agencies = (await fetch("/api/map").then((r) => r.json())).agencies;
     drawSources();

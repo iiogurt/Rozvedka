@@ -27,6 +27,25 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.81.0] – 2026-10-20
+
+### Added
+- **Press freedom and cybersecurity commitment** on `/ratings`, the state pages and the ratings map (roadmap H3d):
+  - a new *Media* group with RSF's **World Press Freedom Index** (0–100, higher = freer) for the editions since 2022.
+    RSF changed its method in 2022, so earlier scores are not comparable and are left out. The scores stay in this
+    library: RSF's terms ask for permission to reproduce them;
+  - in the *Cyber* group, the **ITU Global Cybersecurity Index 2024** tier of each state (T1 role-modelling …
+    T5 building). The tiers are read from the annex of ITU's report PDF (CC BY-NC-SA 3.0 IGO): all 194 states
+    are matched to their country codes, and the counts per tier agree with the report (46 in Tier 1, 29 in Tier 2).
+    Taiwan has no tier, because ITU covers only UN members.
+- Not used: the National Cyber Security Index, because its terms prohibit reproduction.
+
+### Fixed
+- A rating download that the server answers with an error (such as a missing file) is no longer retried as if the
+  connection had dropped.
+- The ratings map opens at the latest year of the chosen measure, and jumps there when you switch to a measure without
+  values in the year shown. With RSF's 2026 edition, the map would otherwise have opened on an empty year.
+
 ## [0.80.0] – 2026-10-20
 
 ### Added
@@ -1542,7 +1561,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.80.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.81.0...HEAD
+[0.81.0]: https://github.com/iiogurt/Rozvedka/compare/v0.80.0...v0.81.0
 [0.80.0]: https://github.com/iiogurt/Rozvedka/compare/v0.79.0...v0.80.0
 [0.79.0]: https://github.com/iiogurt/Rozvedka/compare/v0.78.0...v0.79.0
 [0.78.0]: https://github.com/iiogurt/Rozvedka/compare/v0.77.0...v0.78.0
