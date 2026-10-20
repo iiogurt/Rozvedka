@@ -8,8 +8,8 @@ The owner asked on 2026-10-19 for a graphical timeline of important events that:
 This note covers what exists, the data that can support it, and how to build it.
 
 **Status:** H1a (the events store, `fetch-events`, `/events`) built in 0.71.0; H1b (the timeline page, `/timeline`, with
-vis-timeline) in 0.72.0; H1c (chains with timeline-arrows, relations written by hand) in 0.73.0; H1d (events joined to
-reports) open.
+vis-timeline) in 0.72.0; H1c (chains with timeline-arrows, relations written by hand) in 0.73.0; H1d (reports naming an
+event, events on actor pages and in the network) in 0.74.0.
 
 ## 1. What exists already
 
@@ -109,3 +109,27 @@ Decide by measuring with the real data in step H1b.
 4. **H1d – joined to reports and subjects.** Event names in the gazetteer with a precision sample, context reports, the
    "events" network layer, events on actor, country and topic pages. · minor
 5. Later: dated statements from the book library (see [BOOKS.md](BOOKS.md)), drawn as "according to <book>, p. n".
+
+## 7. Reports naming an event – as built (0.74.0) and measured
+
+- Names: each Wikidata event's label and aliases in the library's report languages (`event_names`). A name is used
+  unless a rule says why not (`events.name_rule`, shown with every event on `/events`):
+  - one word;
+  - a code ("11-M", "21-J");
+  - only a date ("October 7");
+  - a one-word code name ("Operation Domino");
+  - nothing specific after the first word ("Lucha contra el terrorismo");
+  - an actor's name;
+  - a script the full-text index does not split;
+  - shared by two events;
+  - excluded by hand with a reason (`ignore_names`).
+- Match: a full-text phrase search, then the name again in the normalised text. A report must be from the event's
+  start year or later, and at least one occurrence must have no earlier year beside it in the same sentence (within 80
+  characters). Line breaks are not sentence ends; empty lines are.
+- **Precision, measured by reading random matches** (`events.sample`):
+  - first sample: 56 of 60. All 4 errors were generic names of the 2022 invasion used for 2014 → the earlier-year rule;
+  - second sample: 59 of 60 ("Deterrence of Aggression", an everyday phrase → excluded by hand);
+  - third sample, after the rules: **58 of 60 (96.7 %)**: "Operazione Domino" → the code-name rule, and one doubtful
+    "Russo-Ukrainian War, 2014–2022".
+- Not counted as mentions: reports that only name an event's actors in its year. The timeline panel offers these as
+  "context".

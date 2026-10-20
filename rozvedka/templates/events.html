@@ -13,6 +13,10 @@
     actor of the gazetteer as participant or perpetrator; weight = Wikipedia language editions with an article. EuRepoC: every cyber
     incident since 2000; a state is an initiator only when EuRepoC codes the initiator as a state; weight = its weighted intensity. UCDP:
     single events with at least 50 deaths in a state of the library (preliminary candidate events marked ◌); weight = deaths.</li>
+  <li>Reports naming an event: its Wikidata label and aliases in the library's languages are searched for in the reports' text, in the event's
+    year or later. A name is not used when it is one word, has no proper name or year in it ("terrorist attack"), is an actor's name, belongs to
+    two events, or is in a script the full-text index does not split into words – each event lists its names and why one is not used.
+    Rebuild: <code>python -m rozvedka index-events</code>.</li>
   <li>Nothing is inferred: an actor is linked when its Wikidata item or one of its names matches the gazetteer unambiguously – otherwise it
     is shown as written, with the reason. Relations (→) are only those a Wikidata item states. Refresh: <code>python -m rozvedka fetch-events</code>.</li>
   {% if not meta %}<li><b>No events yet</b> – run <code>python -m rozvedka fetch-events</code>.</li>{% endif %}
@@ -34,7 +38,7 @@
 
 {{ pager(pg, "events") }}
 <table class="pc-table small ev-table">
-  <thead><tr><th>Date</th><th>Event</th><th>Where</th><th>Who</th><th class="n">Deaths</th><th>Source</th></tr></thead>
+  <thead><tr><th>Date</th><th>Event</th><th>Where</th><th>Who</th><th class="n">Deaths</th><th class="n" title="Reports in the library that name the event (its Wikidata names, in its year or later)">Reports</th><th>Source</th></tr></thead>
   {% for e in rows %}<tr>
     <td class="ev-date">{{ e.start }}{% if e.end and e.end != e.start %}<br><span class="muted">– {{ e.end }}</span>{% endif %}</td>
     <td><b>{{ e.label }}</b>{% if e.preliminary %} <span class="muted" title="UCDP candidate event: preliminary">◌</span>{% endif %}
@@ -47,6 +51,9 @@
       {% if a.actor_key %}<a href="/actors/{{ a.actor_key }}">{{ a.actor_label or a.name }}</a>{% else %}<span title="{{ a.reason or '' }}">{{ a.name[:70] }}{{ '…' if a.name|length > 70 }}</span>{% endif %}</div>{% endfor %}
       {% if e.actors|length > 6 %}<div class="muted">+{{ e.actors|length - 6 }} more</div>{% endif %}</td>
     <td class="n">{{ e.deaths|num if e.deaths is not none else '' }}</td>
+    <td class="n">{% if e.reports %}<a href="/documents?event={{ e.key }}">{{ e.reports|num }}</a>{% elif e.source == 'wikidata' %}<span class="muted">0</span>{% endif %}
+      {% if e.names %}<details class="ev-names"><summary class="muted">names</summary><ul class="tl-list">{% for n in e.names %}<li>{{ n.name }}
+        <span class="muted">{{ n.lang }}{% if n.status == 'used' %} · {{ n.docs }}{% else %} · not used: {{ n.reason }}{% endif %}</span></li>{% endfor %}</ul></details>{% endif %}</td>
     <td><a href="{{ e.url }}" target="_blank" rel="noopener">{{ {'wikidata': 'Wikidata', 'eurepoc': 'EuRepoC', 'ucdp': 'UCDP'}[e.source] }}</a>
       {% if e.weight is not none %}<div class="muted" title="{{ {'wikidata': 'Wikipedia language editions with an article', 'eurepoc': 'EuRepoC weighted intensity', 'ucdp': 'deaths (best estimate)'}[e.source] }}">weight {{ e.weight|round(1) if e.source == 'eurepoc' else e.weight|int }}</div>{% endif %}</td>
   </tr>{% endfor %}

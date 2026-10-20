@@ -13,7 +13,7 @@ import re
 
 from . import actors, db, ties
 
-BASE = {"us": 1.0, "uk": 1.0, "un": 1.0, "eu": 1.0, "ids": 1.0, "wanted": 1.0, "wikidata": 1.25, "wikipedia": 1.25, "attack": 1.25, "misp": 1.25, "publishers": 1.25, "wikitext": 1.5, "reports": 1.75}
+BASE = {"us": 1.0, "uk": 1.0, "un": 1.0, "eu": 1.0, "ids": 1.0, "wanted": 1.0, "wikidata": 1.25, "wikipedia": 1.25, "attack": 1.25, "misp": 1.25, "publishers": 1.25, "events": 1.5, "wikitext": 1.5, "reports": 1.75}
 HUB = 0.5               # per doubling of an intermediate entity's links
 KIND_COST = {"tool": 1.5}   # system tools (net, PowerShell, Mimikatz) are used by everyone: sharing one says little
 MAX_STEPS = 6

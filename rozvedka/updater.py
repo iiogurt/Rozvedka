@@ -23,7 +23,8 @@ ACTIONS = {"full": "Check for new reports, download and index them", "check": "O
 # after downloading: extract text, recognise scanned reports, date and match – each in its own process
 INDEX_STEPS = (("Extracting text and matching topics", "index-topics"), ("Recognising scanned reports (OCR)", "ocr"),
                ("Dating new reports", "date-documents"), ("Typing and grouping new reports", "type-documents"),
-               ("Matching actors", "index-actors"), ("Building the network of links", "build-graph"))
+               ("Matching actors", "index-actors"), ("Finding the events reports name", "index-events"),
+               ("Building the network of links", "build-graph"))
 
 
 def all_checked_since(con) -> str | None:
@@ -137,7 +138,8 @@ def _index_here() -> dict:
     res["index-cves"] = cves.index()
     res["index-citations"] = citations.index()
     res["index-techniques"] = techniques.index()
-    from . import ties
+    from . import events, ties
+    res["index-events"] = events.index_reports()
     res["build-graph"] = ties.build()
     return res
 

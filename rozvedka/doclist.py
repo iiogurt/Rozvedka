@@ -10,7 +10,7 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
           show_hidden: int = 0, coalition: str = "", topic=(), year_from="", year_to="", indexed: int = 0,
           actor: str = "", main: int = 0, cluster: str = "", series_id: str = "", added_from: str = "",
           added_to: str = "", undated: int = 0, doc_type: str = "", all_types: int = 0, all_files: int = 0,
-          exact: int = 0, cve: str = "", cve_near: str = "", cite: str = "", technique: str = "") -> dict:
+          exact: int = 0, cve: str = "", cve_near: str = "", cite: str = "", technique: str = "", event: str = "") -> dict:
     """SQL condition (over documents d JOIN sources s) and its arguments for the Documents list's parameters."""
     tax = topics.taxonomy()["topics"]
     topic = [topic] if isinstance(topic, str) else list(topic or [])
@@ -47,6 +47,8 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
         where.append("date(d.discovered_at)<=?"); args.append(added_to)
     if indexed:   # links from the Trends charts count only documents whose text is topic-classified
         where.append(trends.CLASSIFIED)
+    if event:     # reports that name the event (rozvedka/events.py: index_reports)
+        where.append("d.id IN (SELECT doc_id FROM event_docs WHERE event_key=?)"); args.append(event)
     actor_row = None
     if actor:
         where.append(actors.doc_clause()); args.append(actor)

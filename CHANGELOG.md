@@ -27,6 +27,30 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.74.0] – 2026-10-20
+
+### Added
+- **Reports that name an event** (roadmap H1d). Each Wikidata event's label and aliases in the library's languages are
+  searched for in the reports' text, in the event's year or later.
+  - Transparent rules decide which names are used: at least two words; a word of three letters or more (not a code
+    such as "11-M"); not only a date ("October 7"); not a one-word code name ("Operation Domino"); something specific
+    after the first word – a capitalised word, an acronym or a year ("Lucha contra el terrorismo" is a phrase, not a
+    name); not an actor's name; not shared by two events; plus a short list excluded by hand with reasons
+    (`ignore_names` in `sources/events.yaml`).
+  - An occurrence next to an earlier year in the same sentence ("Russia's invasion of Ukraine in 2014") does not count.
+  - Precision on 60 random matches: 58 correct (96.7 %), after two earlier samples led to the rules above.
+  - 98 events are named in 1,403 reports. Every count opens `/documents?event=…`, the new filter of the Documents list.
+    Each event lists its names and why one is not used. Rebuild with `python -m rozvedka index-events` (also part of
+    `fetch-events`).
+- **Events in the rest of the portal:**
+  - the event list and the timeline panel show the reports naming an event;
+  - the panel adds context links: reports naming its actors in its year and the next, which need not mention the event;
+  - actor pages get an *Events* section, with the actor's heaviest events and links to all of them and to its
+    timeline lane;
+  - a new network layer *Events* ties each event to its participants, perpetrators, initiators and sides, and to the
+    events it is stated to cause, follow or be part of, so "how are X and Y connected?" can pass through an event;
+  - a link to `/timeline?sel=<event>` without lanes opens the event's own states and actors.
+
 ## [0.73.0] – 2026-10-19
 
 ### Added
@@ -1415,7 +1439,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.73.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.74.0...HEAD
+[0.74.0]: https://github.com/iiogurt/Rozvedka/compare/v0.73.0...v0.74.0
 [0.73.0]: https://github.com/iiogurt/Rozvedka/compare/v0.72.0...v0.73.0
 [0.72.0]: https://github.com/iiogurt/Rozvedka/compare/v0.71.0...v0.72.0
 [0.71.0]: https://github.com/iiogurt/Rozvedka/compare/v0.70.0...v0.71.0

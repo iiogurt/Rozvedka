@@ -23,7 +23,7 @@
   const state = { start: url.searchParams.get("start"), end: url.searchParams.get("end"), sel: url.searchParams.get("sel"),
                   wall: url.searchParams.get("wall") === "1" };
   let data = null, all = [], timeline = null, forced = new Set(), arrows = null;
-  let chain = { keys: new Set(), parts: new Set(), used: [] };
+  let chain = { keys: new Set(), parts: new Set(), used: [] }, timelineWindow = null;
   const items = new vis.DataSet(), groups = new vis.DataSet();
 
   function save() {
@@ -207,6 +207,15 @@
       ${c.members.length ? `<h3 class="tl-ph3">Its parts <span class="muted">${c.members.length > PARTS ? `– the ${PARTS} heaviest of ${c.members.length} highlighted` : ""}</span></h3><ul class="tl-list small">${c.members.map((l) => `<li>${instance(l.src, chain.lane) ? `<a href="#" data-focus="${esc(l.src)}">${esc(l.src_label)}</a>` : esc(l.src_label)}</li>`).join("")}</ul>` : ""}`;
   }
 
+  // reports naming the event's actors in its year and the next – context, not mentions of the event
+  function context(e) {
+    const y = Number(String(e.start).slice(0, 4)), linked = e.actors.filter((a) => a.actor_key);
+    if (!linked.length || !y) return "";
+    const seen = new Set(), links = linked.filter((a) => !seen.has(a.actor_key) && seen.add(a.actor_key)).slice(0, 6)
+      .map((a) => `<a href="/documents?actor=${encodeURIComponent(a.actor_key)}&indexed=1&year_from=${y}&year_to=${y + 1}">${esc(a.actor_label || a.name)}</a>`);
+    return `<p class="small muted">Context – reports naming ${links.join(", ")} in ${y}–${y + 1} (they need not mention this event).</p>`;
+  }
+
   // ── the detail panel ──
   const fmtDate = (e) => esc(e.start) + (e.end && e.end !== e.start ? " – " + esc(e.end) : "");
   function showRecord(it) {
@@ -234,6 +243,9 @@
       ${e.description ? `<p class="small">${esc(e.description)}</p>` : ""}
       ${e.countries.length ? `<p class="small">${e.countries.map((c) => `<img class="flag-sm" src="/static/flags/${esc(c.toLowerCase())}.svg" alt="${esc(c)}" title="${esc(c)}" width="18" height="13" data-code="${esc(c)}">`).join(" ")}</p>` : ""}
       ${actors ? `<h3 class="tl-ph3">Who</h3><ul class="tl-list small">${actors}</ul>` : ""}
+      ${e.source === "wikidata" ? `<p class="small">${e.reports ? `Named in <a href="/documents?event=${encodeURIComponent(e.key)}"><b>${num(e.reports)}</b> report${e.reports === 1 ? "" : "s"}</a> of the library`
+        : "No report of the library names it"} <span class="muted">(${e.names.filter((n) => n.status === "used").length} of ${e.names.length} names searched)</span></p>` : ""}
+      ${context(e)}
       <div class="tl-chainbox">${chainList(c)}</div>
       ${rel ? `<details class="small"><summary>All stated relations (${e.links.length})</summary><ul class="tl-list small">${rel}</ul></details>` : ""}
       <p class="small">Source: <a href="${esc(e.url)}" target="_blank" rel="noopener">${SOURCE[e.source]}</a> ·
@@ -285,8 +297,9 @@
         stack: true, orientation: { axis: "top", item: "top" }, height: "100%", verticalScroll: true, groupOrder: "order",
         zoomMin: 7 * DAY, zoomMax: 40 * 365 * DAY, min: day(1990), max: new Date(Date.now() + 365 * DAY),
         margin: { item: { horizontal: 0, vertical: 4 }, axis: 6 },   // 0: the year bars of the report strip touch without stacking tooltip: { followMouse: true, overflowMethod: "cap", delay: 120 },
-        showCurrentTime: true, selectable: true, multiselect: false, start: state.start ? new Date(state.start) : day(2014),
-        end: state.end ? new Date(state.end) : new Date(Date.now() + 60 * DAY),
+        showCurrentTime: true, selectable: true, multiselect: false,
+        start: state.start ? new Date(state.start) : timelineWindow ? timelineWindow[0] : day(2014),
+        end: state.end ? new Date(state.end) : timelineWindow ? timelineWindow[1] : new Date(Date.now() + 60 * DAY),
       });
       timeline.on("rangechanged", refresh);
       timeline.on("select", (p) => (p.items.length ? select(p.items[0]) : clearChain()));
@@ -355,7 +368,18 @@
     ev.preventDefault();
   });
 
-  if (!lanes.length) lanes = (wrap.dataset.lanes || "").split(",").filter(Boolean);
   setWall(state.wall);
-  load();
+  (async () => {
+    // an event asked for without lanes (a link from the network): its own states and actors are the lanes
+    if (!lanes.length && state.sel) {
+      const r = await fetch(`/api/timeline/event/${encodeURIComponent(state.sel)}`);
+      if (r.ok) {
+        const e = await r.json(), keys = [...new Set(e.actors.filter((a) => a.actor_key).map((a) => a.actor_key))];
+        lanes = [...e.countries.slice(0, 3).map((c) => `country:${c}`), ...keys.slice(0, 2).map((k) => `actor:${k}`)];
+        if (!state.start) { const y = Number(String(e.start).slice(0, 4)); timelineWindow = [day(y - 2), day(y + 3)]; }
+      }
+    }
+    if (!lanes.length) lanes = (wrap.dataset.lanes || "").split(",").filter(Boolean);
+    load();
+  })();
 })();

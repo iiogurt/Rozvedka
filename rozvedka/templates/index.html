@@ -46,8 +46,9 @@
   <span class="muted small">Topics (all must match):</span>
   {% for t in f.topic %}<a class="topic-chip on" href="/documents?{{ qs(topic=f.topic|reject('equalto', t)|list, page=1) }}" title="Remove">{{ TOPICS[t].name }} ✕</a>{% endfor %}
 </div>{% endif %}
-{% if f.year_from or f.year_to or f.indexed or f.actor or f.main or f.cluster or f.series or f.added_from or f.added_to or f.undated or f.cve or f.cite or f.technique %}<div class="chosen-topics">
+{% if f.year_from or f.year_to or f.indexed or f.actor or f.main or f.cluster or f.series or f.added_from or f.added_to or f.undated or f.cve or f.cite or f.technique or f.event %}<div class="chosen-topics">
   <span class="muted small">Also limited to:</span>
+  {% if f.event %}<a class="topic-chip on" href="/documents?{{ qs(event='', page=1) }}" title="Remove">naming the event {{ event_row.label if event_row else f.event }} ✕</a>{% endif %}
   {% if f.actor %}<a class="topic-chip on" href="/documents?{{ qs(actor='', page=1) }}" title="Remove">mentions {{ actor_row.label if actor_row else f.actor }} ✕</a>
     <a class="small" href="/actors/{{ f.actor }}">actor page</a>{% endif %}
   {% if f.year_from or f.year_to %}<a class="topic-chip on" href="/documents?{{ qs(year_from='', year_to='', page=1) }}" title="Remove">years {{ f.year_from or '…' }}–{{ f.year_to or '…' }} ✕</a>{% endif %}
