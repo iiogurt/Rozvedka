@@ -281,7 +281,7 @@
       {% if p.nearby %}<div class="p-near small"><span class="muted">Named nearby:</span>
         {% for n in p.nearby %}<a class="mchip {{ 'linked' if n.says }}" href="/actors/{{ a.key }}/with/{{ n.key }}" title="{{ 'Connected: ' ~ n.says ~ ' – ' if n.says }}passages naming both"><i class="kdot kind-{{ n.kind }}"></i>{{ n.label }}{% if n.says %} <span class="cn-rel">{{ n.says }}</span>{% endif %}</a>{% endfor %}</div>{% endif %}
       <div class="p-foot small">
-        <a href="{{ p.open }}">{% if p.page %}p. {{ p.page }}{% else %}open report{% endif %}</a> ·
+        <a href="{{ p.open }}">{% if p.page %}{{ page_name(p.doc_id, p.page) }}{% else %}open report{% endif %}</a> ·
         <a href="{{ p.url }}" rel="noopener">original</a> ·
         {% if p.ocr %}<span class="badge-ocr" title="{{ p.ocr }} – recognition can misread letters and words; check the PDF">OCR text</span> ·{% endif %}
         <span class="muted">{{ p.hits }} mention{{ 's' if p.hits != 1 }} in this report, as

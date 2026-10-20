@@ -89,4 +89,26 @@ def _book(doc_id: int) -> dict | None:
         return None
     b = dict(b)
     b["authors"], b["meta"] = json.loads(b["authors"] or "[]"), json.loads(b["meta"] or "{}")
+    b["chapters"] = json.loads(b.get("chapters") or "[]")
+    with db.session() as con:
+        books.init_structure()
+        b["index"] = [dict(r) | {"pages": json.loads(r["pages"] or "[]")} for r in con.execute(
+            """SELECT bi.*, a.label actor_label FROM book_index bi LEFT JOIN actors a ON a.key=bi.actor_key
+               WHERE bi.doc_id=? ORDER BY bi.actor_key IS NULL, bi.headword""", (doc_id,))]
+        # the actors named most in each chapter: the actor index's spans placed on the pages
+        ix = con.execute("SELECT pages FROM doc_index WHERE doc_id=?", (doc_id,)).fetchone()
+        offsets = json.loads(ix["pages"]) if ix and ix["pages"] else None
+        starts = [c["page"] for c in b["chapters"]]
+        per: dict[int, dict] = {}
+        if offsets and starts:
+            import bisect
+            for r in con.execute("""SELECT da.actor_key, da.spans, a.label FROM doc_actors da JOIN actors a ON a.key=da.actor_key
+                                    WHERE da.doc_id=? AND a.kind != 'country'""", (doc_id,)):
+                for s0, _ in json.loads(r["spans"] or "[]"):
+                    pg = topics.page_of(offsets, s0)
+                    i = bisect.bisect_right(starts, pg) - 1 if pg else -1
+                    if i >= 0:
+                        per.setdefault(i, {}).setdefault(r["actor_key"], [r["label"], 0])[1] += 1
+        for i, c in enumerate(b["chapters"]):
+            c["actors"] = sorted(([k, v[0], v[1]] for k, v in per.get(i, {}).items()), key=lambda x: -x[2])[:6]
     return b

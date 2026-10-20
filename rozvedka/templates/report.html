@@ -84,6 +84,32 @@
 </section>
 </div>
 
+{% if book %}
+<section class="viz-card" id="chapters">
+  <h2 class="viz-title">Chapters <span class="muted small">{{ book.chapters|length }}{% if book.chapters_from %} · from {{ book.chapters_from }}{% endif %}</span></h2>
+  {% if book.chapters %}
+  <table class="pc-table small">
+    <thead><tr><th>Chapter</th><th>Starts</th><th>Named most in it</th></tr></thead>
+    {% for c in book.chapters %}<tr>
+      <td style="padding-left: {{ 8 + 16 * c.level }}px">{{ c.title }}</td>
+      <td class="ev-date"><a href="/doc/{{ d.id }}#page={{ c.page }}" target="_blank">{{ page_name(d.id, c.page) }}</a></td>
+      <td>{% for k, label, n in c.actors %}<a class="topic-chip" href="/actors/{{ k }}">{{ label }} <span class="muted">{{ n }}</span></a> {% endfor %}</td>
+    </tr>{% endfor %}
+  </table>
+  {% else %}<p class="muted small">No chapters found: the file has no bookmarks or table of contents the library can read.</p>{% endif %}
+</section>
+
+<section class="viz-card" id="book-index">
+  <h2 class="viz-title">The book's own index <span class="muted small">{{ book.index|length }} headwords{% if book.index %} · {{ book.index|selectattr('actor_key')|list|length }} matched to actors{% endif %}</span></h2>
+  {% if book.index %}
+  <p class="muted small">Read from the index at the back of the book ({{ page_name(d.id, book.index_from) }} on) – the editor's own list of what each page is about.
+    A headword is linked to an actor when exactly one actor has that name (also turned round: "Putin, Vladimir").</p>
+  <div class="bk-index small">{% for e in book.index %}<div>{% if e.actor_key %}<a href="/actors/{{ e.actor_key }}"><b>{{ e.headword }}</b></a>{% else %}<span title="{{ e.reason or '' }}">{{ e.headword }}</span>{% endif %}
+    <span class="muted">{{ e.pages|join(', ') }}</span></div>{% endfor %}</div>
+  {% else %}<p class="muted small">No index found at the back of the book.</p>{% endif %}
+</section>
+{% endif %}
+
 {% if cites.links %}
 <section class="viz-card" id="citations">
   <h2 class="viz-title">Links to other sources <span class="muted small">{{ cites.links }}</span></h2>
@@ -157,7 +183,7 @@
   {% for a in actors %}<li><div><i class="kdot kind-{{ a.kind }}"></i><a href="/actors/{{ a.key }}"><b>{{ a.label }}</b></a>
       <span class="muted small">{{ a.kind_name }} · {{ a.hits }} mention{{ 's' if a.hits != 1 }} · as {{ a.names.keys()|list|join(', ') }}</span></div>
     {% if a.match %}<blockquote class="snippet small">{{ a.before }}<mark>{{ a.match }}</mark>{{ a.after }}
-      {% if d.local_path %}<a class="muted" href="/doc/{{ d.id }}{{ '#page=' ~ a.page if a.page }}" target="_blank">{{ 'p. ' ~ a.page if a.page else 'open' }}</a>{% endif %}</blockquote>{% endif %}</li>{% endfor %}
+      {% if d.local_path %}<a class="muted" href="/doc/{{ d.id }}{{ '#page=' ~ a.page if a.page }}" target="_blank">{{ page_name(d.id, a.page) if a.page else 'open' }}</a>{% endif %}</blockquote>{% endif %}</li>{% endfor %}
   </ol>
   {% else %}<p class="muted small">No actor named{% if not index %} – the report has no text in the library yet{% endif %}.</p>{% endif %}
   {% if countries %}<p class="small rp-chips"><span class="muted">Countries named:</span>

@@ -370,7 +370,9 @@ column; <i>over-emphasis</i> shows how much more or less often a row carries a t
 - **Books** (`/books`) – a local library of PDFs and EPUBs (`data/books/`, never committed or exported), read whole and
   matched to actors and topics like the reports, with their passages and pages – but of their own kind (▲ book) and never
   counted as reports. Metadata from a hand-written `books.yaml`, Open Library by ISBN (authors linked to Wikidata) or the
-  file itself, each field with its origin (`import-books`).
+  file itself, each field with its origin (`import-books`). A book's page lists its chapters (bookmarks, EPUB table of
+  contents or the printed contents page) with the actors named most in each, and its own index from the back, headwords
+  linked to actors; passages are cited by the page number printed in the book (`index-books`).
 
 - **Timeline** (`/timeline`) – states and actors as lanes on one time axis: their events (Wikidata, EuRepoC, UCDP) and the library's
   dated records (sanctions listings, designations, official attributions, threat-level changes), UCDP's deaths per month as the lane's
@@ -782,6 +784,7 @@ failure. Starting it after a reboot with nobody logged in needs `loginctl enable
 | `fetch-attack` · `index-techniques` | download MITRE ATT&CK (techniques, groups, software, campaigns and their relations; Enterprise, Mobile, ICS; network) · find technique numbers in the report texts (`update` runs the second) |
 | `fetch-wanted` | read the FBI's and Europe's Most Wanted notices about security (network, ~3 min; then `build-graph`) |
 | `import-books [FOLDER] [--no-lookup] [--no-index]` | read the PDFs and EPUBs of the local book library (`data/books/`) into the library: metadata from `books.yaml`, Open Library by ISBN or the file; text, topics and actors like a report; never counted as reports, never exported |
+| `index-books` | chapters, printed page numbers and the book's own index for every book of the local library (no download) |
 | `index-events` | find the reports that name each event (its Wikidata names, in its year or later; no download – `fetch-events` runs it too) |
 | `fetch-events [--source wikidata\|eurepoc\|ucdp]` | dated events for the timeline: Wikidata items of the classes in `sources/events.yaml`, EuRepoC cyber incidents, UCDP organised violence (network, ~10 min) |
 | `fetch-wikitext` | read the English Wikipedia articles of the actors the reports name and keep the sentences that link to another known subject (network, ~5 min; then `build-graph`) |

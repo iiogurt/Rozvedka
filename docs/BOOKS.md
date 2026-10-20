@@ -1,6 +1,7 @@
 # A local library of books: what it would take (roadmap H2)
 
-**Status:** H2a (import, metadata with its origin, search, topics and actors, the book kind) built in 0.75.0; H2b–H2d open.
+**Status:** H2a (import, metadata with its origin, search, topics and actors, the book kind) built in 0.75.0; H2b (chapters,
+printed page numbers, the book's own index) in 0.76.0; H2c–H2d open.
 
 The owner asked on 2026-10-19: how hard would it be to add a local library of about 100 e-books (PDF) of journalism and
 history, linked into the database? It should extract not only keywords but also basic meanings.

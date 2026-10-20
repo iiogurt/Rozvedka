@@ -143,6 +143,14 @@ _stamps: dict[tuple, str] = {}
 tpl.env.globals["asset"] = asset
 
 
+def _page_name(doc_id, page) -> str:
+    from . import books
+    return books.page_name(doc_id, page)
+
+
+tpl.env.globals["page_name"] = _page_name       # "p. 123" as printed in a book, "section 4" of an EPUB, else "p. 7"
+
+
 async def request_guard(request: Request, call_next):
     """No login: refuse unknown host names (DNS rebinding) and changes requested by other sites (CSRF) – rozvedka/guard.py."""
     host = request.headers.get("host", "")

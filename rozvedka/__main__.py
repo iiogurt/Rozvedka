@@ -69,6 +69,7 @@ def main():
     bk.add_argument("folder", nargs="?", help="the folder with the books (default data/books/)")
     bk.add_argument("--no-lookup", action="store_true", help="do not ask Open Library for the metadata")
     bk.add_argument("--no-index", action="store_true", help="skip extracting the text and matching topics and actors")
+    sub.add_parser("index-books", help="chapters, printed page numbers and the own index of the local library's books – no download")
     sub.add_parser("build-graph", help="rebuild the network of links (sanctions lists, Wikidata, ATT&CK, reports) – no download")
     sub.add_parser("fetch-threat-levels", help="check the official threat-level announcements (sources/threat_levels.yaml) against their pages")
     sub.add_parser("index-citations", help="resolve the web addresses in the report texts: other reports, other agencies, outside sources")
@@ -154,6 +155,9 @@ def main():
     elif a.cmd == "fetch-wikitext":
         from . import wikitext
         print(wikitext.fetch())
+    elif a.cmd == "index-books":
+        from . import books
+        print(books.structure())
     elif a.cmd == "import-books":
         from . import books
         r = books.import_books(a.folder, lookup=not a.no_lookup, index=not a.no_index)

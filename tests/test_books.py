@@ -139,3 +139,54 @@ def test_import_index_and_keep_apart(library, monkeypatch):
     assert dst.execute("SELECT COUNT(*) FROM sources WHERE publisher='book'").fetchone()[0] == 0
     assert dst.execute("SELECT COUNT(*) FROM books").fetchone()[0] == 0
     dst.close()
+
+
+def test_chapters_page_labels_and_the_index(library, tmp_path):
+    from pypdf import PdfReader, PdfWriter
+    from pypdf.constants import PageLabelStyle
+    # a PDF with bookmarks and printed page numbers that start at 'i'
+    make_pdf(tmp_path / "plain.pdf", ["Front matter", "Chapter one: Wagner", "Chapter two: Sandworm", "Index"])
+    w = PdfWriter(clone_from=str(tmp_path / "plain.pdf"))
+    w.add_outline_item("One", 1)
+    w.add_outline_item("Two", 2)
+    w.set_page_label(0, 0, style=PageLabelStyle.LOWERCASE_ROMAN)
+    w.set_page_label(1, 3, style=PageLabelStyle.DECIMAL, start=1)
+    w.write(tmp_path / "book.pdf")
+    chapters, labels = books.pdf_outline(tmp_path / "book.pdf")
+    assert chapters == [{"level": 0, "title": "One", "page": 2}, {"level": 0, "title": "Two", "page": 3}]
+    assert labels == ["i", "1", "2", "3"]
+    # an EPUB's table of contents (EPUB 2 NCX, written by make_epub's spine) → sections
+    make_epub(tmp_path / "a.epub")
+    with zipfile.ZipFile(tmp_path / "a.epub", "a") as z:
+        z.writestr("OEBPS/toc.ncx", """<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/"><navMap>
+          <navPoint id="n1"><navLabel><text>Crimea</text></navLabel><content src="c0.xhtml"/></navPoint>
+          <navPoint id="n2"><navLabel><text>The grid</text></navLabel><content src="c1.xhtml#x"/></navPoint></navMap></ncx>""")
+    opf = zipfile.ZipFile(tmp_path / "a.epub").read("OEBPS/content.opf").decode().replace(
+        "<manifest>", '<manifest><item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>')
+    rebuilt = tmp_path / "b.epub"
+    with zipfile.ZipFile(tmp_path / "a.epub") as src, zipfile.ZipFile(rebuilt, "w") as dst:
+        for n in dict.fromkeys(src.namelist()):
+            dst.writestr(n, opf if n == "OEBPS/content.opf" else src.read(n))
+    assert books.epub_toc(rebuilt) == [{"level": 0, "title": "Crimea", "page": 1}, {"level": 0, "title": "The grid", "page": 2}]
+    # a printed table of contents, through the page labels
+    pages = ["Contents\nIntroduction .......... 1\nThe war ........ 2\nThe peace .... 3\n", "x", "y", "z"]
+    assert [c["page"] for c in books.printed_contents(pages, ["i", "1", "2", "3"])] == [2, 3, 4]
+    # the book's own index: with or without a comma, wrapped page lists, and it ends where the book goes on
+    index = ["INDEX\nA\nEspionage 504, 518\nPutin, Vladimir, 12, 45–47, 210n3\nWagner Group, 7,\n9, 11, 7\n",
+             "This page goes on with the text of a judgment of 10 March.\nIt has sentences.\nAnd more sentences.\n"]
+    entries = books.parse_index(index, 1)
+    assert entries == [{"headword": "Espionage", "pages": ["504", "518"]},
+                       {"headword": "Putin, Vladimir", "pages": ["12", "45–47", "210n3"]},
+                       {"headword": "Wagner Group", "pages": ["7", "9", "11"]}]
+    names = {"vladimir putin": [("Q7747", "person", "Vladimir Putin")]}
+    assert books._actor_for("Putin, Vladimir", names) == ("Q7747", None)
+    assert books._actor_for("Espionage", names) == (None, "no actor of this name")
+    # citations name the printed page
+    with db.session() as con:
+        books.init_structure()
+        con.execute("INSERT INTO sources(id,key,country,agency,type,publisher,active) VALUES(9,'BOOK/X','OTHER','X','book','book',1)")
+        con.execute("INSERT INTO documents(id,source_id,url,title,status) VALUES(90,9,'book:x','B','downloaded')")
+        con.execute("INSERT INTO books(doc_id,file,format,page_labels) VALUES(90,'b.pdf','pdf','[\"i\", \"1\", \"2\"]')")
+        con.execute("INSERT INTO documents(id,source_id,url,title,status) VALUES(91,9,'book:y','E','downloaded')")
+        con.execute("INSERT INTO books(doc_id,file,format) VALUES(91,'e.epub','epub')")
+    assert books.page_name(90, 2) == "p. 1" and books.page_name(91, 4) == "section 4" and books.page_name(5, 7) == "p. 7"
