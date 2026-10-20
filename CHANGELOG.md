@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.80.0] – 2026-10-20
+
+### Added
+- **Disaster risk of the states** (roadmap H3c) – a new group on *Sources → Ratings*, each state's page and the
+  ratings map:
+  - the **INFORM Risk Index** of the EU's Joint Research Centre (0–10, higher = more risk) from its public API: one
+    release, INFORM Risk 2026, with every year since 2015 recomputed by the same method, so the years compare;
+  - the **WorldRiskIndex** (Bündnis Entwicklung Hilft / IFHV, CC BY, from the Humanitarian Data Exchange) since 2000.
+  - Not used: ND-GAIN – its download is behind bot protection, which the library does not get around.
+
+### Fixed
+- The ratings download tries a dropped connection again (10 s, then 20 s) instead of failing the whole fetch.
+
 ## [0.79.0] – 2026-10-20
 
 ### Added
@@ -1529,7 +1542,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.79.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.80.0...HEAD
+[0.80.0]: https://github.com/iiogurt/Rozvedka/compare/v0.79.0...v0.80.0
 [0.79.0]: https://github.com/iiogurt/Rozvedka/compare/v0.78.0...v0.79.0
 [0.78.0]: https://github.com/iiogurt/Rozvedka/compare/v0.77.0...v0.78.0
 [0.77.0]: https://github.com/iiogurt/Rozvedka/compare/v0.76.0...v0.77.0

@@ -143,3 +143,35 @@ def test_conflict_deaths_and_cyber_incidents_from_the_event_data(library):
     assert store["values"]["UKR"]["cyber_incidents"] == {"2022": 0.0, "2023": 0.0}
     assert rows["cyber_incidents"] == 4 and ratings.MEASURES["cyber_incidents"]["better"] is None
     assert ratings.source_url("HU", "cyber_incidents") == "/events?source=eurepoc&country=HU"   # each count opens its incidents
+
+
+def test_disaster_risk_measures_are_read(tmp_path, monkeypatch):
+    calls = []
+
+    def fake_get(url, attempts=3):
+        calls.append(url)
+        if "GetByWorkflowGroup" in url:
+            return json.dumps([{"WorkflowId": 505, "Name": "INFORM Risk 2026"}, {"WorkflowId": 506, "Name": "INFORM Risk 2026 - 2025"}]).encode()
+        if "Countries/Scores" in url:
+            return json.dumps([{"Iso3": "DEU", "IndicatorScore": 2.4}]).encode()
+        if "Countries/Trends" in url:
+            return json.dumps([{"IndicatorId": "INFORM", "GNAYear": 2025, "IndicatorScore": 2.4},
+                               {"IndicatorId": "CC", "GNAYear": 2025, "IndicatorScore": 1.5},            # a sub-index: not the risk
+                               {"IndicatorId": "INFORM", "GNAYear": 2024, "IndicatorScore": 2.5}]).encode()
+        if url.endswith("worldriskindex-trend.csv"):
+            return '"WRI.Country","ISO3.Code","Year","W"\n"Japan","JPN",2023,9.5\n"Japan","JPN",2024,NA\n'.encode()
+        raise OSError("not used in this test")
+    monkeypatch.setattr(ratings, "_get", fake_get)
+    monkeypatch.setattr(ratings, "MEASURES", {k: ratings.MEASURES[k] for k in ("inform_risk", "world_risk")})
+    monkeypatch.setattr(ratings, "_iso3_map", lambda: {"DE": "DEU", "JP": "JPN"})
+    monkeypatch.setattr(ratings, "event_measures", lambda store, today: {})
+    monkeypatch.setattr(ratings.countries, "names", lambda: {"DE": "Germany", "JP": "Japan"})
+    real_get = fake_get
+    monkeypatch.setattr(ratings, "_get", lambda url, attempts=3: real_get(url) if "SP.POP" not in url else json.dumps([{}, []]).encode())
+    out = tmp_path / "r.json"
+    ratings.fetch(out)
+    store = json.loads(out.read_text())
+    assert store["values"]["DEU"]["inform_risk"] == {"2025": 2.4, "2024": 2.5}     # the data year of each recomputed year
+    assert store["values"]["JPN"]["world_risk"] == {"2023": 9.5}                     # NA left out
+    assert any("Trends" in c and "iso3=DEU" in c for c in calls) and ratings.MEASURES["inform_risk"]["better"] == "low"
+    ratings.load.cache_clear()
