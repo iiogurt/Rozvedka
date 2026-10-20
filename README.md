@@ -871,10 +871,13 @@ Pages that turn out to be empty JavaScript shells are rendered with Chromium aut
 
 - Keyword syntax: `word` (whole word), `stem*` (words starting with the stem), `two words` (a phrase; each token may
   end in `*`), Japanese/Chinese/Korean terms as substrings. Case and accents are ignored; every language's terms
-  apply to every document.
+  apply to every document – except in an English text (recognised by its English function words, not by its tag), where
+  a single word of another language that reads as a different English word is left out: Latvian `ķīn*` ("China")
+  would read "kingdom", Czech `munic*` ("ammunition") "municipal", Spanish `temporal*` ("storm") "temporal". Cognates
+  that share their stem with the topic's English terms (`militar*` ~ military) and acronyms in capitals still count.
 - A topic is assigned when the title matches, or when at least 2 different keywords occur and the hits keep up with
   the length (≥ 3, and at least one per 15,000 words).
-- Text is extracted from the first 150 pages (up to 400,000 characters). After editing `topics.yaml`, run
+- Text is extracted from the first 150 pages (up to 400,000 characters; a book of the local library whole). After editing `topics.yaml`, run
   `index-topics` again – documents are re-classified from the stored text.
 
 </details>

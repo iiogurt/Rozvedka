@@ -82,3 +82,20 @@ def test_fts_query_is_safe():
 def test_false_friends_from_accent_folding(text, not_expected):
     """Terms are folded (š → s, ş → s): a term from one language must not become a common word of another."""
     assert not_expected not in [f["key"] for f in classify(text * 5)]
+
+
+def test_false_friends_are_left_out_of_english_text():
+    from rozvedka import topics
+    # Latvian ķīn* (China) would read 'kingdom', 'kind' and 'king' as China; Czech munic* (ammunition) 'municipal'
+    english = ("The kingdom and its king were kind to the municipal council of the city. " * 40)
+    assert "china" not in [f["key"] for f in classify(english, "", "en")]
+    assert "defence-industry" not in [f["key"] for f in classify(english, "", "en")]
+    # a text in another language keeps every language's terms – whatever its tag says
+    latvian = ("Ķīna un Ķīnas izlūkdienesti. Ķīnas ietekme pieaug, Pekina. " * 40)
+    assert "china" in [f["key"] for f in classify(latvian, "", "en")] or "china" in [f["key"] for f in classify(latvian + " Beijing " * 40, "", "en")]
+    assert topics.is_english(topics._WORD.findall(topics.normalize(english)))
+    assert not topics.is_english(topics._WORD.findall(topics.normalize(latvian)))
+    assert topics._false_friend("ķīn*", ["china", "chinese", "beijing"]) and topics._false_friend("munic*", ["munitions"])
+    assert not topics._false_friend("militar*", ["military"]) and not topics._false_friend("rússia", ["russia*"])
+    assert not topics._false_friend("αναρχικ*", ["anarchis*"]) and not topics._false_friend("forces armées", ["armed forces"])
+    assert not topics._false_friend("CTIVD", ["oversight"]) and not topics._false_friend("ＡＩ", ["artificial intelligence"])   # acronyms
