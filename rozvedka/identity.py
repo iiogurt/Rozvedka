@@ -31,7 +31,7 @@ LIST_ORDER = ("UN", "EU", "UK", "US", "FBI", "EUMW")   # whose entry names a mer
 US_IDS = {"Passport": "passport", "National ID No.": "national-id", "Cedula No.": "national-id", "C.U.R.P.": "national-id",
           "Identification Number": "national-id", "Registration Number": "registration", "Business Registration Number": "registration",
           "Company Number": "registration", "Tax ID No.": "tax", "R.F.C.": "tax", "Folio Mercantil No.": "registration",
-          "Vessel Registration Identification": "imo", "MMSI": "mmsi"}
+          "Vessel Registration Identification": "imo", "MMSI": "mmsi", "Legal Entity Number": "lei"}
 EU_IDS = {"passport": "passport", "id": "national-id", "regnumber": "registration", "fiscalcode": "tax", "taxid": "tax", "imo": "imo"}
 UN_IDS = {"Passport": "passport", "National Identification Number": "national-id"}
 

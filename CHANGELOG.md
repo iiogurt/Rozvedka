@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.86.0] – 2026-10-21
+
+### Added
+- **Company ownership from GLEIF** (`fetch-gleif`, a network layer). The register of legal entity identifiers (CC0) is
+  downloaded and kept only for the companies on the sanctions lists. A list company is matched to GLEIF by the LEI its entry
+  states, by its register or tax number in the same country, or by a distinctive name that only one record in its country
+  carries: 565 of 16,318 list companies, with 39 of 40 number matches and 40 of 40 name matches right in hand-read samples. Their
+  direct and ultimate parents, branches and consolidated entities are linked one step out (255 links, e.g. LUKOIL's 24
+  subsidiaries abroad), each with its GLEIF relationship record. Entity pages show the LEI record and why it is the same company,
+  and the Markdown export of the case file cites it.
+- OFAC's "Legal Entity Number" is now read with the entries' other identifiers.
+
 ## [0.85.0] – 2026-10-21
 
 ### Added
@@ -1628,7 +1640,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.85.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.86.0...HEAD
+[0.86.0]: https://github.com/iiogurt/Rozvedka/compare/v0.85.0...v0.86.0
 [0.85.0]: https://github.com/iiogurt/Rozvedka/compare/v0.84.0...v0.85.0
 [0.84.0]: https://github.com/iiogurt/Rozvedka/compare/v0.83.0...v0.84.0
 [0.83.0]: https://github.com/iiogurt/Rozvedka/compare/v0.82.1...v0.83.0

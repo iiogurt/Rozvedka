@@ -518,6 +518,23 @@ telephone number or crypto wallet that two different targets give is an entity l
 parent companies, subsidiaries and ships' owners and operators are linked by name, legal forms ignored (“PAO Sovcomflot” is the
 listed PJSC Sovcomflot).
 
+#### Company ownership (GLEIF)
+
+**Who owns a sanctioned company?** `python -m rozvedka fetch-gleif` downloads the register of legal entity identifiers (GLEIF's
+golden copy, CC0, ~500 MB) and keeps it only for the companies on the sanctions lists. A list entry is matched to a GLEIF record:
+
+1. by the **LEI** the entry states (OFAC gives one for 185 entries);
+2. by its **register or tax number** in the same country, when the record also shares a distinctive name word (Cyrillic read in
+   Latin letters) or the number is a Russian or Belarusian OGRN, since register numbers repeat across countries;
+3. by its **name**, in the same country, when the name is distinctive and only one record carries it ("Orion LLC" is not).
+
+Of 16,318 list companies, 565 matched (176 by LEI, 216 by number, 173 by name). In hand-read samples of 40, 39 number matches and 40
+name matches were right, including renamed companies found through GLEIF's former names ("2Rivers DMCC" was "Coral Energy DMCC").
+Each matched company gets its LEI record on its page (legal name, register number, status, why it is the same company), and its
+**parents, branches and consolidated entities** become a network layer: LUKOIL's 24 subsidiaries abroad, VTB's and Sberbank's banks
+and funds, Gazprom-Media under Gazprombank. Each link has its GLEIF relationship record with type, status, period and how it was
+validated. A company on no list is its own node, marked as a GLEIF record.
+
 #### Vendors' names and toolkit twins
 
 <img src="docs/images/twins.png" alt="Toolkit twins: pairs of threat groups with the most alike MITRE ATT&CK toolkits, rare items weighted up" width="900">
@@ -851,6 +868,7 @@ failure. Starting it after a reboot with nobody logged in needs `loginctl enable
 | `index-events` | find the reports that name each event (its Wikidata names, in its year or later; no download – `fetch-events` runs it too) |
 | `fetch-events [--source wikidata\|eurepoc\|ucdp]` | dated events for the timeline: Wikidata items of the classes in `sources/events.yaml`, EuRepoC cyber incidents, UCDP organised violence (network, ~10 min) |
 | `fetch-wikitext` | read the English Wikipedia articles of the actors the reports name and keep the sentences that link to another known subject (network, ~5 min; then `build-graph`) |
+| `fetch-gleif` | download GLEIF's register of legal entity identifiers (CC0, ~500 MB, ~15 min) and keep the sanctioned companies' records, parents and branches (network; then `build-graph`) |
 | `fetch-misp` | download the MISP threat-actor galaxy (CC0): security vendors' names of threat groups and which groups it holds similar (network; then `index-actors` and `build-graph`) |
 | `build-graph` | rebuild the network of links from what is stored: sanctions lists, Wikidata and Wikipedia connections, ATT&CK, the actor index (no network; `update` runs it last) |
 | `fetch-attributions` | check the official attribution statements in `sources/attributions.yaml` against their pages (network); the result with the check date is stored in `data/gazetteer/attributions.json` |
@@ -1012,6 +1030,7 @@ flowchart LR
 | `rozvedka/wanted.py` | wanted notices of the FBI and Europe's Most Wanted: fetching, the security filter, entries for the identity rules, relation words |
 | `rozvedka/wikitext.py` | links stated in the text of Wikipedia articles: sentences with links, the relation word, redirects |
 | `rozvedka/leads.py` | leads (shared neighbours, never named together; reviews in `sources/lead_reviews.yaml`) and brokers |
+| `rozvedka/gleif.py` | GLEIF: the golden copy read as a stream, list companies matched by LEI, number or name, one step of ownership |
 | `rozvedka/identity.py`, `vendors.py`, `twins.py` | one target across sanctions lists and the details they share; vendors' names of threat groups (MISP); toolkit twins |
 | `rozvedka/rings.py` | Rings and the neighbourhood matrix: an entity's links on two rings, one sector per layer; its neighbours as a matrix ordered by Louvain communities |
 | `rozvedka/casefile.py` | the case file: pins with notes in `data/case_file.yaml`, the chain of every pair, connectors, the Markdown export with citations |
@@ -1259,6 +1278,7 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | Organised violence | [UCDP Georeferenced Event Dataset and Candidate Events](https://ucdp.uu.se/downloads/) | CC BY 4.0 |
 | Country ratings | V-Dem, Freedom House, World Bank WGI, UNODC, SIPRI, Transparency International (via [Our World in Data](https://ourworldindata.org) and the World Bank API), [INFORM](https://drmkc.jrc.ec.europa.eu/inform-index) (EU JRC), [WorldRiskIndex](https://data.humdata.org/dataset/worldriskindex), [RSF](https://rsf.org/en/index) (personal use: only in personal backups, never in datasets to share), [ITU GCI 2024](https://www.itu.int/en/ITU-D/Cybersecurity/Pages/global-cybersecurity-index.aspx) (CC BY-NC-SA 3.0 IGO) | each measure's licence is shown with it on `/ratings` |
 | Sanctions lists | EU (FPI), UK (FCDO), UN Security Council, US Treasury (OFAC) – official XML files | public official data |
+| Company ownership | [GLEIF golden copy](https://www.gleif.org/en/lei-data/gleif-golden-copy) – LEI records and relationships (`data/gleif/`, not committed) | CC0 1.0; no endorsement by GLEIF implied |
 | Wanted notices | [FBI Wanted API](https://api.fbi.gov/wanted/v1/list), [Europe's Most Wanted](https://eumostwanted.eu/) (ENFAST, supported by Europol) – text, names, dates of birth and charges only, no photographs (`data/gazetteer/wanted.json`, not committed) | public official notices, linked on each page |
 | Event dates | Wikidata via `tools/build_events.py` | CC0 |
 | Charts | [Apache ECharts](https://echarts.apache.org) 6.1.0, vendored | Apache-2.0 |

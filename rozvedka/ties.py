@@ -22,7 +22,7 @@ import re
 
 from collections import Counter
 
-from . import actors, db, identity, paging, publishers, ratings, sanctions, techniques, trends, vendors, wanted, wikitext
+from . import actors, db, gleif, identity, paging, publishers, ratings, sanctions, techniques, trends, vendors, wanted, wikitext
 from .actors import PAIR_FOUNDED
 
 log = logging.getLogger("rozvedka.ties")
@@ -56,6 +56,9 @@ LAYERS = {
     "events": {"name": "Events (Wikidata, EuRepoC, UCDP)", "group": "reference",
                "about": "an event names the actor as participant, perpetrator, initiator or side; one event is stated to cause, "
                         "follow or be part of another (events.py) – each with its source"},
+    "gleif": {"name": "GLEIF: company ownership", "group": "reference",
+              "about": "the Legal Entity Identifier register (CC0): a listed company's direct and ultimate parents, branches and the "
+                       "entities it consolidates, as the companies report them (gleif.py)"},
     "reports": {"name": "Named together in the reports", "group": "reports",
                 "about": "two actors named in one passage (600 characters) of at least two reports – a co-mention, not a stated tie"},
 }
@@ -406,6 +409,7 @@ def _from_lists(g: _Graph, stats: dict) -> None:
         stats[layer] = {"entries": len(entries), "unresolved": unresolved}
     _from_details(g, targets, stats)
     stats["wanted"] = _from_wanted(g, targets)
+    g.targets = targets
 
 
 OTHER_OF_THE_NAME = {"Saudi", "Turkish", "Kuwaiti", "Bahraini", "Hejazi"}
@@ -630,6 +634,58 @@ def _slug(name: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", sanctions.normalise(name)).strip("-")
 
 
+def _gleif_info(rec: dict, how: str = "") -> dict:
+    return {"lei": rec["lei"], "name": rec["name"], "label": gleif.label(rec), "reg": rec["reg"], "country": rec["country"],
+            "city": rec["city"], "status": rec["status"], "registration": rec["registration"], "how": how,
+            "url": gleif.RECORD.format(rec["lei"])}
+
+
+def _from_gleif(g: _Graph) -> dict:
+    """GLEIF (gleif.py): the matched list companies get their LEI records; their parents, branches and consolidated
+    entities are linked – a company on no list becomes a node of its own ("lei:…")."""
+    st = gleif.stored()
+    recs, node_of = st["records"], {}
+    targets = getattr(g, "targets", None)
+    matched = 0
+    for key, m in st["matches"].items():
+        if not targets or key not in targets.root:
+            continue
+        nid = targets.node(key)
+        kind, label, akey, origin, data = g.entities[nid]
+        d = json.loads(data or "{}")
+        have = {x["lei"] for x in d.get("gleif", [])}
+        d["gleif"] = d.get("gleif", []) + [_gleif_info(recs[l], m["how"]) for l in m["leis"] if l in recs and l not in have]
+        g.entities[nid] = (kind, label, akey, origin, json.dumps(d, ensure_ascii=False))
+        for l in m["leis"]:
+            node_of.setdefault(l, nid)
+        matched += 1
+
+    def node(lei: str) -> str | None:
+        if lei in node_of:
+            return node_of[lei]
+        rec = recs.get(lei)
+        if not rec:
+            return None
+        node_of[lei] = g.node(f"lei:{lei}", "org", gleif.label(rec), "gleif", {"gleif": [_gleif_info(rec)], "url": gleif.RECORD.format(lei)})
+        return node_of[lei]
+
+    n = 0
+    for r in st["relations"]:
+        a, b = node(r["child"]), node(r["parent"])
+        if not a or not b:
+            continue
+        rel, back = gleif.RELATIONS[r["type"]]
+        if r["status"] != "ACTIVE":
+            rel, back = f"formerly {rel}", f"formerly {back}"
+        g.tie(a, b, rel, back, "gleif", {"url": gleif.RECORD.format(r["child"]), "lei": r["child"], "parent": r["parent"],
+                                         "type": r["type"], "status": r["status"], "start": r["start"], "end": r["end"],
+                                         "accounts": r.get("accounts") or [],
+                                         "validation": r["validation"], "reference": r["reference"],
+                                         "retrieved": st["meta"].get("retrieved")}, date=r["start"])
+        n += 1
+    return {"matched": matched, "relations": n, "nodes": sum(1 for k in g.entities if k.startswith("lei:"))}
+
+
 def _from_publishers(g: _Graph, con) -> dict:
     """The think tanks and commercial analysts of the library with their owners, sponsors, founders, leaders and partners
     (publishers.influence): a publisher is the actor of its Wikidata item when the gazetteer has it, else a node of its own;
@@ -737,6 +793,7 @@ def build() -> dict:
         stats["attack"] = {"relations": _from_attack(g)}
         stats["misp"] = _from_misp(g)
         stats["publishers"] = _from_publishers(g, con)
+        stats["gleif"] = _from_gleif(g)
         stats["events"] = _from_events(g, con)
         _from_reports(g, con)
         con.execute("DELETE FROM ties")
@@ -747,7 +804,7 @@ def build() -> dict:
         meta = {"built": dt.datetime.now().isoformat(timespec="seconds"), "stats": stats,
                 "retrieved": {**{LIST_LAYER[k]: v for k, v in (sanctions.data().get("retrieved") or {}).items()},
                               "attack": cat.get("retrieved"),
-                              "wikitext": (wikitext.stored()["meta"] or {}).get("retrieved"), "wanted": (wanted.stored()["meta"] or {}).get("retrieved"), "misp": (vendors.stored()["meta"] or {}).get("retrieved"), "publishers": publishers.load().get("retrieved"), **dict.fromkeys(("wikidata", "wikipedia"), actors.stamp().get("gazetteer_retrieved"))}}
+                              "wikitext": (wikitext.stored()["meta"] or {}).get("retrieved"), "wanted": (wanted.stored()["meta"] or {}).get("retrieved"), "misp": (vendors.stored()["meta"] or {}).get("retrieved"), "publishers": publishers.load().get("retrieved"), "gleif": gleif.stored()["meta"].get("retrieved"), **dict.fromkeys(("wikidata", "wikipedia"), actors.stamp().get("gazetteer_retrieved"))}}
         con.execute("INSERT OR REPLACE INTO ties_meta VALUES ('meta', ?)", (json.dumps(meta),))
     counts: dict[str, int] = {}
     for t in g.ties.values():
