@@ -4,7 +4,6 @@
 {% block title %}{{ a.label }} · Actors · Rozvedka{% endblock %}
 {% block head %}<script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>{% endblock %}
 {% block main %}
-<p class="small"><a href="/actors">← Actors</a></p>
 {% set pic = profile.picture if profile else none %}
 {% set wp = a.wikipedia if a.wikipedia and a.wikipedia.extract else (profile.wikipedia if profile and profile.wikipedia and profile.wikipedia.extract else none) %}
 {% macro fact_values(f, limit=99) %}{% set hidden = (f['values']|length - limit if f['values']|length > limit else 0) + f.more %}{% for v in f['values'][:limit] %}{% if v.qid %}<a href="https://www.wikidata.org/wiki/{{ v.qid }}">{{ v.text }}</a>{% elif v.url %}<a href="{{ v.url }}" rel="noopener">{{ v.text }}</a>{% else %}{{ v.text }}{% endif %}{% if v.when %} <span class="muted">({{ v.when }})</span>{% endif %}{{ ', ' if not loop.last }}{% endfor %}{% if hidden %} <span class="muted">+{{ hidden }} more</span>{% endif %}{% endmacro %}

@@ -6,9 +6,12 @@
 {% macro age(ts) %}{% if ts %}{% set d = ts|days_ago %}<span class="{{ 'warn' if d >= 7 }}" title="{{ ts[:16].replace('T', ' ') }}">{{ 'today' if d == 0 else (d ~ ' d ago') }}</span>{% else %}<span class="muted">never</span>{% endif %}{% endmacro %}
 {% block main %}
 <h1 class="page-h">Update – check the agencies for new reports</h1>
-<p class="muted">Rozvedka looks for new reports only when you start it here (there is no schedule). An update visits the
+<p class="lede">Rozvedka looks for new reports only when you start it here – there is no schedule.</p>
+<details class="how"><summary>What an update does</summary>
+<p class="muted small">An update visits the
   report pages of the agencies in the registry, lists the reports it has not seen before, downloads them and indexes them
   (text, topics, dates, actors). Sources that block automatic access are collected by hand on <a href="/collect">To collect</a>.</p>
+</details>
 
 <div class="h-counters dx-cards">
   <a href="#sources"><b>{{ age(since) }}</b><span>every source checked since {{ (since or 'never')[:10] }}</span></a>

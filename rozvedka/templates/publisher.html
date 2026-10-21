@@ -4,8 +4,8 @@
 {% set com = s.publisher == 'commercial' %}
 {% block title %}{{ s.agency }} · {{ kind.name|capitalize }} profile · Rozvedka{% endblock %}
 {% block main %}
-<p class="small"><a href="/publishers#{{ s.publisher }}">← All {{ kind.plural }}</a> · <a href="/sources#s-{{ s.id }}">on Sources</a> · <a href="{{ docs_url(source=s.id) }}">its reports</a></p>
 <h1 class="page-h"><img class="flag-sm" src="{{ flag_url(s.country) }}" alt="" width="20" height="15"> {{ s.name_en or s.agency }} {{ pub_mark(s.id) }}</h1>
+<p class="small page-links"><a href="/sources#s-{{ s.id }}">on Sources</a> · <a href="{{ docs_url(source=s.id) }}">its reports</a></p>
 {% if s.name_local and s.name_local != s.name_en %}<p class="muted">{{ s.name_local }}</p>{% endif %}
 <p class="pub-banner pub-lv-{{ p.level }}"><b>{{ kind.mark }} {{ 'Commercial analyst' if com else 'Independent publisher' }} – {{ p.label }}.</b> {{ s.agency }} is {{ kind.about }}.
   Rating: <b>{{ p.label }}</b>{% if p.reasons %}, because – {{ p.reasons|join('; ') }}{% else %} – {{ p.about }}{% endif %}.

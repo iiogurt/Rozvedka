@@ -2,14 +2,18 @@
 {% block title %}Think tanks and commercial analysts · Sources · Rozvedka{% endblock %}
 {% block main %}
 <h1 class="page-h">Think tanks and commercial analysts – credibility</h1>
-<p class="muted small">Publishers that are not states: <b>◆ think tanks</b> and <b>■ commercial analysts</b> (companies that sell
-  political-risk, security or threat analysis to clients). Some "think tanks" exist to influence politics for a state or an interest
-  group, and a company answers to its owners and clients, so each one gets checks with evidence instead of a score – no current,
+<p class="lede">Publishers that are not states – <b>◆ think tanks</b> and <b>■ commercial analysts</b> – each checked with evidence
+  instead of a score; the badge colour shows the result everywhere a publisher appears.</p>
+<details class="how"><summary>How they are checked</summary>
+<p class="muted small">Commercial analysts are companies that sell
+  political-risk, security or threat analysis to clients. Some "think tanks" exist to influence politics for a state or an interest
+  group, and a company answers to its owners and clients, so each one gets checks instead of a score – no current,
   credible ranking exists (the Go To index ended in 2020, Transparify in 2018). Think tanks: how openly they disclose who funds them,
   and whether autocratic governments do. Companies: who owns them, whether they name clients, authors and method. Both: US federal
   contracts and grants (USAspending.gov), official registers (EU Transparency Register, US FARA) and the sanctions lists of the US,
-  UK, EU and UN. The badge colour shows the result everywhere a publisher appears; its owners, sponsors and founders are
+  UK, EU and UN. Their owners, sponsors and founders are
   <a href="/graph/ties?layer=publishers">links of the network</a>. Details: <a href="https://github.com/iiogurt/Rozvedka/blob/main/docs/PUBLISHER_PROFILES.md">the design</a>.</p>
+</details>
 {% for k, spec, items in kinds %}{% if items %}
 <section class="viz-card" id="{{ k }}">
   <h2 class="viz-title">{{ spec.mark }} {{ spec.plural|capitalize }} <span class="muted small">{{ items|length }}</span></h2>

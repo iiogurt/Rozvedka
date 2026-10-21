@@ -12,12 +12,22 @@
   const $ = (s) => document.querySelector(s);
   const form = $("#dm");
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const REGIME = { 3: "#0072b2", 2: "#56b4e9", 1: "#e69f00", 0: "#d55e00" };
-  const RAMP = ["#a63f00", "#d55e00", "#e69f00", "#bfb08a", "#8fc3e8", "#56b4e9", "#0072b2"];   // worse → better
-  const SEQ = ["#2b2a1e", "#4d4524", "#6f6128", "#93802b", "#b8a12f", "#ddc33a", "#f0e442"];    // low → high, no better end
-  const NODATA = "#161b22";
+  // colours from style.css (rzTokens), read again when the theme is switched: regime types, the worse → better ramp, the
+  // yellow low → high ramp of a measure without a better end, no data, the think tanks' credibility, outlines
+  const tok = (name) => window.rzTokens.get(name), run = (p, n) => Array.from({ length: n }, (_, i) => tok(p + (i + 1)));
+  let REGIME, RAMP, SEQ, NODATA, CRED, LINE;
+  function palette() {
+    REGIME = Object.fromEntries([0, 1, 2, 3].map((k) => [k, tok(`--regime-${k}`)]));
+    RAMP = run("--ramp-", 7);
+    SEQ = run("--yel-", 7);
+    NODATA = tok("--nodata");
+    CRED = Object.fromEntries(["transparent", "partial", "concerns", "redflag", "unassessed"].map((k) => [k, tok(`--pl-${k}`)]));
+    LINE = { edge: tok("--map-edge"), line: tok("--map-line"), hover: tok("--map-hover"), spark: tok("--map-spark"),
+             ink: tok("--ink"), panel: tok("--panel"), muted: tok("--muted") };
+  }
+  palette();
+  window.rzDark.addEventListener("change", () => { palette(); if (data) { redraw(); drawSources(); } });
   const CHANGE_SPAN = 10, CHANGE_MAX = 0.25;     // years compared; ±0.25 LDI saturates the colour
-  const CRED = { transparent: "#2ec4a0", partial: "#f0e442", concerns: "#e69f00", redflag: "#ff7a3d", unassessed: "#9aa1ab" };
 
   let geo, data, agencies = [], layer = null, dots = null, playing = null;
   const byIso = {};
@@ -92,8 +102,8 @@
     const pts = arr.map((v, i) => v == null ? null : `${(i / (n - 1) * w).toFixed(1)},${(h - 1 - t(v) * (h - 2)).toFixed(1)}`).filter(Boolean);
     const x = (idx(y) / (n - 1) * w).toFixed(1);
     return `<svg class="dm-spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">
-      <polyline points="${pts.join(" ")}" fill="none" stroke="#8fc3e8" stroke-width="1.3"/>
-      <line x1="${x}" x2="${x}" y1="0" y2="${h}" stroke="#f0f0f0" stroke-width="1" stroke-dasharray="2 2"/></svg>`;
+      <polyline points="${pts.join(" ")}" fill="none" stroke="${LINE.spark}" stroke-width="1.3"/>
+      <line x1="${x}" x2="${x}" y1="0" y2="${h}" stroke="${LINE.ink}" stroke-width="1" stroke-dasharray="2 2"/></svg>`;
   }
 
   // ── drawing ──
@@ -120,7 +130,7 @@
     const c = data.countries[f.properties.iso], key = measure(), only = form.only.checked;
     const lib = c && c.library;
     return { fillColor: colour(key, val(c, key, year())), fillOpacity: only && !lib ? 0.12 : c ? 0.88 : 0.5,
-             color: lib ? "#d0d7de" : "#30363d", weight: lib ? 1.1 : 0.5 };
+             color: lib ? LINE.edge : LINE.line, weight: lib ? 1.1 : 0.5 };
   }
 
   function drawCountries() {
@@ -134,7 +144,7 @@
           const c = data.countries[f.properties.iso];
           if (c && c.library && reportsIn(f.properties.iso, year())) window.location.href = docsUrl(f.properties.iso, year());
         });
-        l.on("mouseover", () => l.setStyle({ weight: 2.4, color: "#ffffff" }));
+        l.on("mouseover", () => l.setStyle({ weight: 2.4, color: LINE.hover }));
         l.on("mouseout", () => layer.resetStyle(l));
       },
     }).addTo(map);
@@ -147,11 +157,11 @@
     dots = L.layerGroup(agencies.filter((a) => a.lat != null).map((a) => {
       const tt = a.type === "think-tank" || a.type === "commercial";
       return L.circleMarker([a.lat, a.lon], {
-        radius: 2.5 + 9 * Math.sqrt(a.n_docs / max), weight: 1.2, color: tt ? (CRED[a.credibility] || "#f0e442") : "#ffffff",
-        fillColor: tt ? (CRED[a.credibility] || "#f0e442") : "#0d1117", fillOpacity: tt ? 0.55 : 0.75, dashArray: tt ? "2 2" : null,
+        radius: 2.5 + 9 * Math.sqrt(a.n_docs / max), weight: 1.2, color: tt ? (CRED[a.credibility] || CRED.unassessed) : LINE.ink,
+        fillColor: tt ? (CRED[a.credibility] || CRED.unassessed) : LINE.panel, fillOpacity: tt ? 0.55 : 0.75, dashArray: tt ? "2 2" : null,
       }).bindTooltip(`<div class="tip-h"><b>${esc(a.agency)}</b><span class="muted">${esc(a.country_name || "")}</span></div>
           ${a.name_en && a.name_en !== a.agency ? `<div class="tip-sub">${esc(a.name_en)}</div>` : ""}
-          <div class="small" style="color:${tt ? CRED[a.credibility] || CRED.unassessed : "#9aa1ab"}">${tt ? `${a.type === "commercial" ? "■ commercial analyst" : "◆ think tank"} · ${esc(a.credibility_label || "not assessed")}` : esc(a.type_name || "")}</div>
+          <div class="small" style="color:${tt ? CRED[a.credibility] || CRED.unassessed : LINE.muted}">${tt ? `${a.type === "commercial" ? "■ commercial analyst" : "◆ think tank"} · ${esc(a.credibility_label || "not assessed")}` : esc(a.type_name || "")}</div>
           <div class="tip-foot">${a.n_docs} report${a.n_docs === 1 ? "" : "s"} in the library${a.y0 ? ` · ${a.y0}–${a.y1}` : ""}
             <span class="hint">click for ${tt ? "its profile" : "its reports"}</span></div>`,
                      { className: "hq-tip country-tip", direction: "top", offset: [0, -6] })
@@ -181,7 +191,7 @@
       html = `<div class="dm-ramp">${ramp.map((c) => `<i style="background:${c}"></i>`).join("")}</div>
         <div class="dm-ramp-l"><span>${esc(ends[0])}</span><span>${esc(ends[1])}</span></div>`;
     }
-    $("#legend").innerHTML = html + `<div class="small muted"><span class="rt-dot" style="background:${NODATA};outline:1px solid #444"></span>no rating · white outline: the library's states</div>`;
+    $("#legend").innerHTML = html + `<div class="small muted"><span class="rt-dot" style="background:${NODATA};outline:1px solid ${LINE.line}"></span>no rating · strong outline: the library's states</div>`;
     $("#year-label").textContent = y;
   }
 
@@ -202,7 +212,7 @@
       </li>`).join("");
     for (const li of document.querySelectorAll(".dm-row")) {
       const l = byIso[li.dataset.iso];
-      li.addEventListener("mouseenter", () => l && l.setStyle({ weight: 3, color: "#ffffff" }));
+      li.addEventListener("mouseenter", () => l && l.setStyle({ weight: 3, color: LINE.hover }));
       li.addEventListener("mouseleave", () => l && layer.resetStyle(l));
       li.querySelector(".dm-name").addEventListener("click", () => l && map.fitBounds(l.getBounds(), { maxZoom: 5 }));
     }

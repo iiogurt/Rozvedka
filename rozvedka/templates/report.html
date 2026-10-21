@@ -2,9 +2,8 @@
 {% from "_ratings.html" import strip, badges %}
 {% set d = doc %}
 {% block title %}{{ d.title }} · {{ d.agency }} · Rozvedka{% endblock %}
+{% block crumbs %}<a href="/documents?source={{ d.source_id }}" title="All reports of {{ d.agency }}">{{ d.agency }}</a><span aria-hidden="true">›</span>{% if series %}<a href="/series/{{ edition.id }}">series “{{ series.name }}”</a><span aria-hidden="true">›</span>{% endif %}{% endblock %}
 {% block main %}
-<p class="small"><a href="/documents?source={{ d.source_id }}">← {{ d.agency }} – all reports</a>
-  {% if series %} · <a href="/series/{{ edition.id }}">series “{{ series.name }}”</a>{% endif %}</p>
 <h1 class="page-h"><img class="flag-sm" src="{{ flag_url(d.country) }}" alt="{{ d.country }}" width="20" height="15"> {{ d.title }}</h1>
 {% if is_independent(d.source_id) %}{% set pp = pub_profile(d.source_id) %}{% set pk = pub_kind(d.source_id) %}<p class="pub-banner pub-lv-{{ pp.level }}">
   {% if pk.type == 'commercial' %}<b>■ Commercial analyst – {{ pp.label }}.</b>

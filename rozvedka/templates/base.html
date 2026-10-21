@@ -40,7 +40,8 @@
   {% include "_mobmenu.html" %}
 </header>
 {% include "_sectionnav.html" %}
-<main>{% block main %}{% endblock %}</main>
+<main>{% if nav.crumbs %}<nav class="crumbs" aria-label="Breadcrumb">{% for c in nav.crumbs %}<a href="{{ c.href }}">{{ c.label }}</a><span aria-hidden="true">›</span>{% endfor %}{% block crumbs %}{% endblock %}</nav>{% endif %}
+{% block main %}{% endblock %}</main>
 <footer class="foot">Rozvedka <a href="/views">all views</a> · <a href="/changelog" title="What's new">v{{ VERSION }}</a>{% if BUILD != VERSION %}
   <span class="muted" title="Build: commits after the release (git)">· build {{ BUILD.split('+', 1)[1] }}</span>{% endif %}</footer>
 </div>

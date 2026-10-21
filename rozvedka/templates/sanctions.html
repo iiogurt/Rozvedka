@@ -5,16 +5,19 @@
 {% if not have_data %}
 <p class="muted small">The sanctions lists have not been fetched yet: run <code>python -m rozvedka fetch-sanctions</code>.</p>
 {% else %}
-<p class="muted small">Actors that appear on an official consolidated sanctions list. The portal fetches the public XML files of
-  the four issuers ({% for k, l in lists.items() %}<a href="{{ l.page }}">{{ k }}</a>{{ ', ' if not loop.last }}{% endfor %}) when
+<p class="lede">Actors that appear on an official consolidated sanctions list ({% for k, l in lists.items() %}<a href="{{ l.page }}">{{ k }}</a>{{ ', ' if not loop.last }}{% endfor %}).
+  <b>A match is a name match, not an identification.</b></p>
+<details class="how"><summary>How this is matched</summary>
+<p class="muted small">The portal fetches the public XML files of the four issuers when
   <code>fetch-sanctions</code> is run – retrieved
   {% for k, l in lists.items() %}{{ k }} {{ retrieved.get(k) or 'never' }} ({{ entries.get(k, 0) }} entries){{ '; ' if not loop.last }}{% endfor %}.
-  <b>A match is a name match, not an identification.</b> Rules (<code>rozvedka/sanctions.py</code>): the name must equal one of the
+  Rules (<code>rozvedka/sanctions.py</code>): the name must equal one of the
   actor's names the index uses, after removing case, accents and punctuation; people need two words, one-word names five letters;
   groups are compared with groups, people with people; a name two actors share is skipped; weak aliases of the lists and
   bare nom-de-guerre aliases are not used. <b>Listed under this name</b> = the list's own name for the entry (measured on a
   random sample of 40: 38 right); <b>only as an alias</b> = the name is an alias on a different entry – check it
   (sample of 30: 23 right, about three in four).</p>
+</details>
 <form class="small" method="get">
   List <select name="list"><option value="">all</option>{% for k in lists %}<option {{ 'selected' if k == list_ }}>{{ k }}</option>{% endfor %}</select>
   match <select name="via"><option value="">all</option><option value="name" {{ 'selected' if via == 'name' }}>listed under this name</option><option value="alias" {{ 'selected' if via == 'alias' }}>only as an alias</option></select>

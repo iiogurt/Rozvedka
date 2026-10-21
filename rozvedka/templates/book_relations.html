@@ -1,15 +1,18 @@
 {% extends "base.html" %}
 {% from "_pager.html" import pager %}
 {% block title %}Stated relations · {{ b.title }} · Books · Rozvedka{% endblock %}
+{% block crumbs %}<a href="/report/{{ b.doc_id }}">{{ b.title }}</a><span aria-hidden="true">›</span>{% endblock %}
 {% block main %}
-<p class="small"><a href="/report/{{ b.doc_id }}">← {{ b.title }}</a> · <a href="/books">all books</a></p>
 <h1 class="page-h">Stated relations <span class="pub-book">book</span></h1>
 <p class="lede">{{ pg.total|num }} relations between actors that sentences of <i>{{ b.title }}</i> state – who did what to whom.</p>
+<p class="muted small">Every relation shows its sentence – read it: the parser can miss a "reportedly" or a question.</p>
+{% if not parser %}<p class="warn small"><b>spaCy is not installed here</b>, so no relations are read (<code>pip install spacy</code> and the
+  <code>en_core_web_sm</code> model, then <code>python -m rozvedka index-books</code>).</p>{% endif %}
+<details class="how"><summary>How relations are read</summary>
 <p class="muted small">Read from the grammar of each sentence naming two actors (spaCy's English parser): the actor that is the verb's subject,
   the verb, and the actor that is its object. Only these verbs count: {{ VERBS|join(', ') }}. A negated verb ("did not fund") is kept and marked
-  <span class="badge-warn">not</span>. Every relation shows its sentence – read it: the parser can miss a "reportedly" or a question.
-  {% if not parser %}<b>spaCy is not installed here</b>, so no relations are read (<code>pip install spacy</code> and the
-  <code>en_core_web_sm</code> model, then <code>python -m rozvedka index-books</code>).{% endif %}</p>
+  <span class="badge-warn">not</span>.</p>
+</details>
 {{ pager(pg, "relations") }}
 <table class="pc-table small">
   <thead><tr><th>Who</th><th>did</th><th>to whom</th><th>The sentence</th><th>Page</th></tr></thead>

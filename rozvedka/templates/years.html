@@ -2,12 +2,13 @@
 {% from "_pager.html" import pager %}
 {% block title %}Year conflicts · Documents · Rozvedka{% endblock %}
 {% block main %}
-<p class="small"><a href="/documents">← Documents</a></p>
 <h1 class="page-h">Year conflicts</h1>
-<p class="muted small">Reports whose stored year is contradicted by strong evidence. Nothing here is changed automatically:
-  <b>Use the year found</b> sets the report's year (marked <i>set by hand</i>, as after an edit); <b>Keep</b> keeps the stored
+<p class="lede">Reports whose stored year is contradicted by strong evidence – nothing here is changed automatically.</p>
+<details class="how"><summary>What a verdict does</summary>
+<p class="muted small"><b>Use the year found</b> sets the report's year (marked <i>set by hand</i>, as after an edit); <b>Keep</b> keeps the stored
   year and stops listing that conflict. Every verdict is written with its evidence to <code>sources/year_reviews.yaml</code>
   ({{ decided }} so far) and travels with datasets.</p>
+</details>
 
 <section class="viz-card">
   <h2 class="viz-title">Evidence <span class="muted small">{{ total }} open conflict{{ 's' if total != 1 }}</span></h2>

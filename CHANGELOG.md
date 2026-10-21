@@ -27,6 +27,22 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.82.1] – 2026-10-21
+
+### Changed
+- **A way back on every detail page.** A report, an actor, a series edition, a book's statements, a state's ratings and the other
+  pages below a list show a breadcrumb under the menu (e.g. *Documents › BIS › series “Annual Report”*), in place of the separate
+  "← back" links each page had.
+- **Shorter page tops.** Sixteen pages (Sanctions, Ratings, Think tanks, Data exchange, Update, Year conflicts, Series, book
+  relations and statements …) open with one line on what they show; the long explanation of how it is counted is folded under
+  *▸ How this is counted* and opens with a click. Cautions such as "a match is a name match, not an identification" stay visible.
+
+### Fixed
+- **Maps in the light theme.** The headquarters, ratings and mentions maps used colours made for the dark theme: agency pins
+  were brighter than their legend, no-data countries (Greenland) were almost black, the library's states had a near-white outline,
+  hover cards stayed dark and the "fewer – more reports" scale lost its colour bar. All map colours now come from the stylesheet,
+  one set per theme, and the maps redraw when the theme is switched.
+
 ## [0.82.0] – 2026-10-21
 
 ### Added
@@ -1575,7 +1591,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.82.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.82.1...HEAD
+[0.82.1]: https://github.com/iiogurt/Rozvedka/compare/v0.82.0...v0.82.1
 [0.82.0]: https://github.com/iiogurt/Rozvedka/compare/v0.81.0...v0.82.0
 [0.81.0]: https://github.com/iiogurt/Rozvedka/compare/v0.80.0...v0.81.0
 [0.80.0]: https://github.com/iiogurt/Rozvedka/compare/v0.79.0...v0.80.0

@@ -11,9 +11,12 @@
   <button>Filter</button> <a class="reset" href="/series">Reset</a>
   <a class="small" href="/sources/coverage#proposals">confirm more series</a>
 </form>
-<p class="muted small">A <b>series</b> is a publication an agency issues again and again – an annual report, a yearly threat
-  assessment, a half-yearly cyber report. Open a series to read it edition by edition: what each edition is mainly about,
+<p class="lede">Publications an agency issues again and again – open one to read it edition by edition.</p>
+<details class="how"><summary>What a series is</summary>
+<p class="muted small">A <b>series</b> is an annual report, a yearly threat
+  assessment, a half-yearly cyber report. Its page shows what each edition is mainly about,
   which actors it names, and what changed from the year before. The grid shows which editions the library has.</p>
+</details>
 {{ legend() }}
 {{ pager(pg, "series") }}
 <div class="series-grid">

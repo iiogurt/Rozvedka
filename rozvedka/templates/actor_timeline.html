@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 {% set a = actor %}
 {% block title %}Timeline · {{ a.label }} · Rozvedka{% endblock %}
+{% block crumbs %}<a href="/actors/{{ a.key }}">{{ a.label }}</a><span aria-hidden="true">›</span>{% endblock %}
 {% block main %}
-<p class="small"><a href="/actors/{{ a.key }}">← {{ a.label }}</a></p>
 <h1 class="page-h">Timeline: {{ a.label }}</h1>
 {% if not years %}
 <p class="muted small">No dated reports in scope name this actor.</p>
 {% else %}
-<p class="muted small">{{ docs }} dated reports, {{ years[0] }}–{{ years[-1] }}, counted as on the actor page (one file per report, the
+<p class="lede">{{ docs }} dated reports, {{ years[0] }}–{{ years[-1] }}. Every number links to the reports it counts.</p>
+<details class="how"><summary>How this is counted</summary>
+<p class="muted small">Counted as on the actor page (one file per report, the
   Trends scope{% if actor.since_year %}, nothing dated before the actor existed ({{ actor.since_year }}){% endif %}).
-  {% if undated %}{{ undated }} more name{{ 's' if undated == 1 }} it but {{ 'is' if undated == 1 else 'are' }} undated or older than the chart and {{ 'is' if undated == 1 else 'are' }} left out. {% endif %}
-  Every number links to the reports it counts.</p>
+  {% if undated %}{{ undated }} more name{{ 's' if undated == 1 }} it but {{ 'is' if undated == 1 else 'are' }} undated or older than the chart and {{ 'is' if undated == 1 else 'are' }} left out.{% else %}No report naming it is left out.{% endif %}</p>
+</details>
 
 <section class="viz-card tlc-card">
   <h2 class="viz-title">Events, reports and who reports, year by year</h2>
