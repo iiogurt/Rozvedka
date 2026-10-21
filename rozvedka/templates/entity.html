@@ -46,7 +46,8 @@
 </section>
 <section class="viz-card" id="network">
   <h2 class="viz-title">Links <span class="muted small"><a href="/graph/ties?entity={{ e.id }}">{{ groups|sum(attribute='n') }}</a></span></h2>
-  <p class="small"><a href="/graph/path?a={{ e.id }}"><b>Find a connection</b> from {{ e.label }} →</a></p>
+  <p class="small"><a href="/graph/path?a={{ e.id }}"><b>Find a connection</b> from {{ e.label }} →</a>
+    · <a href="/graph/rings?e={{ e.id|urlencode }}"><b>Rings</b> around {{ e.label }} →</a></p>
   {{ network(groups, e.label) }}
 </section>
 {% endblock %}

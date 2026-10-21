@@ -1500,3 +1500,37 @@ body.tl-page main { max-width: none; padding-bottom: 12px; }
 .tl-dot.src-book { background: transparent; box-shadow: inset 0 0 0 2px var(--muted); border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); background: var(--muted); }
 .tl .vis-item.src-book { border-color: var(--muted); font-style: italic; }
 .tl .vis-item.src-book .vis-dot { border-color: var(--muted); background: var(--muted); border-radius: 0; }
+
+/* ── Rings around one entity (/graph/rings, rozvedka/rings.py) ── */
+.rings-wrap { max-width: 1100px; margin: 0 auto; overflow-x: auto; }
+@media (max-width: 700px) { svg.rings { min-width: 720px; } }
+svg.rings { width: 100%; height: auto; display: block; font-family: var(--sans); }
+.rg-ring { fill: none; stroke: var(--line); stroke-dasharray: 2 4; }
+.rg-arc { fill: none; stroke-width: 4; stroke-linecap: round; }
+.rg-arc.rg-official, .rg-e.rg-official { stroke: var(--accent); }
+.rg-arc.rg-reference, .rg-e.rg-reference { stroke: var(--accent-2); }
+.rg-arc.rg-reports, .rg-e.rg-reports { stroke: var(--muted); }
+.rg-e { stroke-width: 1; opacity: .55; }
+.rg-e.rg-reports { stroke-dasharray: 3 3; }
+.rg-e.rg-many { stroke-width: 2.6; }
+.rg-e.rg-outer { stroke: var(--thin); opacity: .7; }
+svg.rg-focus .rg-e { opacity: .08; }
+svg.rg-focus .rg-e.on { opacity: 1; stroke-width: 2; }
+svg.rg-focus .rg-e.rg-outer.on { stroke: var(--ink); }
+.rg-sector { font-size: 12px; font-family: var(--mono); fill: var(--muted); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; }
+.rg-sector.rg-official { fill: var(--accent); } .rg-sector.rg-reference { fill: var(--accent-2); }
+.rg-label { fill: var(--ink); font-size: 12px; }
+.rg-l2 { font-size: 11px; fill: var(--muted); }
+.rg-l0 { font-size: 15px; font-weight: 700; paint-order: stroke; stroke: var(--panel); stroke-width: 4px; }
+.rg-node:hover .rg-label { fill: var(--accent); text-decoration: underline; }
+.rg-dot { fill: var(--k-other); stroke: var(--panel); stroke-width: 1.5; }
+.rg-center { stroke: var(--ink); stroke-width: 2; }
+.rk-state { fill: var(--k-state); } .rk-armed { fill: var(--k-armed); } .rk-person { fill: var(--k-person); }
+.rk-crime { fill: var(--k-crime); } .rk-movement { fill: var(--k-movement); } .rk-country { fill: var(--k-country); }
+.rk-cyber { fill: var(--k-cyber); } .rk-terror { fill: var(--k-terror); } .rk-org { fill: var(--muted); }
+.rk-think-tank { fill: var(--indep); } .rk-commercial { fill: var(--com); }
+.rings-key { text-align: center; }
+.rings-tables { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 12px; margin-top: 12px; }
+.rings-h { margin: 12px 0 4px; font-weight: 600; }
+.rings-list li { padding: 2px 0; }
+.rings-list li.rg-drawn::before { content: "● "; color: var(--accent); }

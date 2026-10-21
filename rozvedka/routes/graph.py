@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Form, HTTPException, Query, Request
 from fastapi.responses import RedirectResponse
 
-from .. import actors, leads, paging, paths, sanctions, techniques, ties, twins, wanted
+from .. import actors, leads, paging, paths, rings, sanctions, techniques, ties, twins, wanted
 from ..web import tpl
 
 router = APIRouter()
@@ -50,6 +50,17 @@ def path_page(request: Request, a: str = "", b: str = "", layer: list[str] = Que
         "a": a, "b": b, "ea": ea, "eb": eb, "ca": ca, "cb": cb, "chains": found, "parts": parts,
         "f": {"layers": layers, "countries": countries, "all": len(layers) == len(ties.LAYERS)},
         "layers": ties.LAYERS, "groups": ties.GROUPS, "base": paths.BASE, "hub": paths.HUB, "max_steps": paths.MAX_STEPS})
+
+
+@router.get("/graph/rings")
+def rings_page(request: Request, e: str = "", show: str = "stated", countries: int = 0):
+    """Rings around one entity: its direct links, the entities two steps away, one sector per layer."""
+    show = show if show in rings.CHOICES else "stated"
+    ent, cands = paths.resolve(e)
+    d = rings.rings(ent["id"], show, bool(countries)) if ent else None
+    return tpl.TemplateResponse(request, "graph_rings.html", {"e": e, "ev": ent["value"] if ent else e, "d": d, "cands": cands, "choices": rings.CHOICES,
+                                                              "f": {"show": show, "countries": countries},
+                                                              "inner": rings.INNER, "outer": rings.OUTER, "hub": paths.HUB})
 
 
 @router.get("/api/entities/suggest")

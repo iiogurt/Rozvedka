@@ -90,6 +90,7 @@ SHOTS = {
     "twins": ("/graph/twins", 1000, [], None),                         # threat groups with the most alike toolkits
     "graph-entity": ("/entity/EU:EU.11824.28", 1100, [], None),        # one company on three lists: why, numbers, its ships
     "graph-path": ("/graph/path?a=Evil+Corp&b=Federal+Security+Service", 1300, [], None),     # chains of stated links between two actors
+    "rings": ("/graph/rings?e=Q41053", 1350, [], None),               # Hezbollah: links on two rings, a sector per source
     "map": ("/map", 800, [("sleep", 5)], None),
     "democracy-map": ("/map/democracy?measure=vdem_regime&year=2025", 900, [("sleep", 6)], None),
     "homicide-map": ("/map/democracy?measure=homicide&year=2023", 900, [("sleep", 6)], None),
