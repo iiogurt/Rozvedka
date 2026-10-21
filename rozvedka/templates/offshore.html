@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "_ties.html" import ent %}
+{% block title %}Offshore leaks · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Offshore leaks <span class="tag leak-tag">leaked records · not official</span></h1>
+<p class="lede">Companies and people of the sanctions lists that ICIJ's Offshore Leaks database names – the leaked records of
+  offshore service providers behind the Panama, Paradise and Pandora Papers – and the officers, shareholders and intermediaries
+  linked to them.</p>
+<p class="leak-note">These are <b>leaked documents published by journalists</b>, not an official register: often years old,
+  incomplete, and a name in them is no evidence of wrongdoing. Every link from them is marked <span class="lay lay-leaks">icij</span>
+  and drawn in orange, dashed.</p>
+<details class="how"><summary>How this is matched</summary>
+<p class="muted small">A list entry is the ICIJ record with the same name (case, accents and punctuation ignored) in the same country.
+  <b>Companies</b>: distinctive names only (two words beyond the legal form, or one of 8 letters or more), and every ICIJ record with that
+  name must be in the entry's country – they become links at once. <b>People</b>: a name of two words and {{ min_person }} letters or more,
+  carried by at most {{ max_people }} ICIJ records, all in the entry's country. That is still only the same name and country – many people
+  share one – so a person's match becomes a link only <b>after you confirm it</b> below (kept in <code>sources/icij_reviews.yaml</code>),
+  and the network is rebuilt with <code>build-graph</code> or the next Update. One step out: the companies they are officers, shareholders
+  or beneficial owners of, the officers of their companies, and their intermediaries; registered addresses and ICIJ's own "same name"
+  guesses are left out. Source: <a href="{{ about }}" rel="noopener">ICIJ Offshore Leaks Database</a>, {{ licence }},
+  {% if meta.generated %}generated {{ meta.generated[:4] }}-{{ meta.generated[4:6] }}-{{ meta.generated[6:] }}, {% endif %}retrieved {{ meta.retrieved or 'never' }}
+  (<code>fetch-icij</code>).</p></details>
+{% if notice %}<p class="h-problems" role="status">Review {{ notice }}</p>{% endif %}
+{% if not rows %}<p class="empty">Nothing matched yet – run <code>python -m rozvedka fetch-icij</code>, then <code>build-graph</code>.</p>{% else %}
+{% set people = rows|selectattr('how', 'equalto', 'person')|list %}{% set cos = rows|selectattr('how', 'equalto', 'company')|list %}
+<p class="net-summary"><b>{{ cos|length }}</b> listed companies and <b>{{ people|length }}</b> listed people named in the leaks ·
+  <b>{{ people|selectattr('review')|selectattr('review.verdict', 'equalto', 'confirmed')|list|length }}</b> people confirmed,
+  {{ people|rejectattr('review')|list|length }} to review · <a href="/graph/ties?layer=icij"><b>{{ n_links|num }}</b> links</a> in the network</p>
+<section class="viz-card">
+  <h2 class="viz-title">People – to confirm <span class="muted small">same name and country; a link only once confirmed</span></h2>
+  <table class="pc-table small">
+    <thead><tr><th>On the list</th><th>In the leaks</th><th>Verdict</th></tr></thead>
+    {% for r in people %}<tr id="{{ r.key|replace(':', '-') }}"><td>{{ ent(r.label, 'person', r.href) }}<div class="muted">{{ r.key }}</div></td>
+      <td>{% for x in r.records %}<div><a href="{{ x.url }}" rel="noopener">{{ x.name }}</a> <span class="muted">· {{ x.countries|join(', ') }} · {{ x.source }}</span>
+        {% if x.around %}<div class="muted">{{ x.around[:4]|join(' · ') }}{% if x.around|length > 4 %} · +{{ x.around|length - 4 }} more{% endif %}</div>{% endif %}</div>{% endfor %}</td>
+      <td>{% if r.review %}<b>{{ verdicts[r.review.verdict] }}</b> <span class="muted">{{ r.review.date }}{% if r.review.note %} · {{ r.review.note }}{% endif %}</span>{% if r.review.verdict == 'confirmed' %} · <a href="{{ r.links }}">its links</a>{% endif %}<br>{% endif %}
+        <form method="post" action="/graph/offshore/review" class="inline"><input type="hidden" name="entry" value="{{ r.key }}">
+          <input name="note" placeholder="why (optional)" size="16" value="{{ r.review.note if r.review else '' }}">
+          {% for v, label in verdicts.items() %}<button name="verdict" value="{{ v }}" title="{{ label }}">{{ v }}</button>{% endfor %}</form></td></tr>{% endfor %}
+  </table>
+</section>
+<section class="viz-card">
+  <h2 class="viz-title">Companies <span class="muted small">{{ cos|length }} – linked at once</span></h2>
+  <ul class="plain small rings-list">{% for r in cos %}<li>{{ ent(r.label, 'org', r.href) }} –
+    {% for x in r.records %}<a href="{{ x.url }}" rel="noopener">{{ x.name }}</a> <span class="muted">({{ x.jurisdiction or x.countries|join(', ') }}, {{ x.source }})</span>{{ ' · ' if not loop.last }}{% endfor %}
+    · <a href="{{ r.links }}">links</a></li>{% endfor %}</ul>
+</section>
+{% endif %}
+{% endblock %}

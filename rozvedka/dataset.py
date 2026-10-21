@@ -42,7 +42,7 @@ FORMAT_VERSION = 1
 PART_SIZE = 2_000_000_000
 CHUNK = 1 << 20
 PORTAL_LISTS = ("series.yaml", "watchlist.yaml", "actor_reviews.yaml", "year_reviews.yaml",
-                "doc_types.yaml")     # written by the portal: merged on import
+                "doc_types.yaml", "icij_reviews.yaml")     # written by the portal: merged on import
 
 
 Cancelled = progress.Cancelled
@@ -952,6 +952,19 @@ def _merge_lists(mpath: Path, m: dict) -> dict:
                 if added:
                     doctypes.save_hand(ours, ours_p)
                 out[name] = f"{added} document types added or updated"
+            elif name == "icij_reviews.yaml":
+                from . import icij
+                ours = icij.reviews(ours_p)
+                added = 0
+                for r in theirs or []:
+                    if isinstance(r, dict) and r.get("entry") and (
+                            r["entry"] not in ours or (r.get("date") or "") > (ours[r["entry"]].get("date") or "")):
+                        ours[r["entry"]] = r
+                        added += 1
+                if added:
+                    ours_p.write_text(icij.REVIEW_HEADER + yaml.safe_dump(list(ours.values()), allow_unicode=True, sort_keys=False,
+                                                                         width=120), encoding="utf-8")
+                out[name] = f"{added} offshore-leak verdicts added or updated"
             elif name == "series.yaml":
                 from . import series
                 ours = series.load(ours_p)

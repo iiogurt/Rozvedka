@@ -151,6 +151,9 @@ def cite(link: dict) -> tuple[str, str]:
         return f"MITRE ATT&CK, retrieved {e.get('retrieved', '')}", e.get("url", "")
     if layer == "reports":
         return f"{e.get('docs', '')} reports of the library name both in one passage (a co-mention, not a stated link)", e.get("link", "")
+    if layer == "icij":
+        return (f"ICIJ Offshore Leaks Database ({e.get('source', '')}) – leaked records published by journalists, not official; "
+                f"retrieved {e.get('retrieved', '')}"), e.get("url", "")
     if layer == "gleif":
         return (f"GLEIF Level 2 relationship record {e.get('type', '')} ({e.get('status', '')}"
                 f"{', since ' + e['start'] if e.get('start') else ''}), LEI {e.get('lei', '')}, retrieved {e.get('retrieved', '')}"), e.get("url", "")

@@ -15,6 +15,11 @@
 <p class="lede">{{ e.kind_name }}: {{ 'a company selling political-risk or threat analysis to clients' if d.publisher.kind == 'commercial' else 'an independent publisher, not run by a state' }}.
   Its owners, sponsors, founders and partners are linked below, each with its evidence – see its <a href="/publisher/{{ d.publisher.source }}">credibility profile</a>
   and <a href="/documents?source={{ d.publisher.source }}">its reports</a>.</p>
+{% elif e.origin == 'icij' %}
+<p class="lede">A record of ICIJ's Offshore Leaks database – {{ 'an offshore company' if d.icij and d.icij[0].kind == 'entity' else 'an intermediary' if d.icij and d.icij[0].kind == 'intermediary' else 'an officer, shareholder or owner named in the records' }},
+  on no sanctions list. It is here because the leaked records link it to a listed company or person.</p>
+<p class="leak-note">From <b>leaked documents published by journalists</b> (ICIJ), not an official register: often years old, and a name in
+  them is no evidence of wrongdoing.</p>
 {% elif e.origin == 'gleif' %}
 <p class="lede">A company in the Legal Entity Identifier register (GLEIF), on no sanctions list: it is here because GLEIF records it
   as a parent, branch or consolidated entity of a listed company. Ownership as the companies report it to GLEIF.</p>
@@ -44,6 +49,10 @@
     {% for x in d.gleif %}<tr><th>{{ 'GLEIF' if loop.first }}<span class="tag">CC0</span></th><td><a href="{{ x.url }}" rel="noopener">LEI <code>{{ x.lei }}</code></a> · {{ x.name }}{% if x.label != x.name %} ({{ x.label }}){% endif %}
       · {{ x.city }}{{ ', ' if x.city }}{{ x.country }}{% if x.reg %} · register no. <code>{{ x.reg }}</code>{% endif %} · {{ x.status|lower }}, registration {{ x.registration|lower }}
       {% if x.how %}<br><span class="muted">the same company because {{ {'lei': 'the list entry states this LEI', 'registration': 'the list entry gives this register number in the same country', 'name': 'only this record carries the entry’s name in the same country'}[x.how] }} (<a href="/graph">how companies are matched</a>)</span>{% endif %}</td></tr>{% endfor %}
+    {% for x in d.icij %}<tr><th>{{ 'ICIJ' if loop.first }}<span class="tag leak-tag">leaked records</span></th><td><a href="{{ x.url }}" rel="noopener">{{ x.name }}</a>
+      · {{ x.source }}{% if x.jurisdiction %} · {{ x.jurisdiction }}{% endif %}{% if x.countries %} · {{ x.countries|join(', ') }}{% endif %}{% if x.incorporated %} · incorporated {{ x.incorporated }}{% endif %}{% if x.status %} · {{ x.status|lower }}{% endif %}
+      {% if x.how %}<br><span class="muted">{{ {'company': 'the same company: the same distinctive name in the same country', 'person': 'the same person: the same name and country, confirmed on review', 'unconfirmed': 'the same name and country – not yet confirmed as the same person, so not linked'}[x.how] }}
+        (<a href="/graph/offshore">offshore leaks</a>){% if x.valid %} · {{ x.valid }}{% endif %}</span>{% endif %}</td></tr>{% endfor %}
     {% if d.description %}<tr><th>Description</th><td>{{ d.description }}</td></tr>{% endif %}
     {% if d.attack %}<tr><th>ATT&amp;CK</th><td><a href="{{ d.url }}" rel="noopener">{{ d.attack }}</a>{% if d.aliases %} · also {{ d.aliases|join(', ') }}{% endif %}{% if d.first %} · active {{ d.first }} – {{ d.last }}{% endif %}</td></tr>{% endif %}
     {% if d.publisher and d.url %}<tr><th>Wikidata</th><td><a href="{{ d.url }}" rel="noopener">{{ e.id }}</a></td></tr>{% endif %}

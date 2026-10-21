@@ -535,6 +535,26 @@ Each matched company gets its LEI record on its page (legal name, register numbe
 and funds, Gazprom-Media under Gazprombank. Each link has its GLEIF relationship record with type, status, period and how it was
 validated. A company on no list is its own node, marked as a GLEIF record.
 
+#### Offshore leaks (ICIJ) – leaked records, not official
+
+<img src="docs/images/offshore.png" alt="Offshore leaks: listed companies and people named in ICIJ's leaked records, people to confirm, every link marked as leaked" width="900">
+
+**Which listed companies and people appear in the Panama, Paradise and Pandora Papers?** `python -m rozvedka fetch-icij`
+downloads ICIJ's Offshore Leaks Database (ODbL, ~72 MB) and keeps only what concerns the sanctions lists. These are **leaked
+documents of offshore service providers published by journalists**, not an official register. They are often years old, and a
+name in them is no evidence of wrongdoing. Every link from them is marked `icij`, drawn in orange and dashed, and counted
+apart from the official lists.
+
+- **Companies** are matched by the same distinctive name in the same country: 57, for example IRISL's ship-owning companies in
+  Malta, the Libyan Investment Authority, Ledra and Vassiliades in Cyprus, and Petropars.
+- **People** need a rarer name, but a name and a country are still shared by many people ("Alexander Ivanov", "Muhammad
+  Iqbal"), so each person's match waits on `/graph/offshore` until you **confirm** it. The leak record's own links are shown
+  to help, and verdicts are kept in `sources/icij_reviews.yaml`. Unconfirmed matches are shown on the person's page but never
+  drawn as links.
+- One step out: the companies they are officers, shareholders or beneficial owners of, the officers of their companies, and
+  their intermediaries. That gives 650 links and 471 leak records as nodes. Addresses and ICIJ's own "same name" guesses are
+  left out.
+
 #### Vendors' names and toolkit twins
 
 <img src="docs/images/twins.png" alt="Toolkit twins: pairs of threat groups with the most alike MITRE ATT&CK toolkits, rare items weighted up" width="900">
@@ -868,6 +888,7 @@ failure. Starting it after a reboot with nobody logged in needs `loginctl enable
 | `index-events` | find the reports that name each event (its Wikidata names, in its year or later; no download – `fetch-events` runs it too) |
 | `fetch-events [--source wikidata\|eurepoc\|ucdp]` | dated events for the timeline: Wikidata items of the classes in `sources/events.yaml`, EuRepoC cyber incidents, UCDP organised violence (network, ~10 min) |
 | `fetch-wikitext` | read the English Wikipedia articles of the actors the reports name and keep the sentences that link to another known subject (network, ~5 min; then `build-graph`) |
+| `fetch-icij` | download ICIJ's Offshore Leaks Database (ODbL, ~72 MB) and keep the listed companies and people it names, one step out (network, marked as leaked records; then `build-graph`) |
 | `fetch-gleif` | download GLEIF's register of legal entity identifiers (CC0, ~500 MB, ~15 min) and keep the sanctioned companies' records, parents and branches (network; then `build-graph`) |
 | `fetch-misp` | download the MISP threat-actor galaxy (CC0): security vendors' names of threat groups and which groups it holds similar (network; then `index-actors` and `build-graph`) |
 | `build-graph` | rebuild the network of links from what is stored: sanctions lists, Wikidata and Wikipedia connections, ATT&CK, the actor index (no network; `update` runs it last) |
@@ -1030,6 +1051,7 @@ flowchart LR
 | `rozvedka/wanted.py` | wanted notices of the FBI and Europe's Most Wanted: fetching, the security filter, entries for the identity rules, relation words |
 | `rozvedka/wikitext.py` | links stated in the text of Wikipedia articles: sentences with links, the relation word, redirects |
 | `rozvedka/leads.py` | leads (shared neighbours, never named together; reviews in `sources/lead_reviews.yaml`) and brokers |
+| `rozvedka/icij.py` | ICIJ Offshore Leaks: listed companies and people matched by name and country, people only once confirmed (`sources/icij_reviews.yaml`), one step out |
 | `rozvedka/gleif.py` | GLEIF: the golden copy read as a stream, list companies matched by LEI, number or name, one step of ownership |
 | `rozvedka/identity.py`, `vendors.py`, `twins.py` | one target across sanctions lists and the details they share; vendors' names of threat groups (MISP); toolkit twins |
 | `rozvedka/rings.py` | Rings and the neighbourhood matrix: an entity's links on two rings, one sector per layer; its neighbours as a matrix ordered by Louvain communities |
@@ -1278,6 +1300,7 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | Organised violence | [UCDP Georeferenced Event Dataset and Candidate Events](https://ucdp.uu.se/downloads/) | CC BY 4.0 |
 | Country ratings | V-Dem, Freedom House, World Bank WGI, UNODC, SIPRI, Transparency International (via [Our World in Data](https://ourworldindata.org) and the World Bank API), [INFORM](https://drmkc.jrc.ec.europa.eu/inform-index) (EU JRC), [WorldRiskIndex](https://data.humdata.org/dataset/worldriskindex), [RSF](https://rsf.org/en/index) (personal use: only in personal backups, never in datasets to share), [ITU GCI 2024](https://www.itu.int/en/ITU-D/Cybersecurity/Pages/global-cybersecurity-index.aspx) (CC BY-NC-SA 3.0 IGO) | each measure's licence is shown with it on `/ratings` |
 | Sanctions lists | EU (FPI), UK (FCDO), UN Security Council, US Treasury (OFAC) – official XML files | public official data |
+| Offshore companies (leaked records) | [ICIJ Offshore Leaks Database](https://offshoreleaks.icij.org/pages/database) – journalistic, not official; only records linked to listed companies and confirmed listed people (`data/icij/`, not committed) | ODbL 1.0 (database), CC BY-SA (contents); © International Consortium of Investigative Journalists |
 | Company ownership | [GLEIF golden copy](https://www.gleif.org/en/lei-data/gleif-golden-copy) – LEI records and relationships (`data/gleif/`, not committed) | CC0 1.0; no endorsement by GLEIF implied |
 | Wanted notices | [FBI Wanted API](https://api.fbi.gov/wanted/v1/list), [Europe's Most Wanted](https://eumostwanted.eu/) (ENFAST, supported by Europol) – text, names, dates of birth and charges only, no photographs (`data/gazetteer/wanted.json`, not committed) | public official notices, linked on each page |
 | Event dates | Wikidata via `tools/build_events.py` | CC0 |

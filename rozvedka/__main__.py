@@ -64,6 +64,7 @@ def main():
     sub.add_parser("fetch-misp", help="download the MISP threat-actor galaxy (CC0): security vendors' names of threat groups, similar groups")
     sub.add_parser("fetch-wikitext", help="links between subjects stated in the text of their English Wikipedia articles (network)")
     sub.add_parser("fetch-wanted", help="wanted notices of the FBI and Europe's Most Wanted about security (network)")
+    sub.add_parser("fetch-icij", help="ICIJ Offshore Leaks (ODbL): listed companies and people in the leaked records, one step out (network; ~72 MB)")
     sub.add_parser("fetch-gleif", help="GLEIF (CC0): the sanctioned companies' LEI records and owners, parents and branches (network; ~500 MB, ~15 min)")
     ev = sub.add_parser("fetch-events", help="dated events for the timeline: Wikidata, EuRepoC cyber incidents, UCDP organised violence")
     ev.add_argument("--source", action="append", choices=["wikidata", "eurepoc", "ucdp"], help="only this source (repeatable)")
@@ -175,6 +176,9 @@ def main():
     elif a.cmd == "fetch-wanted":
         from . import wanted
         print(wanted.fetch_all())
+    elif a.cmd == "fetch-icij":
+        from . import icij
+        print(icij.fetch_all())
     elif a.cmd == "fetch-gleif":
         from . import gleif
         print(gleif.fetch_all())
