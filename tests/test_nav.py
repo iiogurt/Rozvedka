@@ -84,4 +84,4 @@ def test_map_scripts_take_their_colours_from_the_stylesheet():
     from pathlib import Path
     static = Path(nav.__file__).parent / "static"
     for name in ("map.js", "map_democracy.js", "mentions.js"):
-        assert not re.findall(r"#[0-9a-fA-F]{6}\b", (static / name).read_text()), name
+        assert not re.findall(r"#[0-9a-fA-F]{6}\b", (static / name).read_text(encoding="utf-8")), name
