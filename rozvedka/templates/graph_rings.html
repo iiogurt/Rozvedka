@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% from "_ties.html" import lay, ent %}
+{% block title %}Rings{% if d %}: {{ d.center.label }}{% endif %} · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Rings{% if d %}: {{ ent(d.center.label, d.center.kind, d.center.href) }}{% endif %}</h1>
+<p class="lede">One entity in the middle, its stated links on the inner ring and the entities two steps away on the outer ring –
+  a sector for each source, every name readable.</p>
+<details class="how"><summary>How this is drawn</summary>
+<p class="muted small">The inner ring shows at most {{ inner }} direct links. Neighbours stated by most sources come first, then actors the
+  reports name, then the most specific ones (fewest links of their own). Each sits in the sector of the strongest source that states
+  its link: official lists before reference data before co-mentions. A double line means several sources state it. The outer ring
+  shows at most {{ outer }} entities linked to the neighbours shown. Those linked to several of them come first, and hubs are weighed down
+  ({{ hub }} for every doubling of their links, as on <a href="/graph/path">Find a connection</a>). Each sits beside the neighbours it is
+  linked to. Countries are left out unless asked for: nearly everything is linked to Russia or Ukraine somewhere. Every sector says how
+  many links it has and how many are not drawn; each count opens the list of links with their evidence. Two steps away is not a link:
+  open the chain on Find a connection.</p></details>
+
+<form class="path-form" method="get" autocomplete="off">
+  <label>Entity <input name="e" value="{{ ev }}" list="ent-list" data-suggest size="38" placeholder="name: Hezbollah, Wagner Group, a company …"></label>
+  <select name="show" aria-label="Which links">{% for k, v in choices.items() %}<option value="{{ k }}" {{ 'selected' if f.show == k }}>{{ v }}</option>{% endfor %}</select>
+  <label class="chk"><input type="checkbox" name="countries" value="1" {{ 'checked' if f.countries }}> with countries</label>
+  <button>Draw</button>
+  <datalist id="ent-list"></datalist>
+</form>
+
+{% if cands %}
+<section class="viz-card">
+  <h2 class="viz-title">Which “{{ e }}”?</h2>
+  <p class="muted small">Several entities carry this name – often one company on several lists. More links usually means a fuller drawing.</p>
+  <ul class="tie-grid small">{% for c in cands %}<li>{{ ent(c.label, c.kind, '/graph/rings?e=' ~ c.value|urlencode ~ '&show=' ~ f.show ~ ('&countries=1' if f.countries else '')) }}
+    <span class="muted">{{ c.kind_name }} · {{ c.links }} links</span></li>{% endfor %}</ul>
+</section>
+{% elif e and not d %}<p class="notice">Nothing in the network is called “{{ e }}”.</p>
+{% elif not e %}
+<p class="muted small">Try <a href="/graph/rings?e=Q41053">Hezbollah</a>, <a href="/graph/rings?e=Q36597284">Wagner Group</a> or
+  <a href="/graph/rings?e=Q20757678">APT28</a>.</p>
+{% endif %}
+
+{% if d %}{% set c = d.counts %}
+<p class="net-summary"><a href="#inner"><b>{{ c.near|num }}</b> direct links</a> in the chosen sources, <b>{{ c.shown }}</b> drawn ·
+  <a href="#outer"><b>{{ c.far|num }}</b> entities two steps away</a> through the drawn ones, <b>{{ c.outer }}</b> drawn{% if not c.countries %} · countries left out{% endif %}
+  · <a href="/graph/path?a={{ d.center.id|urlencode }}">find a connection from {{ d.center.label }} →</a></p>
+{% if not d.inner %}<p class="notice">No links in the chosen sources{% if not c.countries %} other than to countries{% endif %}.</p>{% else %}
+<section class="viz-card rings-card">
+  <div class="rings-wrap">
+  <svg class="rings" viewBox="{{ -d.size }} {{ -d.size }} {{ 2 * d.size }} {{ 2 * d.size }}" role="img"
+       aria-label="Rings around {{ d.center.label }}: {{ d.inner|length }} direct links, {{ d.outer|length }} entities two steps away">
+    <circle class="rg-ring" r="{{ d.r1 }}"/><circle class="rg-ring" r="{{ d.r2 }}"/>
+    {% for s in d.sectors %}<path class="rg-arc rg-{{ s.group }}" d="{{ s.arc }}"/>{% endfor %}
+    <g class="rg-edges">{% for l in d.edges %}<line class="rg-e rg-{{ l.group }}{{ ' rg-many' if l.many }}" data-a="{{ l.a }}" data-b="{{ l.b }}"
+      x1="{{ l.x1 }}" y1="{{ l.y1 }}" x2="{{ l.x2 }}" y2="{{ l.y2 }}"/>{% endfor %}</g>
+    {% for s in d.sectors %}<a href="{{ s.link }}"><text class="rg-sector rg-{{ s.group }}" transform="translate({{ s.label.x }},{{ s.label.y }}) rotate({{ s.label.rot }})"
+      text-anchor="{{ 'start' if s.label.anchor == 'end' else 'end' }}"><title>{{ s.name }}: {{ s.n }} links, {{ s.more }} not drawn – open the list</title>{{ s.layer }} {{ s.n }}{% if s.more %} (+{{ s.more }}){% endif %}</text></a>{% endfor %}
+    {% for n in d.inner + d.outer %}<a href="{{ n.href }}" class="rg-node" data-id="{{ n.id }}">
+      <title>{{ n.label }} – {{ n.kind_name }}{% if n.ring == 1 %} · {{ n.says|join(', ') }} · {{ n.layers|join(', ') }}{% else %} · linked to {{ n.via_labels|join(', ') }}{% endif %} · {{ n.deg }} links</title>
+      <circle class="rg-dot rk-{{ n.kind }}" cx="{{ n.x }}" cy="{{ n.y }}" r="{{ 6 if n.ring == 1 else 4.5 }}"/>
+      <text class="rg-label rg-l{{ n.ring }}" transform="translate({{ n.x }},{{ n.y }}) rotate({{ n.rot }})" x="{{ n.dx }}" dy="0.32em" text-anchor="{{ n.anchor }}">{{ n.short }}</text></a>{% endfor %}
+    <a href="{{ d.center.href }}" class="rg-node" data-id="{{ d.center.id }}"><circle class="rg-dot rg-center rk-{{ d.center.kind }}" r="11"/>
+      <text class="rg-label rg-l0" y="30" text-anchor="middle">{{ d.center.label }}</text></a>
+  </svg>
+  </div>
+  <p class="small rings-key"><span class="lay-official">━ official lists</span> · <span class="lay-reference">━ reference data</span> ·
+    <span class="lay-reports">┄ named together in reports</span> · ═ several sources · the sector labels are the layers, with their links
+    and (+ how many are not drawn) – click one for all of them. Hover a name to see its links.</p>
+</section>
+
+<div class="rings-tables">
+<section class="viz-card" id="inner">
+  <h2 class="viz-title">Inner ring <span class="muted small">{{ c.near|num }} direct links, {{ d.inner|length }} drawn (●)</span></h2>
+  {% for s in d.sectors %}
+  <h3 class="small rings-h" id="sector-{{ s.layer }}">{{ lay(s.layer, s.group, s.name) }} {{ s.name }} · {{ s.n }} · <a href="{{ s.ties }}" title="every link of this layer, with its evidence">its links</a></h3>
+  <ul class="plain small rings-list">{% for n in s.all %}<li class="{{ 'rg-drawn' if n.drawn }}">{{ ent(n.label, n.kind, n.href) }}
+    <span class="muted">{{ n.says|join(' · ') }}</span>{% if n.layers|length > 1 %} <span class="muted">({{ n.layers|join(', ') }})</span>{% endif %}
+    · <a href="{{ n.chain }}">evidence</a></li>{% endfor %}</ul>
+  {% endfor %}
+</section>
+<section class="viz-card" id="outer">
+  <h2 class="viz-title">Outer ring <span class="muted small">{{ c.far|num }} two steps away, {{ d.outer|length }} drawn (●)</span></h2>
+  <p class="muted small">The most specific first: linked to the most neighbours, the fewest links of their own.</p>
+  {% macro far_row(n) %}<li class="{{ 'rg-drawn' if n.drawn }}">{{ ent(n.label, n.kind, n.href) }}
+    <span class="muted">via {{ n.via_labels|join(', ') }} · {{ n.deg }} links</span> · <a href="{{ n.chain }}">chain</a></li>{% endmacro %}
+  <ul class="plain small rings-list">{% for n in d.far if n.drawn %}{{ far_row(n) }}{% endfor %}</ul>
+  {% if c.far > d.outer|length %}<details class="more"><summary>the other {{ (c.far - d.outer|length)|num }}</summary>
+  <ul class="plain small rings-list">{% for n in d.far if not n.drawn %}{{ far_row(n) }}{% endfor %}</ul></details>{% endif %}
+</section>
+</div>
+{% endif %}
+{% endif %}
+<script src="{{ asset('paths.js') }}"></script>
+<script>
+/* hover a name: its links stand out, the rest fades */
+(function () {
+  const svg = document.querySelector("svg.rings");
+  if (!svg) return;
+  const edges = [...svg.querySelectorAll(".rg-e")];
+  svg.querySelectorAll(".rg-node").forEach((n) => {
+    n.addEventListener("mouseenter", () => {
+      const id = n.dataset.id;
+      svg.classList.add("rg-focus");
+      edges.forEach((e) => e.classList.toggle("on", e.dataset.a === id || e.dataset.b === id));
+    });
+    n.addEventListener("mouseleave", () => { svg.classList.remove("rg-focus"); edges.forEach((e) => e.classList.remove("on")); });
+  });
+})();
+</script>
+{% endblock %}

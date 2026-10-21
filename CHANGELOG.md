@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.83.0] – 2026-10-21
+
+### Added
+- **Rings around one entity** (`/graph/rings`, Actors & threats → Rings). An actor, a company or a person sits in the middle,
+  with its stated links on the inner ring and the entities two steps away on the outer ring. There is one sector per source,
+  official lists first, and every name is readable. Large neighbourhoods are cut to 40 + 48 names, chosen by how many sources
+  state a link and how specific an entity is, and every sector says how many links it has and how many are not drawn. The
+  tables below list every neighbour and everything two steps away, each with its evidence or chain. You can choose the sources
+  (stated, official only, reference only, with co-mentions) and whether countries count. Actor and entity pages link to it.
+
 ## [0.82.1] – 2026-10-21
 
 ### Changed
@@ -1591,7 +1601,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.82.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.83.0...HEAD
+[0.83.0]: https://github.com/iiogurt/Rozvedka/compare/v0.82.1...v0.83.0
 [0.82.1]: https://github.com/iiogurt/Rozvedka/compare/v0.82.0...v0.82.1
 [0.82.0]: https://github.com/iiogurt/Rozvedka/compare/v0.81.0...v0.82.0
 [0.81.0]: https://github.com/iiogurt/Rozvedka/compare/v0.80.0...v0.81.0

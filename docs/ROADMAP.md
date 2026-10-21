@@ -215,7 +215,8 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
    "ARC" now need context. Rewards for Justice excluded (robots.txt). Next: **6b** US Justice Department press releases (API
    searches titles only, 10 s per request – search the titles for the actors' names, read the sentences naming known people);
    a gazetteer actor for "Saudi Hizballah" (Hezbollah Al-Hejaz). · minor
-7. **Views** – rings around one entity (hops as rings, relation types as sectors, every label visible), a matrix ordered
+7. ◐ (0.83.0: G7a – rings around one entity, `/graph/rings`: 40 direct links and 48 at two steps drawn, a sector per layer,
+   every count opening the full list) **Views** – still open: a matrix ordered
    by communities, BioFabric for medium networks, links on a time axis and the network as of a year. · minor
 8. **Case file** – one shared board (no per-user state): pin entities, chains between them found automatically, export
    with citations. · minor
@@ -265,7 +266,7 @@ backups and exchange (0.27–0.28), home page and search console (0.22), Update 
 
 Updated 2026-10-21, after H (all of it built by 0.81.0) and F3 + F4 (0.82.1):
 
-1. **G7 → G8 → G9** – finish the network plan the owner approved: views (rings around one entity, a matrix by communities,
+1. **G7 → G8 → G9** – finish the network plan the owner approved: views (rings ✅ 0.83.0; next a matrix by communities,
    the network as of a year), the shared case file, then company registries and leaks (GLEIF, UK Companies House, ICIJ).
 2. **F12** – topic and country briefing pages: reports, actors, events and the country ratings on one page.
 3. **F5, F9–F11** – overview sparklines, the agency × agency citation matrix, the ATT&CK tactic grid, the coverage gap matrix.

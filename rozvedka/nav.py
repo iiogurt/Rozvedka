@@ -25,6 +25,7 @@ GROUPS = [
         ("Actors", "/actors", (), "Groups, states, people and services named in the reports."),
         ("Network", "/graph", ("/entity",), "Stated links between groups, people, companies, malware: sanctions lists, Wikidata, ATT&CK."),
         ("Find a connection", "/graph/path", (), "How two groups, people or companies are linked: the most specific chains of links."),
+        ("Rings", "/graph/rings", (), "One entity in the middle: its links on the inner ring, two steps away on the outer, a sector per source."),
         ("Toolkit twins", "/graph/twins", (), "Threat groups that use the same techniques and software (MITRE ATT&CK)."),
         ("Leads", "/graph/leads", (), "Hypotheses: actors never named together that share neighbours – to review."),
         ("Brokers", "/graph/brokers", (), "Entities whose links reach several worlds: state, cyber, terror, armed, crime."),

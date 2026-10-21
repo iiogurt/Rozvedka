@@ -207,7 +207,8 @@
   <p class="muted small viz-sub">What official sanctions lists, wanted notices and MITRE ATT&amp;CK state about {{ a.label }}'s ties – each with the
     sentence or entry it comes from. Wikidata and Wikipedia ties are under Connections below; co-mentions in reports on the
     <a href="/network">Named together</a> page. All layers: {% for l in net_layers %}<a href="{{ l.link }}">{{ l.name }} {{ l.n }}</a>{{ ' · ' if not loop.last }}{% endfor %}.
-    How it is built: <a href="/graph">Network</a>. <a href="/graph/path?a={{ a.key }}"><b>Find a connection</b> from {{ a.label }} →</a></p>
+    How it is built: <a href="/graph">Network</a>. <a href="/graph/path?a={{ a.key }}"><b>Find a connection</b> from {{ a.label }} →</a>
+    · <a href="/graph/rings?e={{ a.key }}"><b>Rings</b> around {{ a.label }} →</a></p>
   {{ net(network, a.label) }}
 </section>
 {% endif %}

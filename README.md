@@ -600,6 +600,23 @@ their names, sanctions entries, malware, campaigns) and get up to five chains of
   the page says whether the two are in separate parts of the network and how large each part is.
 - Every actor and entity page links to it (“Find a connection from …”).
 
+#### Rings
+
+<img src="docs/images/rings.png" alt="Rings around Hezbollah: its stated links on the inner ring in one sector per source, the entities two steps away on the outer ring, every name readable" width="900">
+
+**Who is around one entity?** `/graph/rings` puts an actor, a company or a person in the middle. Its stated links are on the
+inner ring, the entities two steps away on the outer ring, and every name stays readable:
+
+- **One sector per source.** A neighbour sits in the sector of the strongest source that states its link: official lists
+  before reference data before co-mentions. A double line means several sources state it. Choose all stated links, the
+  official lists only, reference data only, or everything including co-mentions; countries are left out unless asked for.
+- **A choice, said out loud.** Hezbollah has 280 stated links and 262 entities two steps away, so the inner ring draws the 40
+  stated by most sources (then actors of the reports, then the most specific). The outer ring draws the 48 linked to the most
+  of them, with hubs weighed down as on Find a connection. Each sector says how many it has and how many are not drawn.
+- **Every number opens its list.** The tables below the drawing list every neighbour and everything two steps away, with ●
+  on what is drawn. Each row has its evidence or chain on Find a connection. Hover a name to see its links.
+- Every actor and entity page links to it (“Rings around …”).
+
 ### 🕸️ Named together
 
 <img src="docs/images/network.png" alt="Network: clusters of actors named together, with ties, main topics, timeline and reporting agencies" width="900">
@@ -966,6 +983,7 @@ flowchart LR
 | `rozvedka/wikitext.py` | links stated in the text of Wikipedia articles: sentences with links, the relation word, redirects |
 | `rozvedka/leads.py` | leads (shared neighbours, never named together; reviews in `sources/lead_reviews.yaml`) and brokers |
 | `rozvedka/identity.py`, `vendors.py`, `twins.py` | one target across sanctions lists and the details they share; vendors' names of threat groups (MISP); toolkit twins |
+| `rozvedka/rings.py` | Rings: an entity's links on two rings, one sector per layer, the choice of what is drawn and the layout |
 | `rozvedka/paths.py` | Find a connection: the most specific chains between two entities (hub-penalised shortest paths, alternatives on other routes), name resolution |
 | `rozvedka/ties.py` | the network of stated links: entities and links from the sanctions lists, Wikidata, Wikipedia, ATT&CK and the reports, each with its evidence |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |
