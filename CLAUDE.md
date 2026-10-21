@@ -58,6 +58,9 @@ next steps. Read it at the start of a session; update it (mark items done, re-pr
 - Claude opens the PR, **merges it and cuts the release itself** – the owner does not want to do this manually.
   Merge locally with a merge commit and push `main` (see "Operating an installation" on why not through the API).
   One PR per change; merge it before starting the next (no stacked PRs).
+- After the merge, delete the branch on GitHub and locally (`git push origin --delete <branch>`, `git branch -d
+  <branch>`): only `main` stays. GitHub allows only merge commits, deletes merged head branches by itself, and a
+  ruleset keeps `main` from being force-pushed or deleted – so never rewrite `main`'s history.
 - PR descriptions: what changed, how it was verified (tests, sample checks, screenshots), and the test count.
 - Registry edits go in their own commits (`sources: add Latvian SAB reports page`).
 - Never commit `data/` (database, downloaded PDFs, logos, gazetteer), `.env*`, keys or credentials;
