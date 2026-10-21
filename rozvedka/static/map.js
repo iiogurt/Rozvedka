@@ -1,19 +1,20 @@
-/* Rozvedka world map (dark): agency HQ pins with hover cards, clusters, countries shaded by report count. */
+/* Rozvedka world map (both themes): agency HQ pins with hover cards, clusters, countries shaded by report count. */
 (function () {
   "use strict";
   // hover cards fully opaque while open; Leaflet sets 0 when one closes, so only the card under the pointer shows
   L.Tooltip.mergeOptions({ opacity: 1 });
 
-  // agency-type colours, tuned to stay readable on a dark basemap
-  const TYPE_COLORS = {
-    "intelligence-civil": "#5aa9ff", "intelligence-military": "#9ccc65", "cyber": "#c792ea",
-    "civil-protection": "#ffab40", "police-ct": "#ff6b6b", "eu-body": "#82b1ff", "nato": "#4dd0e1", "other": "#b0bec5",
-    "think-tank": "#f0e442",   // independent publishers: also a diamond instead of a dot, so shape tells them apart too
-    "commercial": "#cc79a7",   // commercial analysts: a square
-  };
+  // colours come from style.css (--type-…, --pl-…, --regime-…, --map-…), one set per theme. Pins and cards are HTML and take
+  // var(…) directly, so they follow the theme switch by themselves; the country shapes are SVG and are restyled on a switch.
+  const TYPES = ["intelligence-civil", "intelligence-military", "cyber", "civil-protection", "police-ct", "eu-body", "nato", "other",
+                 "think-tank",    // independent publishers: also a diamond instead of a dot, so shape tells them apart too
+                 "commercial"];   // commercial analysts: a square
+  const typeColor = (t) => `var(--type-${TYPES.includes(t) ? t : "other"})`;
   const PUB_SHAPE = { "think-tank": " diamond", "commercial": " square" };
   // a think tank's diamond and a commercial analyst's square take the colour of its credibility rating (rozvedka/publishers.py)
-  const CREDIBILITY = { transparent: "#2ec4a0", partial: "#f0e442", concerns: "#e69f00", redflag: "#ff7a3d", unassessed: "#9aa1ab" };
+  const CRED_LEVELS = ["transparent", "partial", "concerns", "redflag", "unassessed"];
+  const credColor = (k) => CRED_LEVELS.includes(k) ? `var(--pl-${k})` : null;
+  const tok = (name) => window.rzTokens.get(name);
   const PRECISION = { address: "exact building address", street: "street-level (house not matched)",
                       city: "city only – exact address not published" };
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -49,7 +50,7 @@
     const inside = e.layer.getAllChildMarkers().map((m) => m.options.agency)
       .sort((a, b) => (a.country_name + a.agency).localeCompare(b.country_name + b.agency));
     const rows = inside.slice(0, 10).map((a) =>
-      `<li><img src="${esc(a.flag)}" alt=""><span class="dot solid" style="--c:${TYPE_COLORS[a.type] || "#aaa"}"></span>
+      `<li><img src="${esc(a.flag)}" alt=""><span class="dot solid" style="--c:${typeColor(a.type)}"></span>
        <b title="${esc(a.name_en)}">${esc(a.agency)}</b><span class="muted">${esc(a.country_name)}</span></li>`).join("");
     const more = inside.length > 10 ? `<li class="muted">+ ${inside.length - 10} more – click to zoom in</li>` : "";
     e.layer.bindTooltip(`<div class="cl-card"><div class="cl-h">${inside.length} agencies here</div><ul>${rows}${more}</ul></div>`,
@@ -68,7 +69,6 @@
   });
 
   let markers = [], shading = null, coalitionNames = {}, countryStats = {}, ratingsData = null;
-  const REGIME = { 3: "#0072b2", 2: "#56b4e9", 1: "#e69f00", 0: "#d55e00" };
   // the state's regime type in the latest rated year (V-Dem, /api/ratings/map), for shading and the agency cards
   function regimeOf(iso) {
     const c = ratingsData && ratingsData.countries[iso];
@@ -83,7 +83,7 @@
     const hollow = a.hq_precision !== "address";
     return L.divIcon({
       className: "pin",
-      html: `<span class="pin-dot${hollow ? " hollow" : ""}${PUB_SHAPE[a.type] || ""}" style="--c:${(PUB_SHAPE[a.type] && CREDIBILITY[a.credibility]) || TYPE_COLORS[a.type] || TYPE_COLORS.other}"></span>`,
+      html: `<span class="pin-dot${hollow ? " hollow" : ""}${PUB_SHAPE[a.type] || ""}" style="--c:${(PUB_SHAPE[a.type] && credColor(a.credibility)) || typeColor(a.type)}"></span>`,
       iconSize: [18, 18], iconAnchor: [9, 9], popupAnchor: [0, -8], tooltipAnchor: [0, -10],
     });
   }
@@ -101,8 +101,8 @@
       <div class="hc-head">${logo}<div class="hc-names">
         <div class="hc-acr"><img class="hc-flag" src="${esc(a.flag)}" alt=""> ${esc(a.agency)}</div>
         <div class="hc-en">${esc(a.name_en)}</div>${local}</div></div>
-      <div class="hc-type" style="--c:${TYPE_COLORS[a.type] || "#aaa"}"><span class="dot solid"></span>${esc(a.type_name)} · ${esc(a.country_name)}</div>
-      ${(() => { const r = regimeOf(a.country); return r ? `<div class="hc-regime"><span class="rt-dot" style="background:${REGIME[r.v]}"></span>${esc(ratingsData.regimes[r.v])} <span class="muted">(V-Dem ${r.year})</span></div>` : ""; })()}
+      <div class="hc-type" style="--c:${typeColor(a.type)}"><span class="dot solid"></span>${esc(a.type_name)} · ${esc(a.country_name)}</div>
+      ${(() => { const r = regimeOf(a.country); return r ? `<div class="hc-regime"><span class="rt-dot" style="background:var(--regime-${r.v})"></span>${esc(ratingsData.regimes[r.v])} <span class="muted">(V-Dem ${r.year})</span></div>` : ""; })()}
       ${a.type === "think-tank" ? `<div class="pub-note">◆ Independent think tank – not run by a state · credibility: ${esc(a.credibility_label || "not assessed")}</div>` : ""}
       ${a.type === "commercial" ? `<div class="pub-note">■ Commercial analyst – a company, not run by a state · credibility: ${esc(a.credibility_label || "not assessed")}</div>` : ""}
       ${a.coalitions.length ? `<div class="hc-coal">${coalitionChips(a)}</div>` : ""}
@@ -120,7 +120,7 @@
     return `<div class="pop">
       <div class="pop-head">${logo}<div><img class="pop-flag" src="${esc(a.flag)}" alt=""> <b>${esc(a.agency)}</b>
         <div class="pop-en">${esc(a.name_en)}</div>${local}</div></div>
-      <div class="pop-type" style="--c:${TYPE_COLORS[a.type] || "#aaa"}">${esc(a.type_name)} · ${esc(a.country_name)}</div>
+      <div class="pop-type" style="--c:${typeColor(a.type)}">${esc(a.type_name)} · ${esc(a.country_name)}</div>
       ${a.coalitions.length ? `<div class="pop-coal">${coalitionChips(a)}</div>` : ""}
       <p class="pop-desc">${esc(a.description)}</p>
       <div class="pop-addr"><b>HQ:</b> ${esc(a.hq_address)}<br><span class="muted">${esc(PRECISION[a.hq_precision] || "")}</span></div>
@@ -155,23 +155,25 @@
     }
   }
 
-  // ── country shading: brighter = more reports ──
+  // ── country shading: stronger = more reports (--shade-lo → --shade-hi) ──
   function shadeColor(n, max) {
     const t = Math.sqrt(n / max);                 // sqrt keeps small publishers visible next to big ones
-    return `hsl(205, 70%, ${24 + t * 34}%)`;
+    const lo = tok("--shade-lo"), hi = tok("--shade-hi"), ch = (c, i) => parseInt(c.slice(1 + 2 * i, 3 + 2 * i), 16);
+    return `rgb(${[0, 1, 2].map((i) => Math.round(ch(lo, i) + t * (ch(hi, i) - ch(lo, i)))).join(",")})`;
   }
+  window.rzDark.addEventListener("change", () => { if (shading) { shading.setStyle(countryStyle); fadeShading(); } });
   function countryStyle(f) {
     const coal = document.getElementById("coalition").value;
     if (shadeMode() === "regime") {             // every country by its regime type; the library's states outlined
       const r = regimeOf(f.properties.iso), st = countryStats[f.properties.iso];
-      return r ? { fillColor: REGIME[r.v], fillOpacity: 0.5, color: st && st.docs ? "#d0d7de" : "#3a434e", weight: st && st.docs ? 1 : 0.4 }
-               : { fillOpacity: 0, color: "#3a434e", weight: 0.4 };
+      return r ? { fillColor: tok(`--regime-${r.v}`), fillOpacity: 0.5, color: tok(st && st.docs ? "--map-edge" : "--map-line"), weight: st && st.docs ? 1 : 0.4 }
+               : { fillOpacity: 0, color: tok("--map-line"), weight: 0.4 };
     }
     const st = countryStats[f.properties.iso];
     const c = st && st.docs > 0 && (!coal || st.coalitions.includes(coal)) ? st : null;
     const max = Math.max(1, ...Object.values(countryStats).map((x) => x.docs));
-    return c ? { fillColor: shadeColor(c.docs, max), fillOpacity: 0.5, color: "#6aa7d8", weight: 1 }
-             : { fillOpacity: 0, color: "#3a434e", weight: 0.4 };   // no sources: outline only
+    return c ? { fillColor: shadeColor(c.docs, max), fillOpacity: 0.5, color: tok("--shade-hi"), weight: 1 }
+             : { fillOpacity: 0, color: tok("--map-line"), weight: 0.4 };   // no sources: outline only
   }
   function fadeShading() {       // shading helps at continent scale but hides streets when zoomed in
     if (!shading) return;
@@ -193,7 +195,7 @@
           const r = regimeOf(f.properties.iso);
           return `<b>${esc(c.name)}</b><br>` + (c.agencies ? `${c.agencies} agencies · ${c.docs} documents` : '<span class="muted">no agencies in the library</span>') +
                  (document.getElementById("topic").value ? ` on <i>${esc(topicName)}</i>` : "") +
-                 (r ? `<br><span class="rt-dot" style="background:${REGIME[r.v]}"></span>${esc(ratingsData.regimes[r.v])} (V-Dem ${r.year})` : "") +
+                 (r ? `<br><span class="rt-dot" style="background:var(--regime-${r.v})"></span>${esc(ratingsData.regimes[r.v])} (V-Dem ${r.year})` : "") +
                  (tags ? `<br><span class="muted">${tags}</span>` : "");
         }, { sticky: true, className: "hq-tip country-tip" });
         layer.on("click", () => {
@@ -201,7 +203,7 @@
           const t = document.getElementById("topic").value;
           window.location.href = `/documents?country=${encodeURIComponent(f.properties.iso)}${t ? `&topic=${encodeURIComponent(t)}` : ""}`;
         });
-        layer.on("mouseover", () => layer.setStyle({ weight: 2.5, color: "#9fd0ff" }));
+        layer.on("mouseover", () => layer.setStyle({ weight: 2.5, color: tok("--map-hover") }));
         layer.on("mouseout", () => { shading.resetStyle(layer); fadeShading(); });
       },
     }).addTo(map);

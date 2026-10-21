@@ -153,8 +153,14 @@ combined timeline · C4 ✅ (0.58.1) the other pages in the panel style.
 
 1. ✅ (0.54.0) **Menu in six groups, section tabs, phone menu, `/views`, header search** (`rozvedka/nav.py`, test that no page is missing). · minor
 2. ◐ (0.54.0: map pages follow the theme, matrix legend, network mark, phone overflow) **Visual fixes** – aligned bars on `/actors` done in 0.58.1. · patch
-3. **Page header component** – `<h1>` and breadcrumb on every list page, the long method notes folded into "How this is counted". · patch
-4. **Design tokens** – spacing/type scale, one categorical palette in CSS read by the charts, an SVG icon sprite (Lucide or Tabler, about 8 KB). · patch
+3. ✅ (0.82.1) **Page header component** – every page has its `<h1>`; pages below a menu entry (a report, an actor, an edition, a
+   book's statements) show a breadcrumb back to their list instead of hand-written "← back" links; the long method notes of 16 pages
+   are folded under "How this is counted" (or "How to read it", "What a verdict does") with a one-line summary on top, while
+   cautions ("a match is a name match, not an identification") stay visible. · patch
+4. ✅ (0.56.0: spacing and type scale, chart palettes read through `rzTokens`, Lucide icon sprite; 0.82.1: the maps) **Design
+   tokens** – agency-type, credibility, regime and rating-ramp colours, outlines and shading are CSS tokens for both themes; the three
+   maps read them and redraw when the theme is switched, so pins match their legend and the light theme no longer shows dark-theme
+   outlines and no-data fills. A test keeps hex colours out of the map scripts. · patch
 5. **Overview dashboard** – sparkline tiles instead of the 30/90-day tiles, official/think-tank stacked years, dumbbell for rising topics. · minor
 6. ✅ (0.59.0) **Topic matrix** – a reference column of all reports and an over-emphasis (lift) mode. · minor
 7. → H1 **Annotated actor timeline** – dated events and the country grid on one year axis; covered by the timeline of events (H1). · minor
@@ -257,11 +263,16 @@ backups and exchange (0.27–0.28), home page and search console (0.22), Update 
 
 ## 4. Suggested next steps
 
-1. ✅ **E1** – optional systemd service built and tested (0.48.0); stays off by the owner's decision.
-2. **A1 + A2** – the six silent sources and the six missing member states (sources work, no new code).
-3. **A3 + A4** – civil-protection (national risk assessments) and cyber gaps.
-4. ✅ **B1** – precision measured (0.46.1: 91.6 % on 1,802 passages of the 456 most frequent names).
-5. Then **B2 / B3** (count per report, by document type) and **C1** (a page per report).
+Updated 2026-10-21, after H (all of it built by 0.81.0) and F3 + F4 (0.82.1):
+
+1. **G7 → G8 → G9** – finish the network plan the owner approved: views (rings around one entity, a matrix by communities,
+   the network as of a year), the shared case file, then company registries and leaks (GLEIF, UK Companies House, ICIJ).
+2. **F12** – topic and country briefing pages: reports, actors, events and the country ratings on one page.
+3. **F5, F9–F11** – overview sparklines, the agency × agency citation matrix, the ATT&CK tactic grid, the coverage gap matrix.
+4. **A3–A5, D2–D7** – more sources (no new code); A5 needs the owner to collect the blocked flagships by hand.
+
+Done from the earlier list: E1 (0.48.0, off by the owner's decision), A1 + A2 (0.29.1), B1 (0.46.1), B2 / B3 (0.32–0.33),
+C1 (0.30.0).
 
 ## 5. Scope questions for the owner
 

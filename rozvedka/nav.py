@@ -82,7 +82,19 @@ def locate(path: str):
 def menu(path: str) -> dict:
     """What the templates draw for this page: the groups with their items, and which group and item are the current ones."""
     group, link = locate(path)
-    return {"groups": [{"key": k, "label": label, "short": label.split(" ")[0], "hub": hub, "on": k == group,
-                        "pages": [{"label": i[0], "href": i[1], "blurb": i[3], "on": i[1] == link} for i in items]}
-                       for k, label, hub, items in GROUPS],
-            "group": group, "link": link}
+    groups = [{"key": k, "label": label, "short": label.split(" ")[0], "hub": hub, "on": k == group,
+               "pages": [{"label": i[0], "href": i[1], "blurb": i[3], "on": i[1] == link} for i in items]}
+              for k, label, hub, items in GROUPS]
+    return {"groups": groups, "group": group, "link": link, "crumbs": _crumbs(path, groups, link)}
+
+
+def _crumbs(path: str, groups: list[dict], link: str | None) -> list[dict]:
+    """The way back from a page below a menu entry (a report, an actor, an edition): section, then the list it belongs to.
+    Empty on the menu's own pages – the section tabs already show where they are."""
+    path = "/" + path.strip("/") if path.strip("/") else "/"
+    if link is None or path == link.split("#")[0]:
+        return []
+    g = next(g for g in groups if g["on"])
+    page = next(i for i in g["pages"] if i["on"])
+    return ([{"label": g["label"], "href": g["hub"]}] if g["hub"] != page["href"] else []) + \
+        [{"label": page["label"], "href": page["href"]}]

@@ -5,10 +5,13 @@
 <h1 class="page-h">Ratings of the reporting states</h1>
 <p class="seg rt-groups" role="tablist" aria-label="Group of ratings">{% for g, (name, about) in GROUPS.items() %}<a role="tab" href="/ratings?group={{ g }}" title="{{ about }}"{% if g == group %} class="on" aria-selected="true"{% endif %}>{{ name }}</a>{% endfor %}</p>
 {% if group == 'democracy' %}
-<p class="muted small">How democratic was a state when its agencies wrote a report? A threat assessment from an electoral autocracy, or from a
+<p class="lede">How democratic was a state when its agencies wrote a report? Every value opens its source.</p>
+<details class="how"><summary>How to read it</summary>
+<p class="muted small">A threat assessment from an electoral autocracy, or from a
   democracy that has since slid, reads differently from one by a stable liberal democracy. Each row shows the state's regime type
   year by year since 1990 (colour) with V-Dem's Liberal Democracy Index as a line, and the latest value of three independent
-  measurements. Every value opens its source; report pages show the ratings of the report's own year.</p>
+  measurements. Report pages show the ratings of the report's own year.</p>
+</details>
 
 <section class="viz-card">
   <div class="rt-legend small">
@@ -34,10 +37,13 @@
 </section>
 
 {% else %}
-<p class="muted small">{{ GROUPS[group][0] }}: {{ GROUPS[group][1] }}. Each column is one measurement with its own source, scale and
+<p class="lede">{{ GROUPS[group][0] }}: {{ GROUPS[group][1] }}. Every value opens its source.</p>
+<details class="how"><summary>How to read it</summary>
+<p class="muted small">Each column is one measurement with its own source, scale and
   direction – they are not combined into a score. The small line is the state's course since 1990 on the measure's scale; the number is
-  its latest value and year, then its place among the library's states (the better end first). Every value opens its source; the
+  its latest value and year, then its place among the library's states (the better end first). The
   state's name opens all of its ratings.</p>
+</details>
 <section class="viz-card">
   <p class="small"><span class="muted">Sort:</span>
     {% for k, m in measures.items() %}{% if sort == k %}<b>{{ m.short }}</b>{% else %}<a href="/ratings?group={{ group }}&amp;sort={{ k }}">{{ m.short }}</a>{% endif %} · {% endfor %}

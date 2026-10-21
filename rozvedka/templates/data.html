@@ -4,9 +4,11 @@
 {% block head %}<script src="{{ asset('jobs.js') }}" defer></script><script src="{{ asset('data.js') }}" defer></script>{% endblock %}
 {% block main %}
 <h1 class="page-h">Data exchange</h1>
-<p class="muted">Back up the whole library, or hand it to someone who then does not have to crawl the agencies. A
-  <b>dataset</b> is a few files of at most the chosen size plus a small manifest – copy them to a disk or send them with any
+<p class="lede">Back up the whole library, or hand it to someone who then does not have to crawl the agencies.</p>
+<details class="how"><summary>What a dataset is</summary>
+<p class="muted small">A <b>dataset</b> is a few files of at most the chosen size plus a small manifest – copy them to a disk or send them with any
   file-transfer service. Importing checks every file first and shows whether the dataset is newer or older than this library.</p>
+</details>
 
 <div class="h-counters dx-cards">
   <div><b>{{ me.id }}</b><span>this installation (since {{ me.created[:10] }})</span></div>

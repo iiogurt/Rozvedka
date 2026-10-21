@@ -67,3 +67,21 @@ def test_every_list_page_has_a_title(empty_library):
             if i[1] in ("/", "/map", "/map/democracy", "/map/mentions", "/feed.atom"):      # the map pages title their side panel
                 continue
             assert "<h1" in c.get(i[1]).text, i[1]
+
+
+def test_breadcrumbs_lead_back_from_pages_below_a_menu_entry():
+    assert nav.menu("/documents")["crumbs"] == []                     # a menu page: the section tabs show where it is
+    assert nav.menu("/report/12")["crumbs"] == [{"label": "Documents", "href": "/documents"}]
+    assert nav.menu("/entity/x")["crumbs"] == [{"label": "Actors & threats", "href": "/actors"},
+                                                {"label": "Network", "href": "/graph"}]
+    assert nav.menu("/ratings/DE")["crumbs"][-1] == {"label": "Ratings", "href": "/ratings"}
+    assert nav.menu("/nowhere")["crumbs"] == []
+
+
+def test_map_scripts_take_their_colours_from_the_stylesheet():
+    """Colours live in style.css, one set per theme (rzTokens / var(--…)); a hex colour in a map script would not follow the theme."""
+    import re
+    from pathlib import Path
+    static = Path(nav.__file__).parent / "static"
+    for name in ("map.js", "map_democracy.js", "mentions.js"):
+        assert not re.findall(r"#[0-9a-fA-F]{6}\b", (static / name).read_text(encoding="utf-8")), name

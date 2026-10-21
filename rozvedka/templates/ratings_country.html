@@ -2,12 +2,16 @@
 {% from "_ratings.html" import strip, spark, direction %}
 {% block title %}{{ name }} · Ratings · Rozvedka{% endblock %}
 {% block main %}
-<p class="small"><a href="/ratings">← all states</a> · <a href="{{ docs_url(country=country, type='official') }}">its official reports</a></p>
 <h1 class="page-h"><img class="flag-sm" src="{{ flag_url(country) }}" alt="" width="28" height="21"> {{ name }} – ratings</h1>
-<p class="muted small">Every measurement of the state, one small chart per measure on its own scale since 1990. Next to each: the latest value
+<p class="small page-links"><a href="{{ docs_url(country=country, type='official') }}">its official reports</a></p>
+<p class="lede">Every measurement of the state since 1990, one small chart per measure – not combined into a score.</p>
+{% set reg = p.measures.get('vdem_regime') %}{% if reg %}<p class="small">Regime type
+  year by year: {{ strip(p, width=200, height=14) }}{% for c in reg.changes %} · <b>{{ c.year }}</b> {{ c.to }}{% endfor %}</p>{% endif %}
+<details class="how"><summary>How to read it</summary>
+<p class="muted small">Each chart is on the measure's own scale. Next to it: the latest value
   and its year, the state's place among the library's states (the better end first), the source, and – where a topic matches – the state's
-  official reports on it. The measures are not combined into a score. {% set reg = p.measures.get('vdem_regime') %}{% if reg %}Regime type
-  year by year: {{ strip(p, width=200, height=14) }}{% for c in reg.changes %} · <b>{{ c.year }}</b> {{ c.to }}{% endfor %}{% endif %}</p>
+  official reports on it.</p>
+</details>
 
 {% for g, gname, about, ms in groups %}{% if ms %}
 <section class="viz-card" id="{{ g }}">

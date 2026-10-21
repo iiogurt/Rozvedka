@@ -35,7 +35,7 @@
     layer = L.geoJSON(geo, {
       style: (f) => {
         const r = rows[f.properties.iso];
-        return { color: "#30363d", weight: 0.6, fillOpacity: r ? 0.9 : 0.6,
+        return { color: rzTokens.get("--map-line"), weight: 0.6, fillOpacity: r ? 0.9 : 0.6,
                  fillColor: r ? (r.of < FEW ? rzTokens.get("--thin") : colour(r.share)) : rzTokens.get("--nodata") };
       },
       onEachFeature: (f, l) => {
@@ -45,7 +45,7 @@
           : `<b>${esc(f.properties.name)}</b><br><span class="muted">${mode() === "about" ? "no reports from here in the library" : "not named"}</span>`,
           { sticky: true, className: "hq-tip country-tip" });
         if (r) l.on("click", () => { window.location.href = r.link; });
-        l.on("mouseover", () => l.setStyle({ weight: 2, color: "#9fd0ff" }));
+        l.on("mouseover", () => l.setStyle({ weight: 2, color: rzTokens.get("--map-hover") }));
         l.on("mouseout", () => layer.resetStyle(l));
       },
     }).addTo(map);

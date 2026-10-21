@@ -11,12 +11,14 @@
 </form>
 {% endmacro %}
 {% block main %}
-<p class="small"><a href="/actors">← Actors</a> · <a href="/actors/names">names and why some are not used</a></p>
 <h1 class="page-h">Review actor matches</h1>
-<p class="muted">Actors are found by name, so a match can mean something else – a surname, a place, a company. Here are
-  random passages of the names that put the most reports on their actor; mark each one. A <b>wrong</b> verdict removes
-  that report from the actor at once; every verdict is kept with its passage in <code>sources/actor_reviews.yaml</code>
+<p class="small page-links"><a href="/actors/names">names and why some are not used</a></p>
+<p class="lede">Random passages of the names that put the most reports on their actor – mark each one right or wrong.</p>
+<details class="how"><summary>What a verdict does</summary>
+<p class="muted small">Actors are found by name, so a match can mean something else – a surname, a place, a company.
+  A <b>wrong</b> verdict removes that report from the actor at once; every verdict is kept with its passage in <code>sources/actor_reviews.yaml</code>
   and gives the name a measured precision. A name leaves the queue after {{ q.enough }} verdicts.</p>
+</details>
 
 <div class="nw-sum">{% if q.right + q.wrong %}<b>{{ q.right + q.wrong }}</b> passages reviewed: <b>{{ q.right }}</b> right,
   <b>{{ q.wrong }}</b> wrong – measured precision <b>{{ (100 * q.right / (q.right + q.wrong))|round(1) }} %</b> on the reviewed sample

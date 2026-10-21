@@ -4,8 +4,11 @@
 {% block main %}
 <div class="viz-head"><h1 class="page-h">What's new</h1>
   <div class="viz-actions"><a href="/feed.atom" title="Atom feed of the newest reports – add it to a feed reader on your network">Atom feed</a></div></div>
-<p class="muted">Update by update: an update is a day on which reports entered the library (crawls and downloads run on
-  demand, from the <a href="/update">Update</a> page or with <code>python -m rozvedka update</code>). Every number opens the list it counts.</p>
+<p class="lede">Update by update, the reports that entered the library. Every number opens the list it counts.</p>
+<details class="how"><summary>How this is counted</summary>
+<p class="muted small">An update is a day on which reports entered the library; crawls and downloads run on
+  demand, from the <a href="/update">Update</a> page or with <code>python -m rozvedka update</code>.</p>
+</details>
 
 {% if not u.day %}<p class="empty">The library is empty – run an update first.</p>{% else %}
 <div class="nw-grid">
