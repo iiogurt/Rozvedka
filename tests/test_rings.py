@@ -59,3 +59,32 @@ def test_every_number_matches_the_list_it_opens(network):
         for s in d["sectors"]:
             assert len(s["all"]) == s["n"] and sum(n["drawn"] for n in s["all"]) == s["n"] - s["more"]
         assert len(d["far"]) == d["counts"]["far"] and sum(f["drawn"] for f in d["far"]) == len(d["outer"])
+
+
+def test_louvain_finds_two_triangles_and_is_deterministic():
+    w = {("a", "b"): 1, ("b", "c"): 1, ("a", "c"): 1, ("d", "e"): 1, ("e", "f"): 1, ("d", "f"): 1, ("c", "d"): 1}
+    assert rings.louvain(list("abcdef"), w) == [["a", "b", "c"], ["d", "e", "f"]]
+    assert rings.louvain(list("fedcba"), w) == [["a", "b", "c"], ["d", "e", "f"]]
+    assert rings.louvain(["x", "y"], {}) == [["x"], ["y"]]
+
+
+def test_matrix_rows_cells_and_lists_agree(network):
+    d = rings.matrix("Q1")                     # Evil Corp's neighbours: the person, the holding, the tool; FSB is two steps away
+    ids = [r["id"] for r in d["rows"]]
+    assert set(ids) | {m["id"] for m in d["lone"]} == {"US:1", "US:H", "S1"}
+    assert len(d["cells"]) == 2 * len(d["links"]) == 2 * d["counts"]["shown_pairs"]
+    assert sum(g["size"] for g in d["groups"]) == len(d["rows"])
+    assert all(c["chain"].startswith("/graph/path?a=") for c in d["cells"])
+    d2 = rings.matrix("US:H")                  # the hub: its leaves are linked to nobody else, Evil Corp and the FSB are
+    assert {r["id"] for r in d2["rows"]} == set()  # not linked to each other directly except by a co-mention (left out)
+    assert len(d2["lone"]) == rings.MATRIX
+    assert {r["id"] for r in rings.matrix("US:H", "all")["rows"]} == {"Q1", "Q2"}
+
+
+def test_matrix_page(network):
+    from rozvedka.app import app
+    c = TestClient(app)
+    t = c.get("/graph/rings/matrix?e=US:H&show=all").text
+    assert 'class="mx"' in t and "Federal Security Service" in t and 'id="links"' in t
+    assert 'href="/graph/rings?e=US%3AH&amp;show=all"' in t                      # the switch keeps the choice
+    assert c.get("/graph/rings/matrix").status_code == 200

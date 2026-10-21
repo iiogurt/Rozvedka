@@ -1534,3 +1534,16 @@ svg.rg-focus .rg-e.rg-outer.on { stroke: var(--ink); }
 .rings-h { margin: 12px 0 4px; font-weight: 600; }
 .rings-list li { padding: 2px 0; }
 .rings-list li.rg-drawn::before { content: "● "; color: var(--accent); }
+.mx-wrap { overflow-x: auto; }
+svg.mx { display: block; margin: 0 auto; max-width: none; font-family: var(--sans); }
+.mx-grid { stroke: var(--line); stroke-width: .5; }
+.mx-block { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+.mx-block.mx-b1 { fill: var(--accent-bg); }
+.mx-cell { fill: var(--muted); }
+.mx-cell.mx-official { fill: var(--accent); } .mx-cell.mx-reference { fill: var(--accent-2); }
+.mx-cell.mx-out { opacity: .45; }
+a:hover > .mx-cell { opacity: 1; stroke: var(--ink); stroke-width: 1.5; }
+.mx-many { fill: var(--panel); pointer-events: none; }
+.mx-row, .mx-col { fill: var(--ink); font-size: 11.5px; }
+a:hover > .mx-row, a:hover > .mx-col { fill: var(--accent); }
+.mx-gnum { fill: var(--muted); font-size: 10px; font-family: var(--mono); }

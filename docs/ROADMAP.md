@@ -216,8 +216,10 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
    searches titles only, 10 s per request – search the titles for the actors' names, read the sentences naming known people);
    a gazetteer actor for "Saudi Hizballah" (Hezbollah Al-Hejaz). · minor
 7. ◐ (0.83.0: G7a – rings around one entity, `/graph/rings`: 40 direct links and 48 at two steps drawn, a sector per layer,
-   every count opening the full list) **Views** – still open: a matrix ordered
-   by communities, BioFabric for medium networks, links on a time axis and the network as of a year. · minor
+   every count opening the full list; 0.84.0: G7b – the neighbourhood matrix ordered by Louvain communities, "links that connect"
+   by default) **Views** – still open: links on a time axis and the network as of a year. Only 9,300 of 42,500 links carry a
+   date (UK, UN, EU, wanted notices, events, co-mentions, part of Wikidata; none from OFAC, Wikipedia or shared details), so such a
+   view must show the undated links apart. BioFabric dropped: the matrix answers the same question for these sizes. · minor
 8. **Case file** – one shared board (no per-user state): pin entities, chains between them found automatically, export
    with citations. · minor
 9. **Company registries and leaks** – GLEIF (ownership, CC0), UK Companies House (persons with significant control), ICIJ
@@ -266,7 +268,7 @@ backups and exchange (0.27–0.28), home page and search console (0.22), Update 
 
 Updated 2026-10-21, after H (all of it built by 0.81.0) and F3 + F4 (0.82.1):
 
-1. **G7 → G8 → G9** – finish the network plan the owner approved: views (rings ✅ 0.83.0; next a matrix by communities,
+1. **G7 → G8 → G9** – finish the network plan the owner approved: views (rings ✅ 0.83.0, matrix ✅ 0.84.0; next
    the network as of a year), the shared case file, then company registries and leaks (GLEIF, UK Companies House, ICIJ).
 2. **F12** – topic and country briefing pages: reports, actors, events and the country ratings on one page.
 3. **F5, F9–F11** – overview sparklines, the agency × agency citation matrix, the ATT&CK tactic grid, the coverage gap matrix.

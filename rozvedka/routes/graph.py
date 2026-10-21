@@ -53,14 +53,25 @@ def path_page(request: Request, a: str = "", b: str = "", layer: list[str] = Que
 
 
 @router.get("/graph/rings")
-def rings_page(request: Request, e: str = "", show: str = "stated", countries: int = 0):
+def rings_page(request: Request, e: str = "", show: str = "connecting", countries: int = 0):
     """Rings around one entity: its direct links, the entities two steps away, one sector per layer."""
-    show = show if show in rings.CHOICES else "stated"
+    show = show if show in rings.CHOICES else "connecting"
     ent, cands = paths.resolve(e)
     d = rings.rings(ent["id"], show, bool(countries)) if ent else None
     return tpl.TemplateResponse(request, "graph_rings.html", {"e": e, "ev": ent["value"] if ent else e, "d": d, "cands": cands, "choices": rings.CHOICES,
                                                               "f": {"show": show, "countries": countries},
                                                               "inner": rings.INNER, "outer": rings.OUTER, "hub": paths.HUB})
+
+
+@router.get("/graph/rings/matrix")
+def rings_matrix_page(request: Request, e: str = "", show: str = "connecting", countries: int = 0):
+    """An entity's neighbours as a matrix: the links among them, ordered by communities."""
+    show = show if show in rings.CHOICES else "connecting"
+    ent, cands = paths.resolve(e)
+    d = rings.matrix(ent["id"], show, bool(countries)) if ent else None
+    return tpl.TemplateResponse(request, "graph_matrix.html", {"e": e, "ev": ent["value"] if ent else e, "d": d, "cands": cands,
+                                                               "choices": rings.CHOICES, "size": rings.MATRIX,
+                                                               "f": {"show": show, "countries": countries}})
 
 
 @router.get("/api/entities/suggest")
