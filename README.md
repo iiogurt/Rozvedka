@@ -672,9 +672,14 @@ to crawl the agencies – and either side can crawl on from there.
   the agencies), or the catalogue plus the report files added since a day – each with its size; *where* – a folder
   picker over USB disks (`/media`, `/mnt`) and the home folder, with free space and *new folder*; *options* – the
   largest file (4 GB … 100 MB, 2 GB fits most transfer services) and a label. A meter shows whether it fits.
+- **Personal backup or a dataset to share**: tick *Personal backup* to include the data this library keeps for
+  personal use only: the book library (files, text and what the books say) and RSF's press-freedom scores. The
+  page lists what this library holds of it. Such a dataset's file names end in `-personal`; the import list marks it
+  *personal backup*, and the import report says what it holds. Leave the box off for a dataset to hand on: it then
+  carries the country ratings without RSF and no books.
 - The result is a **dataset**: one tar stream cut into files of at most that size plus a manifest – who made it,
   when, with which version, how fresh the data is per source, the SHA-256 of every file. Inside: a consistent copy of
-  the database, the report files, logos, the actor gazetteer and the lists the portal keeps.
+  the database, the report files, logos, the actor gazetteer, the country ratings and the lists the portal keeps.
 - **Import**: pick the folder with the dataset's files; datasets found there are listed with their date, origin,
   size and whether all files are present. **Check and compare** verifies every file and compares the dataset with
   the library – newer, older, mixed or complementing (same crawl state, but reports this library lacks), per source
@@ -683,6 +688,8 @@ to crawl the agencies – and either side can crawl on from there.
   reports matched by key and address (ids differ between installations), missing reports, files, text and OCR
   added, empty years filled, the later crawl dates kept, conflicting hand edits listed. Reports whose file the
   dataset does not carry are marked for download; an older dataset adds nothing; importing twice changes nothing.
+  Country ratings are taken measure by measure when the dataset's are more recent; a personal backup's books come
+  with their record and what they say.
 - **Progress** for every step (copying and compressing the database, writing, checking, merging, writing files,
   matching topics and actors), with a progress bar, size, speed and time left, the live **log** (kept in
   `data/logs/`), and **Cancel** – an export removes its partial files; an import can be stopped until it starts
@@ -805,7 +812,7 @@ failure. Starting it after a reboot with nobody logged in needs `loginctl enable
 | `index-actors [--rematch]` | find the actors in the report texts (offline) |
 | `fetch-logos [--refresh]` | download agency logos from their home pages |
 | `improve-titles` | replace poor document titles with the title stored in the PDF |
-| `export DIR [--no-files] [--since DATE] [--part-size 2G] [--name LABEL]` | write the whole library as a dataset – parts of at most 2 GB plus a manifest – for backup or to hand to someone else |
+| `export DIR [--no-files] [--since DATE] [--part-size 2G] [--name LABEL] [--personal]` | write the whole library as a dataset – parts of at most 2 GB plus a manifest – to hand to someone else, or with `--personal` as a backup for yourself that also holds the data for personal use only (books, RSF scores) |
 | `import PATH [--check] [--prefer local\|dataset] [--no-index]` | verify a dataset, compare it with the library (newer / older / mixed / complementing), then restore it into an empty library or merge it into this one |
 | `serve [--host] [--port]` | run the portal (default `127.0.0.1:8080` – this computer only; `--host 0.0.0.0` for the home network) |
 | `stats` | documents found and downloaded per country |
@@ -1201,7 +1208,7 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | Cyber incidents | [EuRepoC Global Dataset of Cyber Incidents](https://zenodo.org/records/14965395) | CC BY-NC 4.0 |
 | Book metadata | [Open Library](https://openlibrary.org/developers/api) by ISBN | catalogue data CC0; the books themselves stay on this machine |
 | Organised violence | [UCDP Georeferenced Event Dataset and Candidate Events](https://ucdp.uu.se/downloads/) | CC BY 4.0 |
-| Country ratings | V-Dem, Freedom House, World Bank WGI, UNODC, SIPRI, Transparency International (via [Our World in Data](https://ourworldindata.org) and the World Bank API), [INFORM](https://drmkc.jrc.ec.europa.eu/inform-index) (EU JRC), [WorldRiskIndex](https://data.humdata.org/dataset/worldriskindex), [RSF](https://rsf.org/en/index) (kept locally, not redistributed), [ITU GCI 2024](https://www.itu.int/en/ITU-D/Cybersecurity/Pages/global-cybersecurity-index.aspx) (CC BY-NC-SA 3.0 IGO) | each measure's licence is shown with it on `/ratings` |
+| Country ratings | V-Dem, Freedom House, World Bank WGI, UNODC, SIPRI, Transparency International (via [Our World in Data](https://ourworldindata.org) and the World Bank API), [INFORM](https://drmkc.jrc.ec.europa.eu/inform-index) (EU JRC), [WorldRiskIndex](https://data.humdata.org/dataset/worldriskindex), [RSF](https://rsf.org/en/index) (personal use: only in personal backups, never in datasets to share), [ITU GCI 2024](https://www.itu.int/en/ITU-D/Cybersecurity/Pages/global-cybersecurity-index.aspx) (CC BY-NC-SA 3.0 IGO) | each measure's licence is shown with it on `/ratings` |
 | Sanctions lists | EU (FPI), UK (FCDO), UN Security Council, US Treasury (OFAC) – official XML files | public official data |
 | Wanted notices | [FBI Wanted API](https://api.fbi.gov/wanted/v1/list), [Europe's Most Wanted](https://eumostwanted.eu/) (ENFAST, supported by Europol) – text, names, dates of birth and charges only, no photographs (`data/gazetteer/wanted.json`, not committed) | public official notices, linked on each page |
 | Event dates | Wikidata via `tools/build_events.py` | CC0 |

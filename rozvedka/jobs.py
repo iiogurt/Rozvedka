@@ -178,9 +178,10 @@ def index_steps(steps) -> dict:
 
 # ------------------------------------------------------------------ the jobs the pages start
 
-def export(dest: str, files: bool, since: str | None, part_size: int, name: str) -> dict:
+def export(dest: str, files: bool, since: str | None, part_size: int, name: str, personal: bool = False) -> dict:
     folder = folders.check(dest, writable=True)
-    return start("export", dataset.export, out_dir=folder, files=files, since=since or None, part_size=part_size, name=name)
+    return start("export", dataset.export, out_dir=folder, files=files, since=since or None, part_size=part_size, name=name,
+                 personal=personal)
 
 
 def check(manifest: str) -> dict:

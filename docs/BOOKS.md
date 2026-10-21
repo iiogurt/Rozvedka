@@ -42,7 +42,8 @@ addition.
 
 1. **Folder:** `data/books/` holds the files and a hand-written `books.yaml` (file, ISBN, language, notes). Like all of
    `data/`, it is never committed. A personal reading list is personal, so it is not kept in the public repository the
-   way the source registry is. Book text is never part of `export` unless asked for.
+   way the source registry is. Book text is part of a dataset only when it is a personal backup (`export --personal`, or *Personal
+   backup* on Data exchange).
 2. **Metadata and subjects:** the ISBN on the copyright page is looked up in [Open Library](https://openlibrary.org/developers/api)
    (catalogue data CC0; the API is for lookups, not bulk) and Wikidata. That gives author, publisher, year, edition and
    language.

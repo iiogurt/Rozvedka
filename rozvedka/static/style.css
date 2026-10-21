@@ -819,6 +819,11 @@ table.wl-matrix { border-collapse: collapse; font-size: 13px; width: 100%; }
 .dx-choice { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px 10px 34px; border: 1px solid var(--line); border-radius: 8px; position: relative; cursor: pointer; }
 .dx-choice input[type=radio] { position: absolute; left: 10px; top: 12px; }
 .dx-choice:has(input:checked) { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.dx-personal { display: block; margin: 12px 0 4px; padding: 10px 12px 10px 34px; border: 1px dashed var(--line); border-radius: 8px; position: relative; cursor: pointer; }
+.dx-personal input { position: absolute; left: 10px; top: 12px; }
+.dx-personal .muted { display: block; margin-top: 3px; }
+.dx-personal:has(input:checked) { border-style: solid; border-color: var(--warn, var(--accent)); }
+.dx-badge { font-size: 11px; padding: 1px 6px; border: 1px solid var(--warn, var(--accent)); border-radius: 9px; }
 .dx-size { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 13px; }
 .dx-picker { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
 .dx-roots { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }

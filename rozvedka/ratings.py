@@ -140,7 +140,8 @@ MEASURES = {
     # ── media ──
     "rsf": {"group": "media", "better": "high", "name": "World Press Freedom Index", "by": "Reporters Without Borders (RSF)",
             "short": "RSF", "scale": (0, 100), "fmt": "{:.1f}", "topic": "disinformation", "rsf": True,
-            "license": "© RSF – kept in this library only, not redistributed (RSF's terms ask for permission to reproduce)",
+            "personal": True,           # in personal backups only (dataset.py), never in a dataset to share
+            "license": "© RSF – for personal use in this library; in personal backups only, never in shared datasets (RSF's terms ask for permission to reproduce)",
             "home": "https://rsf.org/en/index",
             "about": "Press freedom from political, economic, legal, social and safety indicators; 0–100, higher = freer. "
                      "Only the editions since 2022: RSF changed its method then and earlier scores are not comparable. "

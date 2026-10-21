@@ -27,6 +27,20 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.82.0] – 2026-10-21
+
+### Added
+- **Personal backup** on *Data exchange* (and `export --personal`): a checkbox to include the data kept for personal
+  use only. That is the book library (files, text, what the books say) and RSF's press-freedom scores; the page lists
+  what this library holds of it. The file names of such a dataset end in `-personal`, the import list marks it, and
+  the import report names what it holds. A personal backup merged into another library brings the books along with
+  their records and what they say.
+- Datasets now carry the **country ratings**. A dataset to share has them without RSF; on import, each measure is
+  taken when the dataset's copy is more recent.
+
+### Fixed
+- The size estimate for an export no longer counts the book files, which a dataset to share does not carry.
+
 ## [0.81.0] – 2026-10-20
 
 ### Added
@@ -1561,7 +1575,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.81.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.82.0...HEAD
+[0.82.0]: https://github.com/iiogurt/Rozvedka/compare/v0.81.0...v0.82.0
 [0.81.0]: https://github.com/iiogurt/Rozvedka/compare/v0.80.0...v0.81.0
 [0.80.0]: https://github.com/iiogurt/Rozvedka/compare/v0.79.0...v0.80.0
 [0.79.0]: https://github.com/iiogurt/Rozvedka/compare/v0.78.0...v0.79.0
