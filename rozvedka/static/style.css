@@ -1341,6 +1341,7 @@ td.a-docs > a { display: inline-block; min-width: 3.2em; font-family: var(--mono
 .lay-official { color: var(--accent); }
 .lay-reference { color: var(--accent-2); }
 .lay-reports { color: var(--muted); }
+.lay-leaks { color: var(--warn); }
 .kpis .kpi-official span { color: var(--accent); } .kpis .kpi-reference span { color: var(--accent-2); }
 .kind-vessel { background: transparent; box-shadow: inset 0 0 0 2px var(--k-crime); border-radius: 2px; }
 .kind-aircraft { background: transparent; box-shadow: inset 0 0 0 2px var(--k-armed); border-radius: 2px; }
@@ -1574,3 +1575,11 @@ table.case-grid { border-collapse: collapse; }
 .case-chains .chain-says { color: var(--muted); }
 .case-chains .chain-says.co { border-bottom: 1px dashed var(--muted); }
 .case-toast { margin: 0 0 10px; }
+
+/* leaked records (ICIJ): never mistaken for official data – orange, dashed */
+.rg-arc.rg-leaks, .rg-e.rg-leaks { stroke: var(--warn); }
+.rg-e.rg-leaks { stroke-dasharray: 5 3; }
+.rg-sector.rg-leaks { fill: var(--warn); }
+.mx-cell.mx-leaks { fill: var(--warn); }
+.leak-tag { color: var(--warn); border: 1px dashed var(--warn); background: none; }
+.leak-note { border-left: 4px dashed var(--warn); padding: 6px 10px; margin: 0 0 12px; font-size: 13px; background: color-mix(in srgb, var(--warn) 8%, transparent); }

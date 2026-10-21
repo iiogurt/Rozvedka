@@ -1,8 +1,11 @@
 """The connection graph: overview, the list of links, and a page per entity that is not an actor."""
+import json
+
 from fastapi import APIRouter, Form, HTTPException, Query, Request
 from fastapi.responses import RedirectResponse
 
-from .. import actors, leads, paging, paths, rings, sanctions, techniques, ties, twins, wanted
+from .. import actors, icij, leads, paging, paths, rings, sanctions, techniques, ties, twins, wanted
+from .. import db
 from ..web import tpl
 
 router = APIRouter()
@@ -73,6 +76,45 @@ def rings_matrix_page(request: Request, e: str = "", show: str = "connecting", c
     return tpl.TemplateResponse(request, "graph_matrix.html", {"e": e, "ev": ent["value"] if ent else e, "d": d, "cands": cands,
                                                                "choices": rings.CHOICES, "size": rings.MATRIX,
                                                                "f": {"show": show, "countries": countries}})
+
+
+@router.get("/graph/offshore")
+def offshore_page(request: Request, notice: str = ""):
+    """ICIJ Offshore Leaks: which listed companies and people the leaked records name, and the people's matches to review."""
+    st, rv = icij.stored(), icij.reviews()
+    with db.session() as con:
+        ties.init()
+        found = {}                    # list entry → its node in the network (entries of several lists are one node)
+        for r in con.execute("SELECT id, label, actor FROM entities WHERE data LIKE '%\"icij\"%' AND origin != 'icij'"):
+            for x in json.loads(con.execute("SELECT data FROM entities WHERE id=?", (r["id"],)).fetchone()[0]).get("icij", []):
+                if x.get("entry"):
+                    found[x["entry"]] = (r["label"], ties.entity_url(r["id"], r["actor"]))
+        n_links = con.execute("SELECT COUNT(*) FROM ties WHERE layer='icij'").fetchone()[0]
+    around: dict[str, list] = {}                 # what each leak record is linked to, to judge a person's match
+    for e in st["edges"]:
+        for x, y, says in ((e["a"], e["b"], e["rel"]), (e["b"], e["a"], f"has as {e['rel'].lower().removesuffix(' of')}")):
+            if y in st["nodes"]:
+                around.setdefault(x, []).append(f"{says} {st['nodes'][y]['name']}")
+    rows = []
+    for key, m in st["matches"].items():
+        recs = [{**st["nodes"][i], "id": i, "url": icij.NODE.format(i), "around": around.get(i, [])}
+                for i in m["nodes"] if i in st["nodes"]]
+        label, href = found.get(key) or (recs[0]["name"] if recs else key, "")
+        rows.append({"key": key, "how": m["how"], "label": label, "href": href, "records": recs,
+                     "review": rv.get(key), "links": ties.ties_url(entity=key, layer="icij")})
+    rows.sort(key=lambda r: (r["how"] != "person", bool(r["review"]), r["label"].casefold()))
+    return tpl.TemplateResponse(request, "offshore.html", {"rows": rows, "meta": st["meta"], "notice": notice, "n_links": n_links,
+                                                           "verdicts": icij.VERDICTS, "about": icij.ABOUT, "licence": icij.LICENCE,
+                                                           "max_people": icij.MAX_PEOPLE, "min_person": icij.MIN_PERSON})
+
+
+@router.post("/graph/offshore/review")
+def offshore_review(entry: str = Form(...), verdict: str = Form(...), note: str = Form("")):
+    r = icij.record(entry, verdict, note)
+    if "error" in r:
+        raise HTTPException(400, r["error"])
+    return RedirectResponse("/graph/offshore?notice=saved – run build-graph (or Update) to draw the link#" + entry.replace(":", "-"),
+                            status_code=303)
 
 
 @router.get("/api/entities/suggest")

@@ -22,7 +22,7 @@ import re
 
 from collections import Counter
 
-from . import actors, db, gleif, identity, paging, publishers, ratings, sanctions, techniques, trends, vendors, wanted, wikitext
+from . import actors, db, gleif, icij, identity, paging, publishers, ratings, sanctions, techniques, trends, vendors, wanted, wikitext
 from .actors import PAIR_FOUNDED
 
 log = logging.getLogger("rozvedka.ties")
@@ -59,10 +59,15 @@ LAYERS = {
     "gleif": {"name": "GLEIF: company ownership", "group": "reference",
               "about": "the Legal Entity Identifier register (CC0): a listed company's direct and ultimate parents, branches and the "
                        "entities it consolidates, as the companies report them (gleif.py)"},
+    "icij": {"name": "ICIJ Offshore Leaks (leaked records)", "group": "leaks",
+             "about": "leaked records of offshore service providers published by ICIJ (Panama, Paradise, Pandora Papers …): the "
+                      "officers, shareholders and intermediaries of listed companies and confirmed listed people – journalistic, "
+                      "not official, often years old, no evidence of wrongdoing (icij.py)"},
     "reports": {"name": "Named together in the reports", "group": "reports",
                 "about": "two actors named in one passage (600 characters) of at least two reports – a co-mention, not a stated tie"},
 }
-GROUPS = {"official": "Official lists", "reference": "Reference data", "reports": "The library's reports"}
+GROUPS = {"official": "Official lists", "reference": "Reference data", "leaks": "Leaked records (journalistic, not official)",
+          "reports": "The library's reports"}
 GROUP_FILTERS = {**GROUPS, "stated": "Stated links (all but co-mentions)",
                  "connecting": "Stated links that connect (no rivalries, no bare article mentions)"}
 # links that say two are rivals, and article sentences about conflict or without a relation word: no sign of a connection
@@ -686,6 +691,65 @@ def _from_gleif(g: _Graph) -> dict:
     return {"matched": matched, "relations": n, "nodes": sum(1 for k in g.entities if k.startswith("lei:"))}
 
 
+def _icij_info(n: dict, nid: str, how: str = "", entry: str = "") -> dict:
+    return {"node": nid, "entry": entry, "name": n["name"], "kind": n["kind"], "countries": n["countries"], "jurisdiction": n["jurisdiction"],
+            "source": n["source"], "valid": n["valid"], "incorporated": n["incorporated"], "status": n["status"], "how": how,
+            "url": icij.NODE.format(nid)}
+
+
+def _from_icij(g: _Graph) -> dict:
+    """ICIJ Offshore Leaks (icij.py): the listed companies and the confirmed listed people get their ICIJ records; the
+    officers, shareholders, companies and intermediaries linked to them become nodes ("icij:…") and links."""
+    st = icij.stored()
+    nodes, node_of, matched = st["nodes"], {}, 0
+    targets = getattr(g, "targets", None)
+    ok = icij.accepted()
+    for key, m in st["matches"].items():          # every match is shown on its entity; only accepted ones are linked
+        if not targets or key not in targets.root:
+            continue
+        nid = targets.node(key)
+        kind, label, akey, origin, data = g.entities[nid]
+        d = json.loads(data or "{}")
+        how = m["how"] if key in ok else "unconfirmed"
+        d["icij"] = d.get("icij", []) + [_icij_info(nodes[i], i, how, key) for i in m["nodes"] if i in nodes]
+        g.entities[nid] = (kind, label, akey, origin, json.dumps(d, ensure_ascii=False))
+        if key in ok:
+            for i in m["nodes"]:
+                node_of.setdefault(i, nid)
+            matched += 1
+    anchors = set(node_of)
+
+    def node(i: str) -> str | None:
+        if i in node_of:
+            return node_of[i]
+        n = nodes.get(i)
+        if not n:
+            return None
+        node_of[i] = g.node(f"icij:{i}", icij.node_kind(n), n["name"], "icij", {"icij": [_icij_info(n, i)], "url": icij.NODE.format(i)})
+        return node_of[i]
+
+    n_links = 0
+    for e in st["edges"]:
+        if e["a"] not in anchors and e["b"] not in anchors:     # only links of the accepted matches
+            continue
+        a, b = node(e["a"]), node(e["b"])
+        if a and b:
+            base = e["rel"].strip().lower().removesuffix(" of").strip()        # "shareholder of", "Ultimate Beneficial Owner"
+            g.tie(a, b, f"{base} of", f"has as {base}", "icij", {"url": icij.NODE.format(e["a"]), "node": e["a"], "other": e["b"], "source": e["source"],
+                           "start": e["start"], "end": e["end"], "retrieved": st["meta"].get("retrieved")},
+                  date=_icij_date(e["start"]))
+            n_links += 1
+    return {"matched": matched, "links": n_links, "nodes": sum(1 for k in g.entities if k.startswith("icij:"))}
+
+
+def _icij_date(s: str) -> str:
+    """ICIJ's "23-MAR-2006" → "2006-03-23"."""
+    try:
+        return dt.datetime.strptime(s, "%d-%b-%Y").date().isoformat() if s else ""
+    except ValueError:
+        return ""
+
+
 def _from_publishers(g: _Graph, con) -> dict:
     """The think tanks and commercial analysts of the library with their owners, sponsors, founders, leaders and partners
     (publishers.influence): a publisher is the actor of its Wikidata item when the gazetteer has it, else a node of its own;
@@ -794,6 +858,7 @@ def build() -> dict:
         stats["misp"] = _from_misp(g)
         stats["publishers"] = _from_publishers(g, con)
         stats["gleif"] = _from_gleif(g)
+        stats["icij"] = _from_icij(g)
         stats["events"] = _from_events(g, con)
         _from_reports(g, con)
         con.execute("DELETE FROM ties")
@@ -804,7 +869,7 @@ def build() -> dict:
         meta = {"built": dt.datetime.now().isoformat(timespec="seconds"), "stats": stats,
                 "retrieved": {**{LIST_LAYER[k]: v for k, v in (sanctions.data().get("retrieved") or {}).items()},
                               "attack": cat.get("retrieved"),
-                              "wikitext": (wikitext.stored()["meta"] or {}).get("retrieved"), "wanted": (wanted.stored()["meta"] or {}).get("retrieved"), "misp": (vendors.stored()["meta"] or {}).get("retrieved"), "publishers": publishers.load().get("retrieved"), "gleif": gleif.stored()["meta"].get("retrieved"), **dict.fromkeys(("wikidata", "wikipedia"), actors.stamp().get("gazetteer_retrieved"))}}
+                              "wikitext": (wikitext.stored()["meta"] or {}).get("retrieved"), "wanted": (wanted.stored()["meta"] or {}).get("retrieved"), "misp": (vendors.stored()["meta"] or {}).get("retrieved"), "publishers": publishers.load().get("retrieved"), "gleif": gleif.stored()["meta"].get("retrieved"), "icij": icij.stored()["meta"].get("retrieved"), **dict.fromkeys(("wikidata", "wikipedia"), actors.stamp().get("gazetteer_retrieved"))}}
         con.execute("INSERT OR REPLACE INTO ties_meta VALUES ('meta', ?)", (json.dumps(meta),))
     counts: dict[str, int] = {}
     for t in g.ties.values():

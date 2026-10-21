@@ -27,6 +27,7 @@ GROUPS = [
         ("Find a connection", "/graph/path", (), "How two groups, people or companies are linked: the most specific chains of links."),
         ("Rings", "/graph/rings", (), "One entity in the middle: its links on the inner ring, two steps away on the outer, a sector per source."),
         ("Case file", "/case", (), "Pinned entities and how every pair of them is connected – export with citations."),
+        ("Offshore leaks", "/graph/offshore", (), "Listed companies and people in ICIJ's leaked records – journalistic, not official; people to confirm."),
         ("Toolkit twins", "/graph/twins", (), "Threat groups that use the same techniques and software (MITRE ATT&CK)."),
         ("Leads", "/graph/leads", (), "Hypotheses: actors never named together that share neighbours – to review."),
         ("Brokers", "/graph/brokers", (), "Entities whose links reach several worlds: state, cyber, terror, armed, crime."),

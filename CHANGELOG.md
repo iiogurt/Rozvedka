@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.87.0] – 2026-10-21
+
+### Added
+- **Offshore leaks** (`fetch-icij`, `/graph/offshore`, a network layer marked as leaked records). ICIJ's Offshore Leaks Database
+  holds the Panama, Paradise and Pandora Papers. It is kept only for the sanctions lists, and its records are **journalistic,
+  not official**: shown with an orange, dashed mark everywhere and never counted as official.
+  - **Companies:** 57 listed companies are matched by the same distinctive name in the same country.
+  - **People:** 35 listed people match by a rarer name and the same country. They become links only after you confirm each
+    one on the new page, which shows what the leak record is linked to; verdicts go in `sources/icij_reviews.yaml` and
+    travel with datasets.
+  - **Links:** their officers, shareholders, owned companies and intermediaries, one step out (650 links).
+
 ## [0.86.0] – 2026-10-21
 
 ### Added
@@ -1640,7 +1652,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.86.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.87.0...HEAD
+[0.87.0]: https://github.com/iiogurt/Rozvedka/compare/v0.86.0...v0.87.0
 [0.86.0]: https://github.com/iiogurt/Rozvedka/compare/v0.85.0...v0.86.0
 [0.85.0]: https://github.com/iiogurt/Rozvedka/compare/v0.84.0...v0.85.0
 [0.84.0]: https://github.com/iiogurt/Rozvedka/compare/v0.83.0...v0.84.0
