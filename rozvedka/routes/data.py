@@ -16,6 +16,7 @@ def data_page(request: Request):
     """Data exchange: this installation, how fresh its data is, and the datasets exported or imported."""
     with db.session() as con:
         fresh = dataset.freshness(con)
+        personal_data = dataset.personal_holdings(con)
         runs = [dict(r) for r in con.execute(
             "SELECT kind, started_at, summary FROM runs WHERE kind IN ('export','import') ORDER BY id DESC LIMIT 50")]
     for r in runs:
@@ -31,7 +32,7 @@ def data_page(request: Request):
                      and Path(r["summary"]["manifest"]).parent.is_dir()), "")
     return tpl.TemplateResponse(request, "data.html", {"me": dataset.installation(), "fresh": fresh, "runs": runs,
                                                       "files_bytes": size, "logs": [p.name for p in logs], "last_dir": last_dir,
-                                                      "roots": [str(r) for r in folders.roots()]})
+                                                      "roots": [str(r) for r in folders.roots()], "personal_data": personal_data})
 
 
 def _api_error(e: Exception, status: int = 400):
@@ -55,15 +56,16 @@ def api_data_mkdir(parent: str = Form(...), name: str = Form(...)):
 
 
 @router.get("/api/data/estimate")
-def api_data_estimate(what: str = "all", since: str = ""):
+def api_data_estimate(what: str = "all", since: str = "", personal: int = 0):
     """About how many bytes an export will need (report files + compressed database)."""
     with db.session() as con:
         if what == "catalogue":
             files_bytes, n = 0, 0
         else:
             row = con.execute("""SELECT COALESCE(SUM(size),0), COUNT(*) FROM documents WHERE status='downloaded'
-                                 AND local_path IS NOT NULL AND (? = '' OR MAX(COALESCE(discovered_at,''), COALESCE(downloaded_at,'')) >= ?)""",
-                              (since if what == "since" else "", since if what == "since" else "")).fetchone()
+                                 AND local_path IS NOT NULL AND (? OR url NOT LIKE 'book:%')
+                                 AND (? = '' OR MAX(COALESCE(discovered_at,''), COALESCE(downloaded_at,'')) >= ?)""",
+                              (bool(personal), since if what == "since" else "", since if what == "since" else "")).fetchone()
             files_bytes, n = row[0], row[1]
     db_bytes = int(db.DB_PATH.stat().st_size * 0.35) if db.DB_PATH.exists() else 0
     return {"files": n, "files_bytes": files_bytes, "database_bytes": db_bytes, "total": files_bytes + db_bytes + (30 << 20)}
@@ -71,7 +73,7 @@ def api_data_estimate(what: str = "all", since: str = ""):
 
 @router.post("/api/data/export")
 def api_data_export(dest: str = Form(...), what: str = Form("all"), since: str = Form(""), part_size: str = Form("2000"),
-                    name: str = Form("")):
+                    name: str = Form(""), personal: str = Form("")):
     try:
         size_mb = int(part_size)
         if not 50 <= size_mb <= 100_000:
@@ -79,7 +81,7 @@ def api_data_export(dest: str = Form(...), what: str = Form("all"), since: str =
         if what == "since" and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", since):
             raise ValueError("choose the day from which report files are included")
         r = jobrunner.export(dest, files=what != "catalogue", since=since if what == "since" else None,
-                            part_size=size_mb * 1_000_000, name=name.strip())
+                            part_size=size_mb * 1_000_000, name=name.strip(), personal=personal == "1")
     except (PermissionError, FileNotFoundError, ValueError) as e:
         return _api_error(e)
     return r if "error" not in r else JSONResponse(r, status_code=409)

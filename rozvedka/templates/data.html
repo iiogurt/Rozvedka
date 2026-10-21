@@ -41,6 +41,11 @@
         <input type="date" id="since" aria-label="Report files added since"></span><span class="dx-size" data-for="since"></span></label>
   </div>
 
+  <label class="dx-personal"><input type="checkbox" id="personal"> <b>Personal backup</b> – also include the data kept
+    for personal use only: {{ personal_data|join(', ') if personal_data else 'none in this library yet' }}.
+    <span class="muted small">Its file names end in <code>-personal</code> and the import says what it holds. Keep it for
+      yourself – do not hand it on. Leave this off for a dataset to share: it then has the country ratings without them.</span></label>
+
   <h2 class="viz-title">2 · Where to</h2>
   <div class="dx-picker" id="picker-export" data-start="{{ last_dir or '' }}"></div>
 
@@ -68,12 +73,12 @@
   {% if runs %}<div class="vt-scroll"><table class="vt">
     <thead><tr><th>when (UTC)</th><th>what</th><th>dataset</th><th>details</th></tr></thead>
     {% for r in runs %}{% set s = r.summary %}<tr><td>{{ r.started_at[:16].replace('T', ' ') }}</td><td>{{ r.kind }}</td><td><code>{{ s.dataset_id }}</code></td>
-      <td>{% if r.kind == 'export' %}{{ s.parts }} file{{ 's' if s.parts != 1 }}, {{ ((s.bytes or 0) / 1e9)|round(2) }} GB, {{ s.files }} report files{% if s.since %} since {{ s.since }}{% endif %}{% if not s.with_files %} (catalogue only){% endif %} – <span class="muted">{{ s.manifest }}</span>
+      <td>{% if r.kind == 'export' %}{{ s.parts }} file{{ 's' if s.parts != 1 }}, {{ ((s.bytes or 0) / 1e9)|round(2) }} GB, {{ s.files }} report files{% if s.since %} since {{ s.since }}{% endif %}{% if not s.with_files %} (catalogue only){% endif %}{% if s.personal %} · <b>personal backup</b>{% endif %} – <span class="muted">{{ s.manifest }}</span>
         {% else %}{{ s.mode }} – dataset {{ s.verdict }}, from {{ (s['from'] or {}).id }} made {{ (s.created or '')[:10] }}: {{ s.documents_added }} added, {{ s.documents_updated }} updated{% if s.conflicts %}, {{ s.conflicts|length }} conflicts{% endif %}{% endif %}</td></tr>{% endfor %}
   </table></div>{% else %}<p class="muted">No dataset exported or imported yet.</p>{% endif %}
   {% if logs %}<p class="small"><span class="muted">Logs:</span> {% for l in logs %}<a href="/data/logs/{{ l }}" target="_blank">{{ l }}</a>{{ ' · ' if not loop.last }}{% endfor %}</p>{% endif %}
   <details class="small"><summary class="muted">The same on the command line</summary>
-    <pre class="dx-cmd">python -m rozvedka export /media/usb/rozvedka [--no-files | --since 2026-10-01] [--part-size 2G] [--name LABEL]
+    <pre class="dx-cmd">python -m rozvedka export /media/usb/rozvedka [--no-files | --since 2026-10-01] [--part-size 2G] [--name LABEL] [--personal]
 python -m rozvedka import FOLDER --check        # verify and compare – changes nothing
 python -m rozvedka import FOLDER [--prefer dataset]</pre>
     <p class="muted">The portal may use these folders: {{ roots|join(', ') }} (more with <code>ROZVEDKA_EXCHANGE_DIRS</code>).</p></details>

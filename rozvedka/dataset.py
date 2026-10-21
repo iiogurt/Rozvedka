@@ -6,8 +6,13 @@
 A dataset is one tar stream cut into parts (`<base>.tar.001`, `.002` …, 2 GB each by default, so they fit the usual
 file-transfer services; joined they are an ordinary tar) and `<base>.manifest.json` – who made it, when, with which
 app version, how fresh the data is, and the SHA-256 of every part. Inside: the manifest, a consistent copy of the
-database (gzip), the report files, logos, the actor gazetteer and the lists the portal writes (series, watchlist,
-reviews of actor matches).
+database (gzip), the report files, logos, the actor gazetteer, the country ratings and the lists the portal writes
+(series, watchlist, reviews of actor matches).
+
+A dataset is made either to share or as a personal backup (`--personal`). Some data may be kept in this library for
+personal use only and goes into personal backups alone: the local book library (the books' files, text and what
+they say) and the ratings whose terms do not allow passing them on (RSF's press-freedom scores – `personal` in
+ratings.MEASURES). The manifest says which kind a dataset is and lists the personal data it holds.
 
 Import checks every part, then compares the dataset with this library – newer or older, overall and per source –
 and what it would add or change (`--check` stops there). An empty library is restored from the dataset; an
@@ -186,6 +191,35 @@ def _sha256(path: Path, phase: str = "", offset: int = 0, total: int = 0) -> str
 
 # ------------------------------------------------------------------ export
 
+def personal_holdings(con) -> list[str]:
+    """What this library keeps for personal use only – what a personal backup adds to a dataset to share."""
+    from . import ratings
+    out = []
+    n = con.execute("SELECT COUNT(*) FROM documents WHERE url LIKE 'book:%'").fetchone()[0]
+    if n:
+        out.append(f"the book library ({n} book{'s' if n != 1 else ''}: files, text, what they say)")
+    stored = ratings.load().get("measures", {})
+    out += [f"{m['name']} ({m['by']})" for k, m in ratings.MEASURES.items() if m.get("personal") and k in stored]
+    return out
+
+
+def _ratings_payload(personal: bool) -> tuple[bytes | None, dict | None]:
+    """The country ratings file, without the measures for personal use only unless it is a personal backup."""
+    from . import ratings
+    if not ratings.STORE.exists():
+        return None, None
+    store = json.loads(ratings.STORE.read_text(encoding="utf-8"))
+    private = [k for k, m in ratings.MEASURES.items() if m.get("personal")]
+    if not personal:
+        for k in private:
+            store.get("measures", {}).pop(k, None)
+            for vals in store.get("values", {}).values():
+                vals.pop(k, None)
+    meta = {"retrieved": store.get("retrieved"), "measures": sorted(store.get("measures", {})),
+            "personal": [k for k in private if k in store.get("measures", {})]}
+    return json.dumps(store).encode("utf-8"), meta
+
+
 def _drop_books(con) -> None:
     """Remove the local book library from an exported copy of the database: the books, their text, index rows and
     publishers (rozvedka/books.py) – a dataset never carries book text."""
@@ -206,29 +240,33 @@ def _drop_books(con) -> None:
 
 
 def export(out_dir: str | Path, files: bool = True, since: str | None = None, part_size: int = PART_SIZE,
-           name: str = "") -> dict:
-    """Write a dataset into out_dir; returns its manifest."""
+           name: str = "", personal: bool = False) -> dict:
+    """Write a dataset into out_dir; returns its manifest. `personal`: a backup for this library's owner, with the
+    data kept for personal use only (books, RSF scores) – not for sharing."""
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     me = installation()
     created = _now()
     base = out / ("rozvedka-dataset-" + created[:19].replace("-", "").replace(":", "").replace("T", "-")
+                  + ("-personal" if personal else "")
                   + (f"-{''.join(c for c in name if c.isalnum() or c in '-_')[:30]}" if name else ""))
     with tempfile.TemporaryDirectory(dir=out, prefix=".rozvedka-export-") as tmp:
         snap = Path(tmp) / "rozvedka.db"
         src = db.connect()
-        log.info("export to %s (files: %s, since: %s, parts of %s bytes)", out, files, since, part_size)
+        log.info("export to %s (files: %s, since: %s, parts of %s bytes, personal: %s)", out, files, since, part_size, personal)
         try:
             dst = __import__("sqlite3").connect(snap)
             ps = src.execute("PRAGMA page_size").fetchone()[0]
             src.backup(dst, pages=4096,           # a consistent copy while the portal may be running
                        progress=lambda status, remaining, total: _tick("Copying the database", (total - remaining) * ps, total * ps))
-            _drop_books(dst)               # book text stays on this machine (copyright; a personal reading list)
+            personal_data = personal_holdings(src) if personal else []
+            if not personal:
+                _drop_books(dst)           # book text is not shared (copyright; a personal reading list)
             dst.close()
             fresh = freshness(src)
             docs = [dict(r) for r in src.execute(
                 """SELECT d.id, d.local_path, d.sha256, d.size, d.discovered_at, d.downloaded_at FROM documents d
-                   WHERE d.local_path IS NOT NULL AND d.status='downloaded' AND d.url NOT LIKE 'book:%'""")]
+                   WHERE d.local_path IS NOT NULL AND d.status='downloaded' AND (? OR d.url NOT LIKE 'book:%')""", (personal,))]
             logo_rows = [dict(r) for r in src.execute("SELECT key, logo_path FROM sources WHERE logo_path IS NOT NULL")]
         finally:
             src.close()
@@ -241,6 +279,7 @@ def export(out_dir: str | Path, files: bool = True, since: str | None = None, pa
                 _tick("Compressing the database", done, size)
         log.info("database copied and compressed: %d → %d bytes", size, gz.stat().st_size)
         db_sha = _sha256(snap)
+        ratings_bytes, ratings_meta = _ratings_payload(personal)
         chosen = [d for d in docs if files and (not since or max(d["discovered_at"] or "", d["downloaded_at"] or "") >= since)]
         chosen = [d for d in chosen if (config.FILES / d["local_path"]).exists()]
         need = sum(d["size"] or 0 for d in chosen) + gz.stat().st_size + (30 << 20)
@@ -250,6 +289,7 @@ def export(out_dir: str | Path, files: bool = True, since: str | None = None, pa
         manifest = {
             "format": FORMAT, "format_version": FORMAT_VERSION, "dataset_id": uuid.uuid4().hex[:12], "created": created,
             "name": name, "app_version": __version__, "installation": me,
+            "purpose": "personal" if personal else "share", "personal_data": personal_data,
             "scope": {"files": files, "since": since, "files_included": len(chosen),
                       "files_bytes": sum(d["size"] or 0 for d in chosen), "documents_with_file": len(docs)},
             "database": {"member": "db/rozvedka.db.gz", "sha256": db_sha, "size": snap.stat().st_size},
@@ -257,12 +297,13 @@ def export(out_dir: str | Path, files: bool = True, since: str | None = None, pa
             "lists": [n for n in PORTAL_LISTS if (_sources_dir() / n).exists()],
             "files": [d["local_path"] for d in chosen],
             "gazetteer": _gazetteer_meta(_gazetteer_dir()),
+            "ratings": ratings_meta,
         }
         writer = _PartWriter(base, part_size, expected=need - (30 << 20))
         log.info("writing %d report files (%.2f GB) into parts of %.2f GB", len(chosen),
                  manifest["scope"]["files_bytes"] / 1e9, part_size / 1e9)
         try:
-            _write_stream(writer, manifest, gz, logo_rows, chosen)
+            _write_stream(writer, manifest, gz, logo_rows, chosen, ratings_bytes)
         except BaseException:
             writer.remove()                       # no half-written dataset is left behind
             raise
@@ -273,12 +314,13 @@ def export(out_dir: str | Path, files: bool = True, since: str | None = None, pa
     mpath.write_text(json.dumps(manifest, indent=1, ensure_ascii=False), encoding="utf-8")
     log.info("dataset %s written: %d parts, %d bytes – %s", manifest["dataset_id"], len(writer.parts), manifest["bytes"], mpath)
     _record_run("export", {"dataset_id": manifest["dataset_id"], "manifest": str(mpath), "parts": len(writer.parts),
-                           "bytes": manifest["bytes"], "files": len(chosen), "since": since, "with_files": files})
+                           "bytes": manifest["bytes"], "files": len(chosen), "since": since, "with_files": files,
+                           "personal": personal, "personal_data": personal_data})
     return {**manifest, "manifest_path": str(mpath)}
 
 
-def _write_stream(writer, manifest: dict, gz: Path, logo_rows: list, chosen: list) -> None:
-    """The tar stream: manifest, database, lists, gazetteer, logos, then the report files."""
+def _write_stream(writer, manifest: dict, gz: Path, logo_rows: list, chosen: list, ratings_bytes: bytes | None = None) -> None:
+    """The tar stream: manifest, database, lists, gazetteer, ratings, logos, then the report files."""
     with tarfile.open(fileobj=writer, mode="w|", format=tarfile.PAX_FORMAT) as tar:
         _add_bytes(tar, "manifest.json", json.dumps({**manifest, "parts": "see the manifest file"}, indent=1).encode())
         tar.add(gz, arcname="db/rozvedka.db.gz")
@@ -286,6 +328,8 @@ def _write_stream(writer, manifest: dict, gz: Path, logo_rows: list, chosen: lis
             tar.add(_sources_dir() / n, arcname=f"sources/{n}")
         for p in sorted(_gazetteer_dir().glob("*.json")) if _gazetteer_dir().exists() else []:
             tar.add(p, arcname=f"gazetteer/{p.name}")
+        if ratings_bytes:
+            _add_bytes(tar, "ratings/ratings.json", ratings_bytes)
         for r in logo_rows:
             p = _logos_dir() / r["logo_path"]
             if p.exists():
@@ -468,8 +512,10 @@ def import_dataset(path: str | Path, check: bool = False, prefer: str = "local",
     if v["problems"]:
         return {"error": "the dataset is incomplete or damaged", "problems": v["problems"], "dataset": _about(m)}
     db.init()
-    from . import collect
+    from . import collect, meanings
     collect.init()
+    if m.get("purpose") == "personal":
+        meanings.init()                  # the book tables, in case this library has never had a book
     work_root = config.DATA / "imports"
     work_root.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=work_root, prefix=f"{m['dataset_id']}-") as tmp:
@@ -524,7 +570,8 @@ def import_dataset(path: str | Path, check: bool = False, prefer: str = "local",
 
 def _about(m: dict) -> dict:
     return {"id": m["dataset_id"], "created": m["created"], "name": m.get("name"), "app_version": m["app_version"],
-            "installation": m["installation"], "scope": m["scope"], "bytes": m.get("bytes")}
+            "installation": m["installation"], "scope": m["scope"], "bytes": m.get("bytes"),
+            "purpose": m.get("purpose", "share"), "personal_data": m.get("personal_data") or []}
 
 
 def _safety_copy(con) -> Path:
@@ -616,6 +663,8 @@ def _merge(con, m: dict, prefer: str) -> dict:
             cur = con.execute(f"INSERT INTO documents({','.join(vals)}) VALUES({','.join('?' * len(vals))})", list(vals.values()))
             new_id = cur.lastrowid
             _copy_text(con, d["id"], new_id)
+            if d["url"].startswith("book:"):            # a personal backup's book: its record and what it says
+                _copy_book(con, d["id"], new_id)
             up = con.execute("SELECT * FROM ds.uploads WHERE doc_id=?", (d["id"],)).fetchone()
             if up:
                 con.execute("INSERT OR IGNORE INTO uploads(doc_id,added_at,via,original_name,official) VALUES(?,?,?,?,?)",
@@ -666,6 +715,20 @@ def _merge(con, m: dict, prefer: str) -> dict:
     return {"wanted": wanted, "logos": logos, "applied": applied}
 
 
+def _copy_book(con, ds_id: int, here_id: int) -> None:
+    """A book's record (books) and what it says (book_* tables of meanings.py), under its id here."""
+    ds_tables = {r[0] for r in con.execute("SELECT name FROM ds.sqlite_master WHERE type='table'")}
+    for t in sorted(ds_tables):
+        if t != "books" and not t.startswith("book_"):
+            continue
+        here_cols = {r[1] for r in con.execute(f"PRAGMA main.table_info({t})")}
+        cols = [c for c in (r[1] for r in con.execute(f"PRAGMA ds.table_info({t})")) if c in here_cols and c != "doc_id"]
+        if not here_cols or "doc_id" not in here_cols:
+            continue
+        con.execute(f"INSERT OR IGNORE INTO main.{t}(doc_id{''.join(',' + c for c in cols)}) "
+                    f"SELECT ?{''.join(',' + c for c in cols)} FROM ds.{t} WHERE doc_id=?", (here_id, ds_id))
+
+
 def _free_path(rel: str, used: set) -> str:
     """The dataset's file path, or a variant of it when another report here already has that path."""
     if rel not in used and not (config.FILES / rel).exists():
@@ -707,7 +770,7 @@ def safe_target(rel: str | None) -> Path | None:
 
 def _extract(tar, plan: dict, m: dict) -> dict:
     """Read the rest of the stream: report files that are wanted (checked against their SHA-256), logos, gazetteer."""
-    stats = {"written": 0, "bytes": 0, "bad_checksum": 0, "unsafe_path": 0, "logos": 0, "gazetteer": None}
+    stats = {"written": 0, "bytes": 0, "bad_checksum": 0, "unsafe_path": 0, "logos": 0, "gazetteer": None, "ratings": None}
     wanted, logos = plan["wanted"], plan["logos"]
     gaz_tmp = None
     seen = set()
@@ -754,6 +817,9 @@ def _extract(tar, plan: dict, m: dict) -> dict:
             gaz_tmp = gaz_tmp or Path(tempfile.mkdtemp(dir=config.DATA / "imports"))
             with tar.extractfile(member) as src, open(gaz_tmp / Path(name).name, "wb") as out:
                 shutil.copyfileobj(src, out)
+        elif name == "ratings/ratings.json":
+            with tar.extractfile(member) as src:
+                stats["ratings"] = _take_ratings(src.read())
         elif name.startswith("sources/") and Path(name).name in PORTAL_LISTS:
             folder = config.DATA / "imports" / f"{m['dataset_id']}-lists"
             folder.mkdir(parents=True, exist_ok=True)
@@ -763,6 +829,37 @@ def _extract(tar, plan: dict, m: dict) -> dict:
     if gaz_tmp:
         stats["gazetteer"] = _take_gazetteer(gaz_tmp, m)
     return stats
+
+
+def _take_ratings(raw: bytes) -> str:
+    """The dataset's country ratings, measure by measure: a measure not here, or retrieved later there, is taken."""
+    from . import ratings
+    try:
+        there = json.loads(raw.decode("utf-8"))
+    except ValueError:
+        return "not readable"
+    if not ratings.STORE.exists():
+        ratings.STORE.parent.mkdir(parents=True, exist_ok=True)
+        ratings.STORE.write_bytes(raw)
+        taken = sorted(there.get("measures", {}))
+    else:
+        here = json.loads(ratings.STORE.read_text(encoding="utf-8"))
+        taken = [k for k, mt in there.get("measures", {}).items()
+                 if (mt.get("retrieved") or "") > ((here.get("measures", {}).get(k) or {}).get("retrieved") or "")]
+        for k in taken:
+            here.setdefault("measures", {})[k] = there["measures"][k]
+            for a3, vals in there.get("values", {}).items():
+                if k in vals:
+                    here.setdefault("values", {}).setdefault(a3, {})[k] = vals[k]
+        for field in ("iso3", "iso2to3", "iso2to3_all", "names", "population"):     # the country lists: united
+            for code, v in (there.get(field) or {}).items():
+                here.setdefault(field, {}).setdefault(code, v)
+        if taken:
+            here["retrieved"] = max(here.get("retrieved") or "", there.get("retrieved") or "")
+            ratings.STORE.write_text(json.dumps(here), encoding="utf-8")
+    ratings.load.cache_clear()
+    ratings.ranks.cache_clear()
+    return f"{len(taken)} measure{'s' if len(taken) != 1 else ''} taken" if taken else "kept this library's (as recent)"
 
 
 def _take_gazetteer(folder: Path, m: dict) -> str:
@@ -899,6 +996,9 @@ def describe(r: dict, cli: bool = True) -> str:
              f"made {day(d['created'])} with Rozvedka {d['app_version']}"
              f"{'' if d['scope']['files'] else ' – catalogue only, no report files'}"
              f"{' – report files since ' + d['scope']['since'] if d['scope'].get('since') else ''}."]
+    if d.get("purpose") == "personal":
+        lines.append("A personal backup – it also holds data for personal use only, not to be shared: "
+                     + ("; ".join(d.get("personal_data") or []) or "none in this one") + ".")
     if r.get("warning"):
         lines.append("! " + r["warning"])
     verdict = {"newer": "The dataset is NEWER than this library.", "older": "The dataset is OLDER than this library – it adds nothing new.",
@@ -929,6 +1029,8 @@ def describe(r: dict, cli: bool = True) -> str:
               f"logos {r['files']['logos']}; reports to download again {r.get('to_download', 0)}"]
     if r["files"].get("gazetteer"):
         lines.append(f"  actor gazetteer: {r['files']['gazetteer']}")
+    if r["files"].get("ratings"):
+        lines.append(f"  country ratings: {r['files']['ratings']}")
     for k, v in (r.get("lists") or {}).items():
         lines.append(f"  {k}: {v}")
     if a.get("conflicts"):

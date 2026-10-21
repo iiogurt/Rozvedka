@@ -45,7 +45,7 @@
     const what = $("input[name=what]:checked").value, since = $("#since").value;
     for (const w of ["all", "catalogue", "since"]) {
       try {
-        const e = await api(`/api/data/estimate?what=${w}&since=${encodeURIComponent(w === "since" ? since : "")}`);
+        const e = await api(`/api/data/estimate?what=${w}&since=${encodeURIComponent(w === "since" ? since : "")}&personal=${$("#personal").checked ? 1 : 0}`);
         $(`.dx-size[data-for=${w}]`).textContent = w === "since" && !since ? "" : `about ${gb(e.total)}` + (e.files ? ` · ${e.files} report files` : "");
         if (w === what) estimate = e;
       } catch (e) { /* shown when exporting */ }
@@ -74,7 +74,7 @@
     if (!d.path) { box.innerHTML = ""; return; }
     if (!d.datasets.length) { box.innerHTML = `<p class="muted">No dataset in this folder (looking for <code>*.manifest.json</code>).</p>`; return; }
     box.innerHTML = d.datasets.map((s) => `<article class="dx-ds">
-      <div><b>${esc(s.label || s.id)}</b> <span class="muted small">${esc(s.name)}</span></div>
+      <div><b>${esc(s.label || s.id)}</b> <span class="muted small">${esc(s.name)}</span>${s.personal ? ` <span class="dx-badge" title="also holds data for personal use only: ${esc((s.personal_data || []).join("; ") || "none")}">personal backup</span>` : ""}</div>
       <div class="small">made ${esc((s.created || "").slice(0, 16).replace("T", " "))} UTC by installation <code>${esc(s.installation)}</code> with Rozvedka ${esc(s.app_version)}
         · ${s.documents ?? "?"} reports, last crawl ${esc((s.last_crawl || "never").slice(0, 10))}
         · ${s.with_files === false ? "catalogue only" : `${s.files} report files${s.since ? " since " + esc(s.since) : ""}`} · ${gb(s.bytes)}</div>
@@ -115,9 +115,10 @@
     document.querySelectorAll("input[name=what]").forEach((r) => r.addEventListener("change", updateEstimate));
     $("#since").addEventListener("change", () => { $("input[name=what][value=since]").checked = true; updateEstimate(); });
     $("#part-size").addEventListener("change", updateSpace);
+    $("#personal").addEventListener("change", updateEstimate);
     $("#export-go").addEventListener("click", () => startJob("/api/data/export", {
       dest: exportDir.path, what: $("input[name=what]:checked").value, since: $("#since").value,
-      part_size: $("#part-size").value, name: $("#label").value}));
+      part_size: $("#part-size").value, name: $("#label").value, personal: $("#personal").checked ? "1" : ""}));
     $("#job-import-go").addEventListener("click", () => {
       if (!confirm("Import the dataset into this library now? A safety copy of the database is made first.")) return;
       startJob("/api/data/import", {manifest: lastManifest, prefer: $("input[name=prefer]:checked").value});

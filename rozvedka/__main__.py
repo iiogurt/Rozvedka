@@ -47,6 +47,8 @@ def main():
     ex.add_argument("--since", help="only report files added on or after this day (YYYY-MM-DD); the catalogue is complete")
     ex.add_argument("--part-size", default="2G", help="largest part, e.g. 2G, 500M (default 2G)")
     ex.add_argument("--name", default="", help="a label for the file name, e.g. your name or the occasion")
+    ex.add_argument("--personal", action="store_true", help="a backup for yourself: also the data for personal use only "
+                                                            "(the book library, RSF's press-freedom scores) – do not share it")
     im = sub.add_parser("import", help="compare a dataset with this library and restore or merge it")
     im.add_argument("path", help="the dataset's .manifest.json, one of its parts, or its folder")
     im.add_argument("--check", action="store_true", help="only verify the dataset and compare it with this library")
@@ -204,7 +206,7 @@ def main():
         size = a.part_size.strip().upper()
         mult = {"K": 1e3, "M": 1e6, "G": 1e9}.get(size[-1:], 1)
         m = dataset.export(a.dir, files=not a.no_files, since=a.since, name=a.name,
-                           part_size=int(float(size.rstrip("KMG")) * mult))
+                           part_size=int(float(size.rstrip("KMG")) * mult), personal=a.personal)
         print(f"dataset {m['dataset_id']}: {len(m['parts'])} part(s), {m['bytes'] / 1e9:.2f} GB, "
               f"{m['scope']['files_included']} report files\nmanifest: {m['manifest_path']}")
     elif a.cmd == "import":

@@ -6,7 +6,8 @@ import json
 import pytest
 import yaml
 
-from rozvedka import actor_sources, actors, collect, config, dataset, db, logos, registry, review, series, topics, watch
+from rozvedka import (actor_sources, actors, collect, config, dataset, db, logos, meanings, ratings, registry, review, series,
+                      topics, watch)
 
 
 def use(monkeypatch, root):
@@ -18,8 +19,9 @@ def use(monkeypatch, root):
                            (series, "SERIES_FILE", root / "sources" / "series.yaml"),
                            (watch, "WATCHLIST", root / "sources" / "watchlist.yaml"),
                            (review, "REVIEWS", root / "sources" / "actor_reviews.yaml"),
-                           (collect, "INBOX", data / "inbox")):
+                           (collect, "INBOX", data / "inbox"), (ratings, "STORE", data / "ratings" / "ratings.json")):
         monkeypatch.setattr(mod, attr, val)
+    ratings.load.cache_clear()
     monkeypatch.setattr(dataset, "_sources_dir", lambda: root / "sources")
     (root / "sources").mkdir(parents=True, exist_ok=True)
     db.init()
@@ -209,3 +211,73 @@ def test_lists_are_merged(a, tmp_path, monkeypatch):
     assert [x["verdict"] for x in review.load()] == ["wrong"]                         # the later verdict wins
     assert r["lists"]["watchlist.yaml"] == "1 searches added"
     assert yaml.safe_load((tmp_path / "B" / "sources" / "watchlist.yaml").read_text(encoding="utf-8"))
+
+
+def add_personal_data(con, files):
+    """A book (with what it says) and the country ratings, among them RSF's scores – for personal use only."""
+    meanings.init()
+    con.execute("INSERT INTO sources(id,key,country,agency,type,publisher,active) VALUES(5,'BOOK/X','OTHER','X','book','book',1)")
+    (files / "books").mkdir(parents=True, exist_ok=True)
+    (files / "books" / "war.epub").write_bytes(b"EPUB on war")
+    con.execute("""INSERT INTO documents(id,source_id,url,title,status,doc_type,local_path,sha256,size)
+                   VALUES(50,5,'book:no-isbn:abc','On War','downloaded','book','books/war.epub',?,11)""",
+                (hashlib.sha256(b"EPUB on war").hexdigest(),))
+    con.execute("INSERT INTO doc_text(rowid,title,body) VALUES(50,'On War','War is the continuation of policy.')")
+    con.execute("INSERT INTO doc_index(doc_id,chars,words) VALUES(50,34,6)")
+    con.execute("INSERT INTO books(doc_id,file,format,title) VALUES(50,'war.epub','epub','On War')")
+    con.execute("INSERT INTO book_statements(doc_id,start,page,date,precision,sentence,actors) VALUES(50,0,1,'1832','year','In 1832 …','[]')")
+    ratings.STORE.parent.mkdir(parents=True, exist_ok=True)
+    ratings.STORE.write_text(json.dumps({"retrieved": "2026-10-20", "iso3": {"CZ": "CZE"},
+        "measures": {"rsf": {"retrieved": "2026-10-20", "rows": 1}, "wgi_va": {"retrieved": "2026-10-20", "rows": 1}},
+        "values": {"CZE": {"rsf": {"2026": 83.0}, "wgi_va": {"2025": 1.0}}}}))
+    ratings.load.cache_clear()
+
+
+def test_personal_data_only_in_personal_backups(a, tmp_path):
+    with db.session() as con:
+        add_personal_data(con, config.FILES)
+        assert dataset.personal_holdings(con) == ["the book library (1 book: files, text, what they say)",
+                                                  "World Press Freedom Index (Reporters Without Borders (RSF))"]
+    share = export(tmp_path, "share")
+    assert share["purpose"] == "share" and share["personal_data"] == [] and "books/war.epub" not in share["files"]
+    assert share["ratings"]["measures"] == ["wgi_va"] and share["ratings"]["personal"] == []      # ratings, without RSF
+    mine = export(tmp_path, "mine", personal=True)
+    assert mine["purpose"] == "personal" and "books/war.epub" in mine["files"] and len(mine["personal_data"]) == 2
+    assert mine["ratings"]["personal"] == ["rsf"] and "-personal" in mine["manifest_path"]
+    from rozvedka import folders
+    listed = folders._dataset_summary(dataset.find_manifest(tmp_path / "mine"))          # as the import page lists it
+    assert listed["personal"] and listed["personal_data"] == mine["personal_data"]
+    assert not folders._dataset_summary(dataset.find_manifest(tmp_path / "share"))["personal"]
+
+
+def test_personal_backup_restores_and_merges_books_and_ratings(a, tmp_path, monkeypatch):
+    with db.session() as con:
+        add_personal_data(con, config.FILES)
+    export(tmp_path, "mine", personal=True)
+    export(tmp_path, "share")
+    use(monkeypatch, tmp_path / "B")                       # an empty library: restored as it was
+    r = dataset.import_dataset(tmp_path / "mine", index=False)
+    assert r["mode"] == "restore" and "personal backup" in dataset.describe(r) and r["files"]["ratings"] == "2 measures taken"
+    assert (config.FILES / "books" / "war.epub").read_bytes() == b"EPUB on war"
+    assert ratings.series("CZ", "rsf") == {2026: 83.0}
+    with db.session() as con:
+        assert con.execute("SELECT title FROM books WHERE doc_id=50").fetchone()[0] == "On War"
+    use(monkeypatch, tmp_path / "C")                       # a library of its own, with older ratings and no RSF
+    with db.session() as con:
+        con.execute("INSERT INTO sources(id,key,country,agency,type,active) VALUES(3,'CZ/BIS','CZ','BIS','intelligence-civil',1)")
+        add_doc(con, config.FILES, 7, 3, "https://bis.cz/own.pdf", body=b"%PDF own")
+    ratings.STORE.parent.mkdir(parents=True, exist_ok=True)
+    ratings.STORE.write_text(json.dumps({"retrieved": "2026-10-01", "iso3": {"CZ": "CZE"},
+        "measures": {"wgi_va": {"retrieved": "2026-10-01"}}, "values": {"CZE": {"wgi_va": {"2024": 0.9}}}}))
+    shared = dataset.import_dataset(tmp_path / "share", index=False)       # to share: no book, no RSF
+    assert shared["files"]["ratings"] == "1 measure taken" and ratings.series("CZ", "rsf") == {}
+    with db.session() as con:
+        assert con.execute("SELECT COUNT(*) FROM documents WHERE url LIKE 'book:%'").fetchone()[0] == 0
+    r = dataset.import_dataset(tmp_path / "mine", index=False)             # the personal backup, merged
+    assert r["mode"] == "merge" and r["files"]["ratings"] == "1 measure taken"     # RSF added, WGI already as recent
+    assert ratings.series("CZ", "rsf") == {2026: 83.0} and ratings.series("CZ", "wgi_va") == {2025: 1.0}
+    with db.session() as con:
+        book = con.execute("SELECT id, local_path FROM documents WHERE url='book:no-isbn:abc'").fetchone()
+        assert (config.FILES / book["local_path"]).read_bytes() == b"EPUB on war"
+        assert con.execute("SELECT title FROM books WHERE doc_id=?", (book["id"],)).fetchone()[0] == "On War"
+        assert con.execute("SELECT sentence FROM book_statements WHERE doc_id=?", (book["id"],)).fetchone()[0] == "In 1832 …"

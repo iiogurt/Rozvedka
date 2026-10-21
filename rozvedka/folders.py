@@ -70,7 +70,9 @@ def _dataset_summary(manifest: Path) -> dict:
             "bytes": _int(m.get("bytes")), "parts": len(parts), "parts_present": len(present), "complete": complete,
             "files": _int((m.get("scope") or {}).get("files_included")), "with_files": (m.get("scope") or {}).get("files") is not False,
             "since": (m.get("scope") or {}).get("since"), "documents": _int((m.get("freshness") or {}).get("documents")),
-            "last_crawl": (m.get("freshness") or {}).get("last_crawl")}
+            "last_crawl": (m.get("freshness") or {}).get("last_crawl"),
+            "personal": m.get("purpose") == "personal",
+            "personal_data": [str(x) for x in (m.get("personal_data") or []) if isinstance(x, str)][:10]}
 
 
 def listing(path: str = "") -> dict:
