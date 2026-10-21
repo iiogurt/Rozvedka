@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% from "_ties.html" import ent %}
+{% block title %}Case file · Rozvedka{% endblock %}
+{% block main %}
+<div class="viz-head"><h1 class="page-h">Case file</h1>
+  {% if b.pins %}<div class="viz-actions"><a href="/case/export.md" title="Markdown with a citation for every step">Export as Markdown</a></div>{% endif %}</div>
+<p class="lede">Entities you are looking into, pinned on one shared board, and how every pair of them is connected – the most specific
+  chain of stated links, with its evidence.</p>
+<details class="how"><summary>How this works</summary>
+<p class="muted small">Pin up to {{ b.max }} entities here or with <i>📌 Pin</i> on an actor, entity, Rings or Find a connection page.
+  There is one board for the whole portal, kept in <code>{{ b.file }}</code>. That file is never committed and only personal backups
+  carry it, because a case file says what you are looking into. For every pair the board finds the most specific chain, as
+  <a href="/graph/path">Find a connection</a> does: official lists count most, co-mentions least, and hubs and common tools are weighed
+  down. The pair grid shows how many steps each chain has, and each number opens all the chains of that pair. <b>Connectors</b> are
+  entities that sit on the chains of several pairs; they are often the thread to pull, but a chain is a set of stated links, not a
+  finding. The export lists the pins, the notes, every chain with a citation for each step, and the connectors.</p></details>
+
+<form class="path-form" method="post" action="/case/pin" autocomplete="off">
+  <label>Pin <input name="e" value="{{ e }}" list="ent-list" data-suggest size="34" placeholder="name: Wagner Group, a company, a person …" required></label>
+  <label>note <input name="note" size="30" placeholder="why it matters (optional)"></label>
+  <button {{ 'disabled' if b.pins|length >= b.max }}>📌 Pin</button>
+  <datalist id="ent-list"></datalist>
+  <span class="muted small">{{ b.pins|length }} of {{ b.max }}</span>
+</form>
+{% if cands %}
+<section class="viz-card">
+  <h2 class="viz-title">Which “{{ e }}”?</h2>
+  <ul class="tie-grid small">{% for c in cands %}<li>{{ ent(c.label, c.kind, c.href) }} <span class="muted">{{ c.kind_name }} · {{ c.links }} links</span>
+    <form class="inline" method="post" action="/case/pin"><input type="hidden" name="e" value="{{ c.value }}"><button class="pin-btn">📌 Pin</button></form></li>{% endfor %}</ul>
+</section>{% endif %}
+
+{% if not b.pins %}<p class="empty">Nothing pinned yet. Pin two or more entities to see how they are connected – for example
+  <a href="/graph/path?a=Q36597284&amp;b=Q20757678">Wagner Group and APT28</a>.</p>{% else %}
+<section class="viz-card">
+  <h2 class="viz-title">Pinned <span class="muted small">{{ b.pins|length }}</span></h2>
+  <div class="case-pins">
+  {% for p in b.pins %}<div class="case-pin{{ ' case-gone' if not p.known }}">
+    <div>{% if p.known %}{{ ent(p.label, p.kind, p.href) }}{% else %}<b>{{ p.label }}</b>{% endif %}
+      <span class="muted small">{{ p.kind_name }}{% if p.known %} · {{ p.links }} links{% endif %} · pinned {{ p.added }}</span></div>
+    <form class="case-note" method="post" action="/case/note"><input type="hidden" name="id" value="{{ p.id }}">
+      <input name="note" value="{{ p.note }}" placeholder="note" aria-label="Note on {{ p.label }}"><button class="small">Save</button></form>
+    <div class="small">{% if p.known %}<a href="/graph/rings?e={{ p.id|urlencode }}">rings</a> ·
+      <a href="/graph/path?a={{ p.id|urlencode }}">find a connection</a> · {% endif %}
+      <form class="inline" method="post" action="/case/unpin"><input type="hidden" name="id" value="{{ p.id }}"><button class="linkish">remove</button></form></div>
+  </div>{% endfor %}
+  </div>
+</section>
+
+{% set known = b.pins|selectattr('known')|list %}
+{% if known|length >= 2 %}
+<section class="viz-card">
+  <h2 class="viz-title">Steps between them <span class="muted small">{{ b.linked }} of {{ b.pairs|length }} pairs connected</span></h2>
+  <div class="tablewrap case-gridwrap"><table class="case-grid small">
+    <tr><th></th>{% for c in known %}<th class="case-col" title="{{ c.label }}"><span>{{ c.label }}</span></th>{% endfor %}</tr>
+    {% for r in known %}<tr><th class="case-row">{{ r.label }}</th>{% for c in known %}
+      {% if r.id == c.id %}<td class="case-self"></td>{% else %}{% set pr = b.grid[(r.id, c.id)] %}
+      <td class="case-s{{ [pr.steps, 5]|min if pr.steps else 0 }}">{% if pr.chain %}<a href="{{ pr.link }}" title="{{ pr.chain.nodes|map(attribute='label')|join(' → ') }}">{{ pr.steps }}</a>{% else %}<a href="{{ pr.link }}" title="no chain">–</a>{% endif %}</td>{% endif %}
+    {% endfor %}</tr>{% endfor %}
+  </table></div>
+  <p class="muted small">Steps of the most specific chain; 1 = a direct link. Each number opens all chains of the pair with their evidence.</p>
+</section>
+
+<section class="viz-card">
+  <h2 class="viz-title">How each pair is connected</h2>
+  <ol class="plain case-chains">{% for pr in b.pairs %}<li>
+    <div><b>{{ pr.a.label }}</b> – <b>{{ pr.b.label }}</b> <span class="muted small">{% if pr.chain %}{{ pr.steps }} step{{ 's' if pr.steps != 1 }}{% else %}no chain{% endif %} · <a href="{{ pr.link }}">all chains, evidence</a></span></div>
+    {% if pr.chain %}<div class="chain small">{% for n in pr.chain.nodes %}{{ ent(n.label, n.kind, n.href) }}{% if not loop.last %}{% set s = pr.chain.steps[loop.index0] %}
+      {% set l0 = s.links[0] %}{% set sym = l0.rel == l0.back %}<span class="chain-says{{ ' co' if loop.index0 in pr.chain.co_mention_only }}" title="{{ s.layers|join(', ') }}">{{ '← ' if not l0.forward and not sym }}{{ l0.rel }}{{ ' →' if l0.forward and not sym }}</span>{% endif %}{% endfor %}</div>
+    {% if pr.chain.co_mention_only %}<div class="muted small">┄ a step rests only on co-mentions in reports</div>{% endif %}{% endif %}
+  </li>{% endfor %}</ol>
+</section>
+
+{% if b.connectors %}
+<section class="viz-card">
+  <h2 class="viz-title">Connectors <span class="muted small">on the chains of several pairs</span></h2>
+  <ul class="plain small rings-list">{% for t in b.connectors %}<li>{{ ent(t.node.label, t.node.kind, t.node.href) }}
+    <span class="muted">{{ t.pairs|length }} pairs: {{ t.pairs|join('; ') }}</span>
+    · <form class="inline" method="post" action="/case/pin"><input type="hidden" name="e" value="{{ t.node.id }}"><button class="linkish">📌 pin</button></form></li>{% endfor %}</ul>
+</section>
+{% endif %}
+{% endif %}
+<form method="post" action="/case/clear" onsubmit="return confirm('Remove every pin from the case file?')"><button class="small">Clear the case file</button></form>
+{% endif %}
+<script src="{{ asset('paths.js') }}"></script>
+{% endblock %}

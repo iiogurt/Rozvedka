@@ -628,6 +628,25 @@ The communities, every link in the matrix and the neighbours linked to none of t
 - By default both views use **links that connect**: rivalries ("opposed to") and Wikipedia sentences without a relation word
   are left out, as on Leads and Brokers. The other choices bring them back.
 
+#### Case file
+
+<img src="docs/images/case.png" alt="Case file: five pinned actors with notes, a grid of the steps between every pair, and the chain of each pair" width="900">
+
+**One board for what you are looking into.** Pin up to 12 entities with **📌 Pin** on an actor, entity, Rings or Find a
+connection page, or type a name on `/case`, and add a note to each. The board shows:
+
+- **Steps between them:** a grid with the length of the most specific chain between every pair (1 = a direct link). Each
+  number opens all the chains of that pair with their evidence.
+- **How each pair is connected:** the chain itself, step by step as the sources state it. Steps that rest only on
+  co-mentions in reports are marked.
+- **Connectors:** entities that sit on the chains of several pairs, often the thread to pull.
+- **Export as Markdown:** the pins and notes, every chain with a citation for each step (list entry, Wikipedia revision,
+  Wikidata statement, retrieval date, the quoted sentence), and the connectors.
+
+The case file is kept in `data/case_file.yaml`. It is never committed, and only **personal backups** carry it, because it
+says what you are looking into. Chains here, on Find a connection, Rings and Matrix use **links that connect** by default:
+rivalries and Wikipedia sentences without a relation word are no sign of a connection.
+
 ### 🕸️ Named together
 
 <img src="docs/images/network.png" alt="Network: clusters of actors named together, with ties, main topics, timeline and reporting agencies" width="900">
@@ -995,6 +1014,7 @@ flowchart LR
 | `rozvedka/leads.py` | leads (shared neighbours, never named together; reviews in `sources/lead_reviews.yaml`) and brokers |
 | `rozvedka/identity.py`, `vendors.py`, `twins.py` | one target across sanctions lists and the details they share; vendors' names of threat groups (MISP); toolkit twins |
 | `rozvedka/rings.py` | Rings and the neighbourhood matrix: an entity's links on two rings, one sector per layer; its neighbours as a matrix ordered by Louvain communities |
+| `rozvedka/casefile.py` | the case file: pins with notes in `data/case_file.yaml`, the chain of every pair, connectors, the Markdown export with citations |
 | `rozvedka/paths.py` | Find a connection: the most specific chains between two entities (hub-penalised shortest paths, alternatives on other routes), name resolution |
 | `rozvedka/ties.py` | the network of stated links: entities and links from the sanctions lists, Wikidata, Wikipedia, ATT&CK and the reports, each with its evidence |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |

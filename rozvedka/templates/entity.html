@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% from "_network.html" import network %}
+{% from "_ties.html" import pin %}
 {% block title %}{{ e.label }} · Network · Rozvedka{% endblock %}
 {% block main %}
-<p class="muted small"><a href="/graph">Network</a> › {{ e.kind_name }}</p>
 <h1 class="page-h"><i class="kdot kind-{{ e.kind }}"></i>{{ e.label }}</h1>
 {% set d = e.data %}
 {% if e.origin == 'ids' %}
@@ -47,7 +47,7 @@
 <section class="viz-card" id="network">
   <h2 class="viz-title">Links <span class="muted small"><a href="/graph/ties?entity={{ e.id }}">{{ groups|sum(attribute='n') }}</a></span></h2>
   <p class="small"><a href="/graph/path?a={{ e.id }}"><b>Find a connection</b> from {{ e.label }} →</a>
-    · <a href="/graph/rings?e={{ e.id|urlencode }}"><b>Rings</b> around {{ e.label }} →</a></p>
+    · <a href="/graph/rings?e={{ e.id|urlencode }}"><b>Rings</b> around {{ e.label }} →</a> · {{ pin(e.id, request.url.path) }}</p>
   {{ network(groups, e.label) }}
 </section>
 {% endblock %}

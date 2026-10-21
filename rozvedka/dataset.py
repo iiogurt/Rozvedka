@@ -11,8 +11,8 @@ database (gzip), the report files, logos, the actor gazetteer, the country ratin
 
 A dataset is made either to share or as a personal backup (`--personal`). Some data may be kept in this library for
 personal use only and goes into personal backups alone: the local book library (the books' files, text and what
-they say) and the ratings whose terms do not allow passing them on (RSF's press-freedom scores – `personal` in
-ratings.MEASURES). The manifest says which kind a dataset is and lists the personal data it holds.
+they say), the ratings whose terms do not allow passing them on (RSF's press-freedom scores – `personal` in
+ratings.MEASURES) and the case file (data/case_file.yaml – what the owner is looking into). The manifest says which kind a dataset is and lists the personal data it holds.
 
 Import checks every part, then compares the dataset with this library – newer or older, overall and per source –
 and what it would add or change (`--check` stops there). An empty library is restored from the dataset; an
@@ -200,6 +200,9 @@ def personal_holdings(con) -> list[str]:
         out.append(f"the book library ({n} book{'s' if n != 1 else ''}: files, text, what they say)")
     stored = ratings.load().get("measures", {})
     out += [f"{m['name']} ({m['by']})" for k, m in ratings.MEASURES.items() if m.get("personal") and k in stored]
+    from . import casefile
+    if (pins := casefile.load()):
+        out.append(f"the case file ({len(pins)} pinned entit{'ies' if len(pins) != 1 else 'y'} with notes)")
     return out
 
 
@@ -303,7 +306,7 @@ def export(out_dir: str | Path, files: bool = True, since: str | None = None, pa
         log.info("writing %d report files (%.2f GB) into parts of %.2f GB", len(chosen),
                  manifest["scope"]["files_bytes"] / 1e9, part_size / 1e9)
         try:
-            _write_stream(writer, manifest, gz, logo_rows, chosen, ratings_bytes)
+            _write_stream(writer, manifest, gz, logo_rows, chosen, ratings_bytes, personal)
         except BaseException:
             writer.remove()                       # no half-written dataset is left behind
             raise
@@ -319,8 +322,10 @@ def export(out_dir: str | Path, files: bool = True, since: str | None = None, pa
     return {**manifest, "manifest_path": str(mpath)}
 
 
-def _write_stream(writer, manifest: dict, gz: Path, logo_rows: list, chosen: list, ratings_bytes: bytes | None = None) -> None:
-    """The tar stream: manifest, database, lists, gazetteer, ratings, logos, then the report files."""
+def _write_stream(writer, manifest: dict, gz: Path, logo_rows: list, chosen: list, ratings_bytes: bytes | None = None,
+                  personal: bool = False) -> None:
+    """The tar stream: manifest, database, lists, gazetteer, ratings, the case file (personal backups only), logos, then
+    the report files."""
     with tarfile.open(fileobj=writer, mode="w|", format=tarfile.PAX_FORMAT) as tar:
         _add_bytes(tar, "manifest.json", json.dumps({**manifest, "parts": "see the manifest file"}, indent=1).encode())
         tar.add(gz, arcname="db/rozvedka.db.gz")
@@ -330,6 +335,9 @@ def _write_stream(writer, manifest: dict, gz: Path, logo_rows: list, chosen: lis
             tar.add(p, arcname=f"gazetteer/{p.name}")
         if ratings_bytes:
             _add_bytes(tar, "ratings/ratings.json", ratings_bytes)
+        from . import casefile
+        if personal and casefile.path().exists():
+            tar.add(casefile.path(), arcname="case/case_file.yaml")
         for r in logo_rows:
             p = _logos_dir() / r["logo_path"]
             if p.exists():
@@ -820,6 +828,12 @@ def _extract(tar, plan: dict, m: dict) -> dict:
         elif name == "ratings/ratings.json":
             with tar.extractfile(member) as src:
                 stats["ratings"] = _take_ratings(src.read())
+        elif name == "case/case_file.yaml":         # a personal backup's case file: its pins added to this one
+            from . import casefile
+            with tar.extractfile(member) as src:
+                theirs = (yaml.safe_load(src.read().decode("utf-8")) or {}).get("pins") or []
+            n = casefile.merge(theirs)
+            stats["case_file"] = f"{n} pin{'s' if n != 1 else ''} added"
         elif name.startswith("sources/") and Path(name).name in PORTAL_LISTS:
             folder = config.DATA / "imports" / f"{m['dataset_id']}-lists"
             folder.mkdir(parents=True, exist_ok=True)
@@ -1031,6 +1045,8 @@ def describe(r: dict, cli: bool = True) -> str:
         lines.append(f"  actor gazetteer: {r['files']['gazetteer']}")
     if r["files"].get("ratings"):
         lines.append(f"  country ratings: {r['files']['ratings']}")
+    if r["files"].get("case_file"):
+        lines.append(f"  case file: {r['files']['case_file']}")
     for k, v in (r.get("lists") or {}).items():
         lines.append(f"  {k}: {v}")
     if a.get("conflicts"):

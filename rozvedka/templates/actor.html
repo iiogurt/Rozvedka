@@ -208,7 +208,8 @@
     sentence or entry it comes from. Wikidata and Wikipedia ties are under Connections below; co-mentions in reports on the
     <a href="/network">Named together</a> page. All layers: {% for l in net_layers %}<a href="{{ l.link }}">{{ l.name }} {{ l.n }}</a>{{ ' · ' if not loop.last }}{% endfor %}.
     How it is built: <a href="/graph">Network</a>. <a href="/graph/path?a={{ a.key }}"><b>Find a connection</b> from {{ a.label }} →</a>
-    · <a href="/graph/rings?e={{ a.key }}"><b>Rings</b> around {{ a.label }} →</a></p>
+    · <a href="/graph/rings?e={{ a.key }}"><b>Rings</b> around {{ a.label }} →</a>
+    · {% from "_ties.html" import pin %}{{ pin(a.key, request.url.path ~ '#network') }}</p>
   {{ net(network, a.label) }}
 </section>
 {% endif %}
