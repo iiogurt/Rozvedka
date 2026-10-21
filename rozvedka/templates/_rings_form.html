@@ -1,0 +1,23 @@
+{# the entity form of Rings and Matrix: `here` is the page's own address #}
+{% from "_ties.html" import ent %}
+<form class="path-form" method="get" autocomplete="off">
+  <label>Entity <input name="e" value="{{ ev }}" list="ent-list" data-suggest size="38" placeholder="name: Hezbollah, Wagner Group, a company …"></label>
+  <select name="show" aria-label="Which links">{% for k, v in choices.items() %}<option value="{{ k }}" {{ 'selected' if f.show == k }}>{{ v }}</option>{% endfor %}</select>
+  <label class="chk"><input type="checkbox" name="countries" value="1" {{ 'checked' if f.countries }}> with countries</label>
+  <button>Draw</button>
+  <datalist id="ent-list"></datalist>
+</form>
+
+{% if cands %}
+<section class="viz-card">
+  <h2 class="viz-title">Which “{{ e }}”?</h2>
+  <p class="muted small">Several entities carry this name – often one company on several lists. More links usually means a fuller drawing.</p>
+  <ul class="tie-grid small">{% for c in cands %}<li>{{ ent(c.label, c.kind, here ~ '?e=' ~ c.value|urlencode ~ '&show=' ~ f.show ~ ('&countries=1' if f.countries else '')) }}
+    <span class="muted">{{ c.kind_name }} · {{ c.links }} links</span></li>{% endfor %}</ul>
+</section>
+{% elif e and not d %}<p class="notice">Nothing in the network is called “{{ e }}”.</p>
+{% elif not e %}
+<p class="muted small">Try <a href="{{ here }}?e=Q41053">Hezbollah</a>, <a href="{{ here }}?e=Q36597284">Wagner Group</a> or
+  <a href="{{ here }}?e=Q20757678">APT28</a>.</p>
+{% endif %}
+

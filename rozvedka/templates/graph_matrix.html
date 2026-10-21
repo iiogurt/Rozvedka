@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% from "_ties.html" import lay, ent %}
+{% block title %}Neighbourhood matrix{% if d %}: {{ d.center.label }}{% endif %} · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Neighbourhood matrix{% if d %}: {{ ent(d.center.label, d.center.kind, d.center.href) }}{% endif %}</h1>
+<p class="lede">How an entity's neighbours are linked among themselves: one row and one column per neighbour, a mark where a source
+  states a link between two of them, ordered so that communities form blocks.</p>
+<details class="how"><summary>How this is ordered</summary>
+<p class="muted small">The neighbours are the entity's direct links in the chosen sources. At most {{ size }} are kept: those with most
+  links to the other neighbours first. Countries are left out unless asked for. Communities come from the Louvain method on the links
+  among them (Blondel et al. 2008): a node moves to the neighbouring community that raises modularity most, and communities are merged
+  and moved again until nothing changes. A link stated by several sources weighs more. A community is named after its most linked
+  member and is drawn as a block on the diagonal; its rows run from most to fewest links inside the matrix. A mark is coloured by the
+  strongest source that states the link, and a dot inside means several sources state it. Every mark opens the link's evidence on
+  Find a connection. Neighbours linked to none of the others are listed below the matrix. A community is a pattern in the stated
+  links, not an organisation.</p></details>
+
+<p class="seg rt-groups" role="tablist" aria-label="View">
+  <a role="tab" href="/graph/rings?e={{ e|urlencode }}&amp;show={{ f.show }}{{ '&amp;countries=1' if f.countries }}">Rings</a>
+  <a role="tab" class="on" aria-selected="true" href="">Matrix</a></p>
+{% set here = "/graph/rings/matrix" %}{% include "_rings_form.html" %}
+
+{% if d %}{% set c = d.counts %}
+<p class="net-summary"><a href="/graph/rings?e={{ d.center.id|urlencode }}&amp;show={{ f.show }}{{ '&amp;countries=1' if f.countries }}#inner"><b>{{ c.near|num }}</b> neighbours</a>
+  in the chosen sources{% if not c.countries %} (countries left out){% endif %}, {{ c.pairs|num }} links among them ·
+  {{ c.chosen }} kept: <b>{{ c.shown }}</b> in the matrix with <a href="#links"><b>{{ c.shown_pairs|num }}</b> links</a>
+  in <a href="#groups"><b>{{ d.groups|length }}</b> communities</a>{% if d.lone %}, <a href="#lone">{{ d.lone|length }}</a> linked to none of the others{% endif %}</p>
+{% if not d.rows %}<p class="notice">None of the neighbours is linked to another one in the chosen sources.</p>{% else %}
+{% set W = d.row_label + d.side + 24 %}{% set H = d.col_label + d.side + 24 %}
+<section class="viz-card mx-card">
+  <div class="mx-wrap">
+  <svg class="mx" viewBox="0 0 {{ W }} {{ H }}" width="{{ W }}" height="{{ H }}" role="img"
+       aria-label="Matrix of {{ d.rows|length }} neighbours of {{ d.center.label }} in {{ d.groups|length }} communities">
+    <g transform="translate({{ d.row_label }},{{ d.col_label }})">
+      {% for g in d.groups %}<rect class="mx-block mx-b{{ g.i % 2 }}" x="{{ g.start * d.cell }}" y="{{ g.start * d.cell }}" width="{{ g.size * d.cell }}" height="{{ g.size * d.cell }}"/>{% endfor %}
+      {% for r in d.rows %}<line class="mx-grid" x1="0" x2="{{ d.side }}" y1="{{ r.y + d.cell }}" y2="{{ r.y + d.cell }}"/>
+        <line class="mx-grid" y1="0" y2="{{ d.side }}" x1="{{ r.y + d.cell }}" x2="{{ r.y + d.cell }}"/>{% endfor %}
+      {% for x in d.cells %}<a href="{{ x.chain }}"><rect class="mx-cell mx-{{ x.group }}{{ ' mx-out' if not x.inside }}" x="{{ x.x + 1 }}" y="{{ x.y + 1 }}" width="{{ d.cell - 2 }}" height="{{ d.cell - 2 }}"><title>{{ x.title }} – open the evidence</title></rect>{% if x.many %}<circle class="mx-many" cx="{{ x.x + d.cell / 2 }}" cy="{{ x.y + d.cell / 2 }}" r="2"/>{% endif %}</a>{% endfor %}
+      {% for r in d.rows %}<a href="{{ r.href }}"><text class="mx-row" x="-6" y="{{ r.y + d.cell / 2 }}" dy="0.32em" text-anchor="end"><title>{{ r.label }} · community {{ r.group }} · {{ r.deg }} links in the matrix</title>{{ r.short }}</text></a>
+        <text class="mx-gnum" x="{{ -d.row_label + 4 }}" y="{{ r.y + d.cell / 2 }}" dy="0.32em">{{ r.group }}</text>
+        <a href="{{ r.href }}"><text class="mx-col" transform="translate({{ r.y + d.cell / 2 }},-6) rotate(-55)" dy="0.32em"><title>{{ r.label }}</title>{{ r.short }}</text></a>{% endfor %}
+    </g>
+  </svg>
+  </div>
+  <p class="small rings-key"><span class="lay-official">■ official lists</span> · <span class="lay-reference">■ reference data</span> ·
+    <span class="lay-reports">■ named together in reports</span> · ● several sources · paler: a link between two communities ·
+    the numbers on the left are the communities. Click a mark for its evidence.</p>
+</section>
+
+<div class="rings-tables">
+<section class="viz-card" id="groups">
+  <h2 class="viz-title">Communities <span class="muted small">{{ d.groups|length }}</span></h2>
+  {% for g in d.groups %}<h3 class="small rings-h">{{ g.i }} · around {{ g.name }} <span class="muted">{{ g.size }} members, {{ g.internal }} links inside</span></h3>
+  <ul class="plain small rings-list">{% for m in g.members %}<li>{{ ent(m.label, m.kind, m.href) }} <span class="muted">{{ m.deg }} links in the matrix</span></li>{% endfor %}</ul>{% endfor %}
+  {% if d.lone %}<h3 class="small rings-h" id="lone">Linked to none of the others <span class="muted">{{ d.lone|length }}</span></h3>
+  <ul class="plain small rings-list">{% for m in d.lone %}<li>{{ ent(m.label, m.kind, m.href) }}</li>{% endfor %}</ul>{% endif %}
+</section>
+<section class="viz-card" id="links">
+  <h2 class="viz-title">Links in the matrix <span class="muted small">{{ d.links|length }}</span></h2>
+  <ul class="plain small rings-list">{% for l in d.links %}<li><a href="{{ l.a_href }}">{{ l.a }}</a> – <a href="{{ l.b_href }}">{{ l.b }}</a>
+    <span class="muted">{{ l.layers|join(', ') }}</span> · <a href="{{ l.chain }}">evidence</a></li>{% endfor %}</ul>
+</section>
+</div>
+{% endif %}
+{% endif %}
+<script src="{{ asset('paths.js') }}"></script>
+{% endblock %}

@@ -14,7 +14,7 @@ Countries are left out unless asked for: nearly everything is linked to Russia o
 import math
 from urllib.parse import quote
 
-from . import paths, ties
+from . import db, paths, ties
 
 INNER = 40
 OUTER = 48
@@ -23,8 +23,27 @@ R1, R2 = 220, 400       # ring radii in the drawing (viewBox units)
 SIZE = 610              # half the drawing's width: room for the outer labels
 MIN_SECTOR = 0.12       # radians a sector with any neighbour gets at least
 GAP = 0.035             # radians between sectors
-CHOICES = {"stated": "Stated links (all but co-mentions)", "official": "Official lists only", "reference": "Reference data only",
+CHOICES = {"connecting": "Links that connect (no rivalries, no bare article mentions)",
+           "stated": "Stated links (all but co-mentions)", "official": "Official lists only", "reference": "Reference data only",
            "all": "All, with co-mentions in reports"}
+
+
+_not_a_tie: dict = {"v": None}
+
+
+def _uses(choice: str):
+    """(tie id, layer) → whether the chosen sources count it. "connecting" also leaves out rivalries and article sentences
+    without a relation word (ties.NOT_A_TIE, as on Leads and Brokers)."""
+    layers = set(_layers(choice))
+    if choice != "connecting":
+        return lambda t, l: l in layers
+    v = db.version()
+    if _not_a_tie["v"] != v:
+        with db.session() as con:
+            ties.init()
+            _not_a_tie.update(v=v, ids={r[0] for r in con.execute(f"SELECT t.id FROM ties t WHERE {ties.NOT_A_TIE}")})
+    skip = _not_a_tie["ids"]
+    return lambda t, l: l in layers and t not in skip
 
 
 def _layers(choice: str) -> list[str]:
@@ -83,12 +102,12 @@ def _spread(items: list[dict], slots: int) -> None:
         j -= 1
 
 
-def rings(center: str, choice: str = "stated", countries: bool = False) -> dict | None:
+def rings(center: str, choice: str = "connecting", countries: bool = False) -> dict | None:
     g = paths._graph()
     ents, adj = g["ents"], g["adj"]
     if center not in ents:
         return None
-    layers = _layers(choice)
+    use = _uses(choice)
     rank = {k: i for i, k in enumerate(sorted(ties.LAYERS, key=lambda k: (paths.BASE.get(k, 2), list(ties.LAYERS).index(k))))}
     keep = lambda e: e != center and (countries or ents[e]["kind"] != "country")
     deg = lambda e: len(adj.get(e, {}))
@@ -96,7 +115,7 @@ def rings(center: str, choice: str = "stated", countries: bool = False) -> dict 
     # ── the inner ring: every neighbour, its layers, the strongest one for its sector ──
     near = {}
     for other, links in adj.get(center, {}).items():
-        ls = sorted({l for _t, l in links if l in layers}, key=rank.get)
+        ls = sorted({l for t, l in links if use(t, l)}, key=rank.get)
         if ls and keep(other):
             near[other] = {"id": other, "layers": ls, "sector": ls[0], "deg": deg(other), "n_ties": len(links)}
     ranked = sorted(near.values(), key=lambda n: (-len(n["layers"]), not ents[n["id"]]["actor"], n["deg"], ents[n["id"]]["label"]))
@@ -132,7 +151,7 @@ def rings(center: str, choice: str = "stated", countries: bool = False) -> dict 
     far: dict[str, dict] = {}
     for n in shown:
         for other, links in adj.get(n["id"], {}).items():
-            if other in near or not keep(other) or not any(l in layers for _t, l in links):
+            if other in near or not keep(other) or not any(use(t, l) for t, l in links):
                 continue
             f = far.setdefault(other, {"id": other, "via": [], "deg": deg(other)})
             f["via"].append(n["id"])
@@ -162,7 +181,7 @@ def rings(center: str, choice: str = "stated", countries: bool = False) -> dict 
         for v in f["via"]:
             p = pos[v]
             edges.append({"a": v, "b": f["id"], "x1": p["x"], "y1": p["y"], "x2": f["x"], "y2": f["y"], "group": "outer", "many": False})
-    group = {"stated": "stated", "official": "official", "reference": "reference"}.get(choice, "")
+    group = {"connecting": "connecting", "stated": "stated", "official": "official", "reference": "reference"}.get(choice, "")
     says: dict[str, set] = {}
     for t in ties.tie_list(entity=center, group=group, limit=100000):
         if t["other"] in near:
@@ -193,3 +212,126 @@ def _arc(a0: float, a1: float, r: float) -> str:
     x0, y0, x1, y1 = r * math.cos(a0), r * math.sin(a0), r * math.cos(a1), r * math.sin(a1)
     big = 1 if a1 - a0 > math.pi else 0
     return f"M{x0:.1f},{y0:.1f} A{r},{r} 0 {big} 1 {x1:.1f},{y1:.1f}"
+
+
+# ── the matrix of one entity's neighbourhood, ordered by communities ──
+MATRIX = 60             # neighbours in the matrix: those with most links among themselves
+CELL = 14               # a cell's size in the drawing
+ROW_LABEL = 230         # room for the row names
+COL_LABEL = 170         # room for the column names, turned
+
+
+def louvain(nodes: list[str], weights: dict[tuple[str, str], float]) -> list[list[str]]:
+    """Communities by modularity (Blondel et al. 2008): move each node to the neighbouring community that raises modularity
+    most, merge the communities into nodes, repeat until nothing moves. Deterministic: nodes are visited in sorted order."""
+    adj: dict[str, dict[str, float]] = {n: {} for n in nodes}
+    for (a, b), w in weights.items():
+        if a != b:
+            adj[a][b] = adj[a].get(b, 0) + w
+            adj[b][a] = adj[b].get(a, 0) + w
+    members = {n: [n] for n in nodes}
+    while True:
+        m2 = sum(sum(v.values()) for v in adj.values())        # twice the total weight
+        if not m2:
+            break
+        k = {n: sum(adj[n].values()) for n in adj}
+        com = {n: n for n in adj}
+        tot = dict(k)
+        moved_any = False
+        for _ in range(20):
+            moved = False
+            for n in sorted(adj):
+                c0 = com[n]
+                tot[c0] -= k[n]
+                links: dict[str, float] = {}
+                for o, w in adj[n].items():
+                    if o != n:                                 # a merged community's own links are not a move
+                        links[com[o]] = links.get(com[o], 0) + w
+                best, gain = c0, links.get(c0, 0) - tot[c0] * k[n] / m2
+                for c, w in sorted(links.items()):
+                    g = w - tot[c] * k[n] / m2
+                    if g > gain + 1e-12:
+                        best, gain = c, g
+                com[n] = best
+                tot[best] += k[n]
+                if best != c0:
+                    moved = moved_any = True
+            if not moved:
+                break
+        if not moved_any:
+            break
+        new_adj: dict[str, dict[str, float]] = {}
+        new_members: dict[str, list[str]] = {}
+        for n, c in com.items():
+            new_members.setdefault(c, []).extend(members[n])
+            row = new_adj.setdefault(c, {})
+            for o, w in adj[n].items():                      # links inside stay as the new node's own (self) weight
+                row[com[o]] = row.get(com[o], 0) + w
+        adj, members = new_adj, new_members
+    return sorted((sorted(v) for v in members.values()), key=lambda v: (-len(v), v))
+
+
+def matrix(center: str, choice: str = "connecting", countries: bool = False) -> dict | None:
+    g = paths._graph()
+    ents, adj = g["ents"], g["adj"]
+    if center not in ents:
+        return None
+    use = _uses(choice)
+    rank = {k: i for i, k in enumerate(sorted(ties.LAYERS, key=lambda k: (paths.BASE.get(k, 2), list(ties.LAYERS).index(k))))}
+    near = {o for o, links in adj.get(center, {}).items()
+            if o != center and (countries or ents[o]["kind"] != "country") and any(use(t, l) for t, l in links)}
+    # links among the neighbours, by pair: the layers that state them
+    pairs: dict[tuple[str, str], list[str]] = {}
+    for a in near:
+        for b, links in adj.get(a, {}).items():
+            if b in near and a < b:
+                ls = sorted({l for t, l in links if use(t, l)}, key=rank.get)
+                if ls:
+                    pairs[(a, b)] = ls
+    inside = {n: 0 for n in near}
+    for a, b in pairs:
+        inside[a] += 1
+        inside[b] += 1
+    chosen = sorted(near, key=lambda n: (-inside[n], -len(adj[n]), ents[n]["label"]))[:MATRIX]
+    chosen_set = set(chosen)
+    linked = [n for n in chosen if any((min(n, o), max(n, o)) in pairs for o in chosen_set if o != n)]
+    lone = sorted((n for n in chosen if n not in set(linked)), key=lambda n: ents[n]["label"].casefold())
+    sub = {p: ls for p, ls in pairs.items() if p[0] in chosen_set and p[1] in chosen_set}
+    comms = louvain(linked, {p: float(len(ls)) for p, ls in sub.items()})
+    deg_in = {n: 0 for n in chosen}
+    for a, b in sub:
+        deg_in[a] += 1
+        deg_in[b] += 1
+    order, groups = [], []
+    for i, cm in enumerate(comms):
+        cm = sorted(cm, key=lambda n: (-deg_in[n], ents[n]["label"].casefold()))
+        internal = sum(1 for a, b in sub if a in cm and b in cm)
+        groups.append({"i": i + 1, "start": len(order), "size": len(cm), "name": ents[cm[0]]["label"], "internal": internal,
+                       "members": [{"id": n, "label": ents[n]["label"], "kind": ents[n]["kind"],
+                                    "href": ties.entity_url(n, ents[n]["actor"]), "deg": deg_in[n]} for n in cm]})
+        order += cm
+    group_of = {m["id"]: gr["i"] for gr in groups for m in gr["members"]}
+    rows = [{"id": n, "label": ents[n]["label"], "short": _short(ents[n]["label"]), "kind": ents[n]["kind"],
+             "href": ties.entity_url(n, ents[n]["actor"]), "group": group_of[n], "deg": deg_in[n], "y": i * CELL}
+            for i, n in enumerate(order)]
+    idx = {n: i for i, n in enumerate(order)}
+    cells, links = [], []
+    for (a, b), ls in sorted(sub.items(), key=lambda x: (idx[x[0][0]], idx[x[0][1]])):
+        grp = ties.LAYERS[ls[0]]["group"]
+        chain = f"/graph/path?a={quote(a)}&b={quote(b)}"
+        for r, c in ((a, b), (b, a)):
+            cells.append({"x": idx[c] * CELL, "y": idx[r] * CELL, "group": grp, "many": len(ls) > 1, "chain": chain,
+                          "title": f"{ents[r]['label']} – {ents[c]['label']}: {', '.join(ls)}",
+                          "inside": group_of[a] == group_of[b]})
+        links.append({"a": ents[a]["label"], "b": ents[b]["label"], "a_href": ties.entity_url(a, ents[a]["actor"]),
+                      "b_href": ties.entity_url(b, ents[b]["actor"]), "layers": ls, "chain": chain, "group": grp})
+    links.sort(key=lambda l: (l["a"].casefold(), l["b"].casefold()))
+    c = ents[center]
+    n = len(order)
+    return {"center": {"id": center, "label": c["label"], "kind": c["kind"], "href": ties.entity_url(center, c["actor"])},
+            "rows": rows, "cells": cells, "groups": groups, "links": links,
+            "lone": [{"id": x, "label": ents[x]["label"], "kind": ents[x]["kind"], "href": ties.entity_url(x, ents[x]["actor"])}
+                     for x in lone],
+            "counts": {"near": len(near), "pairs": len(pairs), "chosen": len(chosen), "shown": n, "shown_pairs": len(sub),
+                       "countries": countries, "choice": choice},
+            "cell": CELL, "side": n * CELL, "row_label": ROW_LABEL, "col_label": COL_LABEL}

@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.84.0] – 2026-10-21
+
+### Added
+- **Neighbourhood matrix** (`/graph/rings/matrix`, the *Matrix* switch on Rings). An entity's neighbours are shown as rows and
+  columns, with a mark where a source states a link between two of them. The rows are ordered by communities (Louvain
+  modularity), so groups such as Hezbollah's Quds Force / IRGC block, the Gaza war or a Latin American crime cluster stand out
+  as blocks. Every mark opens its evidence, and the communities, every link and the neighbours linked to none of the others
+  are listed below it.
+
+### Changed
+- **Rings use "links that connect" by default.** Rivalries and Wikipedia sentences without a relation word are left out, as on
+  Leads and Brokers. The other choices bring them back.
+
 ## [0.83.0] – 2026-10-21
 
 ### Added
@@ -1601,7 +1614,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.83.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.84.0...HEAD
+[0.84.0]: https://github.com/iiogurt/Rozvedka/compare/v0.83.0...v0.84.0
 [0.83.0]: https://github.com/iiogurt/Rozvedka/compare/v0.82.1...v0.83.0
 [0.82.1]: https://github.com/iiogurt/Rozvedka/compare/v0.82.0...v0.82.1
 [0.82.0]: https://github.com/iiogurt/Rozvedka/compare/v0.81.0...v0.82.0

@@ -617,6 +617,17 @@ inner ring, the entities two steps away on the outer ring, and every name stays 
   on what is drawn. Each row has its evidence or chain on Find a connection. Hover a name to see its links.
 - Every actor and entity page links to it (“Rings around …”).
 
+<img src="docs/images/rings-matrix.png" alt="Neighbourhood matrix of Hezbollah: its neighbours as rows and columns, marks where a source states a link between two of them, communities as blocks on the diagonal" width="900">
+
+**How are the neighbours linked among themselves?** The *Matrix* switch shows the same neighbourhood as a matrix. There is one
+row and one column per neighbour (the 60 with most links to the others), and a mark where a source states a link between
+two of them. The rows are ordered by **communities** (Louvain modularity), which form blocks on the diagonal. Around
+Hezbollah, for example, there is a Quds Force / IRGC block, Hamas and the Gaza war, Hezbollah's own commanders, a jihadist
+block, and Maduro with Tren de Aragua and the Zetas. Each mark is coloured by its strongest source and opens its evidence.
+The communities, every link in the matrix and the neighbours linked to none of the others are listed below it.
+- By default both views use **links that connect**: rivalries ("opposed to") and Wikipedia sentences without a relation word
+  are left out, as on Leads and Brokers. The other choices bring them back.
+
 ### 🕸️ Named together
 
 <img src="docs/images/network.png" alt="Network: clusters of actors named together, with ties, main topics, timeline and reporting agencies" width="900">
@@ -983,7 +994,7 @@ flowchart LR
 | `rozvedka/wikitext.py` | links stated in the text of Wikipedia articles: sentences with links, the relation word, redirects |
 | `rozvedka/leads.py` | leads (shared neighbours, never named together; reviews in `sources/lead_reviews.yaml`) and brokers |
 | `rozvedka/identity.py`, `vendors.py`, `twins.py` | one target across sanctions lists and the details they share; vendors' names of threat groups (MISP); toolkit twins |
-| `rozvedka/rings.py` | Rings: an entity's links on two rings, one sector per layer, the choice of what is drawn and the layout |
+| `rozvedka/rings.py` | Rings and the neighbourhood matrix: an entity's links on two rings, one sector per layer; its neighbours as a matrix ordered by Louvain communities |
 | `rozvedka/paths.py` | Find a connection: the most specific chains between two entities (hub-penalised shortest paths, alternatives on other routes), name resolution |
 | `rozvedka/ties.py` | the network of stated links: entities and links from the sanctions lists, Wikidata, Wikipedia, ATT&CK and the reports, each with its evidence |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |
