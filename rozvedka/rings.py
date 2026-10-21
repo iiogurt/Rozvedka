@@ -14,7 +14,7 @@ Countries are left out unless asked for: nearly everything is linked to Russia o
 import math
 from urllib.parse import quote
 
-from . import db, paths, ties
+from . import paths, ties
 
 INNER = 40
 OUTER = 48
@@ -28,21 +28,13 @@ CHOICES = {"connecting": "Links that connect (no rivalries, no bare article ment
            "all": "All, with co-mentions in reports"}
 
 
-_not_a_tie: dict = {"v": None}
-
-
 def _uses(choice: str):
     """(tie id, layer) → whether the chosen sources count it. "connecting" also leaves out rivalries and article sentences
     without a relation word (ties.NOT_A_TIE, as on Leads and Brokers)."""
     layers = set(_layers(choice))
     if choice != "connecting":
         return lambda t, l: l in layers
-    v = db.version()
-    if _not_a_tie["v"] != v:
-        with db.session() as con:
-            ties.init()
-            _not_a_tie.update(v=v, ids={r[0] for r in con.execute(f"SELECT t.id FROM ties t WHERE {ties.NOT_A_TIE}")})
-    skip = _not_a_tie["ids"]
+    skip = ties.not_a_tie_ids()
     return lambda t, l: l in layers and t not in skip
 
 

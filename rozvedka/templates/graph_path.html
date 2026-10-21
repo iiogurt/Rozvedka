@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_ties.html" import lay, ent, evidence %}
+{% from "_ties.html" import lay, ent, evidence, pin %}
 {% block title %}Find a connection{% if ea and eb %}: {{ ea.label }} – {{ eb.label }}{% endif %} · Rozvedka{% endblock %}
 {% block main %}
 <h1 class="page-h">Find a connection</h1>
@@ -12,7 +12,8 @@
   says little, one through a small front company says much – and passing through a common system tool (net, PowerShell,
   Mimikatz) adds 1.5 more. Each step reads as the source states it: “← linked to” means the next entity is linked to the
   previous one. The cheapest chain comes first. The next chains may not reuse its intermediate entities, so they are
-  other routes, not variations of one. At most {{ max_steps }} steps; countries are left out unless asked for. A chain is a set of
+  other routes, not variations of one. At most {{ max_steps }} steps; countries are left out unless asked for. Rivalries (“opposed to”) and Wikipedia
+  sentences without a relation word are left out too unless asked for – they are no sign of a connection. A chain is a set of
   stated links, not a finding: read the evidence. Entries of different sanctions lists are not merged yet, so one company can
   appear as several entities (choose the one with more links).</p></details>
 
@@ -25,6 +26,8 @@
   <fieldset class="small path-layers"><legend>Layers</legend>
     {% for k, l in layers.items() %}<label class="chk"><input type="checkbox" name="layer" value="{{ k }}" {{ 'checked' if k in f.layers }}> {{ lay(k, l.group, l.name) }}</label>{% endfor %}
     <label class="chk"><input type="checkbox" name="countries" value="1" {{ 'checked' if f.countries }}> through countries</label>
+    <select name="connecting" aria-label="Which links"><option value="1" {{ 'selected' if f.connecting }}>only links that connect</option>
+      <option value="0" {{ 'selected' if not f.connecting }}>also rivalries and bare article mentions</option></select>
   </fieldset>
 </form>
 
@@ -41,6 +44,7 @@
 {% endfor %}
 
 {% if chains is not none %}
+  <p class="small">{{ pin(ea.id, request.url.path ~ '?' ~ request.url.query, '📌 Pin ' ~ ea.label) }} {{ pin(eb.id, request.url.path ~ '?' ~ request.url.query, '📌 Pin ' ~ eb.label) }}</p>
   {% if chains %}
   <p class="small muted">{{ chains|length }} chain{{ 's' if chains|length != 1 }} between {{ ent(ea.label, ea.kind, ea.href) }} and {{ ent(eb.label, eb.kind, eb.href) }}, the most specific first.</p>
   {% for c in chains %}

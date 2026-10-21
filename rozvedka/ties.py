@@ -91,6 +91,20 @@ CREATE TABLE IF NOT EXISTS ties_meta (k TEXT PRIMARY KEY, v TEXT);
 """
 
 
+_not_a_tie: dict = {"v": None}
+
+
+def not_a_tie_ids() -> set[int]:
+    """Ids of the links that are no sign of a connection (NOT_A_TIE: rivalries, article sentences without a relation word),
+    kept until the database changes – Rings, Matrix and chains that use "links that connect" leave them out."""
+    v = db.version()
+    if _not_a_tie["v"] != v:
+        with db.session() as con:
+            init()
+            _not_a_tie.update(v=v, ids={r[0] for r in con.execute(f"SELECT t.id FROM ties t WHERE {NOT_A_TIE}")})
+    return _not_a_tie["ids"]
+
+
 def init() -> None:
     with db.session() as con:
         con.executescript(SCHEMA)

@@ -1547,3 +1547,30 @@ a:hover > .mx-cell { opacity: 1; stroke: var(--ink); stroke-width: 1.5; }
 .mx-row, .mx-col { fill: var(--ink); font-size: 11.5px; }
 a:hover > .mx-row, a:hover > .mx-col { fill: var(--accent); }
 .mx-gnum { fill: var(--muted); font-size: 10px; font-family: var(--mono); }
+
+/* ── Case file (/case, rozvedka/casefile.py) ── */
+.pin-form { display: inline; }
+.pin-btn { font-size: 12px; padding: 1px 8px; }
+button.linkish { border: 0; background: none; padding: 0; color: var(--accent); cursor: pointer; font-size: inherit; }
+button.linkish:hover { text-decoration: underline; }
+.case-pins { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 10px; }
+.case-pin { border: 1px solid var(--line); border-radius: var(--r-m); padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
+.case-pin.case-gone { opacity: .6; border-style: dashed; }
+.case-note { display: flex; gap: 4px; }
+.case-note input { flex: 1; min-width: 0; font-size: 12.5px; }
+.case-gridwrap { background: none; border: 0; }
+table.case-grid { border-collapse: collapse; }
+.case-grid th, .case-grid td { border: 1px solid var(--line); text-align: center; padding: 0; }
+.case-grid td a { display: block; min-width: 34px; padding: 6px 4px; font-variant-numeric: tabular-nums; color: var(--ink); }
+.case-row { text-align: right !important; padding: 4px 8px !important; white-space: nowrap; font-weight: 500; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+.case-col { height: 130px; vertical-align: bottom; width: 36px; }
+.case-col span { display: inline-block; writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; max-height: 125px; overflow: hidden; text-overflow: ellipsis; padding: 4px 0; font-weight: 500; }
+.case-self { background: var(--chip); }
+.case-s1 { background: var(--seq-6); } .case-s1 a { color: var(--on-accent) !important; font-weight: 700; }
+.case-s2 { background: var(--seq-5); } .case-s3 { background: var(--seq-4); } .case-s4 { background: var(--seq-3); }
+.case-s5 { background: var(--seq-2); } .case-s0 { background: transparent; }
+.case-chains > li { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.case-chains .chain { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 4px; }
+.case-chains .chain-says { color: var(--muted); }
+.case-chains .chain-says.co { border-bottom: 1px dashed var(--muted); }
+.case-toast { margin: 0 0 10px; }

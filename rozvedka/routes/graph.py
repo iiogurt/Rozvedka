@@ -39,16 +39,17 @@ def entity_page(request: Request, id_: str):
 
 
 @router.get("/graph/path")
-def path_page(request: Request, a: str = "", b: str = "", layer: list[str] = Query(default=[]), countries: int = 0):
+def path_page(request: Request, a: str = "", b: str = "", layer: list[str] = Query(default=[]), countries: int = 0,
+              connecting: int = 1):
     """How are two entities connected? – the most specific chains of stated links between them."""
     ea, ca = paths.resolve(a)
     eb, cb = paths.resolve(b)
     layers = [l for l in layer if l in ties.LAYERS] or list(ties.LAYERS)
-    found = paths.chains(ea["id"], eb["id"], layers, bool(countries)) if ea and eb else None
+    found = paths.chains(ea["id"], eb["id"], layers, bool(countries), connecting=bool(connecting)) if ea and eb else None
     parts = {"a": paths.part(ea["id"]), "b": paths.part(eb["id"])} if ea and eb and not found else None
     return tpl.TemplateResponse(request, "graph_path.html", {
         "a": a, "b": b, "ea": ea, "eb": eb, "ca": ca, "cb": cb, "chains": found, "parts": parts,
-        "f": {"layers": layers, "countries": countries, "all": len(layers) == len(ties.LAYERS)},
+        "f": {"layers": layers, "countries": countries, "connecting": connecting, "all": len(layers) == len(ties.LAYERS)},
         "layers": ties.LAYERS, "groups": ties.GROUPS, "base": paths.BASE, "hub": paths.HUB, "max_steps": paths.MAX_STEPS})
 
 

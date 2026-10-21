@@ -18,3 +18,4 @@
     {%- endif %}{% if e.role %} · {{ e.role }}{% endif %}{% if r.date %} · {{ r.date }}{% endif %}</span>
   {%- endif -%}
 {% endmacro %}
+{% macro pin(id, back, label="📌 Pin") %}<form class="inline pin-form" method="post" action="/case/pin"><input type="hidden" name="e" value="{{ id }}"><input type="hidden" name="back" value="{{ back }}"><button class="pin-btn" title="Pin to the case file (/case)">{{ label }}</button></form>{% endmacro %}

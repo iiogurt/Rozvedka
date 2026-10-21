@@ -27,6 +27,20 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.85.0] – 2026-10-21
+
+### Added
+- **Case file** (`/case`, Actors & threats → Case file). One shared board where you pin up to 12 entities with notes, using
+  **📌 Pin** on actor, entity, Rings and Find a connection pages. It shows a grid of how many steps separate every pair (each
+  number opens the chains), the chain of each pair step by step, and the **connectors** that sit on the chains of several
+  pairs. *Export as Markdown* writes it all with a citation for every step. The file is kept in `data/case_file.yaml`, never
+  committed, and only personal backups carry it (merged on import).
+
+### Changed
+- **Find a connection uses links that connect by default.** Rivalries ("opposed to") and Wikipedia sentences without a relation
+  word are left out of chains, as on Rings, Leads and Brokers. Before, "Hezbollah – Islamic State" was a one-step chain through
+  their conflict. A choice next to the layers brings them back.
+
 ## [0.84.0] – 2026-10-21
 
 ### Added
@@ -1614,7 +1628,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.84.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.85.0...HEAD
+[0.85.0]: https://github.com/iiogurt/Rozvedka/compare/v0.84.0...v0.85.0
 [0.84.0]: https://github.com/iiogurt/Rozvedka/compare/v0.83.0...v0.84.0
 [0.83.0]: https://github.com/iiogurt/Rozvedka/compare/v0.82.1...v0.83.0
 [0.82.1]: https://github.com/iiogurt/Rozvedka/compare/v0.82.0...v0.82.1

@@ -63,7 +63,7 @@ def penalty(degree: int) -> float:
     return HUB * math.log2(1 + degree)
 
 
-def _shortest(g: dict, src: str, dst: str, layers: set, countries: bool, banned: set, banned_edges: set):
+def _shortest(g: dict, src: str, dst: str, layers: set, countries: bool, banned: set, banned_edges: set, skip=frozenset()):
     adj, ents = g["adj"], g["ents"]
     best = {src: 0.0}
     prev: dict[str, str] = {}
@@ -83,7 +83,7 @@ def _shortest(g: dict, src: str, dst: str, layers: set, countries: bool, banned:
                 continue
             if v != dst and not countries and ents.get(v, {}).get("kind") == "country":
                 continue
-            base = min((BASE[layer] for _, layer in links if layer in layers), default=None)
+            base = min((BASE[layer] for tid, layer in links if layer in layers and tid not in skip), default=None)
             if base is None:
                 continue
             c = cost + base + extra
@@ -93,15 +93,17 @@ def _shortest(g: dict, src: str, dst: str, layers: set, countries: bool, banned:
     return None
 
 
-def chains(a: str, b: str, layers=None, countries: bool = False, n: int = CHAINS) -> list[dict]:
-    """Up to n chains from a to b, the most specific first; each the entities on it and the links of every step."""
+def chains(a: str, b: str, layers=None, countries: bool = False, n: int = CHAINS, connecting: bool = False) -> list[dict]:
+    """Up to n chains from a to b, the most specific first; each the entities on it and the links of every step.
+    `connecting`: only links that are a sign of a connection – no rivalries, no article sentences without a relation word."""
     g = _graph()
     if a not in g["ents"] or b not in g["ents"] or a == b:
         return []
     layers = {l for l in (layers or ties.LAYERS) if l in ties.LAYERS}
     found, banned, banned_edges = [], set(), set()
+    skip = ties.not_a_tie_ids() if connecting else frozenset()
     while len(found) < n:
-        r = _shortest(g, a, b, layers, countries, banned, banned_edges)
+        r = _shortest(g, a, b, layers, countries, banned, banned_edges, skip)
         if not r:
             break
         cost, path = r
@@ -111,7 +113,7 @@ def chains(a: str, b: str, layers=None, countries: bool = False, n: int = CHAINS
             banned |= set(inner)
         else:                                       # a direct link: the next chain must go another way
             banned_edges |= {(a, b), (b, a)}
-    ids = {tid for _, path in found for u, v in zip(path, path[1:]) for tid, layer in g["adj"][u][v] if layer in layers}
+    ids = {tid for _, path in found for u, v in zip(path, path[1:]) for tid, layer in g["adj"][u][v] if layer in layers and tid not in skip}
     rows = {}
     if ids:
         with db.session() as con:
@@ -128,7 +130,7 @@ def chains(a: str, b: str, layers=None, countries: bool = False, n: int = CHAINS
         for u, v in zip(path, path[1:]):
             links = []
             for tid, layer in sorted(g["adj"][u][v], key=lambda x: BASE[x[1]]):
-                if layer not in layers:
+                if layer not in layers or tid in skip:
                     continue
                 r = rows[tid]
                 links.append({**r, "says": r["rel"] if r["a"] == u else r["back"], "forward": r["a"] == u})

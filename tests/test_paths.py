@@ -87,3 +87,11 @@ def test_pages(network):
         assert client.get("/graph/path").status_code == 200
         s = client.get("/api/entities/suggest?q=Rost").json()["entities"]
         assert {e["id"] for e in s} == {"US:X", "UK:Y"} and s[0]["value"].endswith("]")
+
+
+def test_links_that_connect_leave_out_rivalries(network):
+    with db.session() as con:
+        con.execute("INSERT INTO ties(a,b,rel,back,layer,weight,evidence) VALUES ('Q1','US:X','opposed to','opposed to','wikidata',1,'{}')")
+    assert [_route(c) for c in paths.chains("Q1", "US:X")][0] == ["Q1", "US:X"]          # a rivalry is a link …
+    assert paths.chains("Q1", "US:X", connecting=True) == []                            # … but no sign of a connection
+    assert paths.chains("Q1", "Q2", connecting=True)                                    # other chains are unaffected

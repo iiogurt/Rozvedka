@@ -219,9 +219,11 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
    every count opening the full list; 0.84.0: G7b – the neighbourhood matrix ordered by Louvain communities, "links that connect"
    by default) **Views** – still open: links on a time axis and the network as of a year. Only 9,300 of 42,500 links carry a
    date (UK, UN, EU, wanted notices, events, co-mentions, part of Wikidata; none from OFAC, Wikipedia or shared details), so such a
-   view must show the undated links apart. BioFabric dropped: the matrix answers the same question for these sizes. · minor
-8. **Case file** – one shared board (no per-user state): pin entities, chains between them found automatically, export
-   with citations. · minor
+   view must show the undated links apart. BioFabric dropped: the matrix answers the same question for these sizes. The owner
+   chose the case file first (2026-10-21); the year view waits until more sources carry dates. · minor
+8. ✅ (0.85.0) **Case file** – one shared board (no per-user state): pin entities, chains between them found automatically, export
+   with citations. Kept in `data/case_file.yaml` (personal: never committed, only in personal backups); connectors on several
+   chains; Find a connection now uses links that connect by default. · minor
 9. **Company registries and leaks** – GLEIF (ownership, CC0), UK Companies House (persons with significant control), ICIJ
    Offshore Leaks (ODbL; journalistic, marked as non-official) for the companies and people already in the network. · minor
 
@@ -268,8 +270,8 @@ backups and exchange (0.27–0.28), home page and search console (0.22), Update 
 
 Updated 2026-10-21, after H (all of it built by 0.81.0) and F3 + F4 (0.82.1):
 
-1. **G7 → G8 → G9** – finish the network plan the owner approved: views (rings ✅ 0.83.0, matrix ✅ 0.84.0; next
-   the network as of a year), the shared case file, then company registries and leaks (GLEIF, UK Companies House, ICIJ).
+1. **G7 → G8 → G9** – finish the network plan the owner approved: views (rings ✅ 0.83.0, matrix ✅ 0.84.0; the network as
+   of a year waits for more dated links), the shared case file ✅ 0.85.0, then company registries and leaks (GLEIF, UK Companies House, ICIJ).
 2. **F12** – topic and country briefing pages: reports, actors, events and the country ratings on one page.
 3. **F5, F9–F11** – overview sparklines, the agency × agency citation matrix, the ATT&CK tactic grid, the coverage gap matrix.
 4. **A3–A5, D2–D7** – more sources (no new code); A5 needs the owner to collect the blocked flagships by hand.

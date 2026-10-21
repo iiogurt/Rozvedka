@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% from "_ties.html" import lay, ent %}
+{% from "_ties.html" import lay, ent, pin %}
 {% block title %}Neighbourhood matrix{% if d %}: {{ d.center.label }}{% endif %} · Rozvedka{% endblock %}
 {% block main %}
-<h1 class="page-h">Neighbourhood matrix{% if d %}: {{ ent(d.center.label, d.center.kind, d.center.href) }}{% endif %}</h1>
+<h1 class="page-h">Neighbourhood matrix{% if d %}: {{ ent(d.center.label, d.center.kind, d.center.href) }} {{ pin(d.center.id, request.url.path ~ '?' ~ request.url.query) }}{% endif %}</h1>
 <p class="lede">How an entity's neighbours are linked among themselves: one row and one column per neighbour, a mark where a source
   states a link between two of them, ordered so that communities form blocks.</p>
 <details class="how"><summary>How this is ordered</summary>

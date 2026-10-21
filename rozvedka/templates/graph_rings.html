@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% from "_ties.html" import lay, ent %}
+{% from "_ties.html" import lay, ent, pin %}
 {% block title %}Rings{% if d %}: {{ d.center.label }}{% endif %} · Rozvedka{% endblock %}
 {% block main %}
-<h1 class="page-h">Rings{% if d %}: {{ ent(d.center.label, d.center.kind, d.center.href) }}{% endif %}</h1>
+<h1 class="page-h">Rings{% if d %}: {{ ent(d.center.label, d.center.kind, d.center.href) }} {{ pin(d.center.id, request.url.path ~ '?' ~ request.url.query) }}{% endif %}</h1>
 <p class="lede">One entity in the middle, its stated links on the inner ring and the entities two steps away on the outer ring –
   a sector for each source, every name readable.</p>
 <details class="how"><summary>How this is drawn</summary>

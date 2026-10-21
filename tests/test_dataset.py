@@ -281,3 +281,20 @@ def test_personal_backup_restores_and_merges_books_and_ratings(a, tmp_path, monk
         assert (config.FILES / book["local_path"]).read_bytes() == b"EPUB on war"
         assert con.execute("SELECT title FROM books WHERE doc_id=?", (book["id"],)).fetchone()[0] == "On War"
         assert con.execute("SELECT sentence FROM book_statements WHERE doc_id=?", (book["id"],)).fetchone()[0] == "In 1832 …"
+
+
+def test_the_case_file_travels_only_in_personal_backups(a, tmp_path, monkeypatch):
+    from rozvedka import casefile
+    casefile.save([{"id": "Q1", "label": "Evil Corp", "added": "2026-10-21", "note": "why"}])
+    with db.session() as con:
+        assert any("case file (1 pinned entity" in x for x in dataset.personal_holdings(con))
+    export(tmp_path, "mine", personal=True)
+    export(tmp_path, "share")
+    use(monkeypatch, tmp_path / "B")
+    r = dataset.import_dataset(tmp_path / "share", index=False)
+    assert "case_file" not in r["files"] and casefile.load() == []
+    casefile.save([{"id": "Q1", "label": "Evil Corp", "added": "2026-10-20", "note": ""},
+                   {"id": "Q2", "label": "FSB", "added": "2026-10-20", "note": "mine"}])
+    r = dataset.import_dataset(tmp_path / "mine", index=False)
+    assert r["files"]["case_file"] == "0 pins added" and "case file: 0 pins added" in dataset.describe(r)
+    assert {x["id"]: x["note"] for x in casefile.load()} == {"Q1": "why", "Q2": "mine"}     # an empty note filled
