@@ -224,8 +224,10 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
 8. ✅ (0.85.0) **Case file** – one shared board (no per-user state): pin entities, chains between them found automatically, export
    with citations. Kept in `data/case_file.yaml` (personal: never committed, only in personal backups); connectors on several
    chains; Find a connection now uses links that connect by default. · minor
-9. **Company registries and leaks** – GLEIF (ownership, CC0), UK Companies House (persons with significant control), ICIJ
-   Offshore Leaks (ODbL; journalistic, marked as non-official) for the companies and people already in the network. · minor
+9. ◐ (0.86.0: G9a – GLEIF: 565 of 16,318 list companies matched by LEI, register number or distinctive name – samples 39/40 and
+   40/40 – with 255 ownership links one step out) **Company registries and leaks** – still open: ICIJ Offshore Leaks (ODbL;
+   journalistic, marked as non-official; downloaded, 72 MB) and UK Companies House (persons with significant control – needs an API
+   key the owner registers for). · minor
 
 ### H. Timeline, books and country ratings (owner's topics, 2026-10-19 – researched, not started)
 

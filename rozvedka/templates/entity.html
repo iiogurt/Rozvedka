@@ -15,6 +15,9 @@
 <p class="lede">{{ e.kind_name }}: {{ 'a company selling political-risk or threat analysis to clients' if d.publisher.kind == 'commercial' else 'an independent publisher, not run by a state' }}.
   Its owners, sponsors, founders and partners are linked below, each with its evidence – see its <a href="/publisher/{{ d.publisher.source }}">credibility profile</a>
   and <a href="/documents?source={{ d.publisher.source }}">its reports</a>.</p>
+{% elif e.origin == 'gleif' %}
+<p class="lede">A company in the Legal Entity Identifier register (GLEIF), on no sanctions list: it is here because GLEIF records it
+  as a parent, branch or consolidated entity of a listed company. Ownership as the companies report it to GLEIF.</p>
 {% elif d.named_by %}
 <p class="lede">Named by {{ d.named_by }} UK list entries as their parent company, subsidiary or ship owner/operator, and
   {{ 'not found as an entry of its own' if not d.candidates else 'matching ' ~ d.candidates ~ ' entries by name – which one is unclear' }}.</p>
@@ -38,6 +41,9 @@
     {% if d.dob %}<tr><th>Born</th><td>{{ d.dob|join(' · ') }}</td></tr>{% endif %}
     {% if d.ids %}<tr><th>Numbers</th><td>{% for k, n, c in d.ids %}{{ k|replace('-', ' ') }} <code>{{ n }}</code>{{ ' (' ~ c ~ ')' if c }}{{ ' · ' if not loop.last }}{% endfor %}</td></tr>{% endif %}
     {% if d.addresses %}<tr><th>Addresses</th><td>{% for a in d.addresses %}{{ a.street }}{{ ', ' ~ a.city if a.city }}{{ ', ' ~ a.country if a.country }}{{ '; ' if not loop.last }}{% endfor %}</td></tr>{% endif %}
+    {% for x in d.gleif %}<tr><th>{{ 'GLEIF' if loop.first }}<span class="tag">CC0</span></th><td><a href="{{ x.url }}" rel="noopener">LEI <code>{{ x.lei }}</code></a> · {{ x.name }}{% if x.label != x.name %} ({{ x.label }}){% endif %}
+      · {{ x.city }}{{ ', ' if x.city }}{{ x.country }}{% if x.reg %} · register no. <code>{{ x.reg }}</code>{% endif %} · {{ x.status|lower }}, registration {{ x.registration|lower }}
+      {% if x.how %}<br><span class="muted">the same company because {{ {'lei': 'the list entry states this LEI', 'registration': 'the list entry gives this register number in the same country', 'name': 'only this record carries the entry’s name in the same country'}[x.how] }} (<a href="/graph">how companies are matched</a>)</span>{% endif %}</td></tr>{% endfor %}
     {% if d.description %}<tr><th>Description</th><td>{{ d.description }}</td></tr>{% endif %}
     {% if d.attack %}<tr><th>ATT&amp;CK</th><td><a href="{{ d.url }}" rel="noopener">{{ d.attack }}</a>{% if d.aliases %} · also {{ d.aliases|join(', ') }}{% endif %}{% if d.first %} · active {{ d.first }} – {{ d.last }}{% endif %}</td></tr>{% endif %}
     {% if d.publisher and d.url %}<tr><th>Wikidata</th><td><a href="{{ d.url }}" rel="noopener">{{ e.id }}</a></td></tr>{% endif %}
