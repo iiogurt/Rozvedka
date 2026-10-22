@@ -1,0 +1,24 @@
+# Dependency updates: security fixes arrive as soon as an advisory is published (Dependabot security updates, enabled in
+# the repository settings); version updates come once a month, grouped into one pull request per ecosystem. Every
+# update goes through the usual pull request, CI and a local merge – nothing merges by itself.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      python:
+        patterns: ["*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: ci
+    groups:
+      github-actions:
+        patterns: ["*"]

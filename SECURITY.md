@@ -4,6 +4,8 @@
 
 Only the **latest release** ([releases](https://github.com/iiogurt/Rozvedka/releases/latest)) gets security fixes.
 Fixes land on `main` and ship in the next release; older versions are not patched – update instead.
+The pinned dependencies (`requirements*.txt`) and the CI actions are watched by Dependabot (security fixes as soon as
+an advisory is out, version updates monthly), and GitHub CodeQL scans the Python and JavaScript code.
 
 ## Reporting a vulnerability
 
