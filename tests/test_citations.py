@@ -92,3 +92,31 @@ def test_a_home_page_deep_in_a_shared_portal_is_matched_by_its_path(library):
         rows = {x["url"]: x["target_source"] for x in con.execute("SELECT url, target_source FROM doc_links WHERE doc_id=3")}
     assert rows["portal.example/government/organisations/ncsc/about"] == 1       # on that source's path
     assert rows["portal.example/other-page"] is None                              # elsewhere on the portal: nobody's
+
+
+def test_matrix_cells_and_totals_are_the_lists_they_link_to(library):
+    with db.session() as con:          # a fourth report: NCSC citing another agency of its own country, and its own site
+        con.execute("INSERT INTO sources(id,key,country,agency,type,homepage) VALUES(6,'GB/NPSA','GB','NPSA','police-ct','https://npsa.example/')")
+        con.execute("INSERT INTO documents(id,source_id,url,title,year,lang,status) VALUES(4,1,'https://ncsc.example/r4.pdf','NCSC 2025',2025,'en','downloaded')")
+        con.execute("INSERT INTO doc_text(rowid,title,body) VALUES(4,'','https://npsa.example/a https://ncsc.example/self')")
+        con.execute("INSERT INTO doc_index(doc_id,chars,taxonomy_hash,pages) VALUES(4,10,'x','[0]')")
+    citations.index()
+    m = citations.matrix("agency")
+    assert [(r["key"], r["n"]) for r in m["rows"]] == [(1, 1), (2, 1), (3, 1)]          # NCSC, BSI, CERT – each one citing report
+    assert [(c["key"], c["n"]) for c in m["cols"]] == [(1, 2), (6, 1)]                  # NCSC cited by two reports, NPSA by one
+    assert m["rows"][1]["cells"][0]["n"] == 1 and m["rows"][1]["cells"][0]["share"] == 1.0 and m["rows"][1]["cells"][1] is None
+    assert m["rows"][0]["cells"][0] is None                                             # its own site is not counted
+    c = citations.matrix("country")
+    gb = next(r for r in c["rows"] if r["key"] == "GB")
+    assert gb["cells"][[x["key"] for x in c["cols"]].index("GB")]["n"] == 1             # the diagonal: two agencies of one country
+    assert c["pairs"] == 3 and c["shown_pairs"] == 3 and m["reports"] == 3
+    # every number on the page is the Documents list it links to
+    for _label, n, url in citations.figures():
+        q = dict(p.split("=", 1) for p in url.split("?", 1)[1].split("&"))
+        assert doclist.count(source=int(q["source"]) if "source" in q else None, country=q.get("country", ""),
+                             type=q.get("type", ""), cite=q["cite"], indexed=1) == n, url
+    assert citations.clause("agency:x") is None and citations.clause("ccountry:1!") is None
+    from rozvedka.app import app
+    t = TestClient(app).get("/citations?by=country").text
+    assert "Country × country" in t and "cite=ccountry:GB" in t
+    assert "linking to NCSC (its site or reports)" in TestClient(app).get("/documents?cite=agency:1&indexed=1").text

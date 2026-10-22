@@ -27,6 +27,21 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.90.0] – 2026-10-22
+
+### Added
+- **Who cites whom, agency by agency** (`/citations#matrix`). A matrix sets the 30 most citing agencies against the 30 most
+  cited:
+  - each cell counts the reports of the row agency that link to the column agency – its site or one of its reports in the
+    library – and opens exactly those reports;
+  - the shade is the cell's share of the row's citing reports, so it shows what each agency relies on, not who publishes most;
+  - row and column totals open their lists too; think tanks ◆ and commercial analysts ■ are marked; links to an agency's own
+    site are left out, and the page says what falls outside the top 30 (now 210 of 493 pairs, 361 of 490 citing reports shown).
+
+  *By country* folds the same links into country × country (486 of 490 reports shown); its diagonal counts agencies of one
+  state citing each other. Two new Documents filters behind the cells: `cite=agency:ID` and `cite=ccountry:XX`, named in
+  the filter chip. `tools/check_links.py` now checks every number of the chord table and both matrices against its list.
+
 ## [0.89.5] – 2026-10-22
 
 ### Changed
@@ -1727,7 +1742,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.89.5...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.90.0...HEAD
+[0.90.0]: https://github.com/iiogurt/Rozvedka/compare/v0.89.5...v0.90.0
 [0.89.5]: https://github.com/iiogurt/Rozvedka/compare/v0.89.4...v0.89.5
 [0.89.4]: https://github.com/iiogurt/Rozvedka/compare/v0.89.3...v0.89.4
 [0.89.3]: https://github.com/iiogurt/Rozvedka/compare/v0.89.2...v0.89.3

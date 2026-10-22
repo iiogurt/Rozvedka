@@ -15,10 +15,10 @@ os.environ.setdefault("ROZVEDKA_ALLOWED_HOSTS", "testserver")   # the host name 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fastapi.testclient import TestClient  # noqa: E402
 
-from rozvedka import briefings, compare, gaps, home, leads, ties, twins, updates, watch  # noqa: E402
+from rozvedka import briefings, citations, compare, gaps, home, leads, ties, twins, updates, watch  # noqa: E402
 from rozvedka.app import app  # noqa: E402
 
-PAGES = ["/", "/new", "/watch", "/compare", "/actors/review", "/data", "/documents", "/years", "/ratings", "/publishers", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/graph", "/graph/path?a=Evil+Corp&b=Federal+Security+Service", "/graph/twins", "/graph/leads", "/graph/brokers", "/map", "/map/democracy", "/collect", "/countries", "/topics/ransomware", "/countries/DE", "/sources/grid"]
+PAGES = ["/", "/new", "/watch", "/compare", "/actors/review", "/data", "/documents", "/years", "/ratings", "/publishers", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/graph", "/graph/path?a=Evil+Corp&b=Federal+Security+Service", "/graph/twins", "/graph/leads", "/graph/brokers", "/map", "/map/democracy", "/collect", "/countries", "/topics/ransomware", "/countries/DE", "/sources/grid", "/citations", "/citations?by=country"]
 
 
 def main() -> int:
@@ -32,6 +32,7 @@ def main() -> int:
         figs += compare.figures(compare.compare(topic=d["rising"]["rising"][0]["key"]))
     figs += briefings.figures("ransomware", "DE") + briefings.figures("war-in-ukraine", "EE")      # two sample briefings
     figs += gaps.figures()                                                                        # every cell of the coverage grid
+    figs += citations.figures()                                                                   # Citations: type flows and both matrices
     for label, n, url in figs:
         r = client.get(url)
         m = re.search(r"<b>(\d+)</b> documents match", r.text)
@@ -39,7 +40,7 @@ def main() -> int:
         if listed != n:
             bad += 1
             print(f"MISMATCH {label}: shows {n}, list has {listed} – {url}")
-    print(f"home, What's new, Compare, Watchlist, briefings: {len(figs)} counts checked, {bad} mismatches")
+    print(f"home, What's new, Compare, Watchlist, briefings, grid, citations: {len(figs)} counts checked, {bad} mismatches")
     net = ties.figures() + [f for f in leads.figures() if f[1] < 0]    # a negative number counts other entities ("with N others")
     for label, n, url in net:
         m = re.search(r"<b>(\d+)</b> links(?: with <b>(\d+)</b> others)?", client.get(url).text)

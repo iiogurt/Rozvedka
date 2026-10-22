@@ -120,7 +120,14 @@ def pub_profile(source_id):
     return _independent["levels"].get(source_id) if source_id in independent_ids() else None
 
 
-tpl.env.globals.update(pub_mark=pub_mark, is_independent=lambda sid: sid in independent_ids(), pub_kind=pub_kind,
+def agency_name(source_id) -> str:
+    """The agency name of a source id (filter chips), the id itself when unknown."""
+    with db.session() as con:
+        r = con.execute("SELECT agency FROM sources WHERE id=?", (int(source_id),)).fetchone() if str(source_id).isdigit() else None
+    return r["agency"] if r else str(source_id)
+
+
+tpl.env.globals.update(pub_mark=pub_mark, is_independent=lambda sid: sid in independent_ids(), pub_kind=pub_kind, agency_name=agency_name,
                        rating=ratings.profile, REGIMES=ratings.REGIMES, pub_profile=pub_profile,
                        PUB_LEVELS=publishers.LEVELS, PUB_KINDS=publishers.KINDS)
 

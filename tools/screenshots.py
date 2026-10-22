@@ -80,6 +80,7 @@ SHOTS = {
     "views": ("/views", 1000, [], None),                               # every page, grouped like the menu
     "techniques": ("/techniques", 1000, [], None),                     # ATT&CK techniques named in reports
     "citations": ("/citations", 1100, [], None),                      # who cites whom: agencies, reports, outside hosts
+    "citation-matrix": ("/citations?by=agency", 1250, [], "#matrix"),  # agency × agency: who cites whom, cell by cell
     "review": ("/actors/review", 1100, [], None),
     "network": ("/network", 1100, [("sleep", 6)], None),
     "graph": ("/graph", 1250, [], None),                                # the network of stated links: layers, most linked

@@ -53,6 +53,31 @@
 </script>
 {% endif %}
 
+{% if mx.rows %}
+<section class="viz-card" id="matrix">
+  <h2 class="viz-title">{{ 'Agency' if mx.by == 'agency' else 'Country' }} × {{ 'agency' if mx.by == 'agency' else 'country' }}
+    <span class="muted small">the {{ mx.rows|length }} most citing × the {{ mx.cols|length }} most cited</span></h2>
+  <p class="small"><a class="topic-chip{{ ' on' if mx.by == 'agency' }}" href="/citations?by=agency#matrix">by agency</a>
+    <a class="topic-chip{{ ' on' if mx.by == 'country' }}" href="/citations?by=country#matrix">by country</a></p>
+  <p class="muted small viz-sub">Each cell counts the reports of the row {{ 'agency' if mx.by == 'agency' else '(the agencies of a country)' }} that link
+    to the column {{ 'agency' if mx.by == 'agency' else '(the agencies of that country)' }} – its site or one of its reports in the library; a report counts once
+    per cell and links to its own agency are left out{{ ', so the diagonal counts agencies of one country citing each other' if mx.by == 'country' }}.
+    The shade is the cell's share of the row's citing reports – what a {{ 'agency' if mx.by == 'agency' else 'country' }} cites most, not who is biggest.
+    Row and column totals count each report once. Shown: {{ mx.shown_pairs }} of {{ mx.pairs }} pairs, {{ mx.shown_reports }} of {{ mx.reports }} citing reports
+    ({{ mx.citing }} citing, {{ mx.cited }} cited {{ 'agencies' if mx.by == 'agency' else 'countries and bodies' }} in all). ◆ think tank · ■ commercial analyst.</p>
+  <div class="tablewrap"><table class="cm-table small">
+    <thead><tr><th class="cm-corner">reports of ↓ link to →</th>
+      {% for c in mx.cols %}<th class="cm-col" title="{{ c.label }}: cited by {{ c.n }} reports of other agencies"><span>{% if mx.by == 'agency' %}{{ c.label }}{{ pub_mark(c.key, compact=True) }}{% else %}{{ c.label }}{% endif %}</span></th>{% endfor %}
+      <th class="cm-col cm-tot"><span>all cited</span></th></tr></thead>
+    {% for r in mx.rows %}<tr><th class="cm-row"><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="" width="16" height="12"> {{ r.label }}{% if mx.by == 'agency' %}{{ pub_mark(r.key, compact=True) }}{% endif %}</th>
+      {% for c in r.cells %}{% set col = mx.cols[loop.index0] %}{% if c %}<td class="cm-c{{ ' cm-diag' if mx.by == 'country' and col.key == r.key }}" style="--s: {{ (c.share * 100)|round|int }}%"><a href="{{ c.link }}" title="{{ r.label }} → {{ col.label }}: {{ c.n }} report{{ 's' if c.n != 1 }} ({{ (c.share * 100)|round|int }}% of the row's citing reports)">{{ c.n }}</a></td>
+      {% else %}<td class="cm-c cm-0{{ ' cm-diag' if mx.by == 'country' and col.key == r.key }}"></td>{% endif %}{% endfor %}
+      <td class="cm-tot n"><a href="{{ r.link }}" title="reports of {{ r.label }} citing any other agency">{{ r.n }}</a></td></tr>{% endfor %}
+    <tr class="cm-tot"><th class="cm-row">cited by, all</th>{% for c in mx.cols %}<td class="n"><a href="{{ c.link }}">{{ c.n }}</a></td>{% endfor %}<td></td></tr>
+  </table></div>
+</section>
+{% endif %}
+
 <section class="viz-card">
   <h2 class="viz-title">Agencies cited by others <span class="muted small">{{ cited_sources|length }}</span></h2>
   <p class="muted small viz-sub">Reports of other sources that link to the agency's own site – {{ "{:,}".format(totals.to_agencies or 0) }} links in all.</p>

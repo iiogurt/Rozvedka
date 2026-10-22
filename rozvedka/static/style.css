@@ -1620,3 +1620,19 @@ td.cg-open { background: var(--panel); }
 .cg-k { padding: 0 6px; border-radius: 3px; border: 1px solid var(--line); }
 .cg-k.cg-covered { background: color-mix(in srgb, var(--official) 22%, transparent); }
 .cg-k.cg-checked { background: repeating-linear-gradient(45deg, transparent 0 5px, var(--chip) 5px 10px); }
+
+/* ── Citations: agency × agency / country × country matrix ── */
+table.cm-table { border-collapse: collapse; }
+.cm-table th, .cm-table td { border: 1px solid var(--line); padding: 2px 4px; }
+.cm-table th.cm-col { vertical-align: bottom; height: 150px; padding: 4px 2px; font-weight: 500; }
+.cm-table th.cm-col span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; display: inline-block; max-height: 150px;
+  overflow: hidden; text-overflow: ellipsis; }
+.cm-table th.cm-row { text-align: left; white-space: nowrap; font-weight: 500; max-width: 240px; overflow: hidden; text-overflow: ellipsis; }
+.cm-table .cm-corner { font-size: 11px; color: var(--muted); font-weight: 400; vertical-align: bottom; text-align: left; }
+.cm-table td.cm-c { min-width: 24px; text-align: center; font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--accent) calc(var(--s, 0%) * 0.9), transparent); }
+.cm-table td.cm-c a { color: var(--ink); display: block; }
+.cm-table td.cm-diag { outline: 1px dashed var(--muted); outline-offset: -2px; }
+.cm-table .cm-tot { color: var(--muted); }
+.cm-table .cm-tot a { color: var(--muted); }
+.cm-table tr.cm-tot th, .cm-table tr.cm-tot td { border-top: 2px solid var(--line); font-size: 11px; text-align: center; }
