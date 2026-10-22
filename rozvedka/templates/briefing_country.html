@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "_briefing.html" import years, ranked %}
+{% from "_ties.html" import ent %}
+{% block title %}{{ d.name }} · Countries · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h"><img class="flag-sm" src="{{ flag_url(d.code) }}" alt="" width="28" height="21"> {{ d.name }}</h1>
+<p class="lede"><a href="{{ d.link }}"><b>{{ d.n|num }}</b> official reports</a> by {{ d.sources|length }} agenc{{ 'ies' if d.sources|length != 1 else 'y' }}{% if d.regime %}
+  · <a href="{{ d.regime.url }}" rel="noopener" title="V-Dem Regimes of the World">{{ d.regime.latest_label }} ({{ d.regime.latest[0] }})</a>{% endif %}
+  {% if d.has_ratings %}· <a href="/ratings/{{ d.code }}">ratings</a>{% endif %} · <a href="{{ d.events_link }}">events</a>
+  · <a href="{{ d.threat_link }}">threat levels</a>{% if d.me %} · <a href="{{ d.about_link }}">{{ d.name }} as an actor</a>{% endif %}</p>
+<details class="how"><summary>How this is counted</summary>
+<p class="muted small">The state's agencies in the library and their listed reports, one file per report. <b>Topics</b> and <b>actors</b>
+  are ranked by how much more often the state's official reports name them than all {{ d.n_all|num }} official reports do (lift), times
+  how many reports – a state's own emphasis, not what every report says; at least {{ d.min_docs }} reports; countries and the state's
+  own agencies ({{ d.own }}) left out, since agencies name themselves. <b>Who reports about it</b>: other states' official reports naming
+  {{ d.name }}{% if not d.me %} – not available, {{ d.name }} is not an actor of the gazetteer{% endif %}. Every number opens its reports.</p></details>
+
+<section class="viz-card"><h2 class="viz-title">Year by year</h2>{{ years(d.years, 'Reports of ' ~ d.name) }}</section>
+
+<div class="bf-grid">
+<section class="viz-card"><h2 class="viz-title">Agencies</h2>
+  {% macro sl(r) %}<a href="/sources#s-{{ r.id }}">{{ r.agency }}</a> <span class="muted">{{ r.name_en if r.name_en and r.name_en != r.agency }}</span>{% if r.publisher == 'independent' %} <span class="pub-count">◆</span>{% elif r.publisher == 'commercial' %} <span class="pub-count-com">■</span>{% endif %}{% endmacro %}
+  {{ ranked(d.sources, sl) }}</section>
+<section class="viz-card"><h2 class="viz-title">Topics its reports emphasise</h2>
+  {% macro tl(r) %}<a href="{{ r.href }}">{{ r.label }}</a>{% endmacro %}{% macro ts(r) %}×{{ r.lift|round(1) }}{% endmacro %}
+  {% if d.topics %}{{ ranked(d.topics, tl, ts) }}{% else %}<p class="muted small">Too few classified reports.</p>{% endif %}</section>
+<section class="viz-card"><h2 class="viz-title">Actors its reports emphasise</h2>
+  {% macro al(r) %}{{ ent(r.label, r.kind, r.href) }}{% endmacro %}
+  {% if d.actors %}{{ ranked(d.actors, al, ts) }}{% else %}<p class="muted small">Too few classified reports.</p>{% endif %}</section>
+<section class="viz-card"><h2 class="viz-title">Who reports about {{ d.name }} <span class="muted small">other states' official reports naming it</span></h2>
+  {% macro cl(r) %}<img class="flag-sm" src="{{ flag_url(r.country) }}" alt="" width="16" height="12"> <a href="/countries/{{ r.country }}">{{ r.name }}</a>{% endmacro %}
+  {% if d.about %}{{ ranked(d.about, cl) }}{% elif d.me %}<p class="muted small">No other state's reports name it.</p>{% else %}<p class="muted small">Not available: {{ d.name }} is not an actor of the gazetteer.</p>{% endif %}</section>
+</div>
+
+<section class="viz-card"><h2 class="viz-title">Newest reports</h2>
+  <ul class="plain small rings-list">{% for r in d.newest %}<li><a href="/report/{{ r.id }}">{{ r.title }}</a> <span class="muted">· {{ r.agency }} · {{ r.year or 'undated' }}</span></li>{% endfor %}</ul>
+  <p class="small"><a href="{{ d.link }}">all {{ d.n|num }} official reports →</a></p></section>
+{% endblock %}

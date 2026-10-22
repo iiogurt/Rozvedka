@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Countries · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Countries</h1>
+<p class="lede">One page per state and body whose agencies the library follows: what their reports emphasise, who reports about it,
+  its ratings and events.</p>
+<div class="tablewrap"><table class="docs small">
+  <thead><tr><th>State or body</th><th class="num">Agencies</th><th class="num">Official reports</th></tr></thead>
+  {% for r in rows %}<tr><td><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="" width="20" height="15"> <a href="{{ r.href }}">{{ r.name }}</a></td>
+    <td class="num">{{ r.agencies }}</td><td class="num"><a href="{{ r.link }}">{{ r.n|num }}</a></td></tr>{% endfor %}
+</table></div>
+{% endblock %}

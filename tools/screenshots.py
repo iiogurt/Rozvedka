@@ -59,6 +59,8 @@ SHOTS = {
     "series": ("/series/e64e96b2", 1200, [], None),
     "collect": ("/collect", 1100, [], None),
     "topics": ("/topics", 1100, [], None),
+    "briefing-topic": ("/topics/ransomware", 1450, [], None),          # one topic on one page
+    "briefing-country": ("/countries/DE", 1450, [], None),             # one country on one page
     "terms": ("/trends/terms?term=drone&term=ransomware&term=disinformation", 1000, [("sleep", 4)], None),
     "matrix": ("/trends/matrix", 1000, [("sleep", 5)], None),
     "matrix-lift": ("/trends/matrix?mx=lift", 1000, [("sleep", 5)], None),   # over-emphasis against all reports

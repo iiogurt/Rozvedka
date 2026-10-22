@@ -302,6 +302,29 @@ no periodic job.
 - Each topic is defined by keywords in 28 languages in [`sources/topics.yaml`](sources/topics.yaml); a report gets
   a topic only when it mentions it substantially, not in passing.
 
+### 📋 Briefings – one topic or one country on one page
+
+<img src="docs/images/briefing-topic.png" alt="Topic briefing for ransomware: reports year by year, the countries and agencies writing most about it, the actors and related topics its reports emphasise" width="900">
+
+- **A topic** (`/topics/ransomware`, opened from the Topics page) shows:
+  - its reports year by year, official agencies apart from think tanks ◆ and commercial analysts ■;
+  - the countries writing most about it, with the share of each state's own reports;
+  - the agencies writing most about it;
+  - the **actors** and **related topics** its reports emphasise, ranked by lift × reports: how much more often than all
+    reports, so neither the names every report mentions nor one-off mentions come first. For ransomware these are LockBit,
+    Fancy Bear, Sandworm, Conti and Akira;
+  - its newest reports, with the words that tagged them.
+- **A country** (`/countries/DE`, Sources → Countries) shows:
+  - its agencies and their reports year by year;
+  - the topics and actors its official reports emphasise compared with all official reports. Its own agencies are left out,
+    since they name themselves. For Germany these are crime statistics, anti-government and conspiracy movements, and
+    antisemitism, and the Reichsbürger, AfD and Die Heimat;
+  - which other states' reports name it;
+  - its regime type, ratings, events and threat levels.
+- Every number opens the Documents list it counts. `tools/check_links.py` compares two sample briefings with their lists.
+
+<img src="docs/images/briefing-country.png" alt="Country briefing for Germany: agencies, reports by year, emphasised topics and actors, who reports about it" width="900">
+
 ### 📈 Trends
 
 <table>
@@ -1047,6 +1070,7 @@ flowchart LR
 | `rozvedka/downloader.py` | download, check the PDF header, de-duplicate by SHA-256, improve titles |
 | `rozvedka/topics.py` | text extraction with page offsets, FTS5 index, topic classification (all CPU cores) |
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
+| `rozvedka/briefings.py` | briefing pages: one topic or one country – reports by year, countries, agencies, emphasised actors and topics (lift × reports), who reports about it |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
 | `rozvedka/wanted.py` | wanted notices of the FBI and Europe's Most Wanted: fetching, the security filter, entries for the identity rules, relation words |
 | `rozvedka/wikitext.py` | links stated in the text of Wikipedia articles: sentences with links, the relation word, redirects |
