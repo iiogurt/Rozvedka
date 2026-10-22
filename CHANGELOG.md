@@ -27,6 +27,17 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+### Added
+- **An open-source licence:** Rozvedka's code is now under the MIT licence (`LICENSE`). Vendored libraries, fonts and
+  icons keep their own licences, listed in the README; downloaded reports, logos and gazetteer data are not covered.
+- **Guides for contributors:** `CONTRIBUTING.md` (what is in scope, how to propose an agency, think tank or commercial
+  analyst, the crawling rules, tests and pull requests), the Contributor Covenant 2.1 as `CODE_OF_CONDUCT.md`, and
+  `SECURITY.md` (only the latest release is supported; vulnerabilities go through GitHub's private reporting; an
+  unauthenticated portal on an untrusted network is documented behaviour, not a vulnerability).
+- **Issue and pull-request forms:** a bug report, a source suggestion (every language version and archive page, funding
+  or ownership for think tanks), a link for private security reports, and a pull-request checklist.
+- The README links these files from its header, Development, Security and licence sections, with a licence badge.
+
 ## [0.89.0] – 2026-10-22
 
 ### Added
