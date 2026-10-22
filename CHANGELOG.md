@@ -27,6 +27,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.89.1] – 2026-10-22
+
 ### Added
 - **An open-source licence:** Rozvedka's code is now under the MIT licence (`LICENSE`). Vendored libraries, fonts and
   icons keep their own licences, listed in the README; downloaded reports, logos and gazetteer data are not covered.
@@ -1689,7 +1691,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.89.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.89.1...HEAD
+[0.89.1]: https://github.com/iiogurt/Rozvedka/compare/v0.89.0...v0.89.1
 [0.89.0]: https://github.com/iiogurt/Rozvedka/compare/v0.88.0...v0.89.0
 [0.88.0]: https://github.com/iiogurt/Rozvedka/compare/v0.87.0...v0.88.0
 [0.87.0]: https://github.com/iiogurt/Rozvedka/compare/v0.86.0...v0.87.0
