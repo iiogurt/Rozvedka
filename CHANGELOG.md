@@ -27,6 +27,14 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.89.3] – 2026-10-22
+
+### Security
+- **pypdf 6.21.1** (was 6.19.0): fixes four advisories about PDFs that could make the indexer loop forever or use very
+  large amounts of memory (crafted cross-reference tables, outline and tree items, streams with many filters), and one about
+  unvalidated JPEG data. Rozvedka reads PDFs downloaded from agency sites, so a malformed report could have stalled indexing.
+- **pytest 9.0.3** (was 8.4.2, development only): fixes its handling of temporary directories.
+
 ## [0.89.2] – 2026-10-22
 
 ### Changed
@@ -1699,7 +1707,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.89.2...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.89.3...HEAD
+[0.89.3]: https://github.com/iiogurt/Rozvedka/compare/v0.89.2...v0.89.3
 [0.89.2]: https://github.com/iiogurt/Rozvedka/compare/v0.89.1...v0.89.2
 [0.89.1]: https://github.com/iiogurt/Rozvedka/compare/v0.89.0...v0.89.1
 [0.89.0]: https://github.com/iiogurt/Rozvedka/compare/v0.88.0...v0.89.0
