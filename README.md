@@ -8,7 +8,7 @@ collected, searchable, indexed by topic and actor, and traceable back to the pag
 [![release](https://img.shields.io/github/v/release/iiogurt/Rozvedka?color=1f4e79&label=release)](https://github.com/iiogurt/Rozvedka/releases/latest)
 [![tests](https://github.com/iiogurt/Rozvedka/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/iiogurt/Rozvedka/actions/workflows/tests.yml)
 [![licence](https://img.shields.io/github/license/iiogurt/Rozvedka?color=4c7a34&label=licence)](LICENSE)
-![python](https://img.shields.io/badge/python-3.10–3.13-3776ab?logo=python&logoColor=white)
+![python](https://img.shields.io/badge/python-3.11–3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
 ![platform](https://img.shields.io/badge/runs%20on-Raspberry%20Pi-c51a4a?logo=raspberrypi&logoColor=white)
@@ -1279,10 +1279,10 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | | Status |
 |---|---|
 | **Raspberry Pi OS / Debian 13, Python 3.13, ARM64** | the reference installation |
-| Linux x86-64 and ARM64, Python 3.10–3.13 | test suite passes in CI |
+| Linux x86-64 and ARM64, Python 3.11–3.13 | test suite passes in CI |
 | macOS, Python 3.13 | test suite passes in CI; external disks appear under `/Volumes` in the folder picker |
 | Windows, Python 3.13 | test suite passes in CI; the folder picker offers only your home folder and OCR needs the tools on `PATH` – WSL is the smoother way |
-| Python 3.9 and older | not supported (the code uses Python 3.10 syntax) |
+| Python 3.10 and older | not supported (3.10 reached its end of life in October 2026; Markdown 3.11 needs 3.11) |
 
 - **Python packages:** pinned in `requirements.txt` (FastAPI, Uvicorn, Jinja2, httpx, pypdf, PyYAML, Beautiful
   Soup, Markdown); checked with `pip-audit`.
