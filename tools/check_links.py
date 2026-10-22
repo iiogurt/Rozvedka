@@ -15,10 +15,10 @@ os.environ.setdefault("ROZVEDKA_ALLOWED_HOSTS", "testserver")   # the host name 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fastapi.testclient import TestClient  # noqa: E402
 
-from rozvedka import briefings, compare, home, leads, ties, twins, updates, watch  # noqa: E402
+from rozvedka import briefings, compare, gaps, home, leads, ties, twins, updates, watch  # noqa: E402
 from rozvedka.app import app  # noqa: E402
 
-PAGES = ["/", "/new", "/watch", "/compare", "/actors/review", "/data", "/documents", "/years", "/ratings", "/publishers", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/graph", "/graph/path?a=Evil+Corp&b=Federal+Security+Service", "/graph/twins", "/graph/leads", "/graph/brokers", "/map", "/map/democracy", "/collect", "/countries", "/topics/ransomware", "/countries/DE"]
+PAGES = ["/", "/new", "/watch", "/compare", "/actors/review", "/data", "/documents", "/years", "/ratings", "/publishers", "/series", "/sources", "/topics", "/trends", "/actors", "/network", "/graph", "/graph/path?a=Evil+Corp&b=Federal+Security+Service", "/graph/twins", "/graph/leads", "/graph/brokers", "/map", "/map/democracy", "/collect", "/countries", "/topics/ransomware", "/countries/DE", "/sources/grid"]
 
 
 def main() -> int:
@@ -31,6 +31,7 @@ def main() -> int:
     if d["rising"]["rising"]:
         figs += compare.figures(compare.compare(topic=d["rising"]["rising"][0]["key"]))
     figs += briefings.figures("ransomware", "DE") + briefings.figures("war-in-ukraine", "EE")      # two sample briefings
+    figs += gaps.figures()                                                                        # every cell of the coverage grid
     for label, n, url in figs:
         r = client.get(url)
         m = re.search(r"<b>(\d+)</b> documents match", r.text)

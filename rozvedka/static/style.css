@@ -1602,3 +1602,21 @@ table.case-grid { border-collapse: collapse; }
 .bf-bar i { display: block; height: 100%; background: var(--accent); }
 .bf-num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
 .bf-sub { white-space: nowrap; }
+
+/* ── Coverage grid (/sources/grid, rozvedka/gaps.py) ── */
+table.cg-table { border-collapse: collapse; width: 100%; }
+.cg-table th, .cg-table td { border: 1px solid var(--line); padding: 3px 6px; text-align: center; white-space: nowrap; }
+.cg-table thead th { font-size: 12px; vertical-align: bottom; white-space: normal; min-width: 84px; }
+.cg-sum { font-weight: 400; font-size: 11px; }
+.cg-state { text-align: left !important; font-weight: 500; }
+.cg-region th { text-align: left; background: var(--chip); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+td.cg-covered { background: color-mix(in srgb, var(--official) 22%, transparent); }
+td.cg-covered.cg-stale { background: color-mix(in srgb, var(--thin) 30%, transparent); }
+td.cg-covered.cg-empty { background: color-mix(in srgb, var(--warn) 22%, transparent); }
+td.cg-checked { color: var(--muted); background: repeating-linear-gradient(45deg, transparent 0 5px, var(--chip) 5px 10px); cursor: help; }
+td.cg-open { background: var(--panel); }
+.cg-meta { display: block; font-size: 10px; color: var(--muted); line-height: 1.1; }
+.cg-x { color: var(--muted); font-size: 12px; }
+.cg-k { padding: 0 6px; border-radius: 3px; border: 1px solid var(--line); }
+.cg-k.cg-covered { background: color-mix(in srgb, var(--official) 22%, transparent); }
+.cg-k.cg-checked { background: repeating-linear-gradient(45deg, transparent 0 5px, var(--chip) 5px 10px); }

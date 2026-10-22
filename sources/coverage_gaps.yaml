@@ -1,0 +1,25 @@
+# Coverage gaps that were checked: a state and agency type for which no regular public report was found, with the date
+# of the check and what was found. Shown on the coverage grid (/sources/grid) as "checked, none published" instead of
+# an open gap. Transcribed from the registry's notes and the changelog; add a line whenever a slot is researched and
+# nothing is found. A source of that type in the registry always wins over an entry here.
+#   type: intelligence-civil | intelligence-military | cyber | civil-protection | police-ct
+- {country: AT, type: civil-protection, checked: 2026-10-06, note: "the BMI published one national risk analysis summary (bmi.gv.at/204_english/disaster_management); no regular series"}
+- {country: HU, type: intelligence-civil, checked: 2026-10-06, note: "Hungarian civil intelligence (AH, IH) publish no regular public reports"}
+- {country: RO, type: intelligence-military, checked: 2026-10-06, note: "the Foreign Intelligence Service SIE publishes no public reports"}
+- {country: RO, type: civil-protection, checked: 2026-10-08, retry: true, note: "IGSU's national risk assessment 2018 and country report 2020 are on old.igsu.ro, which timed out – retry; no regular series found"}
+- {country: GR, type: intelligence-civil, checked: 2026-10-06, note: "the National Intelligence Service (EYP) publishes no regular public threat reports"}
+- {country: GR, type: civil-protection, checked: 2026-10-08, note: "no regular national risk assessment or civil-protection report – published only as one-off plans or on script-built pages"}
+- {country: BG, type: civil-protection, checked: 2026-10-08, note: "no regular national risk assessment or civil-protection report – published only as one-off plans or on script-built pages"}
+- {country: CY, type: civil-protection, checked: 2026-10-08, note: "no regular national risk assessment or civil-protection report – published only as one-off plans or on script-built pages"}
+- {country: SK, type: civil-protection, checked: 2026-10-08, note: "no regular national risk assessment or civil-protection report – published only as one-off plans or on script-built pages"}
+- {country: MT, type: intelligence-civil, checked: 2026-10-06, note: "no regular public security reports found from the Security Service (MSS)"}
+- {country: MT, type: civil-protection, checked: 2026-10-06, note: "no regular public reports found from the Civil Protection Department"}
+- {country: AL, type: intelligence-civil, checked: 2026-10-06, note: "the State Intelligence Service (SHISH) site publishes no documents"}
+- {country: ME, type: intelligence-civil, checked: 2026-10-06, note: "the National Security Agency (ANB) reports to parliament's security committee; no public reports on anb.gov.me or gov.me"}
+- {country: ME, type: civil-protection, checked: 2026-10-06, note: "no regular public reports found on the sites or gov.me"}
+- {country: ME, type: cyber, checked: 2026-10-06, note: "CIRT.ME: no regular public reports found (cirt.me did not resolve)"}
+- {country: TR, type: intelligence-civil, checked: 2026-10-06, note: "MİT publishes no reports"}
+- {country: TR, type: civil-protection, checked: 2026-10-06, note: "AFAD activity reports not found on afad.gov.tr"}
+- {country: LU, type: cyber, checked: 2026-10-08, note: "CIRCL publishes conference slides, no regular report"}
+- {country: KR, type: cyber, checked: 2026-10-08, note: "KISA: no regular report found"}
+- {country: TW, type: cyber, checked: 2026-10-08, note: "TWCERT/CC: no regular report found"}
