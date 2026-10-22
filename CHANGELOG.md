@@ -27,6 +27,14 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.89.2] – 2026-10-22
+
+### Changed
+- **Dependency watch:** Dependabot now proposes security fixes for the pinned Python packages and the CI actions as soon as
+  an advisory is published, and one grouped version update per month (`.github/dependabot.yml`). Every update still goes
+  through a pull request and CI; nothing merges by itself.
+- CI runs on `actions/checkout` and `actions/setup-python` v7 (were v4 and v5).
+
 ## [0.89.1] – 2026-10-22
 
 ### Added
@@ -1691,7 +1699,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.89.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.89.2...HEAD
+[0.89.2]: https://github.com/iiogurt/Rozvedka/compare/v0.89.1...v0.89.2
 [0.89.1]: https://github.com/iiogurt/Rozvedka/compare/v0.89.0...v0.89.1
 [0.89.0]: https://github.com/iiogurt/Rozvedka/compare/v0.88.0...v0.89.0
 [0.88.0]: https://github.com/iiogurt/Rozvedka/compare/v0.87.0...v0.88.0
