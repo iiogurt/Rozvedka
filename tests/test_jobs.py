@@ -89,7 +89,9 @@ def test_cancel_only_before_changes(tmp_path, monkeypatch):
     j = wait()
     assert j["status"] == "cancelled" and "removed" in j["error"]
     datajobs.start("import", slow, final_after=5)                                            # past the point of no return
-    time.sleep(0.2)
+    end = time.time() + 10                      # wait for the state, not a fixed time: Windows sleeps are coarse
+    while datajobs.state()["cancellable"] and time.time() < end:
+        time.sleep(0.02)
     assert datajobs.cancel() is False
     j = wait()
     assert j["status"] == "done" and j["progress"]["total"] == 400
