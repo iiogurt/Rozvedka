@@ -173,8 +173,8 @@ combined timeline · C4 ✅ (0.58.1) the other pages in the panel style.
     sources with no report yet – mostly bot-protected sites for A5. · minor
 12. ✅ (0.88.0) **Topic and country briefing pages** – `/topics/{key}` and `/countries/{code}`: reports by year (official apart),
     countries, agencies, emphasised actors and topics (lift × reports), who reports about a state, its ratings and events; every
-    number opens its list (checked by `tools/check_links.py`). Found on the way: Czechia is not a country actor of the gazetteer,
-    so "who reports about Czechia" is empty – to fix with the next `fetch-actors --refresh`. · minor
+    number opens its list (checked by `tools/check_links.py`). Found on the way: Czechia was not a country actor of the gazetteer –
+    fixed in 0.89.4 (Wikidata had cut large replies short; 8 countries were lost, all back). · minor
 
 ### G. Networks of groups and people (owner's decision 2026-10-14: everything, no mockups)
 

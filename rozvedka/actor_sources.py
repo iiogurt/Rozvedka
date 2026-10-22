@@ -154,11 +154,22 @@ def resolve_titles(titles: list[str], what: str = "seed") -> dict[str, str]:
 
 
 def entities(qids: list[str], props: str, languages: list[str]) -> dict[str, dict]:
+    """Entities in batches of 50. The API cuts a reply larger than 12 MB short, with only a warning (countries are big:
+    8 of them were lost that way), so the ids a reply leaves out are asked again in halves, down to one at a time."""
     out = {}
-    for chunk in _chunks(sorted(qids), 50):
+    pending = list(_chunks(sorted(qids), 50))
+    while pending:
+        chunk = pending.pop(0)
         d = _get(WD_API, {"action": "wbgetentities", "ids": "|".join(chunk), "props": props,
                           "languages": "|".join(languages), "sitefilter": "enwiki", "format": "json"})
-        out.update({k: v for k, v in d.get("entities", {}).items() if "missing" not in v})
+        got = d.get("entities", {})
+        out.update({k: v for k, v in got.items() if "missing" not in v})
+        rest = [q for q in chunk if q not in got]
+        if rest and len(chunk) == 1:
+            log.warning("wikidata entity %s left out of the reply even alone: %s", chunk[0], d.get("warnings"))
+        elif rest:
+            half = (len(rest) + 1) // 2
+            pending[:0] = [c for c in (rest[:half], rest[half:]) if c]
         log.info("wikidata entities %d/%d", len(out), len(qids))
     return out
 

@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.89.4] – 2026-10-22
+
+### Fixed
+- **Eight countries were missing from the actors:** Argentina, Cambodia, Czechia, Greece, Moldova, North Korea, Peru and
+  Slovenia. Wikidata cuts a reply larger than 12 MB short and only adds a warning; country records are large, so two batches
+  of 50 came back incomplete and the missing countries went unnoticed. The gazetteer now asks again for whatever a reply left
+  out, in smaller batches, so no Wikidata item is lost this way (all `fetch-…` commands that read Wikidata entities). After
+  `fetch-actors --refresh` and `index-actors`, all 196 sovereign states are actors again – "who reports about Czechia" on its
+  briefing page, the country matrices and the network now include them.
+
 ## [0.89.3] – 2026-10-22
 
 ### Security
@@ -1707,7 +1717,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.89.3...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.89.4...HEAD
+[0.89.4]: https://github.com/iiogurt/Rozvedka/compare/v0.89.3...v0.89.4
 [0.89.3]: https://github.com/iiogurt/Rozvedka/compare/v0.89.2...v0.89.3
 [0.89.2]: https://github.com/iiogurt/Rozvedka/compare/v0.89.1...v0.89.2
 [0.89.1]: https://github.com/iiogurt/Rozvedka/compare/v0.89.0...v0.89.1
