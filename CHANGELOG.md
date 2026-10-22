@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.89.5] – 2026-10-22
+
+### Changed
+- **Dependencies updated** (Dependabot's first monthly update): FastAPI 0.148.0 (was 0.141.1, now on Starlette 1.7),
+  Markdown 3.11.1 (was 3.9), pytest 9.1.1 (was 9.0.3, development only).
+- **Python 3.11 or newer is needed** (was 3.10): Python 3.10 reached its end of life in October 2026, and Markdown 3.11 no
+  longer installs on it. CI no longer measures 3.10; the Raspberry Pi target stays Python 3.13.
+- The portal's start-up (database, collection queue, registry sync) runs in a FastAPI lifespan handler instead of the
+  deprecated `on_event("startup")`, so it keeps working with later FastAPI versions.
+
 ## [0.89.4] – 2026-10-22
 
 ### Fixed
@@ -1717,7 +1727,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.89.4...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.89.5...HEAD
+[0.89.5]: https://github.com/iiogurt/Rozvedka/compare/v0.89.4...v0.89.5
 [0.89.4]: https://github.com/iiogurt/Rozvedka/compare/v0.89.3...v0.89.4
 [0.89.3]: https://github.com/iiogurt/Rozvedka/compare/v0.89.2...v0.89.3
 [0.89.2]: https://github.com/iiogurt/Rozvedka/compare/v0.89.1...v0.89.2

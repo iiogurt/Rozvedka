@@ -76,7 +76,7 @@ silently.
 ## Setting up and running the tests
 
 Python **3.13** is the reference (the Raspberry Pi target). CI runs the test suite on Ubuntu with Python 3.13 as the
-required job, and measures – without requiring – Python 3.10–3.12, Linux ARM64, macOS and Windows
+required job, and measures – without requiring – Python 3.11–3.12, Linux ARM64, macOS and Windows
 ([`.github/workflows/tests.yml`](.github/workflows/tests.yml)).
 
 ```bash
