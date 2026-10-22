@@ -4,7 +4,7 @@ fastapi==0.141.1
 httpx==0.28.1
 Jinja2==3.1.6
 Markdown==3.9
-pypdf==6.19.0
+pypdf==6.21.1
 python-multipart==0.0.32
 PyYAML==6.0.3
 uvicorn[standard]==0.54.0
