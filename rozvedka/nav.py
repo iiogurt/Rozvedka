@@ -53,6 +53,7 @@ GROUPS = [
     ("maintain", "Maintain", "/views#maintain", [
         ("Update", "/update", ("/jobs",), "Check the agencies for new reports and refresh the indexes."),
         ("Coverage", "/sources/coverage", (), "What is collected, what is missing, per series."),
+        ("Coverage grid", "/sources/grid", (), "Every state against the agency types: covered, checked and not published, or still open."),
         ("To collect", "/collect", (), "Reports that need to be added by hand."),
         ("Year conflicts", "/years", (), "Reports whose publication year is in doubt."),
         ("Actor names", "/actors/names", (), "The names used to find actors, and why some are not used."),

@@ -58,6 +58,13 @@ def sources(request: Request):
                                                          "pages": pages, "series_by": series.by_source()})
 
 
+@router.get("/sources/grid")
+def coverage_grid(request: Request):
+    """Every state against the national agency types: covered, checked and found not published, or open."""
+    from .. import gaps
+    return tpl.TemplateResponse(request, "coverage_grid.html", {"g": gaps.grid()})
+
+
 @router.get("/publishers")
 def publishers_page(request: Request):
     """Every publisher that is not a state – think tanks, then commercial analysts – with its credibility rating and checks."""

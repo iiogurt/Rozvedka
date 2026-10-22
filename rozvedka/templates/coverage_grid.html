@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Coverage grid · Rozvedka{% endblock %}
+{% block main %}
+<h1 class="page-h">Coverage grid</h1>
+<p class="lede">Every state in scope against the national agency types: <span class="cg-k cg-covered">covered</span>,
+  <span class="cg-k cg-checked">∅ checked – no regular reports published</span>, or <span class="cg-k cg-open">open – still to research</span>.</p>
+<details class="how"><summary>How to read it</summary>
+<p class="muted small">A <b>covered</b> cell counts the state's agencies of that type in the registry and their listed reports (one file per
+  report; the number opens them), with the newest report's year – grey when older than {{ g.stale }} years, ✋ where the site is
+  collected by hand. <b>0</b> means the source is listed but has no report yet: a source to fix. <b>∅</b> means the slot was researched
+  and no regular public report found – the date and what was found are in the cell's tooltip and in <code>{{ g.file }}</code>.
+  An empty cell is <b>open</b>: nobody has looked yet, or nothing was recorded. Other official bodies and the state's think tanks ◆ and
+  commercial analysts ■ are counted apart, never in the agency types. EU bodies, NATO and international organisations are on
+  <a href="/sources">Agencies</a>.</p></details>
+
+<div class="tablewrap"><table class="cg-table small">
+  <thead><tr><th>State</th>{% for c in g.cols %}<th class="cg-th" title="{{ c.covered }} covered, {{ c.empty }} with no report yet, {{ c.checked }} checked, {{ c.open }} open">{{ c.name }}
+      <div class="muted cg-sum">{{ c.covered }} · {% if c.empty %}{{ c.empty }} ⚠ · {% endif %}{{ c.checked }} ∅ · {{ c.open }} open</div></th>{% endfor %}
+    <th>Other official</th><th>Think tanks ◆ · analysts ■</th></tr></thead>
+  {% set ns = namespace(region='') %}
+  {% for r in g.rows %}{% if r.region != ns.region %}{% set ns.region = r.region %}<tr class="cg-region"><th colspan="{{ g.cols|length + 3 }}">{{ r.region }}</th></tr>{% endif %}
+  <tr><th class="cg-state"><img class="flag-sm" src="{{ flag_url(r.code) }}" alt="" width="16" height="12"> <a href="/countries/{{ r.code }}">{{ r.name }}</a></th>
+    {% for c in r.cells %}{% if c.state in ('covered', 'empty') %}<td class="cg-covered{{ ' cg-stale' if c.stale }}{{ ' cg-empty' if c.state == 'empty' }}">
+        <a href="{{ c.link }}" title="{{ c.agencies }} agenc{{ 'ies' if c.agencies != 1 else 'y' }}{{ ', ' ~ c.manual ~ ' collected by hand' if c.manual }} – open the reports"><b>{{ c.n|num }}</b></a>
+        <span class="cg-meta">{{ c.newest or '' }}{{ ' ✋' if c.manual }}{% if c.agencies > 1 %} ·{{ c.agencies }}{% endif %}</span></td>
+      {% elif c.state == 'checked' %}<td class="cg-checked" title="checked {{ c.checked }}: {{ c.note }}">∅<span class="cg-meta">{{ c.checked[:7] }}{{ ' ↻' if c.retry }}</span></td>
+      {% else %}<td class="cg-open"></td>{% endif %}{% endfor %}
+    <td class="cg-x">{% for o in r.other %}<a href="{{ o.link }}" title="{{ o.agencies }} {{ o.type }}">{{ o.n|num }}</a>{{ ' · ' if not loop.last }}{% endfor %}</td>
+    <td class="cg-x">{% for o in r.independent %}<a href="{{ o.link }}" title="{{ o.agencies }} {{ o.type }}">{{ o.mark }} {{ o.n|num }}</a>{{ ' · ' if not loop.last }}{% endfor %}</td></tr>
+  {% endfor %}
+</table></div>
+
+<div class="rings-tables">
+<section class="viz-card"><h2 class="viz-title">Open slots <span class="muted small">{{ g.open|length }} to research</span></h2>
+  <p class="muted small">Look for regular public reports of these; add what is found to <code>sources/registry.yaml</code>, or record the check
+    in <code>{{ g.file }}</code>.</p>
+  {% for t, name in g.types.items() %}{% set os = g.open|selectattr('type', 'equalto', t)|list %}{% if os %}
+  <h3 class="small rings-h">{{ name }} <span class="muted">{{ os|length }}</span></h3>
+  <p class="small">{% for o in os %}<a href="/countries/{{ o.code }}">{{ o.name }}</a>{{ ' · ' if not loop.last }}{% endfor %}</p>{% endif %}{% endfor %}
+</section>
+<section class="viz-card"><h2 class="viz-title">Sources without a report <span class="muted small">{{ g.empty|length }}</span></h2>
+  {% if g.empty %}<ul class="plain small rings-list">{% for e in g.empty %}<li><a href="/countries/{{ e.code }}">{{ e.name }}</a> – {{ e.type_name }}
+    · <a href="/update?country={{ e.code }}#sources">check on Update</a>{{ ' · collected by hand: ' if e.manual }}{% if e.manual %}<a href="/collect">To collect</a>{% endif %}</li>{% endfor %}</ul>{% else %}<p class="muted small">None.</p>{% endif %}
+  {% if g.retry %}<h3 class="small rings-h">Checks to retry ↻</h3>
+  <ul class="plain small rings-list">{% for e in g.retry %}<li>{{ e.name }} – {{ g.types[e.type] }}: {{ e.note }} ({{ e.checked }})</li>{% endfor %}</ul>{% endif %}
+</section>
+</div>
+{% endblock %}

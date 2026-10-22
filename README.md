@@ -279,6 +279,22 @@ Recurring publications – the BIS annual report in Czech and English, KAPO's an
 The library proposes series from recurring titles; confirm, rename, merge or reject them on *Sources → Coverage*
 (stored in [`sources/series.yaml`](sources/series.yaml)), which also lists every series' gaps for maintenance.
 
+### 🧩 Coverage grid – where the library is thin
+
+<img src="docs/images/coverage-grid.png" alt="Coverage grid: every state against civil and military intelligence, cyber security, civil protection and police, with report counts, checked gaps and open slots" width="900">
+
+`/sources/grid` (Maintain → Coverage grid) puts every state in scope against the five national agency types: civil
+intelligence, military/foreign intelligence, cyber security, civil protection, and police/counter-terrorism.
+
+- **Covered cells** give the reports of the state's agencies of that type (the number opens them), the newest year (grey when
+  older than three years) and ✋ where the site is collected by hand.
+- **0** marks a source that is listed but has no report yet. Most of these are bot-protected sites waiting on *To collect*.
+- **∅** marks a slot that was researched without finding regular public reports, such as Greece's intelligence service or
+  Malta's civil protection. The date and what was found are kept in [`sources/coverage_gaps.yaml`](sources/coverage_gaps.yaml).
+- **Empty cells** are open: the page lists them as the slots still to research.
+- Other official bodies and the state's think tanks ◆ and commercial analysts ■ are counted in separate columns. Every
+  number is checked against its list by `tools/check_links.py`.
+
 ### 📥 To collect – hand import with provenance
 
 <img src="docs/images/collect.png" alt="To collect: missing editions with candidates, upload form and not-published marker" width="900">
@@ -1070,6 +1086,7 @@ flowchart LR
 | `rozvedka/downloader.py` | download, check the PDF header, de-duplicate by SHA-256, improve titles |
 | `rozvedka/topics.py` | text extraction with page offsets, FTS5 index, topic classification (all CPU cores) |
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
+| `rozvedka/gaps.py` | the coverage grid: states × agency types, covered, without reports, checked (`sources/coverage_gaps.yaml`) or open |
 | `rozvedka/briefings.py` | briefing pages: one topic or one country – reports by year, countries, agencies, emphasised actors and topics (lift × reports), who reports about it |
 | `rozvedka/trends.py` | the statistics behind the Trends pages, each with the link that reproduces it |
 | `rozvedka/wanted.py` | wanted notices of the FBI and Europe's Most Wanted: fetching, the security filter, entries for the identity rules, relation words |

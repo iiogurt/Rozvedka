@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.89.0] – 2026-10-22
+
+### Added
+- **Coverage grid** (`/sources/grid`, Maintain → Coverage grid). Every state in scope is set against the five national agency
+  types, and each cell shows one of four things:
+  - the reports the library has, with the newest year and the hand-collected sites;
+  - **0** for a listed source with no report yet (mostly bot-protected sites waiting on *To collect*);
+  - **∅** for a slot researched without finding regular public reports, with the date and what was found;
+  - nothing, for a slot still open – the open slots are listed below the grid as a to-do.
+
+  Think tanks and analysts get columns of their own. The checked gaps that were scattered over comments in the registry are
+  now in `sources/coverage_gaps.yaml` (20 slots). Every count is checked against its list by `tools/check_links.py` (142 cells).
+
 ## [0.88.0] – 2026-10-22
 
 ### Added
@@ -1665,7 +1678,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.88.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.89.0...HEAD
+[0.89.0]: https://github.com/iiogurt/Rozvedka/compare/v0.88.0...v0.89.0
 [0.88.0]: https://github.com/iiogurt/Rozvedka/compare/v0.87.0...v0.88.0
 [0.87.0]: https://github.com/iiogurt/Rozvedka/compare/v0.86.0...v0.87.0
 [0.86.0]: https://github.com/iiogurt/Rozvedka/compare/v0.85.0...v0.86.0

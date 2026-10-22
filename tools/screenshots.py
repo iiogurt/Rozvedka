@@ -58,6 +58,7 @@ SHOTS = {
     "ratings-country": ("/ratings/DE", 1300, [], None),                  # one state: a chart per measure
     "series": ("/series/e64e96b2", 1200, [], None),
     "collect": ("/collect", 1100, [], None),
+    "coverage-grid": ("/sources/grid", 1250, [], None),               # states × agency types: covered, checked, open
     "topics": ("/topics", 1100, [], None),
     "briefing-topic": ("/topics/ransomware", 1450, [], None),          # one topic on one page
     "briefing-country": ("/countries/DE", 1450, [], None),             # one country on one page
