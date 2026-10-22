@@ -7,6 +7,7 @@ collected, searchable, indexed by topic and actor, and traceable back to the pag
 
 [![release](https://img.shields.io/github/v/release/iiogurt/Rozvedka?color=1f4e79&label=release)](https://github.com/iiogurt/Rozvedka/releases/latest)
 [![tests](https://github.com/iiogurt/Rozvedka/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/iiogurt/Rozvedka/actions/workflows/tests.yml)
+[![licence](https://img.shields.io/github/license/iiogurt/Rozvedka?color=4c7a34&label=licence)](LICENSE)
 ![python](https://img.shields.io/badge/python-3.10–3.13-3776ab?logo=python&logoColor=white)
 ![fastapi](https://img.shields.io/badge/FastAPI-server--rendered-009688?logo=fastapi&logoColor=white)
 ![sqlite](https://img.shields.io/badge/SQLite-FTS5-003b57?logo=sqlite&logoColor=white)
@@ -14,6 +15,8 @@ collected, searchable, indexed by topic and actor, and traceable back to the pag
 
 [Features](#features) · [Quick start](#quick-start) · [Commands](#commands) · [Configuration](#configuration) ·
 [How it works](#how-it-works) · [Database](#database) · [Development](#development) · [Sources & licences](#data-sources-and-licences)
+
+[Contributing](CONTRIBUTING.md) · [Code of conduct](CODE_OF_CONDUCT.md) · [Security policy](SECURITY.md) · [MIT licence](LICENSE)
 
 <img src="docs/images/home.png" alt="Home page: ASCII radar and word mark, the search console, and dashboards of the newest reports" width="900">
 
@@ -1267,7 +1270,9 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
   sanctions and lobbying registers when you run the `fetch-…` commands. No telemetry, no accounts, no CDN at runtime.
 - **Headless Chromium** renders the few JavaScript-only report pages (`access: browser`); it runs without its sandbox
   (needed under some service managers), so keep it updated with the system.
-- Report a vulnerability through a private GitHub security advisory on the repository.
+- Report a vulnerability privately through [GitHub's vulnerability reporting](https://github.com/iiogurt/Rozvedka/security/advisories/new),
+  never as a public issue. [`SECURITY.md`](SECURITY.md) says what is in scope (exposing the portal without a login is
+  documented behaviour, not a vulnerability) and what to expect.
 
 ## Compatibility
 
@@ -1295,6 +1300,10 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 .venv/bin/python tools/check_links.py      # before a release: home, What's new, Compare and Watchlist counts = their lists; no broken links
 ```
 
+- **Contributing:** new and corrected sources, bug reports and fixes are welcome.
+  [`CONTRIBUTING.md`](CONTRIBUTING.md) covers the scope, how to propose an agency or think tank, the crawling rules,
+  tests and pull requests; the [issue forms](https://github.com/iiogurt/Rozvedka/issues/new/choose) ask for what a
+  report or a source suggestion needs. Taking part means accepting the [Code of Conduct](CODE_OF_CONDUCT.md).
 - **Working rules:** [`CLAUDE.md`](CLAUDE.md) holds the project conventions – scope and source rules, the
   traceability and visualisation principles, git/GitHub workflow, versioning, changelog, README and release
   steps. Claude Code reads it automatically in every session.
@@ -1324,6 +1333,13 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 
 ## Data sources and licences
 
+Rozvedka's own code is released under the [MIT licence](LICENSE). Vendored third-party files keep their own licences,
+each next to them under `rozvedka/static/` and listed below: Apache ECharts and vis-timeline (Apache-2.0, vis-timeline
+also MIT), Leaflet (BSD-2), Leaflet.markercluster, timeline-arrows and flag-icons (MIT), the IBM Plex fonts (SIL OFL
+1.1), DejaVu Sans Mono (Bitstream Vera licence) and the Lucide icons (ISC). The downloaded reports, agency logos and
+gazetteer data are not covered by the MIT licence and are not in the repository (`data/` is not committed); they stay
+under their publishers' terms below.
+
 | Component | Source | Licence / terms |
 |---|---|---|
 | Reports | the agencies' official websites, listed in [`sources/sources.md`](sources/sources.md) | the publishers' terms; downloaded for personal reference, not redistributed |
@@ -1345,10 +1361,10 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 | Company ownership | [GLEIF golden copy](https://www.gleif.org/en/lei-data/gleif-golden-copy) – LEI records and relationships (`data/gleif/`, not committed) | CC0 1.0; no endorsement by GLEIF implied |
 | Wanted notices | [FBI Wanted API](https://api.fbi.gov/wanted/v1/list), [Europe's Most Wanted](https://eumostwanted.eu/) (ENFAST, supported by Europol) – text, names, dates of birth and charges only, no photographs (`data/gazetteer/wanted.json`, not committed) | public official notices, linked on each page |
 | Event dates | Wikidata via `tools/build_events.py` | CC0 |
-| Charts | [Apache ECharts](https://echarts.apache.org) 6.1.0, vendored | Apache-2.0 |
+| Charts | [Apache ECharts](https://echarts.apache.org) 6.1.0, vendored (`static/vendor/echarts/`) | Apache-2.0 ([`LICENSE`](rozvedka/static/vendor/echarts/LICENSE), [`NOTICE`](rozvedka/static/vendor/echarts/NOTICE)) |
 | Timeline | [vis-timeline](https://visjs.github.io/vis-timeline/) 8.5.4, vendored (`static/vendor/vis-timeline/`) | Apache-2.0 or MIT ([`LICENSE.md`](rozvedka/static/vendor/vis-timeline/LICENSE.md)) |
 | Timeline arrows | [timeline-arrows](https://github.com/javdome/timeline-arrows) 4.8.0, vendored (`static/vendor/timeline-arrows/`) | Apache-2.0 or MIT ([`LICENSE`](rozvedka/static/vendor/timeline-arrows/LICENSE)) |
-| Map | [Leaflet](https://leafletjs.com) 1.9.4, Leaflet.markercluster 1.5.3, [Natural Earth](https://www.naturalearthdata.com) outlines | BSD-2, MIT, public domain |
+| Map | [Leaflet](https://leafletjs.com) 1.9.4, Leaflet.markercluster 1.5.3, vendored (`static/vendor/leaflet/`, `static/vendor/markercluster/`); [Natural Earth](https://www.naturalearthdata.com) outlines (`static/geo/`) | BSD-2 ([`LICENSE`](rozvedka/static/vendor/leaflet/LICENSE)), MIT ([`LICENSE`](rozvedka/static/vendor/markercluster/LICENSE)), public domain ([`SOURCE.txt`](rozvedka/static/geo/SOURCE.txt)) |
 | Home-page font | [DejaVu Sans Mono](https://dejavu-fonts.github.io), a subset vendored in `rozvedka/static/vendor/fonts/` | Bitstream Vera licence ([`LICENSE-DejaVu.txt`](rozvedka/static/vendor/fonts/LICENSE-DejaVu.txt)); DejaVu changes public domain |
 | Street tiles | [OpenStreetMap](https://www.openstreetmap.org/copyright), loaded in the viewer's browser | ODbL, © OpenStreetMap contributors; OSM tile usage policy |
 

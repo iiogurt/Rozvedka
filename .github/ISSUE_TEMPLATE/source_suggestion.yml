@@ -1,0 +1,50 @@
+name: Source suggestion
+description: Propose an agency, a reports page, or a think tank or commercial analyst – or correct an existing source.
+labels: [sources]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Rozvedka collects regular public reports of intelligence, cyber-security, civil-protection and police /
+        counter-terrorism agencies in the states listed in [CONTRIBUTING.md](https://github.com/iiogurt/Rozvedka/blob/main/CONTRIBUTING.md#what-rozvedka-collects),
+        plus vetted think tanks. Reports must come from the publisher's own domain (no aggregators or mirrors).
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of publisher
+      options:
+        - official (state agency, government portal, intergovernmental body)
+        - independent (think tank, research institute)
+        - commercial (company selling analysis)
+    validations:
+      required: true
+  - type: input
+    id: publisher
+    attributes:
+      label: Publisher and country
+      placeholder: "Latvia – Constitution Protection Bureau (SAB)"
+    validations:
+      required: true
+  - type: textarea
+    id: pages
+    attributes:
+      label: Report pages
+      description: Every language version and the archive of older editions, one URL per line with its language.
+      placeholder: |
+        lv  https://…/zinojumi/
+        en  https://…/en/reports/
+        en  archive: https://…/en/reports/archive/
+    validations:
+      required: true
+  - type: textarea
+    id: credibility
+    attributes:
+      label: Funding or ownership (think tanks and commercial analysts only)
+      description: |
+        Where the publisher discloses its funding (or, for a company, its owners), any donor governments, and the date
+        you checked. See docs/PUBLISHER_PROFILES.md for the admission rules.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Report types and rhythm, bot protection you noticed, anything else.

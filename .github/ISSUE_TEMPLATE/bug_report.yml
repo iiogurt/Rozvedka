@@ -1,0 +1,43 @@
+name: Bug report
+description: Something in the portal or a command does not work as described.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Security problems go through a [private advisory](https://github.com/iiogurt/Rozvedka/security/advisories/new), not here.
+        Please leave out personal names, e-mail addresses, home paths and host names (also in logs and screenshots).
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead. A wrong number? Say which page and which link.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. python -m rozvedka …
+        2. open /documents?…
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The portal footer or `python -m rozvedka --version`.
+      placeholder: 0.88.0
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: System
+      placeholder: Raspberry Pi OS 13, Python 3.13, Firefox
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error output
+      render: text
