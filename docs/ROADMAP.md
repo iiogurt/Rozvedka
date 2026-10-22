@@ -168,7 +168,10 @@ combined timeline · C4 ✅ (0.58.1) the other pages in the panel style.
 9. ◐ (0.61.0: chord diagram between agency types) **Citations** – still open: an agency × agency matrix. · minor
 10. **ATT&CK tactic grid and CVE lag plot.** · minor
 11. **Coverage overview grid and a country × agency-type gap matrix.** · minor
-12. **Topic and country briefing pages** (`/topics/{key}`: trend, top agencies and actors, newest passages). · minor / large
+12. ✅ (0.88.0) **Topic and country briefing pages** – `/topics/{key}` and `/countries/{code}`: reports by year (official apart),
+    countries, agencies, emphasised actors and topics (lift × reports), who reports about a state, its ratings and events; every
+    number opens its list (checked by `tools/check_links.py`). Found on the way: Czechia is not a country actor of the gazetteer,
+    so "who reports about Czechia" is empty – to fix with the next `fetch-actors --refresh`. · minor
 
 ### G. Networks of groups and people (owner's decision 2026-10-14: everything, no mockups)
 
@@ -275,7 +278,7 @@ Updated 2026-10-21, after H (all of it built by 0.81.0) and F3 + F4 (0.82.1):
 
 1. **G7 → G8 → G9** – finish the network plan the owner approved: views (rings ✅ 0.83.0, matrix ✅ 0.84.0; the network as
    of a year waits for more dated links), the shared case file ✅ 0.85.0, then company registries and leaks (GLEIF, UK Companies House, ICIJ).
-2. **F12** – topic and country briefing pages: reports, actors, events and the country ratings on one page.
+2. ✅ **F12** – topic and country briefing pages (0.88.0).
 3. **F5, F9–F11** – overview sparklines, the agency × agency citation matrix, the ATT&CK tactic grid, the coverage gap matrix.
 4. **A3–A5, D2–D7** – more sources (no new code); A5 needs the owner to collect the blocked flagships by hand.
 

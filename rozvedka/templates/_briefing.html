@@ -1,0 +1,17 @@
+{# shared pieces of the briefing pages (rozvedka/briefings.py) #}
+{% macro years(ys, what) %}{% if ys %}{% set top = (ys|map(attribute='official')|max) + (ys|map(attribute='independent')|max) or 1 %}
+<div class="bf-years" role="img" aria-label="{{ what }} per year">
+  {% for y in ys %}<div class="bf-y" title="{{ y.year }}: {{ y.official }} official{% if y.independent %} + {{ y.independent }} think tanks and analysts{% endif %}{% if y.share is not none %} – {{ (100 * y.share)|round(1) }} % of the {{ y.of }} official reports that year{% endif %}">
+    <span class="bf-bars">{% if y.independent %}<a class="bf-ind" href="{{ y.link_all }}" style="height:{{ (100 * y.independent / top)|round(1) }}%"></a>{% endif %}<a class="bf-off" href="{{ y.link }}" style="height:{{ (100 * y.official / top)|round(1) }}%"></a></span>
+    <span class="bf-n">{{ y.official or '' }}</span>{% if loop.first or loop.last or y.year % 5 == 0 %}<span class="bf-yl">{{ y.year }}</span>{% endif %}</div>{% endfor %}
+</div>
+<p class="muted small bf-key"><span class="bf-sw bf-off"></span> official agencies <span class="bf-sw bf-ind"></span> think tanks ◆ and commercial analysts ■ – each bar opens its reports; hover for the share of all official reports that year.</p>
+{% endif %}{% endmacro %}
+
+{% macro ranked(rows, label, sub=None) %}{% set top = (rows|map(attribute='n')|max if rows else 1) or 1 %}
+<ol class="plain bf-rank">{% for r in rows %}<li>
+  <span class="bf-l">{{ label(r) }}</span>
+  <span class="bf-bar"><i style="width:{{ (100 * r.n / top)|round(1) }}%"></i></span>
+  <a class="bf-num" href="{{ r.link }}" title="open these reports">{{ r.n|num }}</a>
+  <span class="muted small bf-sub">{{ sub(r) if sub }}</span></li>{% endfor %}</ol>
+{% endmacro %}

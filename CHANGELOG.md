@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.88.0] – 2026-10-22
+
+### Added
+- **Briefing pages – one topic or one country on one page.**
+  - **A topic** (`/topics/{key}`, the topic names on Topics now open it) shows its reports year by year (official agencies
+    apart from think tanks and commercial analysts), the countries writing most about it (with the share of each state's own
+    reports), the agencies, the actors and related topics its reports emphasise (lift × reports, not raw frequency), and its
+    newest reports with the words that tagged them.
+  - **A country** (`/countries/{code}`, Sources → Countries) shows its agencies, its reports by year, the topics and actors
+    its official reports emphasise compared with all official reports (its own agencies left out), which other states'
+    reports name it, its regime type, ratings, events and threat levels.
+  - Every number opens its Documents list, and the link checker now compares two sample briefings with their lists.
+
 ## [0.87.0] – 2026-10-21
 
 ### Added
@@ -1652,7 +1665,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.87.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.88.0...HEAD
+[0.88.0]: https://github.com/iiogurt/Rozvedka/compare/v0.87.0...v0.88.0
 [0.87.0]: https://github.com/iiogurt/Rozvedka/compare/v0.86.0...v0.87.0
 [0.86.0]: https://github.com/iiogurt/Rozvedka/compare/v0.85.0...v0.86.0
 [0.85.0]: https://github.com/iiogurt/Rozvedka/compare/v0.84.0...v0.85.0
