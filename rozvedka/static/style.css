@@ -1223,6 +1223,19 @@ body.home .h-search { margin-bottom: 14px; }
 .kpis b { font: 500 24px/1.15 var(--mono); color: var(--ink); }
 .kpis em { font-style: normal; font-size: 11px; color: var(--muted); }
 .kpis .kpi-ind span, .kpis .kpi-ind b { color: var(--indep); }
+/* a tile with a sparkline: the tile's link, then one link per publication year (reports of that year) */
+.kpis .kpi-box { display: flex; flex-direction: column; background: var(--panel); }
+.kpis .kpi-box > a:first-child { padding-bottom: 4px; flex: 1; }
+.kpi-spark { display: grid; grid-template-columns: repeat(15, 1fr); align-items: end; gap: 1px; height: 22px; margin: 0 16px 10px;
+             position: relative; grid-template-rows: 22px auto; row-gap: 1px; height: auto; }
+.kpis .kpi-spark a { display: block; padding: 0; height: var(--h); min-height: 1px; background: var(--accent); opacity: .75; align-self: end; }
+.kpis .kpi-spark a:hover { opacity: 1; background: var(--accent); }
+.kpis .kpi-spark a.zero { background: var(--line); }
+.kpis .kpi-spark a.part { opacity: .4; }
+.kpis .kpi-ind .kpi-spark a:not(.zero) { background: var(--indep); }
+.kpis .kpi-com .kpi-spark a:not(.zero) { background: var(--com); }
+.kpi-spark i { font-style: normal; font-size: 9px; color: var(--muted); grid-row: 2; }
+.kpi-spark i:first-of-type { grid-column: 1 / 8; } .kpi-spark i:last-of-type { grid-column: 9 / 16; text-align: right; }
 .h-grid { gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
           grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
 .h-grid .h-card { border: 0; border-radius: 0; margin: 0; padding: 14px 18px; }

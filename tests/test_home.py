@@ -117,6 +117,11 @@ def test_pages_and_redirects(library):
     r = client.get("/search", params={"q": "agency:BIS"})
     assert r.status_code == 200 and "is the name of 2 agencies" in r.text and "country%3ACZ%20agency%3ABIS" in r.text
     assert total(client, "/documents?undated=1") == 1
+    # the report tile's sparkline: one bar per year of the publication-year chart, each linking to that year's list
+    d = home.dashboard()
+    spark = client.get("/").text.split('class="kpi-spark"', 1)[1].split("</div>", 1)[0]
+    assert spark.count("<a ") == len(d["years"]) == 15
+    assert all(f'href="{y["url"]}"' in spark.replace("&amp;", "&") for y in d["years"])
     assert client.get("/api/suggest", params={"q": "cz"}).json()["groups"][0]["items"][0]["flag"].endswith("cz.svg")
 
 

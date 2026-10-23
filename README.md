@@ -66,6 +66,8 @@ The start page (`/`): an ASCII radar and word mark, one search box for the whole
   <kbd>Tab</kbd> puts the suggestion into the query as a filter, <kbd>/</kbd> jumps to the box. Recent searches
   are remembered in your browser only.
 - **Key numbers** – a strip under the search: reports, official agencies, ◆ think tanks, ■ commercial analysts, countries, languages and editions to collect.
+  The report, think-tank and analyst tiles carry a sparkline of their reports by publication year over the last 15 years
+  (the current year paler, as it is not over); each bar opens that year's list.
 - **Dashboards** – one grid of panels: newest editions; reports added lately, with a column for each of the last 30 days (a column opens
   that day's additions); reports per publication year, each bar split into official agencies, ◆ think tanks and ■ commercial analysts (every
   report in one row, undated ones included); rising topics as a dumbbell – each topic's share in the earlier and the
