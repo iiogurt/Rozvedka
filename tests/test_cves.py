@@ -97,3 +97,19 @@ def test_pages(library):
     d = c.get("/documents?cve=CVE-2023-23397&cve_near=Q1").text
     assert "within one passage of Fancy Bear" in d and "Report 1" in d and "Report 2" not in d
     assert 'id="cves"' in c.get("/report/2").text and "CVE-2021-44228" in c.get("/report/2").text
+
+
+def test_cve_ages_and_cisa_listing_are_counted_per_pair_and_link_to_their_reports(library):
+    with db.session() as con:
+        con.execute("UPDATE documents SET year=2022 WHERE id=3")      # names CVE-2023-23397 a year before its number and CISA's list
+    cves.index()
+    lag = cves.lags()
+    ages = {b["key"]: (b["pairs"], b["reports"]) for b in lag["ages"]}
+    assert ages[0] == (1, 1) and ages[2] == (1, 1) and ages[-1] == (1, 1) and ages[1] == (0, 0)
+    assert {b["key"]: b["pairs"] for b in lag["kev"]} == {"before": 1, "same": 1, "after": 0}
+    assert lag["pairs"] == 3 and lag["within_a_year"] == 1 and lag["kev_pairs"] == 2
+    for _label, n, url in cves.figures():
+        assert doclist.count(cve=url.split("cve=")[1].split("&")[0], indexed=1) == n, url
+    assert cves.clause("age:11") is None and cves.clause("kev:soon") is None
+    t = TestClient(__import__("rozvedka.app", fromlist=["app"]).app).get("/documents?cve=age:2").text
+    assert "numbered 2 years before the report" in t and "CVE page" not in t

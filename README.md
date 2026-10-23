@@ -402,11 +402,21 @@ column; <i>over-emphasis</i> shows how much more or less often a row carries a t
   catalog of vulnerabilities known to be exploited (`fetch-kev`, CC0, version and retrieval date shown). `/cves` lists them
   with reports, agencies, years and the CISA entry; a CVE page shows the reports naming it with the passage and page and the
   actors named in the same passage (a nearness in the text, not a claim that the actor used it); actor and report pages show
-  their CVEs. Every number links to the reports it counts.
+  their CVEs. Every number links to the reports it counts. **How old the named flaws are**: for every report × CVE pair,
+  the years between the year in the CVE number and the report's year (year precision – reports carry no exact date), and
+  for CVEs on CISA's list whether the report named it before, in or after the year CISA added it; each bar opens the
+  reports behind it.
+
+<img src="docs/images/cve-lag.png" alt="How old the named vulnerabilities are: report × CVE pairs by years between the CVE number and the report, and against CISA's listing" width="900">
 
 - **ATT&CK techniques** (`/techniques`) – the attacker-technique numbers (T1566, T1059.001 …) the reports name, tied to MITRE's
   catalog (`fetch-attack`, `index-techniques`): name, tactics, reports and agencies per technique, the passages, and the groups
   MITRE lists as using it (linked to the actor index). Report pages list the techniques they name; every count links to its reports.
+  **The ATT&CK matrix as the reports name it** heads the page: a block per tactic in MITRE's order (the Enterprise kill chain,
+  then what only ICS or Mobile has), the reports naming any of its techniques, and its techniques ranked by reports with a bar
+  – how much of each tactic the reports cover ("8 of 46 named") at a glance.
+
+<img src="docs/images/attack-grid.png" alt="The ATT&CK matrix as the reports name it: a block per tactic with its techniques ranked by reports" width="900">
 
 - **Terrorism threat levels** (`/threat-levels`) – small charts, one per state on its own scale and one shared time axis
   (announced changes as steps, levels read in reports as dots), then the levels states' services publish, as dated statements with the quote: the

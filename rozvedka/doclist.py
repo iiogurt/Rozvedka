@@ -73,6 +73,10 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
     if cve == "kev":   # reports naming any CVE on CISA's Known Exploited Vulnerabilities list
         where.append("d.id IN (SELECT doc_id FROM doc_cves WHERE cve IN (SELECT value FROM json_each(?)))")
         args.append(json.dumps(cves.kev_ids()))
+    elif cve.startswith(("age:", "kev:")):   # the CVE lag buckets of the CVE page
+        cl = cves.clause(cve)
+        if cl:
+            where.append(cl[0]); args += cl[1]
     elif re.fullmatch(r"CVE-\d{4}-\d{4,7}", cve.upper()):
         if cve_near:   # … within one passage of this actor (what the actor page counts)
             where.append("d.id IN (SELECT doc_id FROM actor_cves WHERE cve=? AND actor_key=?)"); args += [cve.upper(), cve_near]
@@ -83,6 +87,9 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
         t = technique.upper()
         if re.fullmatch(r"T1\d{3}(\.\d{3})?", t):
             where.append("d.id IN (SELECT doc_id FROM doc_techniques WHERE technique=?)"); args.append(t)
+        elif technique.startswith("tactic:"):   # reports naming any technique of this tactic
+            where.append("d.id IN (SELECT doc_id FROM doc_techniques WHERE technique IN (SELECT value FROM json_each(?)))")
+            args.append(json.dumps(techniques.of_tactic(technique[7:])))
     if cite:
         citations.init()
         cl = citations.clause(cite)

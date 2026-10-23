@@ -1636,3 +1636,29 @@ table.cm-table { border-collapse: collapse; }
 .cm-table .cm-tot { color: var(--muted); }
 .cm-table .cm-tot a { color: var(--muted); }
 .cm-table tr.cm-tot th, .cm-table tr.cm-tot td { border-top: 2px solid var(--line); font-size: 11px; text-align: center; }
+
+/* ── ATT&CK tactic grid (/techniques) ── */
+.ag-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px 16px; }
+.ag-col { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-content: start; gap: 2px 6px; font-size: 11px; min-width: 0; }
+.ag-head { grid-column: 1 / -1; border-bottom: 2px solid var(--line); padding-bottom: 4px; margin-bottom: 2px; font-weight: 600; font-size: 12px; }
+.ag-head > a:first-child { color: var(--ink); }
+.ag-n { float: right; font-variant-numeric: tabular-nums; }
+.ag-sub { display: block; font-weight: 400; font-size: 10px; }
+.ag-t { position: relative; display: block; padding: 1px 3px; color: var(--ink); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ag-bar { position: absolute; inset: 0 auto 0 0; width: var(--w); background: color-mix(in srgb, var(--accent) 22%, transparent); z-index: 0; }
+.ag-t > span:not(.ag-bar) { position: relative; }
+.ag-id { color: var(--muted); font-family: var(--mono, monospace); font-size: 10px; }
+.ag-c { text-align: right; font-variant-numeric: tabular-nums; padding: 1px 2px; }
+.ag-more { grid-column: 1 / -1; color: var(--muted); }
+
+/* ── CVE lag (/cves) ── */
+.lag-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; align-items: start; }
+table.lag { border-collapse: collapse; width: 100%; }
+.lag th, .lag td { padding: 2px 6px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+.lag thead th { font-size: 11px; color: var(--muted); font-weight: 600; }
+.lag td.n { text-align: right; font-variant-numeric: tabular-nums; }
+.lag td.lag-b { width: 60%; position: relative; }
+.lag td.lag-b span { display: inline-block; height: 10px; width: var(--w); background: var(--accent); vertical-align: middle; min-width: 1px; }
+.lag td.lag-b i { font-style: normal; color: var(--muted); margin-left: 6px; font-variant-numeric: tabular-nums; }
+.lag td.lag-kev-before span { background: var(--accent-2); }
+.lag td.lag-kev-after span { background: var(--muted); }

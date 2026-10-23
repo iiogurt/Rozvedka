@@ -17,7 +17,8 @@ def cves_page(request: Request, kev: str = "", q: str = "", ransomware: int = 0,
                          {"kev": kev, "q": q, "ransomware": ransomware or "", "sort": sort if sort != "reports" else "",
                           "per_page": size if size != 50 else ""}, default=50)
     return tpl.TemplateResponse(request, "cves.html", {**d, "rows": d["rows"][pg["offset"]:pg["offset"] + size], "pg": pg,
-                                                       "f": {"kev": kev, "q": q, "ransomware": ransomware, "sort": sort}})
+                                                       "f": {"kev": kev, "q": q, "ransomware": ransomware, "sort": sort},
+                                                       "lag": cves.lags()})
 
 
 @router.get("/cves/{cve}")
