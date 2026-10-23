@@ -2,6 +2,7 @@
 {% block title %}Rozvedka – open-source intelligence library{% endblock %}
 {% block head %}<script src="{{ asset('home.js') }}" defer></script>{% endblock %}
 {% block body_class %}home{% endblock %}
+{% macro spark(years, n, url, what) %}{% set top = (years|map(attribute=n)|max) or 1 %}<div class="kpi-spark" role="img" aria-label="{{ what }} by publication year, {{ years[-1].year }}–{{ years[0].year }}">{% for y in years|reverse %}<a href="{{ y[url] }}" style="--h: {{ (100 * y[n] / top)|round|int }}%" class="{{ 'zero' if not y[n] }}{{ ' part' if y.partial }}" title="{{ y.year }}{{ ' so far' if y.partial }}: {{ y[n] }} {{ what }}"></a>{% endfor %}<i>{{ years[-1].year }}</i><i>{{ years[0].year }}</i></div>{% endmacro %}
 {% macro doc_row(r, when) %}
   <li><img class="flag-sm" src="{{ flag_url(r.country) }}" alt="{{ r.country }}" width="20" height="15">
     <span class="h-srcw"><a class="h-src" href="/documents?source={{ r.source_id }}">{{ r.agency }}</a>{{ pub_mark(r.source_id, compact=True) }}</span>
@@ -68,10 +69,10 @@
 </section>
 
 <section class="kpis" aria-label="The library in numbers">
-  <a href="{{ d.totals.reports.url }}"><span>Reports</span><b>{{ d.totals.reports.n|num }}</b><em>{{ d.totals.searchable.n|num }} full-text searchable</em></a>
+  <div class="kpi-box"><a href="{{ d.totals.reports.url }}"><span>Reports</span><b>{{ d.totals.reports.n|num }}</b><em>{{ d.totals.searchable.n|num }} full-text searchable</em></a>{{ spark(d.years, 'n', 'url', 'reports') }}</div>
   <a href="{{ d.totals.agencies.url }}"><span>Official agencies</span><b>{{ d.totals.agencies.n|num }}</b><em>state bodies, EU and NATO</em></a>
-  {% if d.totals.think_tanks.n %}<a class="kpi-ind" href="{{ d.totals.think_tanks.reports_url }}" title="Independent publishers – not run by states"><span>Think tanks ◆</span><b>{{ d.totals.think_tanks.n }}</b><em>{{ d.totals.think_tanks.reports|num }} reports</em></a>{% endif %}
-  {% if d.totals.commercial.n %}<a class="kpi-com" href="{{ d.totals.commercial.reports_url }}" title="Commercial analysts – companies selling analysis to clients, not run by states"><span>Commercial ■</span><b>{{ d.totals.commercial.n }}</b><em>{{ d.totals.commercial.reports|num }} reports</em></a>{% endif %}
+  {% if d.totals.think_tanks.n %}<div class="kpi-box kpi-ind"><a href="{{ d.totals.think_tanks.reports_url }}" title="Independent publishers – not run by states"><span>Think tanks ◆</span><b>{{ d.totals.think_tanks.n }}</b><em>{{ d.totals.think_tanks.reports|num }} reports</em></a>{{ spark(d.years, 'n_ind', 'url_ind', 'think-tank reports') }}</div>{% endif %}
+  {% if d.totals.commercial.n %}<div class="kpi-box kpi-com"><a href="{{ d.totals.commercial.reports_url }}" title="Commercial analysts – companies selling analysis to clients, not run by states"><span>Commercial ■</span><b>{{ d.totals.commercial.n }}</b><em>{{ d.totals.commercial.reports|num }} reports</em></a>{{ spark(d.years, 'n_com', 'url_com', 'commercial reports') }}</div>{% endif %}
   <a href="{{ d.totals.countries.url }}"><span>Countries</span><b>{{ d.totals.countries.n|num }}</b><em>+ EU and NATO bodies</em></a>
   <a href="{{ d.totals.searchable.url }}"><span>Languages</span><b>{{ d.totals.languages.n }}</b><em>{{ (d.totals.searchable.words / 1e6)|round(1) }} M words indexed</em></a>
   <a href="/collect"><span>To collect</span><b>{{ d.collect.missing }}</b><em>editions missing from series</em></a>

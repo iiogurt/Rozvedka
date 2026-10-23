@@ -27,6 +27,15 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.92.0] – 2026-10-23
+
+### Added
+- **Sparklines in the overview's key numbers.** The Reports, Think tanks ◆ and Commercial ■ tiles show their reports by
+  publication year over the last 15 years, in the colour of their kind (the current year paler, as it is not over). Each bar
+  opens that year's list – the same counts as the publication-year chart below, which `tools/check_links.py` already checks.
+  This completes roadmap F5: the daily columns, the years split by publisher kind and the dumbbell of rising topics were
+  built earlier.
+
 ## [0.91.0] – 2026-10-23
 
 ### Added
@@ -1758,7 +1767,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.91.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.92.0...HEAD
+[0.92.0]: https://github.com/iiogurt/Rozvedka/compare/v0.91.0...v0.92.0
 [0.91.0]: https://github.com/iiogurt/Rozvedka/compare/v0.90.0...v0.91.0
 [0.90.0]: https://github.com/iiogurt/Rozvedka/compare/v0.89.5...v0.90.0
 [0.89.5]: https://github.com/iiogurt/Rozvedka/compare/v0.89.4...v0.89.5
