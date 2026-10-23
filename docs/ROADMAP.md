@@ -165,7 +165,8 @@ combined timeline · C4 ✅ (0.58.1) the other pages in the panel style.
 6. ✅ (0.59.0) **Topic matrix** – a reference column of all reports and an over-emphasis (lift) mode. · minor
 7. → H1 **Annotated actor timeline** – dated events and the country grid on one year axis; covered by the timeline of events (H1). · minor
 8. ✅ (0.60.0) **Threat-level small multiples** – one step chart per state on its own scale. · minor
-9. ◐ (0.61.0: chord diagram between agency types) **Citations** – still open: an agency × agency matrix. · minor
+9. ✅ (0.61.0: chord diagram between agency types; 0.90.0: agency × agency and country × country matrix, `/citations#matrix` –
+   the 30 most citing × the 30 most cited, shaded by the share of the row's citing reports, every cell its list) **Citations**. · minor
 10. **ATT&CK tactic grid and CVE lag plot.** · minor
 11. ✅ (0.89.0) **Coverage overview grid and a country × agency-type gap matrix** – `/sources/grid`: covered (reports, newest
     year, hand-collected), listed without a report (0), checked and not published (∅, `sources/coverage_gaps.yaml`) or open; the
@@ -282,7 +283,7 @@ Updated 2026-10-21, after H (all of it built by 0.81.0) and F3 + F4 (0.82.1):
 1. **G7 → G8 → G9** – finish the network plan the owner approved: views (rings ✅ 0.83.0, matrix ✅ 0.84.0; the network as
    of a year waits for more dated links), the shared case file ✅ 0.85.0, then company registries and leaks (GLEIF, UK Companies House, ICIJ).
 2. ✅ **F12** – topic and country briefing pages (0.88.0).
-3. **F5, F9, F10** – overview sparklines, the agency × agency citation matrix, the ATT&CK tactic grid (F11 ✅ 0.89.0).
+3. **F5, F10** – overview sparklines, the ATT&CK tactic grid (F9 ✅ 0.90.0, F11 ✅ 0.89.0).
 4. **A3–A5, D2–D7** – more sources (no new code); A5 needs the owner to collect the blocked flagships by hand.
 
 Done from the earlier list: E1 (0.48.0, off by the owner's decision), A1 + A2 (0.29.1), B1 (0.46.1), B2 / B3 (0.32–0.33),

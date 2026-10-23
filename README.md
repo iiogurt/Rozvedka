@@ -457,6 +457,15 @@ everything else is dimmed, and *part of* highlights the whole and its parts. An 
 
 <img src="docs/images/citations.png" alt="Who cites whom: agencies cited by other agencies, with the number of reports and citing agencies" width="900">
 
+  The **agency × agency matrix** (`/citations#matrix`) sets the 30 most citing agencies against the 30 most cited: each cell
+  counts the reports of the row agency that link to the column agency – its site or one of its reports in the library –
+  and opens exactly those reports. The shade is the cell's share of the row's citing reports, so it shows what each agency
+  relies on rather than who publishes most; think tanks ◆ and commercial analysts ■ are marked, links to an agency's own
+  site are left out, and the page says how many pairs and reports fall outside the top 30. *By country* folds the same links
+  into country × country, its diagonal being agencies of one state citing each other.
+
+<img src="docs/images/citation-matrix.png" alt="Agency × agency citation matrix: the most citing agencies as rows, the most cited as columns, each cell a count of reports" width="900">
+
 <img src="docs/images/threat-levels.png" alt="Terrorism threat levels per state: each level with the quote from the official source and the report page" width="900">
 
 <img src="docs/images/techniques.png" alt="ATT&CK techniques named in the reports, with MITRE's names and tactics, reports and agencies" width="900">

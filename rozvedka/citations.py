@@ -10,7 +10,7 @@ Addresses broken across lines in a PDF are not recovered, so the counts are mini
 import re
 from urllib.parse import unquote, urlsplit
 
-from . import actors, db, paging, trends
+from . import actors, countries, db, paging, trends
 
 URL = re.compile(r"https?://[^\s<>\"'«»]+", re.I)
 TRAIL = ".,;:)]}>'\"»”’"
@@ -173,6 +173,77 @@ def overview() -> dict:
             "flows": flows}
 
 
+MATRIX = 30          # rows and columns of the matrix: the most citing and the most cited
+
+
+@db.cached
+def matrix(by: str = "agency", n: int = MATRIX) -> dict:
+    """Who cites whom, one cell per pair: reports of the row (an agency, or the agencies of a country) that link to the
+    column (another agency's site or one of its library reports; for countries, the agencies of that country). A report
+    counts once per cell; links to its own agency are left out, so a country's diagonal counts its agencies citing each
+    other. Rows are the n most citing, columns the n most cited; what falls outside is counted in "left"."""
+    by = by if by in ("agency", "country") else "agency"
+    where, args = _scoped()
+    a, b = ("s.id", "t.id") if by == "agency" else ("s.country", "t.country")
+    with db.session() as con:
+        init()
+        rows = [dict(r) for r in con.execute(
+            f"""SELECT {a} a, {b} b, l.doc_id doc FROM doc_links l JOIN documents d ON d.id=l.doc_id
+                JOIN sources s ON s.id=d.source_id JOIN doc_index i ON i.doc_id=d.id JOIN sources t ON t.id={CITED}
+                WHERE {where} AND t.id != s.id""", args)]
+        info = {r["id"]: dict(r) for r in con.execute("SELECT id, agency, country, type FROM sources")}
+    pairs: dict[tuple, set] = {}
+    for r in rows:
+        pairs.setdefault((r["a"], r["b"]), set()).add(r["doc"])
+    out_docs: dict = {}
+    in_docs: dict = {}
+    for (x, y), docs in pairs.items():
+        out_docs.setdefault(x, set()).update(docs)
+        in_docs.setdefault(y, set()).update(docs)
+    order = lambda d: sorted(d, key=lambda k: (-len(d[k]), str(k)))[:n]
+    rk, ck = order(out_docs), order(in_docs)
+    names = countries.names()
+
+    def head(k, docs):
+        if by == "agency":
+            s = info.get(k, {})
+            return {"key": k, "label": s.get("agency", k), "country": s.get("country", ""), "type": s.get("type", ""), "n": len(docs)}
+        return {"key": k, "label": names.get(k, k), "country": k, "type": "", "n": len(docs)}
+
+    def link(x, y):
+        return (f"/documents?source={x}&cite=agency:{y}&indexed=1" if by == "agency"
+                else f"/documents?country={x}&cite=ccountry:{y}&indexed=1")
+
+    grid = []
+    for x in rk:
+        cells = []
+        for y in ck:
+            docs = pairs.get((x, y))
+            cells.append({"n": len(docs), "share": round(len(docs) / len(out_docs[x]), 3), "link": link(x, y)} if docs else None)
+        grid.append({**head(x, out_docs[x]), "cells": cells, "link": (f"/documents?source={x}&cite=agency:any&indexed=1"
+                                                                       if by == "agency" else f"/documents?country={x}&cite=ccountry:any&indexed=1")})
+    shown = {p for p in pairs if p[0] in set(rk) and p[1] in set(ck)}
+    cols = [{**head(y, in_docs[y]), "link": f"/documents?cite=agency:{y}&indexed=1" if by == "agency"
+             else f"/documents?cite=ccountry:{y}&indexed=1"} for y in ck]
+    return {"by": by, "rows": grid, "cols": cols, "n": n,
+            "pairs": len(pairs), "shown_pairs": len(shown),
+            "reports": len({d for docs in pairs.values() for d in docs}),
+            "shown_reports": len({d for p in shown for d in pairs[p]}),
+            "citing": len(out_docs), "cited": len(in_docs)}
+
+
+def figures() -> list[tuple[str, int, str]]:
+    """(label, number, Documents link) of every number on the Citations page's flows and matrices, for tools/check_links.py."""
+    out = [(f"citations flow {f['src']}→{f['dst']}", f["reports"], f["link"]) for f in overview()["flows"]]
+    for by in ("agency", "country"):
+        m = matrix(by)
+        for r in m["rows"]:
+            out += [(f"citations {by} {r['key']}→{m['cols'][j]['key']}", c["n"], c["link"]) for j, c in enumerate(r["cells"]) if c]
+        out += [(f"citations {by} {r['key']} citing", r["n"], r["link"]) for r in m["rows"]]
+        out += [(f"citations {by} {c['key']} cited", c["n"], c["link"]) for c in m["cols"]]
+    return out
+
+
 @db.cached
 def of_doc(doc_id: int) -> dict:
     """What a report links to, and which library reports link to it."""
@@ -201,7 +272,8 @@ def of_doc(doc_id: int) -> dict:
 def clause(cite: str) -> tuple[str, list] | None:
     """Documents-page filter `cite=`: doc:ID reports citing report ID · by:ID reports cited by ID · src:ID reports linking to
     source ID's site · host:HOST reports linking to that outside host · stype:TYPE reports linking to an agency of that type
-    (its site or one of its reports in the library), not their own."""
+    (its site or one of its reports in the library), not their own · agency:ID the same for agency ID (agency:any – any
+    other agency) · ccountry:XX for the agencies of country XX (ccountry:any – any other agency)."""
     kind, _, val = (cite or "").partition(":")
     if kind == "doc" and val.isdigit():
         return "d.id IN (SELECT doc_id FROM doc_links WHERE target_doc=?)", [int(val)]
@@ -212,6 +284,15 @@ def clause(cite: str) -> tuple[str, list] | None:
     if kind == "stype" and re.fullmatch(r"[a-z-]+", val):
         return (f"""d.id IN (SELECT l.doc_id FROM doc_links l JOIN documents dd ON dd.id=l.doc_id JOIN sources t ON t.id={CITED}
                     WHERE t.type=? AND t.id != dd.source_id)""", [val])
+    if kind == "agency" and val.isdigit():                       # that agency: its site or one of its reports, not its own
+        return ("""d.source_id != ? AND d.id IN (SELECT doc_id FROM doc_links WHERE target_source=? UNION
+                   SELECT l.doc_id FROM doc_links l JOIN documents t ON t.id=l.target_doc WHERE t.source_id=?)""", [int(val)] * 3)
+    if kind == "agency" and val == "any":                        # any other agency
+        return (f"""d.id IN (SELECT l.doc_id FROM doc_links l JOIN documents dd ON dd.id=l.doc_id JOIN sources t ON t.id={CITED}
+                    WHERE t.id != dd.source_id)""", [])
+    if kind == "ccountry" and (re.fullmatch(r"[A-Za-z]{2,5}", val)):  # an agency of that country (or any), not the report's own
+        return (f"""d.id IN (SELECT l.doc_id FROM doc_links l JOIN documents dd ON dd.id=l.doc_id JOIN sources t ON t.id={CITED}
+                    WHERE t.id != dd.source_id{' AND t.country=?' if val != 'any' else ''})""", [val.upper()] if val != "any" else [])
     if kind == "host" and val:
         return "d.id IN (SELECT doc_id FROM doc_links WHERE host=? AND target_source IS NULL AND target_doc IS NULL)", [val.lower()]
     return None

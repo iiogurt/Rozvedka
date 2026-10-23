@@ -8,5 +8,5 @@ router = APIRouter()
 
 
 @router.get("/citations")
-def citations_page(request: Request):
-    return tpl.TemplateResponse(request, "citations.html", citations.overview())
+def citations_page(request: Request, by: str = "agency"):
+    return tpl.TemplateResponse(request, "citations.html", {**citations.overview(), "mx": citations.matrix(by)})
