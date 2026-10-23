@@ -27,6 +27,22 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.91.0] – 2026-10-23
+
+### Added
+- **The ATT&CK matrix as the reports name it** (top of `/techniques`). A block per ATT&CK tactic in MITRE's order – the
+  Enterprise kill chain, then what only ICS or Mobile has:
+  - the reports naming any technique of the tactic (each counted once), opening them;
+  - its techniques ranked by reports, with a bar against the most named one, each opening its reports;
+  - how many of the tactic's techniques the reports name at all ("8 of 46 named"), with the rest behind "more".
+
+  Now 16 tactics over 57 reports. New Documents filter `technique=tactic:<name>`.
+- **How old the named vulnerabilities are** (top of `/cves`). For every report × CVE pair, the years between the year in the
+  CVE number and the report's year (74% name a CVE of the same or the previous year), and for CVEs on CISA's Known Exploited
+  list whether the report named it before, in or after the year CISA added it. Year precision only, as the page says; each
+  bar opens the reports behind it (new filters `cve=age:N` and `cve=kev:before|same|after`).
+- `tools/check_links.py` checks every number of both views against its list.
+
 ## [0.90.0] – 2026-10-22
 
 ### Added
@@ -1742,7 +1758,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.90.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.91.0...HEAD
+[0.91.0]: https://github.com/iiogurt/Rozvedka/compare/v0.90.0...v0.91.0
 [0.90.0]: https://github.com/iiogurt/Rozvedka/compare/v0.89.5...v0.90.0
 [0.89.5]: https://github.com/iiogurt/Rozvedka/compare/v0.89.4...v0.89.5
 [0.89.4]: https://github.com/iiogurt/Rozvedka/compare/v0.89.3...v0.89.4

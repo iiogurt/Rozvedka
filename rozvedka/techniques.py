@@ -168,6 +168,65 @@ def _counts() -> list[dict]:
                 JOIN doc_index i ON i.doc_id=d.id WHERE {where} GROUP BY t.technique""", args)]
 
 
+# ATT&CK's tactics in the order of its matrices (Enterprise kill chain first, then what only ICS or Mobile has)
+TACTIC_ORDER = ("reconnaissance", "resource-development", "initial-access", "execution", "persistence", "privilege-escalation",
+                "stealth", "defense-evasion", "defense-impairment", "credential-access", "discovery", "lateral-movement",
+                "collection", "command-and-control", "exfiltration", "impact", "evasion", "inhibit-response-function",
+                "impair-process-control", "network-effects", "remote-service-effects")
+GRID_ROWS = 12          # techniques listed per tactic; the rest behind "more"
+
+
+def tactic_name(t: str) -> str:
+    return t.replace("-", " ").replace("command and control", "command & control").capitalize()
+
+
+def of_tactic(tactic: str) -> list[str]:
+    """Every technique number of the catalog under this tactic."""
+    return sorted(k for k, v in _catalog()["techniques"].items() if tactic in v["tactics"])
+
+
+@db.cached
+def grid() -> dict:
+    """The ATT&CK matrix as the reports name it: a column per tactic (ATT&CK's order), its techniques ranked by reports.
+    A column's total counts the reports naming any technique of the tactic, once each; a technique under several tactics
+    is listed under each."""
+    if not meta():
+        return {"cols": [], "reports": 0}
+    where, args, _ = trends.scope()
+    with db.session() as con:
+        init()
+        pairs = [(r[0], r[1]) for r in con.execute(
+            f"""SELECT t.doc_id, t.technique FROM doc_techniques t JOIN documents d ON d.id=t.doc_id
+                JOIN sources s ON s.id=d.source_id JOIN doc_index i ON i.doc_id=d.id WHERE {where}""", args)]
+    by_t: dict[str, set] = {}
+    for doc, t in pairs:
+        if known(t):
+            by_t.setdefault(t, set()).add(doc)
+    cols = {}
+    for t, docs in by_t.items():
+        for tac in known(t)["tactics"]:
+            c = cols.setdefault(tac, {"tactic": tac, "name": tactic_name(tac), "docs": set(), "techniques": []})
+            c["docs"] |= docs
+            c["techniques"].append({**_view(t), "docs": len(docs), "link": f"/documents?technique={t}&indexed=1"})
+    order = {t: i for i, t in enumerate(TACTIC_ORDER)}
+    out = []
+    for c in sorted(cols.values(), key=lambda c: (order.get(c["tactic"], 99), c["tactic"])):
+        c["techniques"].sort(key=lambda x: (-x["docs"], x["technique"]))
+        out.append({"tactic": c["tactic"], "name": c["name"], "reports": len(c["docs"]), "named": len(c["techniques"]),
+                    "in_catalog": len(of_tactic(c["tactic"])), "link": f"/documents?technique=tactic:{c['tactic']}&indexed=1",
+                    "techniques": c["techniques"][:GRID_ROWS], "more": len(c["techniques"]) - GRID_ROWS,
+                    "list": f"/techniques?tactic={c['tactic']}"})
+    top = max((x["docs"] for c in out for x in c["techniques"]), default=1)
+    return {"cols": out, "reports": len({d for docs in by_t.values() for d in docs}), "top": top, "rows": GRID_ROWS}
+
+
+def figures() -> list[tuple[str, int, str]]:
+    """(label, number, Documents link) of every number of the tactic grid, for tools/check_links.py."""
+    g = grid()
+    return [(f"tactic {c['tactic']}", c["reports"], c["link"]) for c in g["cols"]] + \
+           [(f"technique {x['technique']}", x["docs"], x["link"]) for c in g["cols"] for x in c["techniques"]]
+
+
 def overview(q: str = "", tactic: str = "", sort: str = "reports") -> dict:
     allrows = [{**r, **_view(r["technique"])} for r in _only_known(_counts())]
     tactics = sorted({x for r in allrows if r["info"] for x in r["info"]["tactics"]})

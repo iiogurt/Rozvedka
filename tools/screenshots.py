@@ -73,12 +73,14 @@ SHOTS = {
     "actor-timeline": ("/actors/Q38799/timeline", 1300, [], None),   # Hamas: agencies, countries, neighbours
     "attributions": ("/actors/Q20757678", 900, [("sleep", 3)], "#attributions"),   # APT28: statements of the UK NCSC
     "cves": ("/cves", 900, [], None),                                  # CVE numbers named in reports, with CISA's list
+    "cve-lag": ("/cves", 620, [], "#lag"),                             # how old the named CVEs are; against CISA's listing
     "cve": ("/cves/CVE-2021-26855", 1000, [], None),                   # one CVE: CISA entry, reports with passages, actors nearby
     "threat-levels": ("/threat-levels", 1300, [], None),               # official levels with the passage behind each
     "menu": ("/cves", 520, [("eval", "var s=document.createElement('style');s.textContent='.rgrp:nth-of-type(4) .drop{display:block!important}';"
                                       "document.head.appendChild(s); 1")], None),   # a group's pages open under the header
     "views": ("/views", 1000, [], None),                               # every page, grouped like the menu
     "techniques": ("/techniques", 1000, [], None),                     # ATT&CK techniques named in reports
+    "attack-grid": ("/techniques", 1250, [], "#grid"),                  # the ATT&CK matrix as the reports name it
     "citations": ("/citations", 1100, [], None),                      # who cites whom: agencies, reports, outside hosts
     "citation-matrix": ("/citations?by=agency", 1250, [], "#matrix"),  # agency × agency: who cites whom, cell by cell
     "review": ("/actors/review", 1100, [], None),

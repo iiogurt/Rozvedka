@@ -12,6 +12,31 @@
   {% else %}The Known Exploited Vulnerabilities list has not been fetched yet: run <code>python -m rozvedka fetch-kev</code>.{% endif %}
   The catalog says <b>what</b> is exploited, never <b>by whom</b>; the actors on a CVE's page are only named in the same passage of a report.
   Counts are reports of the usual scope (one file per report); each number links to exactly those reports.</p></details>
+{% if lag.pairs %}
+<section class="viz-card" id="lag">
+  <h2 class="viz-title">How old the named vulnerabilities are <span class="muted small">{{ "{:,}".format(lag.pairs) }} report × CVE pairs</span></h2>
+  <p class="muted small viz-sub">Years between the year in a CVE number – the year the number was reserved, usually the year the flaw was
+    found – and the year of the report naming it. Year precision only: reports carry a year, not a date. {{ lag.within_a_year }} of
+    {{ lag.pairs }} pairs ({{ (lag.within_a_year / lag.pairs * 100)|round|int }}%) name a CVE of the same or the previous year;
+    a bar counts pairs, its number the reports behind them (a report naming CVEs of several ages counts in each bar) and opens them.
+    {% if lag.undated %}{{ lag.undated }} pairs of undated reports are left out.{% endif %}</p>
+  <div class="lag-grid">
+    <table class="lag small"><thead><tr><th>CVE number from</th><th>pairs</th><th class="n">reports</th></tr></thead>
+    {% for b in lag.ages %}<tr><th>{{ b.label }}{% if b.key > 0 and b.key < 10 %} earlier{% elif b.key == 10 %} earlier{% endif %}</th>
+      <td class="lag-b"><span style="--w: {{ (b.pairs / lag.top * 100)|round|int }}%"></span><i>{{ b.pairs }}</i></td>
+      <td class="n">{% if b.reports %}<a href="{{ b.link }}">{{ b.reports }}</a>{% else %}0{% endif %}</td></tr>{% endfor %}
+    </table>
+    {% if lag.kev_pairs %}<div><table class="lag small"><thead><tr><th>Named on CISA's exploited list – reported</th><th>pairs</th><th class="n">reports</th></tr></thead>
+    {% for b in lag.kev %}<tr><th>{{ b.label }}</th><td class="lag-b lag-kev-{{ b.key }}"><span style="--w: {{ (b.pairs / lag.kev_top * 100)|round|int }}%"></span><i>{{ b.pairs }}</i></td>
+      <td class="n">{% if b.reports %}<a href="{{ b.link }}">{{ b.reports }}</a>{% else %}0{% endif %}</td></tr>{% endfor %}
+    </table>
+    <p class="muted small">{{ lag.kev_pairs }} pairs name a CVE of CISA's Known Exploited Vulnerabilities list, against the year CISA added it
+      (<i>dateAdded</i>). "Before" means a report named it in an earlier year than CISA listed it as exploited – not necessarily as
+      exploited, and CISA lists many older flaws long after the fact.</p></div>{% endif %}
+  </div>
+</section>
+{% endif %}
+
 <form class="small" method="get">
   Search <input name="q" value="{{ f.q }}" placeholder="CVE, vendor, product" size="20">
   on CISA's list <select name="kev"><option value="">any</option><option value="yes" {{ 'selected' if f.kev == 'yes' }}>yes</option><option value="no" {{ 'selected' if f.kev == 'no' }}>no</option></select>

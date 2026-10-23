@@ -16,7 +16,8 @@ def techniques_page(request: Request, q: str = "", tactic: str = "", sort: str =
                          {"q": q, "tactic": tactic, "sort": sort if sort != "reports" else "",
                           "per_page": size if size != 50 else ""}, default=50)
     return tpl.TemplateResponse(request, "techniques.html", {**d, "rows": d["rows"][pg["offset"]:pg["offset"] + size], "pg": pg,
-                                                             "f": {"q": q, "tactic": tactic, "sort": sort}})
+                                                             "f": {"q": q, "tactic": tactic, "sort": sort},
+                                                             "grid": techniques.grid(), "tactic_name": techniques.tactic_name})
 
 
 @router.get("/techniques/{technique}")

@@ -138,6 +138,91 @@ def _counts() -> list[dict]:
                 JOIN doc_index i ON i.doc_id=d.id WHERE {where} GROUP BY c.cve""", args)]
 
 
+AGE_TOP = 10        # the last bucket: this many years or more
+
+
+def _age_bucket(report_year: int, cve: str) -> int:
+    a = report_year - int(cve[4:8])
+    return -1 if a < 0 else min(a, AGE_TOP)
+
+
+def _kev_bucket(report_year: int, cve: str) -> str | None:
+    k = kev_of(cve)
+    if not k or not k.get("dateAdded"):
+        return None
+    y = int(k["dateAdded"][:4])
+    return "before" if report_year < y else "same" if report_year == y else "after"
+
+
+@db.cached
+def _dated_pairs() -> list[tuple[int, str, int]]:
+    """(report, CVE, report year) of every CVE a dated report of the usual scope names."""
+    where, args, _ = trends.scope()
+    with db.session() as con:
+        init()
+        return [(r[0], r[1], r[2]) for r in con.execute(
+            f"""SELECT c.doc_id, c.cve, d.year FROM doc_cves c JOIN documents d ON d.id=c.doc_id JOIN sources s ON s.id=d.source_id
+                JOIN doc_index i ON i.doc_id=d.id WHERE {where} AND d.year IS NOT NULL""", args)]
+
+
+def _docs_where(test) -> list[int]:
+    return sorted({doc for doc, cve, year in _dated_pairs() if test(year, cve)})
+
+
+def clause(value: str) -> tuple[str, list] | None:
+    """Documents filter cve=age:N (naming a CVE whose number is N years older than the report; age:-1 a number of a later
+    year, age:10 ten years or more) and cve=kev:before|same|after (naming a CVE of CISA's list before, in or after the year
+    CISA added it)."""
+    kind, _, v = value.partition(":")
+    if kind == "age" and re.fullmatch(r"-1|\d{1,2}", v) and -1 <= int(v) <= AGE_TOP:
+        docs = _docs_where(lambda y, c: _age_bucket(y, c) == int(v))
+    elif kind == "kev" and v in ("before", "same", "after"):
+        docs = _docs_where(lambda y, c: _kev_bucket(y, c) == v)
+    else:
+        return None
+    return "d.id IN (SELECT value FROM json_each(?))", [json.dumps(docs)]
+
+
+def lags() -> dict:
+    """How old the CVEs are that reports name (year precision: the year in the CVE number, which is when the number was
+    reserved, against the report's year), and when reports named CVEs of CISA's list compared with when CISA added them.
+    Counted per report × CVE pair; each bar's link lists the reports with at least one such pair."""
+    pairs = _dated_pairs()
+    age: dict[int, list] = {}
+    kev: dict[str, list] = {}
+    for doc, cve, year in pairs:
+        age.setdefault(_age_bucket(year, cve), []).append(doc)
+        b = _kev_bucket(year, cve)
+        if b:
+            kev.setdefault(b, []).append(doc)
+    label = lambda a: "later year" if a == -1 else f"{a}+ years" if a == AGE_TOP else "same year" if a == 0 else f"{a} year{'s' if a > 1 else ''}"
+    ages = [{"key": a, "label": label(a), "pairs": len(age.get(a, [])), "reports": len(set(age.get(a, []))),
+             "link": f"/documents?cve=age:{a}&indexed=1"} for a in range(-1, AGE_TOP + 1)]
+    names = {"before": "before CISA listed it", "same": "the year CISA listed it", "after": "after CISA listed it"}
+    kevs = [{"key": k, "label": names[k], "pairs": len(kev.get(k, [])), "reports": len(set(kev.get(k, []))),
+             "link": f"/documents?cve=kev:{k}&indexed=1"} for k in names]
+    n = len(pairs)
+    within = sum(b["pairs"] for b in ages if 0 <= b["key"] <= 1)
+    return {"ages": ages, "kev": kevs, "pairs": n, "within_a_year": within, "top": max([b["pairs"] for b in ages] + [1]),
+            "kev_top": max([b["pairs"] for b in kevs] + [1]), "kev_pairs": sum(b["pairs"] for b in kevs),
+            "undated": _undated()}
+
+
+@db.cached
+def _undated() -> int:
+    where, args, _ = trends.scope()
+    with db.session() as con:
+        init()
+        return con.execute(f"""SELECT COUNT(*) FROM doc_cves c JOIN documents d ON d.id=c.doc_id JOIN sources s ON s.id=d.source_id
+                               JOIN doc_index i ON i.doc_id=d.id WHERE {where} AND d.year IS NULL""", args).fetchone()[0]
+
+
+def figures() -> list[tuple[str, int, str]]:
+    """(label, number, Documents link) of every bar of the CVE lag chart, for tools/check_links.py."""
+    l = lags()
+    return [(f"cve age {b['key']}", b["reports"], b["link"]) for b in l["ages"] + l["kev"]]
+
+
 def overview(kev: str = "", q: str = "", ransomware: int = 0, sort: str = "reports") -> dict:
     rows = [{**r, **_kev_view(r["cve"])} for r in _counts()]
     total = len(rows)

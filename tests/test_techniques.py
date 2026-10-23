@@ -85,3 +85,17 @@ def test_pages(library):
     assert "naming ATT&amp;CK technique T1566.001" in d and "Report 1" in d and "Report 3" not in d
     r = c.get("/report/2").text
     assert 'id="techniques"' in r and "Spearphishing Attachment" in r and "T1999" not in r
+
+
+def test_tactic_grid_follows_attacks_order_and_every_number_is_its_list(library):
+    techniques.index()
+    g = techniques.grid()
+    assert [(c["tactic"], c["reports"], c["named"], c["in_catalog"]) for c in g["cols"]] == [
+        ("initial-access", 2, 1, 1), ("execution", 2, 1, 1)]                   # kill-chain order, not alphabetical
+    assert g["reports"] == 3 and g["cols"][0]["techniques"][0]["technique"] == "T1566.001"
+    for _label, n, url in techniques.figures():
+        assert doclist.count(technique=url.split("technique=")[1].split("&")[0], indexed=1) == n, url
+    assert techniques.tactic_name("command-and-control") == "Command & control"
+    c = TestClient(__import__("rozvedka.app", fromlist=["app"]).app)
+    assert 'id="grid"' in c.get("/techniques").text
+    assert "of the ATT&amp;CK tactic “initial access”" in c.get("/documents?technique=tactic:initial-access").text

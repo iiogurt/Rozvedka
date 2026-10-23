@@ -13,6 +13,27 @@
   {% else %}MITRE's technique list has not been fetched yet: run <code>python -m rozvedka fetch-attack</code> for names and tactics.{% endif %}
   A report that names a technique by its number is one that describes it; reports that describe the behaviour without the number are not counted.
   Each count links to exactly those reports (one file per report, the usual scope).</p></details>
+{% if grid.cols and not f.q and not f.tactic %}
+<section class="viz-card" id="grid">
+  <h2 class="viz-title">The ATT&amp;CK matrix as the reports name it <span class="muted small">{{ grid.cols|length }} tactics · {{ grid.reports }} reports</span></h2>
+  <p class="muted small viz-sub">A block per ATT&amp;CK tactic, in MITRE's order left to right (the Enterprise kill chain, then tactics only ICS or Mobile have).
+    The number beside a tactic counts the reports naming any of its techniques, once each, and opens them; below it the techniques named,
+    ranked by reports – a technique MITRE files under several tactics is listed under each. The bar is the number of reports against
+    the most named technique. "named" counts the tactic's techniques the reports name, of all MITRE lists for it.</p>
+  <div class="ag-grid">
+  {% for c in grid.cols %}<div class="ag-col">
+    <div class="ag-head"><a href="{{ c.list }}" title="the techniques of this tactic named in the reports">{{ c.name }}</a>
+      <span class="ag-n"><a href="{{ c.link }}" title="reports naming any technique of this tactic">{{ c.reports }}</a></span>
+      <span class="muted ag-sub">{{ c.named }} of {{ c.in_catalog }} named</span></div>
+    {% for x in c.techniques %}<a class="ag-t" href="/techniques/{{ x.technique }}" title="{{ x.technique }} {{ x.title }}{% if x.info.retired %} (retired by MITRE){% endif %}">
+      <span class="ag-bar" style="--w: {{ (x.docs / grid.top * 100)|round|int }}%"></span>
+      <span class="ag-id">{{ x.technique }}</span> <span class="ag-name">{{ x.info.name }}</span></a><a class="ag-c" href="{{ x.link }}">{{ x.docs }}</a>
+    {% endfor %}{% if c.more > 0 %}<a class="ag-more small" href="{{ c.list }}">{{ c.more }} more →</a>{% endif %}
+  </div>{% endfor %}
+  </div>
+</section>
+{% endif %}
+
 <form class="small" method="get">
   Search <input name="q" value="{{ f.q }}" placeholder="number or name" size="20">
   tactic <select name="tactic"><option value="">any</option>{% for t in tactics %}<option {{ 'selected' if f.tactic == t }}>{{ t }}</option>{% endfor %}</select>
