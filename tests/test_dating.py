@@ -130,3 +130,23 @@ def test_hand_edit_is_marked(library):
     with db.session() as con:
         assert con.execute("SELECT year, year_source FROM documents WHERE id=1").fetchone()[:] == (2017, "set by hand")
         assert con.execute("SELECT year, year_source FROM documents WHERE id=2").fetchone()[:] == (2015, None)
+
+
+def test_versions_rule(library):
+    """An undated language version takes the year its other versions of the same title share."""
+    with db.session() as con:
+        rows = [(30, "https://e.eu/d/Blueprint-resumen-es.pdf", "Blueprint of crime - Resumen", "es", 2024),
+                (31, "https://e.eu/d/Blueprint-sintesi-it.pdf", "Blueprint of crime - Sintesi", "it", 2024),
+                (32, "https://e.eu/d/Blueprint-santrauka-lt.pdf", "Blueprint of crime - Santrauka", "lt", None),
+                (33, "https://e.eu/d/Blueprint-resume-fr.pdf", "Blueprint of crime - Résumé", "fr", None),
+                (34, "https://e.eu/d/other.pdf", "Blueprint of crime", "es", None)]
+        for i, url, title, lang, year in rows[:4]:
+            con.execute("INSERT INTO documents(id,source_id,url,title,lang,year,status) VALUES(?,1,?,?,?,?,'downloaded')",
+                        (i, url, title, lang, year))
+        y, why = dating.from_versions(con, 32, 1, rows[2][1], rows[2][2], "lt")
+        assert y == 2024 and why.startswith("versions: 2 other language versions of “blueprint of crime”")
+        con.execute("INSERT INTO documents(id,source_id,url,title,lang,status) VALUES(34,1,?,?,'es','downloaded')", rows[4][1:3])
+        assert dating.from_versions(con, 32, 1, rows[2][1], rows[2][2], "lt") is None       # Spanish twice: not versions
+        con.execute("DELETE FROM documents WHERE id=34")
+        con.execute("UPDATE documents SET year=2023 WHERE id=31")
+        assert dating.from_versions(con, 32, 1, rows[2][1], rows[2][2], "lt") is None       # versions disagree

@@ -23,6 +23,10 @@ def test_title_key_and_address_lang():
     assert works.title_key("TE-SAT 2025 - Zusammenfassung") == works.title_key("TE-SAT 2025 - Santrauka") == "te-sat 2025"
     assert works.title_key("VLA 2021 (et)") == works.title_key("VLA 2021 (en)")
     assert works.title_key("Annual Report 2024 (PDF, 2.3 MB)") == "annual report 2024"
+    assert works.title_key("Blueprint of criminal opportunism - Síntese") == "blueprint of criminal opportunism"   # no letters eaten
+    assert works.title_key("2016 – AER for 2016 anthrax") != works.title_key("2016 – AER for 2016 AMC")
+    assert works.title_key("DEFENSE OF JAPAN 2025 (Digest) PDF") == works.title_key("DEFENSE OF JAPAN 2025 (PDF)")
+    assert works.title_key("DEFENSE OF JAPAN 2020 (English)（PDF【195MB】") == "defense of japan 2020"
     assert works.address_lang("https://europol.europa.eu/documents/es_euorganisedcrimesitrep04-es.pdf") == "es"
     assert works.address_lang("https://x.org/report.pdf") is None
 

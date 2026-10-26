@@ -4,7 +4,9 @@ The year of a report is normally taken from its title or address when it is foun
 reports where that gives nothing, this module looks, in order, at
   1. a report heading on the first pages – "Annual Report 2023", "Jahresbericht 2022", "Výroční zpráva … za rok
      2021", "Informe Anual 2020", "2023年版": the year the report covers;
-  2. a publication date on the first pages – "March 2024", "15. 3. 2024", "© 2024";
+  2. the year its other language versions share (a summary "– Santrauka" next to "– Résumé" of one report);
+  3. the year shared by the other reports in its folder;
+  4. a publication date on the first pages – "March 2024", "15. 3. 2024", "© 2024";
 (The creation date in the PDF's metadata was tested and is not used: it is the publication date, a year after the
 covered year about half of the time.) The chosen year is stored with `documents.year_source` (e.g. 'text: “Annual Report 2023” (p. 1)'); years set by hand
 are marked 'set by hand' and never changed. Nothing is overwritten: only reports without a year are dated.
@@ -208,8 +210,33 @@ def from_folder(con, doc_id: int, url: str, cover_text: str = "") -> tuple[int, 
     return None
 
 
+VERSIONS_MIN = 2   # dated language versions of the same title in the same folder, all from one year
+
+
+def from_versions(con, doc_id: int, source_id: int, url: str, title: str, lang: str) -> tuple[int, str] | None:
+    """The year of the other language versions of the same report: files of the same publisher in the same folder
+    whose titles are the same once a language or "summary" word is removed (works.title_key), each in another
+    language, at least VERSIONS_MIN of them dated and all with one year. Years from this rule do not count."""
+    from .works import title_key
+    key = title_key(title)
+    if len(key) < 8:
+        return None
+    folder = folder_of(url)
+    sib = [(r["year"], r["lang"]) for r in con.execute(
+        """SELECT url, title, year, lang FROM documents WHERE id != ? AND source_id=? AND hidden=0
+           AND status NOT IN ('missing','duplicate','skipped') AND (year_source IS NULL OR year_source NOT LIKE 'versions:%')""",
+        (doc_id, source_id)) if folder_of(r["url"]) == folder and title_key(r["title"]) == key]
+    langs = [l for _, l in sib] + [lang]
+    years = {y for y, _ in sib if y}
+    dated = sum(1 for y, _ in sib if y)
+    if len(set(langs)) == len(langs) and dated >= VERSIONS_MIN and len(years) == 1:
+        y = years.pop()
+        return y, f"versions: {dated} other language versions of “{key[:60]}” in {folder} are from {y}"
+    return None
+
+
 def estimate(con, doc_id: int) -> tuple[int, str] | None:
-    row = con.execute("""SELECT d.local_path, d.title, d.url, t.body, i.pages FROM documents d LEFT JOIN doc_text t ON t.rowid=d.id
+    row = con.execute("""SELECT d.local_path, d.title, d.url, d.source_id, d.lang, t.body, i.pages FROM documents d LEFT JOIN doc_text t ON t.rowid=d.id
                          LEFT JOIN doc_index i ON i.doc_id=d.id WHERE d.id=?""", (doc_id,)).fetchone()
     if row is None:
         return None
@@ -219,7 +246,8 @@ def estimate(con, doc_id: int) -> tuple[int, str] | None:
     pages = json.loads(row["pages"]) if row["pages"] else None
     heading = from_text(row["body"], pages, kinds=("heading",)) if row["body"] else None
     first = (row["body"] or "")[:pages[1] if pages and len(pages) > 1 else 1500]
-    return (heading or from_folder(con, doc_id, row["url"], first)
+    return (heading or from_versions(con, doc_id, row["source_id"], row["url"], row["title"], row["lang"])
+            or from_folder(con, doc_id, row["url"], first)
             or (from_text(row["body"], pages, kinds=("date",), cover=True) if row["body"] else None))      # PDF creation dates are a year off too often (blind check: 47 % exact) – not used for the year
 
 
@@ -244,12 +272,13 @@ def date_documents(limit: int | None = None) -> dict:
 
 
 LABELS = {"heading": "a report heading", "date": "a publication date", "address": "the title or address",
-          "folder": "reports in the same folder", "cover": "the only year on the cover"}
+          "folder": "reports in the same folder", "versions": "its other language versions", "cover": "the only year on the cover"}
 
 
 def kind_of(source: str) -> str:
     """The rule behind a year's evidence text."""
     return ("address" if source.startswith(("address", "title")) else "folder" if source.startswith("folder")
+            else "versions" if source.startswith("versions")
             else "cover" if "only year on the cover" in source
             else "date" if "publication date" in source else "heading")
 

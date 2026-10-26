@@ -27,6 +27,31 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+### Added
+- **Languages checked against the text.** The crawler only knows the languages a source is listed with, so the 24
+  language versions of a Europol summary were all tagged English, and the English editions of NÚKIB, RIA, ANSSI or SRI
+  carried the agency's own language. A new pass (`rozvedka/languages.py`, run with `type-documents`, `date-documents` and
+  every update) reads the text's script and its most frequent short words – no model – and corrects the stored language
+  where
+  - the address names another language (`…-bg.pdf`, `?filename=…_SL.pdf`) and the text reads as it, or
+  - the text alone reads clearly as another language and hardly as the stored one (a bilingual report is left alone).
+
+  An address code alone is never enough: `_uk` is often the United Kingdom, `_ar` an annual report. 446 files corrected;
+  40 sampled text-only corrections all right. The report page shows why a language was corrected (new field
+  `documents.lang_why`); a language edited by hand is never changed.
+- **Undated language versions take their report's year** – files of one publisher in one folder with the same title
+  once a language or "summary" word is removed, each in another language, all dated versions agreeing (blind check on
+  dated reports: 40 of 40 exact).
+
+### Fixed
+- **Language versions grouped into their report.** With the right languages, 58 more files are counted as versions of
+  a report rather than reports of their own (3,924 → 3,866 reports); undated reports 148 → 142.
+- The title rule that groups versions cut letters off the last word ("opportunism" → "opportu"), which merged two
+  different ECDC reports; "Digest", "Síntese", "Zhrnutie", "Συνοπτική" and "Inglés" are now known summary and language
+  words.
+- `sources/series.yaml`: the English titles of the RIA, ANSSI and SRI series and the Finnish ones of Supo are listed
+  under their real language, so those editions stay in their series.
+
 ## [0.92.1] – 2026-10-26
 
 ### Changed
