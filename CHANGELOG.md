@@ -27,6 +27,28 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.1] – 2026-10-26
+
+### Fixed
+- **An unreadable robots.txt is no longer taken as permission.** When a site's robots.txt timed out or answered with a
+  server error, the fetcher treated it as empty and fetched anyway – a retry of two Natural Resources Canada reports
+  went to a server whose robots.txt forbids it. Now only an answer of 200 (its rules) or 4xx (no rules) lets anything be
+  fetched; robots.txt also gets the curl fallback the pages have, so sites that refuse Python's TLS keep working. The
+  error says which of the two refused ("blocked by robots.txt" / "robots.txt could not be read (…) – not fetched").
+- **Titles made of labels** ("true true", "Español", "EN FR ES AR" – the link text of a language switcher) are replaced
+  by the file name when the PDF has no title of its own: 32 UNODC and INTERPOL files now say what they are.
+- **Failed downloads re-checked** (61 → 54, 50 of them Türkiye's, blocked by robots.txt and waiting on *To collect*):
+  the four IRSEM failures were stale links to briefs already in the library from IRSEM's new file store, NEMA's 2015
+  capability assessment is in the library under its new address – those five, and three files that are not reports
+  (IPCC Panel decisions and press slides, a UNGRD procurement study), are hidden.
+
+### Added
+- UNODC: the World Drug Report 2021 page moved (`wdr2021.html`); the 2017 and 2026 editions added – 31 reports.
+- NEMA: 9 new reports found on a re-crawl; IRSEM: one new study.
+- Türkiye (`sources/coverage_gaps.yaml`): AFAD keeps its documents under a path its robots.txt disallows; USOM
+  publishes no reports; the national cyber security strategies are on a ministry server that refused connections from
+  the EU and the US – noted for a retry.
+
 ## [0.93.0] – 2026-10-26
 
 ### Added
@@ -1801,7 +1823,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.1...HEAD
+[0.93.1]: https://github.com/iiogurt/Rozvedka/compare/v0.93.0...v0.93.1
 [0.93.0]: https://github.com/iiogurt/Rozvedka/compare/v0.92.1...v0.93.0
 [0.92.1]: https://github.com/iiogurt/Rozvedka/compare/v0.92.0...v0.92.1
 [0.92.0]: https://github.com/iiogurt/Rozvedka/compare/v0.91.0...v0.92.0

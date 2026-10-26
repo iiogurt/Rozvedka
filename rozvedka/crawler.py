@@ -488,8 +488,8 @@ def crawl(country: str | None = None, agency: str | None = None, source_ids=None
                 else:
                     try:
                         status, new = crawl_page(con, src, page, allowed_langs)
-                    except fetch.Blocked:
-                        status, new = "blocked by robots.txt", 0
+                    except fetch.Blocked as e:
+                        status, new = str(e), 0
                         stats["errors"] += 1
                         per["errors"] += 1
                     except Exception as e:  # noqa: BLE001

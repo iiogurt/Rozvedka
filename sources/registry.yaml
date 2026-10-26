@@ -1704,11 +1704,13 @@
   frequency: yearly
   report_types: [world drug report]
   pages:
+    - {lang: en, kind: archive, url: "https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2026.html"}
     - {lang: en, kind: archive, url: "https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2025.html"}
     - {lang: en, kind: archive, url: "https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2024.html"}
     - {lang: en, kind: archive, url: "https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2023.html"}
     - {lang: en, kind: archive, url: "https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2022.html"}
-    - {lang: en, kind: archive, url: "https://www.unodc.org/unodc/en/data-and-analysis/world-drug-report-2021.html"}
+    - {lang: en, kind: archive, url: "https://www.unodc.org/unodc/data-and-analysis/wdr2021.html"}      # moved; the old address gives 404
+    - {lang: en, kind: archive, url: "https://www.unodc.org/wdr2017/"}
 
 - country: OTHER
   agency: Interpol

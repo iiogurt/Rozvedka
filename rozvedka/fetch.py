@@ -22,10 +22,14 @@ HEADERS = {
 _lock = threading.Lock()
 _last: dict[str, float] = {}
 _robots: dict[str, urllib.robotparser.RobotFileParser | None] = {}
+_unreadable: dict[str, str] = {}      # sites whose robots.txt could not be read this run, and why
 
 
 class Blocked(Exception):
-    """robots.txt disallows the URL."""
+    """robots.txt disallows the URL, or could not be read (then nothing on the site is fetched)."""
+
+    def __init__(self, reason: str = "blocked by robots.txt"):
+        super().__init__(reason)
 
 
 @dataclass
@@ -57,16 +61,38 @@ def allowed(url: str, lenient: bool = False) -> bool:
     parts = urlsplit(url)
     base = f"{parts.scheme}://{parts.netloc}"
     if base not in _robots:
+        # 200: its rules; 4xx: the site has none; a 5xx or no answer at all: fetch nothing (a failed robots.txt is
+        # not a permission – this once let a retry download from a site whose robots.txt forbids it)
         rp = urllib.robotparser.RobotFileParser()
         try:
-            with _client(lenient) as c:
-                r = c.get(base + "/robots.txt", timeout=15)
-            rp.parse(r.text.splitlines() if r.status_code == 200 else [])
-        except Exception:
-            rp.parse([])
+            try:
+                with _client(lenient) as c:
+                    r = c.get(base + "/robots.txt", timeout=15)
+                status, text = r.status_code, r.text
+            except (httpx.TransportError, httpx.TimeoutException):
+                if not shutil.which("curl"):
+                    raise
+                r = _curl(base + "/robots.txt", None, lenient)       # the TLS fallback, as for the pages themselves
+                status, text = r.status, r.text
+            if status == 200:
+                rp.parse(text.splitlines())
+            elif 400 <= status < 500:
+                rp.parse([])
+            else:
+                raise RuntimeError(f"http {status}")
+        except Exception as e:  # noqa: BLE001 - any failure means: do not fetch
+            _unreadable[base] = f"{type(e).__name__}: {e}"[:120]
+            rp.parse(["User-agent: *", "Disallow: /"])
         _robots[base] = rp
     rp = _robots[base]
     return rp.can_fetch(USER_AGENT, url) if rp else True
+
+
+def blocked(url: str) -> Blocked:
+    """The Blocked error for a URL that allowed() refused, saying whether the rules or an unreadable file refused it."""
+    parts = urlsplit(url)
+    why = _unreadable.get(f"{parts.scheme}://{parts.netloc}")
+    return Blocked(f"robots.txt could not be read ({why}) – not fetched" if why else "blocked by robots.txt")
 
 
 def _curl(url: str, dest: Path | None, lenient: bool) -> Response:
@@ -95,7 +121,7 @@ def _curl(url: str, dest: Path | None, lenient: bool) -> Response:
 
 def get(url: str, lenient: bool = False, check_robots: bool = True) -> Response:
     if check_robots and not allowed(url, lenient):
-        raise Blocked(url)
+        raise blocked(url)
     _wait(urlsplit(url).netloc)
     try:
         with _client(lenient) as c:
@@ -116,7 +142,7 @@ def render(url: str, budget_ms: int = 15000) -> Response:
     if not CHROMIUM:
         raise RuntimeError("no chromium available for JavaScript rendering")
     if not allowed(url):
-        raise Blocked(url)
+        raise blocked(url)
     _wait(urlsplit(url).netloc)
     with _render_lock, tempfile.TemporaryDirectory() as profile:
         out = subprocess.run(
@@ -141,7 +167,7 @@ def looks_like_js_shell(resp: Response) -> bool:
 def download(url: str, dest: Path, lenient: bool = False, max_bytes: int = 200 * 2**20) -> Response:
     """Stream url to dest. Returns Response without body."""
     if not allowed(url, lenient):
-        raise Blocked(url)
+        raise blocked(url)
     _wait(urlsplit(url).netloc)
     dest.parent.mkdir(parents=True, exist_ok=True)
     try:

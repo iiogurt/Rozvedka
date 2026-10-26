@@ -11,7 +11,7 @@ from urllib.parse import unquote, urlsplit
 
 from . import db, fetch, progress
 from .config import FILES, MAX_FILE_MB
-from .crawler import is_poor_title
+from .crawler import LABEL_ONLY, humanize_filename, is_poor_title
 
 log = logging.getLogger("rozvedka.download")
 
@@ -58,6 +58,10 @@ def improve_titles() -> int:
             if good_pdf_title(pdf_title) and not is_poor_title(pdf_title.strip(), r["url"]):
                 con.execute("UPDATE documents SET title=? WHERE id=?", (pdf_title.strip()[:300], r["id"]))
                 changed += 1
+            elif LABEL_ONLY.fullmatch((r["title"] or "").strip()) and re.search(r"[^\W\d_]{3,}", name := humanize_filename(r["url"])):
+                # a link text of language labels or "true true" says nothing; the file name at least names the report
+                con.execute("UPDATE documents SET title=? WHERE id=?", (name[:300], r["id"]))
+                changed += 1
     return changed
 
 
@@ -103,8 +107,8 @@ def download_one(doc_id: int) -> str:
                 status, error = "skipped", f"not a PDF ({resp.content_type or 'unknown type'})"
         else:
             status, error, fields = store_pdf(doc, dest, tmp)
-    except fetch.Blocked:
-        error = "blocked by robots.txt"
+    except fetch.Blocked as e:
+        error = str(e)
     except Exception as e:  # noqa: BLE001
         error = f"{type(e).__name__}: {e}"[:300]
     finally:
