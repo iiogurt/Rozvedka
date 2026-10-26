@@ -105,11 +105,13 @@ def type_doc(request: Request, doc_id: int, doc_type: str = Form(...)):
 @router.post("/doc/{doc_id}/edit")
 def edit_doc(request: Request, doc_id: int, title: str = Form(...), lang: str = Form(""), year: str = Form("")):
     with db.session() as con:
-        old = con.execute("SELECT year, year_source FROM documents WHERE id=?", (doc_id,)).fetchone()
+        old = con.execute("SELECT year, year_source, lang, lang_why FROM documents WHERE id=?", (doc_id,)).fetchone()
         new_year = int(year) if year.strip().isdigit() else None
         source = old["year_source"] if old and old["year"] == new_year else ("set by hand" if new_year else None)
-        con.execute("UPDATE documents SET title=?, lang=?, year=?, year_source=? WHERE id=?",
-                    (title.strip(), lang.strip().lower(), new_year, source, doc_id))
+        new_lang = lang.strip().lower()
+        lang_why = old["lang_why"] if old and (old["lang"] or "") == new_lang else "set by hand"
+        con.execute("UPDATE documents SET title=?, lang=?, year=?, year_source=?, lang_why=? WHERE id=?",
+                    (title.strip(), new_lang, new_year, source, lang_why, doc_id))
     return _back(request)
 
 

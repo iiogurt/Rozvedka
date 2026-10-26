@@ -41,7 +41,7 @@
       <form class="inline rp-type" method="post" action="/doc/{{ d.id }}/type"><select name="doc_type" aria-label="Correct the type">
         {% for k, (label, _) in doc_types.items() %}<option value="{{ k }}" {{ 'selected' if d.doc_type == k }}>{{ label }}</option>{% endfor %}</select>
         <button title="Set the type by hand – written to sources/doc_types.yaml">Set</button></form></td></tr>
-    <tr><th>Language</th><td>{{ d.lang or '?' }}</td></tr>
+    <tr><th>Language</th><td>{{ d.lang or '?' }}{% if d.lang_why %} <span class="muted">– {{ d.lang_why }}</span>{% endif %}</td></tr>
     {% if not book %}<tr><th>Official address</th><td class="mono brk"><a href="{{ d.url }}" target="_blank" rel="noopener">{{ d.url }}</a></td></tr>{% endif %}
     {% if d.page_url %}<tr><th>Found on</th><td class="mono brk"><a href="{{ d.page_url }}" target="_blank" rel="noopener">{{ d.page_url }}</a>
       <span class="muted">({{ d.page_lang or '?' }}{{ ', ' ~ d.page_kind if d.page_kind }})</span></td></tr>{% endif %}

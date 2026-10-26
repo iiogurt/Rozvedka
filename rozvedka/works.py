@@ -18,7 +18,7 @@ from urllib.parse import unquote, urlsplit
 
 import yaml
 
-from . import db, topics
+from . import db, languages, topics
 from .config import ROOT
 
 log = logging.getLogger("rozvedka.works")
@@ -33,10 +33,11 @@ LANGS = ("en|de|fr|it|nl|cs|sk|pl|sv|da|nb|no|fi|et|lv|lt|es|pt|ro|bg|hr|sl|hu|e
 SUMMARY_WORDS = (
     r"executive summary|summary|zusammenfassung|kurzfassung|resume|synthese|resumen ejecutivo|resumen|sintesi|"
     r"samenvatting|shrnuti|suhrn|streszczenie|sammanfattning|sammendrag|tiivistelma|kokkuvote|kopsavilkums|santrauka|"
-    r"rezumat|резюме|обобщение|sazetak|povzetek|osszefoglalo|περιληψη|achoimre feidhmiuchain|achoimre|"
-    r"sommarju ezekuttiv|sommarju|resumo|sumario executivo|kratak pregled|english|deutsch|francais|espanol|italiano|"
+    r"rezumat|резюме|обобщение|sazetak|povzetek|osszefoglalo|περιληψη|συνοπτικη|sintese|zhrnutie|achoimre feidhmiuchain|achoimre|"
+    r"sommarju ezekuttiv|sommarju|resumo|sumario executivo|kratak pregled|digest|english|deutsch|francais|espanol|italiano|"
+    r"ingles|anglais|englisch|"
     r"nederlands|english version|version|versie|fassung|translation|traduction")
-_TAIL = re.compile(rf"\s*([-–—:|(,]\s*)?({SUMMARY_WORDS}|\(?[a-z]{{2}}\)?)\s*\)?\s*$")
+_TAIL = re.compile(rf"\s*([-–—:|(,]\s*)?\b({SUMMARY_WORDS}|\(?[a-z]{{2}}\)?)\s*\)?\s*$")   # \b: never part of a word
 
 
 def address_key(url: str) -> str:
@@ -52,9 +53,7 @@ def address_key(url: str) -> str:
 
 def address_lang(url: str) -> str | None:
     """The language an address names (…/en/…, en_x.pdf, x-en.pdf, x_EN.pdf), if it names exactly one."""
-    path = unquote(urlsplit(url or "").path).lower()
-    found = set(re.findall(r"(?:^|[/_. -])(en|de|fr|it|nl|cs|sk|pl|sv|da|nb|fi|et|lv|lt|es|pt|ro|bg|hr|sl|hu|el|ru|ja|zh|ga|mt|is|sq|mk|tr|uk)"
-                           r"(?=[/_. -]|$)", path.rsplit(".", 1)[0] if "." in path.rsplit("/", 1)[-1] else path))
+    found = languages.address_langs(url)
     return found.pop() if len(found) == 1 else None
 
 
@@ -62,7 +61,8 @@ def title_key(title: str) -> str:
     """The title without file-size noise and without a trailing language or "summary" word."""
     t = topics.normalize(title or "")
     t = re.sub(r"\(pdf[^)]*\)|\bpdf\b|\d+([.,]\d+)?\s*(kb|mb)\b", " ", t)
-    t = re.sub(r"\s+", " ", t).strip()
+    t = re.sub(r"【\s*】|\(\s*\)|\[\s*\]", " ", t)                     # brackets emptied by the size removal
+    t = re.sub(r"[\s(\[【]+$", "", re.sub(r"\s+", " ", t)).strip()       # and an opening one left at the end
     for _ in range(3):
         shorter = _TAIL.sub("", t).strip()
         if shorter == t:

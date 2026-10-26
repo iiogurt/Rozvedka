@@ -1133,7 +1133,7 @@ flowchart LR
 | `rozvedka/updates.py` | What's new by update and the Atom feed, each count with its link |
 | `rozvedka/home.py` | the home page: search-console operators and suggestions, dashboard counts with their links |
 | `rozvedka/report.py` | the report page: provenance, series edition and changes, topics with terms, actors with passages |
-| `rozvedka/doctypes.py`, `works.py`, `dating.py` | document types; language versions and summaries grouped into one report; years from the text and year conflicts |
+| `rozvedka/doctypes.py`, `works.py`, `dating.py`, `languages.py` | document types; language versions and summaries grouped into one report; years from the text (or from the report's other language versions) and year conflicts; stored languages checked against the text's script and function words |
 | `rozvedka/concepts.py` | cross-language search: concept names in every language from Wikidata |
 | `rozvedka/ratings.py`, `publishers.py` | democracy, security and governance ratings of states over time; credibility checks of think tanks and commercial analysts (funding or ownership, EU register, FARA, USAspending, sanctions lists) and their owners and sponsors |
 | `rozvedka/app.py`, `web.py`, `routes/`, `templates/`, `static/` | the server-rendered portal: the app and its middleware, what the pages share (templates, helpers, request guard), one route module per area (actors, documents, trends, maps, data, update, …) |

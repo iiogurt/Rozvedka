@@ -76,10 +76,12 @@ series:
   name: Cyber security yearbook
   per_year: 1
   languages:
+  - en
   - et
   titles:
     et:
     - kuberturvalisuse aastaraamat
+    en:
     - cyber security in estonia
   since: 2019
 - source: ES/DSN
@@ -105,10 +107,12 @@ series:
   per_year: 1
   languages:
   - en
+  - fi
   - sv
   titles:
     en:
     - national security overview
+    fi:
     - kansallisen turvallisuuden katsaus
     sv:
     - oversikt av den nationella sakerheten
@@ -117,10 +121,12 @@ series:
   name: Panorama de la cybermenace / Cyber Threat Overview
   per_year: 1
   languages:
+  - en
   - fr
   titles:
     fr:
     - panorama cybermenace ouvre une nouvelle fenetre
+    en:
     - cyber threat overview ouvre une nouvelle fenetre
   since: 2021
 - source: GB/ISC
@@ -160,9 +166,12 @@ series:
   per_year: 1
   languages:
   - en
+  - ja
   titles:
     en:
     - white paper on disaster management
+    - white paper on disaster management all
+    ja:
     - white paper on disaster management all
   since: 2015
 - source: JP/MOD Japan
@@ -224,12 +233,14 @@ series:
   name: Raport de activitate
   per_year: 1
   languages:
+  - en
   - ro
   titles:
     ro:
     - raport activitate
-    - activity report
     - raport activitate sri
+    en:
+    - activity report
   since: 2002
 - source: SI/SI-CERT
   name: Poročilo o kibernetski varnosti

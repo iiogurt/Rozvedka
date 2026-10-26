@@ -29,7 +29,7 @@ Written 2026-10-06 at version 0.29.0 (the previous assessment was made at 0.16.0
 | Failed downloads | 61: Türkiye 49 (robots.txt), Public Safety Canada 24, CCCS 5, IRSEM 4, IPCC 5, single ones elsewhere | dead addresses and robots.txt – re-check the listing pages |
 | Open in a browser only | 30 (E-tjenesten 20 behind a bot challenge, Canada 8, BSI 1, CCDCOE 1) | not circumvented |
 | Reports without any topic | 185 of 3,866 real reports (4.8 %; reports, annual reports, assessments, strategies, bulletins); 101 more among forms, guides, legal, finance and statements | B4 target (below 5 %) still met, only just |
-| Undated reports | 148 | grew with the library (90 at 0.29.0) |
+| Undated reports | 148 (0.93.0: 142) | grew with the library (90 at 0.29.0); 0.93.0 dates language versions from each other |
 | Reports with too little text | 23 under 100 words | image-only pages OCR could not read |
 | Matching precision | 91.6 % on 1,802 passages of the 456 most frequent names (0.46.1; 75 % of the links) | the ~1,700 rarer names are not measured |
 | Book library | built (H2), **no books imported** yet | `data/books/` is empty – needs the owner's files |
@@ -282,7 +282,8 @@ backups and exchange (0.27–0.28), home page and search console (0.22), Update 
 
 Updated 2026-10-26 at 0.92.0, after F5 – F12 (0.88.0 – 0.92.0):
 
-1. **Quality patch** – re-date what can be dated among the 148 undated reports, re-check the 61 failed downloads (Canada
+1. **Quality patch** – ✅ (0.93.0) languages checked against the text (446 files corrected), language versions date and
+   group each other (3,924 → 3,866 reports, 148 → 142 undated); still open: re-check the 61 failed downloads (Canada
    first), keep untagged real reports under 5 %.
 2. **A2 Türkiye, then A3 / A4** – a fetchable official Turkish publisher; then the open slots of `/sources/grid`
    (civil protection AT, BG, CY, GR, RO, SK; cyber LU, BG, KR, TW, BR).

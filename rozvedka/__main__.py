@@ -111,7 +111,8 @@ def main():
         from . import ocr
         if ocr.available():
             print(ocr.run())
-        from . import dating, doctypes
+        from . import dating, doctypes, languages
+        print(languages.retag())        # before dating: the language versions of a report date each other
         print(dating.date_documents())
         print(doctypes.type_documents())
         from . import works
@@ -122,11 +123,16 @@ def main():
         from . import ocr
         print(ocr.run(a.limit, a.workers))
     elif a.cmd == "date-documents":
-        from . import dating
-        print(dating.check() if a.check else dating.date_documents())
+        from . import dating, languages
+        if a.check:
+            print(dating.check())
+        else:
+            print(languages.retag())    # first: the language versions of a report date each other
+            print(dating.date_documents())
     elif a.cmd == "type-documents":
-        from . import doctypes, works
+        from . import doctypes, languages, works
         print(doctypes.type_documents())
+        print(languages.retag())
         print(works.group())
     elif a.cmd == "fetch-actors":
         from . import actor_sources, concepts

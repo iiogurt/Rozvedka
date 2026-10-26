@@ -124,10 +124,11 @@ def run(action: str = "full", scope: str = "all", country: str = "", sources=(),
 
 
 def _index_here() -> dict:
-    from . import actor_sources, actors, dating, doctypes, ocr, topics, works
+    from . import actor_sources, actors, dating, doctypes, languages, ocr, topics, works
     res = {"index-topics": topics.index()}
     if ocr.available():
         res["ocr"] = ocr.run()
+    res["languages"] = languages.retag()            # before dating: the language versions of a report date each other
     res["date-documents"] = dating.date_documents()
     res["type-documents"] = doctypes.type_documents()
     res["group-works"] = works.group()
