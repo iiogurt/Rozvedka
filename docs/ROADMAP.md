@@ -1,47 +1,46 @@
 # Rozvedka – assessment and roadmap
 
-Written 2026-10-06 at version 0.29.0 (the previous assessment was made at 0.16.0). Update this file when an item is done
-or priorities change; it is the working plan referred to from [`CLAUDE.md`](../CLAUDE.md). Numbers below were measured
-on the library that day.
+Written 2026-10-06 at version 0.29.0 (the previous assessment was made at 0.16.0); section 1 re-measured 2026-10-26 at
+0.92.0. Update this file when an item is done or priorities change; it is the working plan referred to from
+[`CLAUDE.md`](../CLAUDE.md). Numbers below were measured on the library on the date given.
 
 ## 1. Where the project stands
 
-### Built (0.1 → 0.29, 39 merged PRs, 564 tests)
+### Built (0.1 → 0.92, 137 merged PRs, 1,019 tests)
 
 | Area | What exists |
 |---|---|
-| Library | 120 sources in 46 countries and bodies (94 fetched automatically, 26 collected by hand), 3,015 listed reports in 26 languages, 1987–2026; 2,932 downloaded (14.6 GB) |
-| Collecting | registry → crawl → download (robots.txt, 2 s per host, curl / Chromium fallbacks); report series with missing editions; *To collect* for blocked sites with provenance; **Update page** with scope, progress, cancel and per-source status (0.29) |
-| Text | full text of every PDF, OCR for scanned ones (135 recognised), years from text/address/folder (90 undated left) |
-| Index | 64 topics (3,800 multilingual terms), 5,123 actors from Wikidata / Wikipedia / MITRE ATT&CK with connections, rule-based and transparent name matching, precision review in the portal (0.26) |
-| Reading | home page with search console and dashboards, What's new by update + Atom feed, Watchlist, Compare agencies, Trends, Actors and pairs, Network, Maps, Topic mind map |
-| Operations | datasets for backup and exchange with a GUI (export / check / import, progress, cancel); one job runner for long jobs; release check of every count against its list (`tools/check_links.py`) |
+| Library | 188 sources in 50 countries and bodies (163 official, 19 think tanks ◆, 6 commercial analysts ■; 141 fetched automatically, 47 collected by hand), 4,488 listed reports in 31 languages, 1987–2026; 4,256 downloaded (18.3 GB) |
+| Collecting | registry → crawl → download (robots.txt, 2 s per host, curl / Chromium fallbacks); report series with missing editions; *To collect* for blocked sites with provenance; Update page; coverage grid of country × agency type (`/sources/grid`) |
+| Text | full text of every PDF, OCR for scanned ones (336 recognised), years from text/address/folder, document types, editions and translations grouped into one report |
+| Index | 66 topics, 5,182 actors (59,000 names) from Wikidata / Wikipedia / MITRE ATT&CK / MISP, transparent name matching with a measured precision; CVEs, ATT&CK techniques, citations between reports, 5,545 dated events |
+| Reading | overview dashboard, search console with cross-language expansion, report, actor, topic and country pages, What's new + Atom, Watchlist, Compare, Trends, edition diffs, timeline, maps, matrices, ATT&CK grid, CVE lag, citation matrix, local book library |
+| Network | 23,900 entities and 43,500 links from sanctions lists, wanted notices, Wikidata, Wikipedia, ATT&CK, GLEIF and ICIJ (marked as leaked records); paths, rings, community matrix, leads, case file |
+| Country ratings | democracy (V-Dem, Freedom House, WGI), security, governance, media, cyber and disaster risk, per state and year |
+| Operations | datasets for backup and exchange; one job runner; CI (tests, CodeQL) on every PR; release check of every count against its list (`tools/check_links.py`) |
 
-### Gaps, measured (2026-10-06)
+### Gaps, measured (2026-10-26)
 
 | Gap | Size | Notes |
 |---|---|---|
-| **NATO and EU members without any source** | **6**: Albania, Iceland, Montenegro, North Macedonia, Turkey (NATO), Malta (EU) | in the declared scope (EU27 + NATO) but missing |
-| Automatic sources that return nothing | 6: NCSC-NL, VIGINUM, NCSA (GR), SRE (LU), NCSC-IE, OEP (IE) | pages, patterns or JavaScript (old item A4) |
-| Agency types not covered per country | civil protection / national risk assessment missing in 17 countries (AT, BE, BG, CY, EE, GR, HR, HU, LT, LV, NL, PT, RO, SI, SK, KR, TW …); cyber in 13 (AT, BG, HR, LU, LV, SE, US, JP, KR, TW, MX, PE, AR, BR …); military intelligence in most (few publish) | each needs a check whether the agency publishes at all |
-| Blocked flagship reports | 26 manual sources, e.g. Säpo, PET, ASIO, CSIS, VSD/AOTD | collected by hand on *To collect* (needs the owner) |
-| Open in a browser only | 74 (DIS Italy 38, E-tjenesten 20, StratCom CoE 12, Canada 4) | not downloadable automatically |
-| Downloaded reports without any topic | 383 of 2,932 (13 %) | taxonomy gaps or non-report files (forms, leaflets) |
-| Reports with too little text | 83 | mostly image-only pages OCR could not read |
-| Undated reports | 90 | mostly undated leaflets and forms |
-| Matching precision | 91.6 % measured on 1,802 passages of the 456 most frequent names (0.46.1; 75 % of the links), shown on the Actors page | names beyond the top 450 are not measured |
-| Wrong years from titles | known cases (UK ISC press releases dated 2021) | date stamps in file names disagree with stored years |
-| Per-file counting | translations and editions count as separate reports | item B2 |
-| Portal start after a reboot | **not automatic** – runs from a shell, by the owner's choice | an optional systemd user service exists and is tested (0.48.0, `python -m rozvedka service install`); the owner keeps it off; starting at boot would need `loginctl enable-linger` (sudo) |
-| Code size | `app.py` 28 lines; 13 route modules of 30–150 lines (0.47.2) | – |
-| CI | none | tests run only on the Pi |
+| **Hand-collected sources still empty** | **all 47** manual sources have no report: Säpo, PET, CSIS, ASIO, VSD/AOTD, DE BMI, KR NIS, three Ukrainian agencies, NATO STO and ACT, FATF, IAEA, CERT-EU, EUDA, Eurojust … | A5 – collected by hand on *To collect* (needs the owner) |
+| **Türkiye in name only** | its only source (EGM Narkotik, manual) lists 50 reports; 49 are blocked by robots.txt, 1 is gone (404) | A2 – a fetchable official publisher is needed (USOM, AFAD), or hand collection |
+| Open slots in the coverage grid | 106 country × agency-type slots neither covered nor checked: police / counter-terrorism 39, military intelligence 38, civil intelligence 10, cyber 10, civil protection 9; 20 checked as not published | `/sources/grid`; A3, A4 |
+| Failed downloads | 61: Türkiye 49 (robots.txt), Public Safety Canada 24, CCCS 5, IRSEM 4, IPCC 5, single ones elsewhere | dead addresses and robots.txt – re-check the listing pages |
+| Open in a browser only | 30 (E-tjenesten 20 behind a bot challenge, Canada 8, BSI 1, CCDCOE 1) | not circumvented |
+| Reports without any topic | 185 of 3,866 real reports (4.8 %; reports, annual reports, assessments, strategies, bulletins); 101 more among forms, guides, legal, finance and statements | B4 target (below 5 %) still met, only just |
+| Undated reports | 148 | grew with the library (90 at 0.29.0) |
+| Reports with too little text | 23 under 100 words | image-only pages OCR could not read |
+| Matching precision | 91.6 % on 1,802 passages of the 456 most frequent names (0.46.1; 75 % of the links) | the ~1,700 rarer names are not measured |
+| Book library | built (H2), **no books imported** yet | `data/books/` is empty – needs the owner's files |
+| Portal start after a reboot | **not automatic**, by the owner's choice | optional systemd user service (`python -m rozvedka service install`); needs `loginctl enable-linger` (sudo) |
 
 ## 2. Strategy
 
-The library is broad; its weak spots are **completeness inside the declared scope** (6 member states, missing agency
-types, silent and blocked sources) and **measured quality** (precision never measured, per-file counting). New reading
-features matter less than closing those, so the order is: **A (complete the scope) → B (quality you can measure) →
-E1 (the portal survives a reboot) → C/D as useful**, with each item one PR.
+The reading, network and visualisation plans (C, F, G, H) are built. The weak spots are again **completeness inside the
+declared scope** – the hand-collected sources hold nothing yet, Türkiye has no fetchable source, 106 slots of the coverage
+grid are unchecked – and keeping the measured quality as the library grows. So the order is: **A (sources) → B (quality
+kept under its targets) → the open feature items (C2, E4, G7, G9) as useful**, with each item one PR.
 
 ## 3. Roadmap
 
@@ -51,7 +50,8 @@ Each item: why · what · done when · version step.
 
 1. ✅ (0.29.1) **Fix the six silent automatic sources** (NCSC-NL, VIGINUM, NCSA, SRE, NCSC-IE, OEP) – check pages, link patterns,
    JavaScript rendering; mark as manual where nothing can be fetched. *Done when* each has reports or a documented reason. · patch (sources)
-2. ✅ (0.29.1: Iceland, Albania, North Macedonia, Türkiye added; Montenegro and Malta publish no regular reports) **The six missing member states** – research the official publishers per slot (civil and military intelligence,
+2. ◐ (0.29.1: Iceland, Albania, North Macedonia, Türkiye added; Montenegro and Malta publish no regular reports; 2026-10-26:
+   Türkiye's only source is blocked by robots.txt – 0 reports, a fetchable publisher is still needed) **The six missing member states** – research the official publishers per slot (civil and military intelligence,
    cyber agency / national CERT, civil protection and national risk assessment, police / counter-terrorism) and add
    those that publish regularly. Starting points to verify (names from memory, not yet checked): Albania – state
    intelligence service, national cyber security authority; Iceland – national police commissioner's risk
@@ -280,13 +280,15 @@ backups and exchange (0.27–0.28), home page and search console (0.22), Update 
 
 ## 4. Suggested next steps
 
-Updated 2026-10-21, after H (all of it built by 0.81.0) and F3 + F4 (0.82.1):
+Updated 2026-10-26 at 0.92.0, after F5 – F12 (0.88.0 – 0.92.0):
 
-1. **G7 → G8 → G9** – finish the network plan the owner approved: views (rings ✅ 0.83.0, matrix ✅ 0.84.0; the network as
-   of a year waits for more dated links), the shared case file ✅ 0.85.0, then company registries and leaks (GLEIF, UK Companies House, ICIJ).
-2. ✅ **F12** – topic and country briefing pages (0.88.0).
-3. ✅ **F5, F9, F10, F11** – overview sparklines (0.92.0), citation matrix (0.90.0), ATT&CK grid and CVE lag (0.91.0), coverage grid (0.89.0).
-4. **A3–A5, D2–D7** – more sources (no new code); A5 needs the owner to collect the blocked flagships by hand.
+1. **Quality patch** – re-date what can be dated among the 148 undated reports, re-check the 61 failed downloads (Canada
+   first), keep untagged real reports under 5 %.
+2. **A2 Türkiye, then A3 / A4** – a fetchable official Turkish publisher; then the open slots of `/sources/grid`
+   (civil protection AT, BG, CY, GR, RO, SK; cyber LU, BG, KR, TW, BR).
+3. **A5 (owner)** – hand-collect the blocked flagships through *To collect*: Säpo, PET, CSIS, ASIO, VSD/AOTD first.
+4. **Features still open** – C2 research notes and citations; E4 caching (cross-language search ~3 s on the Pi); G9 UK
+   Companies House (needs an API key from the owner); G7 the network as of a year (waits for dated links).
 
 Done from the earlier list: E1 (0.48.0, off by the owner's decision), A1 + A2 (0.29.1), B1 (0.46.1), B2 / B3 (0.32–0.33),
 C1 (0.30.0).
