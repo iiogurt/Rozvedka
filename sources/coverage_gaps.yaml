@@ -19,7 +19,8 @@
 - {country: ME, type: civil-protection, checked: 2026-10-06, note: "no regular public reports found on the sites or gov.me"}
 - {country: ME, type: cyber, checked: 2026-10-06, note: "CIRT.ME: no regular public reports found (cirt.me did not resolve)"}
 - {country: TR, type: intelligence-civil, checked: 2026-10-06, note: "MİT publishes no reports"}
-- {country: TR, type: civil-protection, checked: 2026-10-06, note: "AFAD activity reports not found on afad.gov.tr"}
+- {country: TR, type: civil-protection, checked: 2026-10-26, note: "AFAD: no activity-report page found; its documents (e.g. disaster statistics) sit under /kurumlar/, which afad.gov.tr's robots.txt disallows – as on narkotik.pol.tr"}
+- {country: TR, type: cyber, checked: 2026-10-26, retry: true, note: "USOM publishes no reports (figures only in ministry press statements); the national cyber security strategies 2013–2028 are on hgm.uab.gov.tr, which refused or timed out from the EU and the US – retry, then add as a strategy source"}
 - {country: LU, type: cyber, checked: 2026-10-08, note: "CIRCL publishes conference slides, no regular report"}
 - {country: KR, type: cyber, checked: 2026-10-08, note: "KISA: no regular report found"}
 - {country: TW, type: cyber, checked: 2026-10-08, note: "TWCERT/CC: no regular report found"}
