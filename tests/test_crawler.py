@@ -324,3 +324,22 @@ def test_label_only_titles_are_poor(title):
 def test_real_title_not_poor():
     from rozvedka.crawler import is_poor_title
     assert not is_poor_title("World Drug Report 2025", "https://x.org/a.pdf")
+
+
+def test_label_only_titles_take_the_file_name(tmp_path, monkeypatch):
+    """A link text of language labels says nothing: without a title in the PDF, the file name names the report."""
+    from rozvedka import db, downloader
+    monkeypatch.setattr(db, "DB_PATH", tmp_path / "t.db")
+    monkeypatch.setattr(downloader, "pdf_info", lambda path: (3, None))
+    db.init()
+    with db.session() as con:
+        con.execute("INSERT INTO sources(id,key,country,agency,type) VALUES(1,'X/U','OTHER','U','other')")
+        for i, title, url in [(1, "true true", "https://u.org/WDR25_Special_points_of_interest.pdf"),
+                              (2, "Español", "https://u.org/2314940S.pdf"),                     # no word in the name: kept
+                              (3, "World Drug Report 2025", "https://u.org/WDR25.pdf")]:        # a real title: kept
+            con.execute("INSERT INTO documents(id,source_id,url,title,status,local_path) VALUES(?,1,?,?,'downloaded','f.pdf')",
+                        (i, url, title))
+    assert downloader.improve_titles() == 1
+    with db.session() as con:
+        titles = [r[0] for r in con.execute("SELECT title FROM documents ORDER BY id")]
+    assert titles == ["WDR25 Special points of interest", "Español", "World Drug Report 2025"]

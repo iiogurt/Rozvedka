@@ -283,9 +283,11 @@ backups and exchange (0.27–0.28), home page and search console (0.22), Update 
 Updated 2026-10-26 at 0.92.0, after F5 – F12 (0.88.0 – 0.92.0):
 
 1. **Quality patch** – ✅ (0.93.0) languages checked against the text (446 files corrected), language versions date and
-   group each other (3,924 → 3,866 reports, 148 → 142 undated); still open: re-check the 61 failed downloads (Canada
-   first), keep untagged real reports under 5 %.
-2. **A2 Türkiye, then A3 / A4** – a fetchable official Turkish publisher; then the open slots of `/sources/grid`
+   group each other (3,924 → 3,866 reports, 148 → 142 undated); ✅ (0.93.1) failed downloads
+   re-checked (61 → 54; 50 are Türkiye's, for hand collection), an unreadable robots.txt no longer taken as permission;
+   still open: keep untagged real reports under 5 %.
+2. **A2 Türkiye, then A3 / A4** – a fetchable official Turkish publisher (2026-10-26: AFAD and EGM keep their files
+   under paths robots.txt disallows, USOM publishes no reports, the cyber strategies' server did not answer – retry); then the open slots of `/sources/grid`
    (civil protection AT, BG, CY, GR, RO, SK; cyber LU, BG, KR, TW, BR).
 3. **A5 (owner)** – hand-collect the blocked flagships through *To collect*: Säpo, PET, CSIS, ASIO, VSD/AOTD first.
 4. **Features still open** – C2 research notes and citations; E4 caching (cross-language search ~3 s on the Pi); G9 UK
