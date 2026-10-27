@@ -72,6 +72,13 @@ def test_real_titles_not_generic(title):
     ("Raport_SRI_2014.pdf", False),
     ("Годишен доклад за дейността на ДАНС за 2020 г.", False),
     ("EU Terrorism Situation and Trend Report 2025", False),
+    ("2025 APS Employee Census Highlight Report", True),
+    ("National Emergency Management Agency Gift and Benefits Register", True),
+    ("AusAlert decision support tool https://www.nema.gov.au/sites/default/files/2026-07/Document 1 (FOI 2526-22).pdf", True),
+    ("Agency Procedures for Determining Suspected Breaches of the APS Code of Conduct", True),
+    ("HCSS – Code of Conduct for Responsible Use of AI", False),   # a publication, not a staff rule
+    ("2025–26 Annual Report", False),
+    ("NSA 2024 Cybersecurity Year in Review", False),
 ])
 def test_low_relevance(text, low):
     assert bool(LOW_RELEVANCE_RE.search(text)) is low

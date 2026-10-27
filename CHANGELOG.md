@@ -27,6 +27,25 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.2] – 2026-10-27
+
+### Added
+- **Four sources for open cyber and civil-protection slots of the coverage grid:** the NSA Cybersecurity Directorate's
+  yearly *Cybersecurity Year in Review* (US cyber, 2021–2024); Australia's National Emergency Management Agency (annual
+  reports 2018–19 to 2025–26 of NEMA and the recovery agencies before it, corporate plans, after-action review);
+  Argentina's SINAGIR (National Plans for Disaster Risk Reduction 2018–2023 and 2025–2029); CERT-IS, Iceland's national
+  CERT, collected by hand (its list is built by JavaScript and robots.txt disallows the folder of its files).
+  28 reports downloaded and indexed.
+- **14 more slots checked and recorded** in `sources/coverage_gaps.yaml` (cyber: BG, MT, MK, MX, PE, AR, BR;
+  civil protection: IS, UA, AL, MK, TW, KR, BR), with what was found; Ukraine's DSNS (answers 403) and Korea's Disaster
+  Yearbook (a script-built list) are marked for a retry. The cyber and civil-protection columns now have no open slots.
+
+### Fixed
+- **An agency's housekeeping papers are hidden like other administrative files:** staff census results, gift and
+  benefit registers, indexed file lists, released freedom-of-information files ("FOI 2526-22"), child-safety, work-safety
+  and employer statements, emissions plans, staff codes of conduct and audit-committee charters. 40 files hidden (38 of
+  them from the new NEMA and NSA pages); a publication such as HCSS's AI code of conduct stays visible.
+
 ## [0.93.1] – 2026-10-26
 
 ### Fixed
@@ -1823,7 +1842,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.2...HEAD
+[0.93.2]: https://github.com/iiogurt/Rozvedka/compare/v0.93.1...v0.93.2
 [0.93.1]: https://github.com/iiogurt/Rozvedka/compare/v0.93.0...v0.93.1
 [0.93.0]: https://github.com/iiogurt/Rozvedka/compare/v0.92.1...v0.93.0
 [0.92.1]: https://github.com/iiogurt/Rozvedka/compare/v0.92.0...v0.92.1

@@ -69,7 +69,7 @@ class _CallToAction:
 CALL_TO_ACTION = _CallToAction()
 # the action words a link text starts with before the publication's name ("Get publication The Last European Colonial Empire")
 ACTION_PREFIX = re.compile(r"^\s*(get publication|hämta publikation|download(?: the)?(?: full)?(?: report| pdf| publication)?|"
-                           r"ladda ner|lataa|télécharger|herunterladen|read(?: the)?(?: full)? report)\b\s*[:–-]?\s*", re.I)
+                           r"ladda ner|lataa|télécharger|herunterladen|descargar|read(?: the)?(?: full)? report)\b\s*[:–-]?\s*", re.I)
 # kept but hidden by default: administrative documents that are not security reports
 LOW_RELEVANCE_RE = re.compile((
     r"contract|procurement|corrigendum|questionnaire|formulier|zakázk|veřejn[aá] zak|кандидат|конкурс|класиране|"
@@ -80,7 +80,12 @@ LOW_RELEVANCE_RE = re.compile((
     r"carta de trato digno|lenguaje claro|participación ciudadana|manuales de comunicación|"
     r"reporte complementario|informe de emergencia n|boletín informativo sísmico|boletin informativo sismico|"
     r"obrazac|eur-lex|"   # Croatian "form"; links to EU law texts
-    r"cve.\d{4}.\d{4,}"   # vulnerability bulletins of CERTs (advisories, not reports)
+    r"cve.\d{4}.\d{4,}|"  # vulnerability bulletins of CERTs (advisories, not reports)
+    # an agency's staff and housekeeping papers: census of its employees, gift registers, file lists, released FOI files
+    r"employee census|aps census|census (results|highlight|action plan)|gifts? and benefits register|indexed file list|"
+    r"reasonable accommodation|personal assistance services|child safety statement|emissions reduction plan|"
+    r"employer statement|work safety statement|(aps|events) code of conduct|audit and risk committee|disclosure log|"
+    r"\bfoi\W{0,3}\d{3,4}"
 ).replace(" ", r"[\s_-]+"), re.I)   # filenames use _ or - where titles use spaces
 
 
