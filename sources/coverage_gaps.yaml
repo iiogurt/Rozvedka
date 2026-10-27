@@ -20,7 +20,21 @@
 - {country: ME, type: cyber, checked: 2026-10-06, note: "CIRT.ME: no regular public reports found (cirt.me did not resolve)"}
 - {country: TR, type: intelligence-civil, checked: 2026-10-06, note: "MİT publishes no reports"}
 - {country: TR, type: civil-protection, checked: 2026-10-26, note: "AFAD: no activity-report page found; its documents (e.g. disaster statistics) sit under /kurumlar/, which afad.gov.tr's robots.txt disallows – as on narkotik.pol.tr"}
-- {country: TR, type: cyber, checked: 2026-10-26, retry: true, note: "USOM publishes no reports (figures only in ministry press statements); the national cyber security strategies 2013–2028 are on hgm.uab.gov.tr, which refused or timed out from the EU and the US – retry, then add as a strategy source"}
+- {country: TR, type: cyber, checked: 2026-10-27, retry: true, note: "USOM publishes no reports (figures only in ministry press statements); the national cyber security strategies 2013–2028 are on hgm.uab.gov.tr, which still timed out on 2026-10-27 (the ministry site uab.gov.tr answers but does not carry them) – retry, then add as a strategy source"}
 - {country: LU, type: cyber, checked: 2026-10-08, note: "CIRCL publishes conference slides, no regular report"}
 - {country: KR, type: cyber, checked: 2026-10-08, note: "KISA: no regular report found"}
 - {country: TW, type: cyber, checked: 2026-10-08, note: "TWCERT/CC: no regular report found"}
+- {country: IS, type: civil-protection, checked: 2026-10-27, note: "Almannavarnir publishes situation reports during events (eruptions, landslides, COVID-19) and a one-off risk review of 2011; no regular report"}
+- {country: UA, type: civil-protection, checked: 2026-10-27, retry: true, note: "dsns.gov.ua answers 403 to the crawler; the yearly national report on man-made and natural safety could not be located from here – retry, or add by hand"}
+- {country: AL, type: civil-protection, checked: 2026-10-27, note: "AKMC publishes news of activities and a magazine page without files; no risk assessment or regular report"}
+- {country: MK, type: civil-protection, checked: 2026-10-27, note: "the Crisis Management Center (cuk.gov.mk) publishes only budget, audit and strategic-planning documents"}
+- {country: TW, type: civil-protection, checked: 2026-10-27, note: "NCDR hands out its publications on request (出版品申請); no downloadable regular report"}
+- {country: KR, type: civil-protection, checked: 2026-10-27, retry: true, note: "the Ministry of the Interior and Safety's Disaster Yearbook (재해연보) is listed on a safekorea.go.kr board built by JavaScript – retry with browser rendering"}
+- {country: BR, type: civil-protection, checked: 2026-10-27, note: "the MIDR civil-defence pages carry one-off lists (municipalities at high risk) and no regular report"}
+- {country: BG, type: cyber, checked: 2026-10-27, note: "govcert.bg publishes incident-reporting forms, no regular report"}
+- {country: MT, type: cyber, checked: 2026-10-27, note: "csirtmalta.org did not resolve; no regular report found"}
+- {country: MK, type: cyber, checked: 2026-10-27, note: "MKD-CIRT publishes the cyber strategy text and forms, no regular report"}
+- {country: MX, type: cyber, checked: 2026-10-27, note: "CERT-MX (Guardia Nacional) publishes only its RFC 2350 profile"}
+- {country: PE, type: cyber, checked: 2026-10-27, note: "the National Digital Security Centre (CNSD, PCM) publishes alerts only"}
+- {country: AR, type: cyber, checked: 2026-10-27, note: "the National Cyber Security Directorate's page lists no reports"}
+- {country: BR, type: cyber, checked: 2026-10-27, note: "CTIR Gov (GSI) publishes alerts and recommendations, and the E-Ciber strategy once; no regular report"}
