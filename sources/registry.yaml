@@ -1498,6 +1498,21 @@
   pages:
     - {lang: is, kind: archive, url: "https://www.stjornarradid.is/verkefni/almannaoryggi/thjodaroryggi/utgefid-efni/"}
 
+- country: IS
+  agency: CERT-IS
+  name_local: "Netöryggissveitin CERT-IS"
+  name_en: "CERT-IS – Iceland's national cyber security incident response team"
+  homepage: "https://www.cert.is/"
+  description: "Iceland's national CERT under the Electronic Communications Office (Fjarskiptastofa). Annual reports cover incidents, threats to critical infrastructure and the state of cyber security in Iceland."
+  hq: {address: "Suðurlandsbraut 4, 108 Reykjavík, Iceland", lat: 64.1399, lon: -21.88639, precision: address}
+  type: cyber
+  access: manual
+  frequency: yearly
+  report_types: [Ársskýrsla / annual report]
+  notes: "The list is built by JavaScript and the files are under /content/, which robots.txt disallows: collect by hand."
+  pages:
+    - {lang: is, kind: archive, url: "https://www.cert.is/frettir-og-utgefid-efni/arsskyrslur/"}
+
 - country: AL
   agency: AKSK
   name_local: "Autoriteti Kombëtar për Sigurinë Kibernetike"
@@ -1934,6 +1949,21 @@
     - {lang: en, kind: archive, url: "https://www.dia.mil/Military-Power-Publications/", verified: false}
 
 - country: US
+  agency: NSA Cybersecurity
+  name_local: "National Security Agency – Cybersecurity Directorate"
+  name_en: "National Security Agency – Cybersecurity Directorate"
+  homepage: "https://www.nsa.gov/Cybersecurity/"
+  description: "The NSA's cyber-defence arm, which secures national security systems and the defence industrial base. The yearly Cybersecurity Year in Review covers state-sponsored intrusions (China, Russia), guidance it released, zero trust and the protection of weapons and space systems."
+  hq: {address: "Fort George G. Meade, Maryland, USA", lat: 39.10227, lon: -76.74626, precision: address}
+  domains: ["defense.gov"]   # its reports are on media.defense.gov
+  type: cyber
+  access: auto
+  frequency: yearly
+  report_types: [Cybersecurity Year in Review]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.nsa.gov/Cybersecurity/Year-in-Review/"}
+
+- country: US
   agency: DHS
   name_local: "Department of Homeland Security"
   name_en: "Department of Homeland Security"
@@ -2064,6 +2094,21 @@
   report_types: [Annual Cyber Threat Report]
   pages:
     - {lang: en, kind: archive, url: "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics", verified: false}
+
+- country: AU
+  agency: NEMA
+  name_local: "National Emergency Management Agency"
+  name_en: "National Emergency Management Agency"
+  homepage: "https://www.nema.gov.au/"
+  description: "Australia's federal emergency-management agency (since 2022; before that the National Recovery and Resilience Agency and the drought and flood recovery agencies). Annual reports cover the disaster season, crisis coordination, recovery funding and national preparedness."
+  hq: {address: "Canberra ACT 2600, Australia", lat: -35.29652, lon: 149.12957, precision: city}
+  type: civil-protection
+  access: auto
+  frequency: yearly
+  report_types: [annual report, corporate plan]
+  pages:
+    - {lang: en, kind: current, url: "https://www.nema.gov.au/about-us/governance-and-reporting/reporting-and-publications"}
+    - {lang: en, kind: archive, url: "https://www.nema.gov.au/about-us/governance-and-reporting/reporting-and-publications/archived-publications"}
 
 # ════════════════════════ NEW ZEALAND ════════════════════════
 - country: NZ
@@ -2473,6 +2518,20 @@
   report_types: [Informe SNIC / criminal statistics]
   pages:
     - {lang: es, kind: archive, url: "https://www.argentina.gob.ar/seguridad/estadisticascriminales/informes"}
+
+- country: AR
+  agency: SINAGIR
+  name_local: "Sistema Nacional para la Gestión Integral del Riesgo y la Protección Civil"
+  name_en: "National System for Integrated Risk Management and Civil Protection"
+  homepage: "https://www.argentina.gob.ar/sinagir"
+  description: "Argentina's civil-protection system under the security ministry. Its National Plan for Disaster Risk Reduction (PNRRD, 2018–2023, 2025–2029) assesses floods, landslides, volcanoes, earthquakes, fires, droughts and technological hazards."
+  hq: {address: "Gelly y Obes 2289, Buenos Aires, Argentina", lat: -34.58568, lon: -58.39636, precision: address}
+  type: civil-protection
+  access: auto
+  frequency: periodic
+  report_types: [Plan Nacional para la Reducción del Riesgo de Desastres]
+  pages:
+    - {lang: es, kind: current, url: "https://www.argentina.gob.ar/sinagir/plan-2025-2029"}
 
 # ════════════════════════ INDEPENDENT PUBLISHERS – THINK TANKS ════════════════════════
 # Not run by a state (2026-10-07, owner's decision): pro-democratic and security think tanks and research institutes

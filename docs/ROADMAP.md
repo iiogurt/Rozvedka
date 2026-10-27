@@ -25,7 +25,7 @@ Written 2026-10-06 at version 0.29.0 (the previous assessment was made at 0.16.0
 |---|---|---|
 | **Hand-collected sources still empty** | **all 47** manual sources have no report: Säpo, PET, CSIS, ASIO, VSD/AOTD, DE BMI, KR NIS, three Ukrainian agencies, NATO STO and ACT, FATF, IAEA, CERT-EU, EUDA, Eurojust … | A5 – collected by hand on *To collect* (needs the owner) |
 | **Türkiye in name only** | its only source (EGM Narkotik, manual) lists 50 reports; 49 are blocked by robots.txt, 1 is gone (404) | A2 – a fetchable official publisher is needed (USOM, AFAD), or hand collection |
-| Open slots in the coverage grid | 106 country × agency-type slots neither covered nor checked: police / counter-terrorism 39, military intelligence 38, civil intelligence 10, cyber 10, civil protection 9; 20 checked as not published | `/sources/grid`; A3, A4 |
+| Open slots in the coverage grid | 87 country × agency-type slots neither covered nor checked (2026-10-27; 106 before): police / counter-terrorism 39, military intelligence 38, civil intelligence 10, cyber 0, civil protection 0; 35 checked as not published, 4 of them for a retry | `/sources/grid`; A3, A4 |
 | Failed downloads | 61: Türkiye 49 (robots.txt), Public Safety Canada 24, CCCS 5, IRSEM 4, IPCC 5, single ones elsewhere | dead addresses and robots.txt – re-check the listing pages |
 | Open in a browser only | 30 (E-tjenesten 20 behind a bot challenge, Canada 8, BSI 1, CCDCOE 1) | not circumvented |
 | Reports without any topic | 185 of 3,866 real reports (4.8 %; reports, annual reports, assessments, strategies, bulletins); 101 more among forms, guides, legal, finance and statements | B4 target (below 5 %) still met, only just |
@@ -58,10 +58,10 @@ Each item: why · what · done when · version step.
    assessments, CERT-IS; Montenegro – national security agency, CIRT.ME; North Macedonia – national security agency,
    MKD-CIRT; Turkey – USOM (national CERT), AFAD (disasters); Malta – Civil Protection Department, CSIRTMalta. Only
    official domains; manual where blocked; record the slots where nothing is published. · patch (sources)
-3. ◐ (0.44.1: no regular reports found for BG, CY, GR, RO, SK; AT BMI Sicherheitsbericht added; 0.29.1: NL, BE, PT, HU, HR, SI, IE added; AT, BG, CY, GR, RO, SK still open; 0.42.5: EE, LV added, LT by hand) **National risk assessments and civil protection gaps** – EU states must report a national risk assessment
+3. ✅ (0.93.2: AU NEMA, AR SINAGIR added; IS, UA, AL, MK, TW, KR, BR checked – UA and KR for a retry; 0.44.1: no regular reports found for BG, CY, GR, RO, SK; AT BMI Sicherheitsbericht added; 0.29.1: NL, BE, PT, HU, HR, SI, IE added; AT, BG, CY, GR, RO, SK still open; 0.42.5: EE, LV added, LT by hand) **National risk assessments and civil protection gaps** – EU states must report a national risk assessment
    summary to the Union Civil Protection Mechanism every three years; most publish one (e.g. NL Rijksbrede
    Risicoanalyse, LT, LV, SK, AT). Fill the 17 countries without a civil-protection source. · patch (sources)
-4. ◐ (0.29.1: AT, LV, SE, HR added; 0.42.5: JP; LU, BG and the other non-EU countries still open – CISA publishes its year in review as web pages only, KISA / TWCERT / CERT.br need a closer look) **Cyber gaps** – national CERT / cyber-agency annual reports where they exist; candidates to verify: CERT.at, CERT.LV,
+4. ✅ (0.93.2: US NSA Cybersecurity Year in Review, IS CERT-IS by hand; BG, MT, MK, MX, PE, AR, BR checked; 0.29.1: AT, LV, SE, HR added; 0.42.5: JP; LU, BG and the other non-EU countries still open – CISA publishes its year in review as web pages only, KISA / TWCERT / CERT.br need a closer look) **Cyber gaps** – national CERT / cyber-agency annual reports where they exist; candidates to verify: CERT.at, CERT.LV,
    CERT-SE / NCSC-SE, CERT.hr, CIRCL (LU), NISC / JPCERT (JP), KISA (KR), TWCERT (TW), CISA (US), CERT.br. · patch (sources)
 5. **Hand-collect the blocked flagships** (Säpo, PET, ASIO, CSIS, VSD/AOTD …) through *To collect*. *Done when* their
    latest three editions are in the library. · owner + data
@@ -287,8 +287,14 @@ Updated 2026-10-26 at 0.92.0, after F5 – F12 (0.88.0 – 0.92.0):
    re-checked (61 → 54; 50 are Türkiye's, for hand collection), an unreadable robots.txt no longer taken as permission;
    still open: keep untagged real reports under 5 %.
 2. **A2 Türkiye, then A3 / A4** – a fetchable official Turkish publisher (2026-10-26: AFAD and EGM keep their files
-   under paths robots.txt disallows, USOM publishes no reports, the cyber strategies' server did not answer – retry); then the open slots of `/sources/grid`
-   (civil protection AT, BG, CY, GR, RO, SK; cyber LU, BG, KR, TW, BR).
+   under paths robots.txt disallows, USOM publishes no reports, the cyber strategies' server did not answer on
+   2026-10-26 or 10-27 – retry); ✅ (0.93.2) the cyber and civil-protection columns of `/sources/grid` have no open
+   slots left. Still open: civil intelligence (10, mostly states without a public intelligence report), police /
+   counter-terrorism (39) and military intelligence (38) – most will be "checked, none published"; police crime and
+   organised-crime reports (e.g. Iceland's national police risk assessments) are the likeliest finds. The four
+   retries on the grid (RO, TR, UA, KR) need a second attempt or browser rendering – and browser rendering
+   (`fetch.render`, `chromium --dump-dom`) hung for every remote page on 2026-10-27 inside the assistant's sandbox,
+   while local pages rendered: check on the Pi itself whether the four `browser-js` sources still crawl.
 3. **A5 (owner)** – hand-collect the blocked flagships through *To collect*: Säpo, PET, CSIS, ASIO, VSD/AOTD first.
 4. **Features still open** – C2 research notes and citations; E4 caching (cross-language search ~3 s on the Pi); G9 UK
    Companies House (needs an API key from the owner); G7 the network as of a year (waits for dated links).
