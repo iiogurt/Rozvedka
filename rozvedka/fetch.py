@@ -1,4 +1,6 @@
 """HTTP fetching: browser-like headers, per-host rate limit, robots.txt, curl fallback."""
+import json
+import re
 import shutil
 import subprocess
 import tempfile
@@ -133,18 +135,67 @@ def get(url: str, lenient: bool = False, check_robots: bool = True) -> Response:
         raise e
 
 
+FIREFOX = shutil.which("firefox") or shutil.which("firefox-esr")
 CHROMIUM = shutil.which("chromium") or shutil.which("chromium-browser") or shutil.which("google-chrome")
 _render_lock = threading.Semaphore(1)   # one browser at a time – the Pi has limited RAM
 
 
 def render(url: str, budget_ms: int = 15000) -> Response:
-    """Render a JavaScript-built page with headless Chromium and return the final DOM."""
-    if not CHROMIUM:
-        raise RuntimeError("no chromium available for JavaScript rendering")
+    """Render a JavaScript-built page with a headless browser and return the final DOM. Firefox comes first: since
+    October 2026 headless Chromium on Raspberry Pi OS loads remote pages but never finishes the navigation."""
+    if not (FIREFOX or CHROMIUM):
+        raise RuntimeError("no firefox or chromium available for JavaScript rendering")
     if not allowed(url):
         raise blocked(url)
     _wait(urlsplit(url).netloc)
-    with _render_lock, tempfile.TemporaryDirectory() as profile:
+    with _render_lock:
+        return _firefox(url, budget_ms) if FIREFOX else _chromium(url, budget_ms)
+
+
+def _firefox(url: str, budget_ms: int) -> Response:
+    """Headless Firefox driven over WebDriver BiDi: open the page, let its scripts run, read the DOM."""
+    from websockets.sync.client import connect     # comes with uvicorn[standard]
+    with tempfile.TemporaryDirectory() as profile:
+        Path(profile, "user.js").write_text(f'user_pref("general.useragent.override", "{USER_AGENT}");\n')
+        proc = subprocess.Popen([FIREFOX, "--headless", "--no-remote", "--profile", profile, "--remote-debugging-port=0"],
+                                stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+        try:
+            endpoint = next((m.group(1) for line in proc.stderr
+                             if (m := re.search(r"WebDriver BiDi listening on (ws://\S+)", line))), None)
+            if not endpoint:
+                raise RuntimeError("firefox did not open its WebDriver BiDi port")
+            threading.Thread(target=proc.stderr.read, daemon=True).start()   # keep the pipe from filling up
+            with connect(endpoint + "/session", max_size=200 * 2**20) as ws:
+                ids = iter(range(1, 100))
+
+                def call(method: str, **params):
+                    n = next(ids)
+                    ws.send(json.dumps({"id": n, "method": method, "params": params}))
+                    while True:
+                        msg = json.loads(ws.recv(timeout=budget_ms / 1000 + 90))
+                        if msg.get("id") == n:
+                            if msg.get("type") == "error":
+                                raise RuntimeError(f"firefox: {msg.get('error')}: {msg.get('message', '')[:200]}")
+                            return msg["result"]
+
+                call("session.new", capabilities={})
+                context = call("browsingContext.getTree")["contexts"][0]["context"]
+                final = call("browsingContext.navigate", context=context, url=url, wait="complete").get("url") or url
+                time.sleep(min(budget_ms, 5000) / 1000)   # lists that scripts fill in after the load event
+                html = call("script.evaluate", expression="document.documentElement.outerHTML",
+                            target={"context": context}, awaitPromise=False)["result"]["value"]
+                call("session.end")
+        finally:
+            proc.terminate()
+            try:
+                proc.wait(10)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+    return Response(final, 200, "text/html", html.encode())
+
+
+def _chromium(url: str, budget_ms: int) -> Response:
+    with tempfile.TemporaryDirectory() as profile:
         out = subprocess.run(
             [CHROMIUM, "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage",
              f"--user-data-dir={profile}", f"--user-agent={USER_AGENT}",

@@ -882,7 +882,7 @@ at a time (an update, an export or an import); the indexers run as separate proc
 git clone https://github.com/iiogurt/Rozvedka.git      # any folder; nothing depends on where it lives
 cd Rozvedka
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-sudo apt install poppler-utils chromium      # pdftotext (text extraction), Chromium (JavaScript-only sites)
+sudo apt install poppler-utils firefox       # pdftotext (text extraction), Firefox (JavaScript-only sites; firefox-esr on Debian)
 sudo apt install ocrmypdf tesseract-ocr tesseract-ocr-eng tesseract-ocr-spa …   # optional: OCR for scanned reports
 
 .venv/bin/python -m rozvedka update          # crawl, download, extract and index (first run: hours)
@@ -1003,10 +1003,10 @@ Settings of an installation are environment variables (none is required):
 | `auto` | plain HTTP fetch |
 | `browser-ua` | same, with a curl fallback for servers that reject Python's TLS handshake |
 | `tls-lenient` | skip certificate verification (server sends an incomplete chain) |
-| `browser-js` | the page is rendered with headless Chromium |
+| `browser-js` | the page is rendered with headless Firefox (Chromium where Firefox is not installed) |
 | `manual` | bot-protected; add documents in the portal (Sources → *Add a document by URL*) |
 
-Pages that turn out to be empty JavaScript shells are rendered with Chromium automatically. Report pages marked
+Pages that turn out to be empty JavaScript shells are rendered with the headless browser automatically. Report pages marked
 `verified: false` are listed but not crawled.
 
 </details>
@@ -1106,7 +1106,7 @@ flowchart LR
 
 | Module | Role |
 |---|---|
-| `rozvedka/registry.py`, `crawler.py`, `fetch.py` | load the registry, find document links (robots.txt, per-host delay, curl and Chromium fallbacks) |
+| `rozvedka/registry.py`, `crawler.py`, `fetch.py` | load the registry, find document links (robots.txt, per-host delay, curl fallback, headless Firefox / Chromium for JavaScript-built pages) |
 | `rozvedka/downloader.py` | download, check the PDF header, de-duplicate by SHA-256, improve titles |
 | `rozvedka/topics.py` | text extraction with page offsets, FTS5 index, topic classification (all CPU cores) |
 | `rozvedka/actor_sources.py`, `actors.py` | build the gazetteer from public reference data; match actors in the texts |
@@ -1289,8 +1289,9 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 - **What it sends out:** requests to the agencies' and think tanks' sites (robots.txt respected, one request per host
   every 2 s), to Wikidata, Wikipedia, Wikimedia Commons, MITRE ATT&CK, Our World in Data, the World Bank and the
   sanctions and lobbying registers when you run the `fetch-…` commands. No telemetry, no accounts, no CDN at runtime.
-- **Headless Chromium** renders the few JavaScript-only report pages (`access: browser`); it runs without its sandbox
-  (needed under some service managers), so keep it updated with the system.
+- **Headless Firefox** renders the few JavaScript-only report pages (`access: browser-js`) in a fresh, temporary
+  profile; Chromium, used only where Firefox is missing, runs without its sandbox (needed under some service
+  managers). Keep either updated with the system.
 - Report a vulnerability privately through [GitHub's vulnerability reporting](https://github.com/iiogurt/Rozvedka/security/advisories/new),
   never as a public issue. [`SECURITY.md`](SECURITY.md) says what is in scope (exposing the portal without a login is
   documented behaviour, not a vulnerability) and what to expect.
@@ -1307,8 +1308,8 @@ Rozvedka is built for one person on one computer or a trusted home network, and 
 
 - **Python packages:** pinned in `requirements.txt` (FastAPI, Uvicorn, Jinja2, httpx, pypdf, PyYAML, Beautiful
   Soup, Markdown); checked with `pip-audit`.
-- **System tools, optional:** `pdftotext` (poppler-utils) for better text extraction, `chromium` for JavaScript-only
-  sites, `ocrmypdf` + Tesseract for scanned reports. Without them those steps are skipped and the rest works.
+- **System tools, optional:** `pdftotext` (poppler-utils) for better text extraction, `firefox` (or `chromium`) for
+  JavaScript-only sites, `ocrmypdf` + Tesseract for scanned reports. Without them those steps are skipped and the rest works.
 - **Browsers:** current Firefox, Chromium/Chrome, Safari and Edge; the pages need JavaScript for charts and maps.
 - **Resources:** the full library is about 16 GB of PDFs plus a 0.6 GB database; a first full update takes hours on a
   Raspberry Pi 4/5.

@@ -27,6 +27,15 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.3] – 2026-10-27
+
+### Fixed
+- **Pages built by JavaScript are read again.** Since October 2026 headless Chromium on the Pi loads a remote page but
+  never finishes the navigation, so every source that needs a browser (DIS Italy, SRE, Europol, NSB Taiwan) would have
+  timed out on its next crawl and found nothing. Rendering now uses headless Firefox (driven over WebDriver BiDi, with
+  the same user agent and robots.txt check) whenever Firefox is installed, and Chromium only without it. SRE's list
+  reads as before: 7 reports from 10 pages.
+
 ## [0.93.2] – 2026-10-27
 
 ### Added
@@ -1842,7 +1851,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.2...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.3...HEAD
+[0.93.3]: https://github.com/iiogurt/Rozvedka/compare/v0.93.2...v0.93.3
 [0.93.2]: https://github.com/iiogurt/Rozvedka/compare/v0.93.1...v0.93.2
 [0.93.1]: https://github.com/iiogurt/Rozvedka/compare/v0.93.0...v0.93.1
 [0.93.0]: https://github.com/iiogurt/Rozvedka/compare/v0.92.1...v0.93.0
