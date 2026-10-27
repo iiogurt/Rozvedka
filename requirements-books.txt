@@ -1,4 +1,4 @@
 # Optional, for the local book library's stated relations (rozvedka/meanings.py): spaCy's small English parser.
 # Everything else works without it.  pip install -r requirements-books.txt
-spacy==3.8.16
+spacy==3.8.18
 en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl

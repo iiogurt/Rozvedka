@@ -27,6 +27,13 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.4] – 2026-10-27
+
+### Security
+- **Dependencies updated:** pypdf 6.21.3 (the PDF reader, two bug-fix releases after the patched 6.21.1), FastAPI
+  0.162.0, Markdown 3.11.2 and, for the optional book library, spaCy 3.8.18. The 11 open GitHub dependency warnings
+  were left over from before the 0.89.3 pypdf and pytest updates; the pinned versions already contained those fixes.
+
 ## [0.93.3] – 2026-10-27
 
 ### Fixed
@@ -1851,7 +1858,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.3...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.4...HEAD
+[0.93.4]: https://github.com/iiogurt/Rozvedka/compare/v0.93.3...v0.93.4
 [0.93.3]: https://github.com/iiogurt/Rozvedka/compare/v0.93.2...v0.93.3
 [0.93.2]: https://github.com/iiogurt/Rozvedka/compare/v0.93.1...v0.93.2
 [0.93.1]: https://github.com/iiogurt/Rozvedka/compare/v0.93.0...v0.93.1
