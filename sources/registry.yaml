@@ -2325,6 +2325,21 @@
     - {lang: en, kind: current, url: "https://eng.nis.go.kr/EAF/1_7.do"}
     - {lang: ko, kind: current, url: "https://www.nis.go.kr/"}
 
+- country: KR
+  agency: MOIS
+  name_local: "행정안전부"
+  name_en: "Ministry of the Interior and Safety"
+  homepage: "https://www.mois.go.kr/"
+  description: "South Korea's ministry for disaster and safety management. Its Disaster Yearbook (재해연보), published each December, records the year's natural disasters, the damage and the recovery costs, with ten-year statistics."
+  hq: {address: "Government Complex Sejong, Sejong, South Korea", lat: 36.50382, lon: 127.25751, precision: address}
+  type: civil-protection
+  access: manual
+  frequency: yearly
+  report_types: [재해연보 / Disaster Yearbook]
+  notes: "The yearbooks (2012–2024) are listed on the Safety Korea portal; each file downloads through a script call (safeKorea.fileDown), not a link the crawler can follow: collect by hand."
+  pages:
+    - {lang: ko, kind: archive, url: "https://www.safekorea.go.kr/safekorea-kor/cmmn/bbs/bbsList.do?menuSn=45"}
+
 # ════════════════════════ TAIWAN ════════════════════════
 - country: TW
   agency: NSB
