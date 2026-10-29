@@ -1295,6 +1295,20 @@
     - {lang: en, kind: archive, url: "https://www.gov.ie/ga/preasraitis/5e685-national-risk-assessment-for-ireland-2020/"}
     - {lang: en, kind: archive, url: "https://www.gov.ie/en/office-of-emergency-planning/publications/national-risk-assessment-for-ireland-2017"}
 
+- country: IE
+  agency: An Garda Síochána
+  name_local: "An Garda Síochána"
+  name_en: "An Garda Síochána – Ireland's national police and security service"
+  homepage: "https://www.garda.ie/"
+  description: "Ireland's national police, also responsible for state security. Its annual reports (the Commissioner's reports since 1947) cover crime, organised crime, drugs, terrorism and the year's policing."
+  hq: {address: "Garda Headquarters, Phoenix Park, Dublin 8, Ireland", lat: 53.35034, lon: -6.32031, precision: city}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Annual report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.garda.ie/en/about-us/publications/annual%20reports/an-garda-siochana-annual-reports/", note: "annual reports since 1947"}
+
 # (Malta: no regular public security reports found from MSS or civil protection.)
 
 # ════════════════════════ EU BODIES ════════════════════════
@@ -1555,6 +1569,25 @@
   notes: "The list is built by JavaScript and the files are under /content/, which robots.txt disallows: collect by hand."
   pages:
     - {lang: is, kind: archive, url: "https://www.cert.is/frettir-og-utgefid-efni/arsskyrslur/"}
+
+- country: IS
+  agency: Ríkislögreglustjóri
+  name_local: "Ríkislögreglustjóri"
+  name_en: "National Commissioner of the Icelandic Police"
+  homepage: "https://island.is/s/logreglan"
+  description: "Iceland's national police commissioner. Its analysis department's risk assessments of organised crime (2015, 2017, 2019, 2021, 2025) cover criminal groups, drugs, human trafficking, money laundering and cybercrime."
+  hq: {address: "Skúlagata 21, 101 Reykjavík, Iceland", lat: 64.14523, lon: -21.91569, precision: address}
+  domains: ["logreglan.is", "ctfassets.net"]
+  type: police-ct
+  access: auto
+  frequency: periodic
+  report_types: [Skipulögð brotastarfsemi á Íslandi / organised crime risk assessment]
+  notes: "island.is keeps its files on its content system's file host (assets.ctfassets.net); the reports are linked from the police's news items, as there is no list page."
+  pages:
+    - {lang: is, kind: current, url: "https://island.is/s/logreglan/frett/skipuloegdum-brotahopum-hefur-fjoelgad-um-helming", note: "2025"}
+    - {lang: is, kind: archive, url: "https://island.is/s/logreglan/frett/ny-skyrsla-rikislogreglustjora-um-skipulagda-brotastarfsemi", note: "2021"}
+    - {lang: is, kind: archive, url: "https://island.is/s/logreglan/frett/skyrsla-greiningardeildar-um-skipulagda-glaepastarfsemi-2019", note: "2019"}
+    - {lang: is, kind: archive, url: "https://island.is/s/logreglan/frett/skipulogd-glaepastarfsemi-mat-grd-september-2015", note: "2015"}
 
 - country: AL
   agency: AKSK
@@ -2229,6 +2262,21 @@
   report_types: [preparedness resources]
   pages:
     - {lang: en, kind: archive, url: "https://www.civildefence.govt.nz/resources/"}
+
+- country: NZ
+  agency: NZ Police
+  name_local: "New Zealand Police – Ngā Pirihimana o Aotearoa"
+  name_en: "New Zealand Police"
+  homepage: "https://www.police.govt.nz/"
+  description: "New Zealand's national police. Its annual reports cover crime, organised crime and gangs, family harm, road policing and counter-terrorism work."
+  hq: {address: "180 Molesworth Street, Wellington, New Zealand", lat: -41.27336, lon: 174.77808, precision: address}
+  type: police-ct
+  access: manual
+  frequency: yearly
+  report_types: [Annual report]
+  notes: "police.govt.nz answers 429 (too many requests) to the crawler, also after a pause (2026-10-29) – add reports by hand."
+  pages:
+    - {lang: en, kind: archive, url: "https://www.police.govt.nz/about-us/publications/corporate/annual-report", follow: "publication/annual-report-\\d{4}$"}
 
 # ════════════════════════ NORWAY ════════════════════════
 - country: "NO"
@@ -3013,6 +3061,22 @@
   pages:
     - {lang: et, kind: archive, url: "https://www.rescue.ee/et/juhend/vaeljaanded/aastaraamatud"}
 
+- country: EE
+  agency: JDM
+  name_local: "Justiits- ja Digiministeerium"
+  name_en: "Ministry of Justice and Digital Affairs of Estonia"
+  homepage: "https://www.kriminaalpoliitika.ee/"
+  description: "Estonia's justice ministry, which sets criminal policy. Its yearly review Kuritegevus Eestis (Crime in Estonia, since 2006) covers the year's crime, organised and drug crime, violence and the work of the police and prosecutors."
+  hq: {address: "Suur-Ameerika 1, 10122 Tallinn, Estonia", lat: 59.42763, lon: 24.73539, precision: address}
+  domains: ["justdigi.ee"]
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Kuritegevus Eestis / Crime in Estonia]
+  notes: "PDF editions 2006–2017; since 2018 the review is a web edition on kriminaalpoliitika.ee, which the crawler does not keep."
+  pages:
+    - {lang: et, kind: archive, url: "https://www.kriminaalpoliitika.ee/et/statistika-ja-uuringud/kuritegevus-eestis"}
+
 - country: LV
   agency: VUGD
   name_local: "Valsts ugunsdzēsības un glābšanas dienests"
@@ -3026,6 +3090,20 @@
   report_types: [public report]
   pages:
     - {lang: lv, kind: archive, url: "https://www.vugd.gov.lv/lv/gada-publiskie-parskati"}
+
+- country: LV
+  agency: Valsts policija
+  name_local: "Valsts policija"
+  name_en: "State Police of Latvia"
+  homepage: "https://www.vp.gov.lv/"
+  description: "Latvia's national police. Its yearly public report (publiskais pārskats) covers crime, organised and economic crime, drugs, public order and the year's main events and operations."
+  hq: {address: "Čiekurkalna 1. līnija 1, Rīga, Latvia", lat: 56.98341, lon: 24.15547, precision: address}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Publiskais pārskats / public report]
+  pages:
+    - {lang: lv, kind: archive, url: "https://www.vp.gov.lv/lv/publikacijas-un-parskati", note: "reports since 2003"}
 
 - country: LT
   agency: PAGD

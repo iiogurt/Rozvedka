@@ -1,6 +1,6 @@
 # Rozvedka – report sources: official agencies and ◆ independent think tanks
 
-Generated from `sources/registry.yaml` — 202 sources, 333 pages.
+Generated from `sources/registry.yaml` — 207 sources, 341 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
@@ -268,6 +268,7 @@ _EU (1973)_
 | **Dept. of the Taoiseach** – Department of the Taoiseach<br>_Roinn an Taoisigh_<br>[www.gov.ie/en/department-of-the-taoiseach](https://www.gov.ie/en/department-of-the-taoiseach/) | Irish Prime Minister's department. The National Risk Assessment identifies strategic geopolitical, economic, social, environmental and technological risks for Ireland. | National Risk Assessment<br>_Published 2014–2024; none in 2025; 2026 edition in consultation._ | [en current](https://www.gov.ie/en/department-of-the-taoiseach/policy-information/national-risk-assessment-2023-overview-of-strategic-risks/) |
 | **NCSC-IE** – National Cyber Security Centre<br>_An tIonad Náisiúnta Cibearshlándála_<br>[www.ncsc.gov.ie](https://www.ncsc.gov.ie/) | Irish national cyber-security centre. National Cyber Risk Assessment, advisories and guidance. | National Cyber Risk Assessment<br>_The assessments are published on gov.ie, the government portal._ | [en current](https://www.ncsc.gov.ie/ncra/) · [en current](https://www.gov.ie/en/department-of-justice-home-affairs-and-migration/publications/ncsc-2025-national-cyber-risk-assessment/) · [en archive](https://www.gov.ie/en/publication/5a871-national-cyber-risk-assessment-2022/) |
 | **OEP** – Office of Emergency Planning<br>_An Oifig um Pleanáil Éigeandála_<br>[www.gov.ie/en/office-of-emergency-planning](https://www.gov.ie/en/office-of-emergency-planning/) | Irish government office coordinating national emergency planning. Publishes the National Risk Assessment for Ireland (2017, 2020, 2023). | National Risk Assessment | [en current](https://www.gov.ie/en/office-of-emergency-planning/guides/our-national-risks) · [en archive](https://www.gov.ie/ga/preasraitis/5e685-national-risk-assessment-for-ireland-2020/) · [en archive](https://www.gov.ie/en/office-of-emergency-planning/publications/national-risk-assessment-for-ireland-2017) |
+| **An Garda Síochána** – An Garda Síochána – Ireland's national police and security service<br>_An Garda Síochána_<br>[www.garda.ie](https://www.garda.ie/) | Ireland's national police, also responsible for state security. Its annual reports (the Commissioner's reports since 1947) cover crime, organised crime, drugs, terrorism and the year's policing. | Annual report | [en archive](https://www.garda.ie/en/about-us/publications/annual%20reports/an-garda-siochana-annual-reports/) |
 
 ## EU bodies
 
@@ -302,6 +303,7 @@ _NATO (1949) · Schengen (2001) · JEF (2021)_
 |---|---|---|---|
 | **Þjóðaröryggisráð** – National Security Council of Iceland<br>_Þjóðaröryggisráð_<br>[www.stjornarradid.is/verkefni/almannaoryggi/thjodaroryggi](https://www.stjornarradid.is/verkefni/almannaoryggi/thjodaroryggi/) | Iceland has no intelligence service; the National Security Council (Act 98/2016) oversees the national security policy. Publishes assessments of the security situation and outlook, and yearly reports on the implementation of the national security strategy. | Mat á ástandi og horfum í þjóðaröryggismálum, Skýrsla um framkvæmd þjóðaröryggisstefnu | [is archive](https://www.stjornarradid.is/verkefni/almannaoryggi/thjodaroryggi/utgefid-efni/) |
 | **CERT-IS** – CERT-IS – Iceland's national cyber security incident response team<br>_Netöryggissveitin CERT-IS_<br>[www.cert.is](https://www.cert.is/) | Iceland's national CERT under the Electronic Communications Office (Fjarskiptastofa). Annual reports cover incidents, threats to critical infrastructure and the state of cyber security in Iceland. | Ársskýrsla / annual report<br>_The list is built by JavaScript and the files are under /content/, which robots.txt disallows: collect by hand._ | [is archive](https://www.cert.is/frettir-og-utgefid-efni/arsskyrslur/) |
+| **Ríkislögreglustjóri** – National Commissioner of the Icelandic Police<br>_Ríkislögreglustjóri_<br>[island.is/s/logreglan](https://island.is/s/logreglan) | Iceland's national police commissioner. Its analysis department's risk assessments of organised crime (2015, 2017, 2019, 2021, 2025) cover criminal groups, drugs, human trafficking, money laundering and cybercrime. | Skipulögð brotastarfsemi á Íslandi / organised crime risk assessment<br>_island.is keeps its files on its content system's file host (assets.ctfassets.net); the reports are linked from the police's news items, as there is no list page._ | [is current](https://island.is/s/logreglan/frett/skipuloegdum-brotahopum-hefur-fjoelgad-um-helming) · [is archive](https://island.is/s/logreglan/frett/ny-skyrsla-rikislogreglustjora-um-skipulagda-brotastarfsemi) · [is archive](https://island.is/s/logreglan/frett/skyrsla-greiningardeildar-um-skipulagda-glaepastarfsemi-2019) · [is archive](https://island.is/s/logreglan/frett/skipulogd-glaepastarfsemi-mat-grd-september-2015) |
 
 ## Albania
 
@@ -486,6 +488,7 @@ _Five Eyes (1956) · NATO IP4 (2022)_
 | **NZSIS** – New Zealand Security Intelligence Service<br>_New Zealand Security Intelligence Service / Te Pā Whakamarumaru_<br>[www.nzsis.govt.nz](https://www.nzsis.govt.nz/) | New Zealand's security intelligence service. The annual 'New Zealand's Security Threat Environment' covers foreign interference, espionage, violent extremism and insider threats, with case studies. | New Zealand's Security Threat Environment | [en archive](https://www.nzsis.govt.nz/our-work/new-zealands-security-threat-environment)<br>pattern: `https://www.nzsis.govt.nz/assets/NZSIS-Documents/New-Zealands-Security-Threat-Environment-{year}.pdf` 2023–2026 |
 | **GCSB / NCSC-NZ** – Government Communications Security Bureau – National Cyber Security Centre<br>_Government Communications Security Bureau / Te Tira Tiaki – National Cyber Security Centre_<br>[www.ncsc.govt.nz](https://www.ncsc.govt.nz/) | New Zealand's signals intelligence and cyber-security agency. Cyber threat reports on state-sponsored and criminal activity, and GCSB annual reports. | Cyber Threat Report, annual report | [en archive](https://www.ncsc.govt.nz/news/) · [en archive](https://www.gcsb.govt.nz/publications/annual-reports) |
 | **NEMA** – National Emergency Management Agency<br>_National Emergency Management Agency / Te Rākau Whakamarumaru_<br>[www.civildefence.govt.nz](https://www.civildefence.govt.nz/) | New Zealand's emergency-management agency. National hazard and preparedness resources, emergency-management plans and public guidance. | preparedness resources | [en archive](https://www.civildefence.govt.nz/resources/) |
+| **NZ Police** – New Zealand Police<br>_New Zealand Police – Ngā Pirihimana o Aotearoa_<br>[www.police.govt.nz](https://www.police.govt.nz/) | New Zealand's national police. Its annual reports cover crime, organised crime and gangs, family harm, road policing and counter-terrorism work. | Annual report<br>_police.govt.nz answers 429 (too many requests) to the crawler, also after a pause (2026-10-29) – add reports by hand._ | [en archive](https://www.police.govt.nz/about-us/publications/corporate/annual-report) |
 
 ## Norway
 
@@ -591,6 +594,7 @@ _EU (2004) · NATO (2004) · Schengen (2007) · JEF (2014)_
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **Päästeamet** – Estonian Rescue Board<br>_Päästeamet_<br>[www.rescue.ee](https://www.rescue.ee/) | Estonian rescue and civil-protection authority (fire safety, rescue, crisis management, explosive ordnance disposal). The yearbook reports on incidents, prevention, supervision and preparedness. | yearbook | [et archive](https://www.rescue.ee/et/juhend/vaeljaanded/aastaraamatud) |
+| **JDM** – Ministry of Justice and Digital Affairs of Estonia<br>_Justiits- ja Digiministeerium_<br>[www.kriminaalpoliitika.ee](https://www.kriminaalpoliitika.ee/) | Estonia's justice ministry, which sets criminal policy. Its yearly review Kuritegevus Eestis (Crime in Estonia, since 2006) covers the year's crime, organised and drug crime, violence and the work of the police and prosecutors. | Kuritegevus Eestis / Crime in Estonia<br>_PDF editions 2006–2017; since 2018 the review is a web edition on kriminaalpoliitika.ee, which the crawler does not keep._ | [et archive](https://www.kriminaalpoliitika.ee/et/statistika-ja-uuringud/kuritegevus-eestis) |
 
 ## Latvia
 
@@ -599,6 +603,7 @@ _EU (2004) · NATO (2004) · Schengen (2007) · JEF (2014)_
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **VUGD** – State Fire and Rescue Service<br>_Valsts ugunsdzēsības un glābšanas dienests_<br>[www.vugd.gov.lv](https://www.vugd.gov.lv/) | Latvian fire-safety, rescue and civil-protection service under the Ministry of the Interior. Annual public reports on fires, rescues, civil protection, prevention and supervision, 2002 onwards. | public report | [lv archive](https://www.vugd.gov.lv/lv/gada-publiskie-parskati) |
+| **Valsts policija** – State Police of Latvia<br>_Valsts policija_<br>[www.vp.gov.lv](https://www.vp.gov.lv/) | Latvia's national police. Its yearly public report (publiskais pārskats) covers crime, organised and economic crime, drugs, public order and the year's main events and operations. | Publiskais pārskats / public report | [lv archive](https://www.vp.gov.lv/lv/publikacijas-un-parskati) |
 
 ## Lithuania
 

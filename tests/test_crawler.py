@@ -81,6 +81,7 @@ def test_real_titles_not_generic(title):
     ("NSA 2024 Cybersecurity Year in Review", False),
     ("2025 Gender Pay Gap Report https://www.nationalcrimeagency.gov.uk/who-we-are/publications/815-2025-gender-pay-gap-report/file.pdf", True),
     ("The Cocaine Chemists [Podcast Transcript]", True),
+    ("2024 Annual Report for Section 22 Protected Disclosures 03/03/2025", True),   # whistle-blowing statistics
     ("How to register your organisation for the Child Sexual Exploitation and Abuse Industry Reporting Portal", True),
     ("正誤表（23KB） https://www.npa.go.jp/publications/statistics/kikakubunseki/r7seigohyou.pdf", True),
     # a white paper whose row also offers its errata: only the file name tells the errata apart
@@ -315,6 +316,9 @@ def test_korean_file_servlet_links_are_documents():
     from rozvedka.crawler import DOC_RE
     assert DOC_RE.search("https://www.police.go.kr/component/file/ND_fileDownload.do?q_fileSn=158073&q_fileId=2a160836")
     assert not DOC_RE.search("https://www.police.go.kr/user/bbs/BD_selectBbsList.do?q_bbsCode=1113")
+    # Contentful's file host: island.is links reports there, without a file extension
+    assert DOC_RE.search("https://assets.ctfassets.net/8k0h54kbe6bj/4PAOb3h3QXthUt0cF3P7yU/b6bdb5/Ný%5Fskýrsla-2")
+    assert not DOC_RE.search("https://images.ctfassets.net/8k0h54kbe6bj/logo.png")
 
 
 @pytest.mark.parametrize("url,expected", [
