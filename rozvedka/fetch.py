@@ -180,8 +180,9 @@ def _firefox(url: str, budget_ms: int) -> Response:
 
                 call("session.new", capabilities={})
                 context = call("browsingContext.getTree")["contexts"][0]["context"]
-                final = call("browsingContext.navigate", context=context, url=url, wait="complete").get("url") or url
-                time.sleep(min(budget_ms, 5000) / 1000)   # lists that scripts fill in after the load event
+                # "interactive" (the document is parsed), not "complete": some sites keep one resource loading forever
+                final = call("browsingContext.navigate", context=context, url=url, wait="interactive").get("url") or url
+                time.sleep(min(budget_ms, 5000) / 1000)   # lists that scripts fill in after that
                 html = call("script.evaluate", expression="document.documentElement.outerHTML",
                             target={"context": context}, awaitPromise=False)["result"]["value"]
                 call("session.end")

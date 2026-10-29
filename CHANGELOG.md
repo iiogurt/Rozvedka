@@ -27,6 +27,26 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.6] – 2026-10-29
+
+### Added
+- **Nine police and organised-crime sources**, filling nine police / counter-terrorism slots of the coverage grid: the
+  UK National Crime Agency (National Strategic Assessment 2019–2026, SARs annual reports), Italy's Anti-Mafia
+  Investigation Directorate (half-yearly reports to Parliament, recent ones also in English, French, Spanish and
+  Portuguese), Switzerland's fedpol (annual reports since 2013), Japan's National Police Agency (the Security Bureau's
+  yearly review and outlook, half-yearly cyber threat reports, crime and organised-crime situation, the English White
+  Paper on Police), the Norwegian Police Threat Assessment (2021–2026), Australia's ACIC (Illicit Drug Data Reports),
+  the Swedish police's situation reports on vulnerable areas and criminal networks, France's yearly crime report
+  (SSMSI, Insécurité et délinquance) and Korea's Police White Paper.
+
+### Fixed
+- **Pages built by JavaScript that never finish loading** (a script or image that hangs) are read once the page is
+  parsed, instead of timing out – Korea's police white-paper board is one.
+- **Downloads through Korean government sites' file servlet** (`ND_fileDownload.do`) are recognised as documents.
+- **More housekeeping papers hidden:** gender pay gap reports, terms and conditions, podcast transcripts, "how to
+  register" guides and errata sheets (Japanese `seigo` files) – kept, but hidden by default like other administrative
+  papers.
+
 ## [0.93.5] – 2026-10-29
 
 ### Added
@@ -1870,7 +1890,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.5...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.6...HEAD
+[0.93.6]: https://github.com/iiogurt/Rozvedka/compare/v0.93.5...v0.93.6
 [0.93.5]: https://github.com/iiogurt/Rozvedka/compare/v0.93.4...v0.93.5
 [0.93.4]: https://github.com/iiogurt/Rozvedka/compare/v0.93.3...v0.93.4
 [0.93.3]: https://github.com/iiogurt/Rozvedka/compare/v0.93.2...v0.93.3
