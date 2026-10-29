@@ -79,6 +79,14 @@ def test_real_titles_not_generic(title):
     ("HCSS – Code of Conduct for Responsible Use of AI", False),   # a publication, not a staff rule
     ("2025–26 Annual Report", False),
     ("NSA 2024 Cybersecurity Year in Review", False),
+    ("2025 Gender Pay Gap Report https://www.nationalcrimeagency.gov.uk/who-we-are/publications/815-2025-gender-pay-gap-report/file.pdf", True),
+    ("The Cocaine Chemists [Podcast Transcript]", True),
+    ("How to register your organisation for the Child Sexual Exploitation and Abuse Industry Reporting Portal", True),
+    ("正誤表（23KB） https://www.npa.go.jp/publications/statistics/kikakubunseki/r7seigohyou.pdf", True),
+    # a white paper whose row also offers its errata: only the file name tells the errata apart
+    ("令和４年版防災白書（ html 、 PDF ）、正誤表（ PDF ） https://www.bousai.go.jp/kaigirep/hakusho/pdf/R4_honbun.pdf", False),
+    ("令和７年における組織犯罪の情勢（7.3MB）", False),
+    ("National Strategic Assessment of Serious and Organised Crime 2026", False),
 ])
 def test_low_relevance(text, low):
     assert bool(LOW_RELEVANCE_RE.search(text)) is low
@@ -301,6 +309,12 @@ def test_pgp_signature_files_are_not_documents():
     from rozvedka.crawler import DOC_RE
     assert DOC_RE.search("https://www.jpcert.or.jp/english/doc/IR_Report2024Q4_en.pdf")
     assert not DOC_RE.search("https://www.jpcert.or.jp/english/doc/IR_Report2017Q2_en.pdf.asc")
+
+
+def test_korean_file_servlet_links_are_documents():
+    from rozvedka.crawler import DOC_RE
+    assert DOC_RE.search("https://www.police.go.kr/component/file/ND_fileDownload.do?q_fileSn=158073&q_fileId=2a160836")
+    assert not DOC_RE.search("https://www.police.go.kr/user/bbs/BD_selectBbsList.do?q_bbsCode=1113")
 
 
 @pytest.mark.parametrize("url,expected", [

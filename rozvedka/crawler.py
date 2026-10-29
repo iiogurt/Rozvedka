@@ -20,7 +20,8 @@ DOC_RE = re.compile(
     r"(\.pdf($|[?#]))|__blob=publicationFile|/document/download/|/attachments/[^/]+/download|/file\.html$|/doc/[^/]+\.pdf($|[?#])|"
     r"/documents/[^?#]*\.pdf/|"   # Liferay document library: /documents/<ids>/<name>.pdf/<uuid>?download=true
     r"/bitstreams?/[^?#]+/download|"  # DSpace repositories: /bitstreams/<uuid>/download
-    r"/library/\?itemid=",            # Episerver media libraries (Icelandic government: stjornarradid.is/library/?itemid=…)
+    r"/library/\?itemid=|"            # Episerver media libraries (Icelandic government: stjornarradid.is/library/?itemid=…)
+    r"/ND_fileDownload\.do\?",         # Korean government sites' file servlet: /component/file/ND_fileDownload.do?q_fileSn=…
     re.I)
 JUNK_RE = re.compile(
     r"cookie|privacy|gdpr|ochrana-osobnich|osobnych-udajov|datenschutz|impressum|"
@@ -85,7 +86,9 @@ LOW_RELEVANCE_RE = re.compile((
     r"employee census|aps census|census (results|highlight|action plan)|gifts? and benefits register|indexed file list|"
     r"reasonable accommodation|personal assistance services|child safety statement|emissions reduction plan|"
     r"employer statement|work safety statement|(aps|events) code of conduct|audit and risk committee|disclosure log|"
-    r"\bfoi\W{0,3}\d{3,4}"
+    r"\bfoi\W{0,3}\d{3,4}|gender pay gap|terms and conditions|how to register|"
+    r"podcast transcript|seigo"   # outreach material; errata sheets (file names *seigo*: 正誤表 – the titles of
+    # whole Japanese white-paper rows list 正誤表 too, so only the file name tells)
 ).replace(" ", r"[\s_-]+"), re.I)   # filenames use _ or - where titles use spaces
 
 
