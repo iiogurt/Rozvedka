@@ -2271,9 +2271,10 @@
   description: "New Zealand's national police. Its annual reports cover crime, organised crime and gangs, family harm, road policing and counter-terrorism work."
   hq: {address: "180 Molesworth Street, Wellington, New Zealand", lat: -41.27336, lon: 174.77808, precision: address}
   type: police-ct
-  access: auto
+  access: manual
   frequency: yearly
   report_types: [Annual report]
+  notes: "police.govt.nz answers 429 (too many requests) to the crawler, also after a pause (2026-10-29) – add reports by hand."
   pages:
     - {lang: en, kind: archive, url: "https://www.police.govt.nz/about-us/publications/corporate/annual-report", follow: "publication/annual-report-\\d{4}$"}
 
