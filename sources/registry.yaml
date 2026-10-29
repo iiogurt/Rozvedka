@@ -842,6 +842,21 @@
     - {lang: en, kind: archive, url: "https://www.irsem.fr/en/publications", follow: "irsem\\.fr/en/publications/[^/?#]+$"}
     - {lang: en, kind: archive, url: "https://www.irsem.fr/en/publications?page=2", follow: "irsem\\.fr/en/publications/[^/?#]+$"}
 
+- country: FR
+  agency: SSMSI
+  name_local: "Service statistique ministériel de la sécurité intérieure"
+  name_en: "Interior Ministry Statistical Service for Internal Security"
+  homepage: "https://statistiques.interieur.gouv.fr/ssmsi/"
+  description: "The French interior ministry's statistical service. Its yearly report Insécurité et délinquance (since 2016) with a departmental atlas, key figures, and reports on human trafficking and on racist, xenophobic and anti-religious offences."
+  hq: {address: "Place Beauvau, 75008 Paris, France", lat: 48.87116, lon: 2.31621, precision: city}
+  domains: ["interieur.gouv.fr"]
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Insécurité et délinquance – bilan statistique, atlas départemental, chiffres clés]
+  pages:
+    - {lang: fr, kind: archive, url: "https://statistiques.interieur.gouv.fr/ssmsi/publications-et-infographies/interstats-references", follow: "ssmsi/publications/[\\w-]+$", follow_limit: 40}
+
 # ════════════════════════ ITALY ════════════════════════
 - country: IT
   agency: DIS / Sistema di informazione
@@ -2451,6 +2466,21 @@
   notes: "The yearbooks (2012–2024) are listed on the Safety Korea portal; each file downloads through a script call (safeKorea.fileDown), not a link the crawler can follow: collect by hand."
   pages:
     - {lang: ko, kind: archive, url: "https://www.safekorea.go.kr/safekorea-kor/cmmn/bbs/bbsList.do?menuSn=45"}
+
+- country: KR
+  agency: KNPA
+  name_local: "경찰청"
+  name_en: "Korean National Police Agency"
+  homepage: "https://www.police.go.kr/"
+  description: "South Korea's national police. Its yearly Police White Paper (경찰백서) covers crime trends, organised and cyber crime, drugs, counter-terrorism, public order and the police's work of the year."
+  hq: {address: "97 Tongil-ro, Seodaemun-gu, Seoul, South Korea", lat: 37.56352, lon: 126.96744, precision: address}
+  type: police-ct
+  access: browser-js
+  frequency: yearly
+  report_types: [경찰백서 / Police White Paper]
+  notes: "The white-paper board is built by JavaScript; each chapter is its own PDF."
+  pages:
+    - {lang: ko, kind: current, url: "https://www.police.go.kr/user/bbs/BD_selectBbsList.do?q_bbsCode=1113"}
 
 # ════════════════════════ TAIWAN ════════════════════════
 - country: TW

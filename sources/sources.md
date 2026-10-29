@@ -1,6 +1,6 @@
 # Rozvedka – report sources: official agencies and ◆ independent think tanks
 
-Generated from `sources/registry.yaml` — 200 sources, 331 pages.
+Generated from `sources/registry.yaml` — 202 sources, 333 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
@@ -155,6 +155,7 @@ _EU (1958) · NATO (1949) · Schengen (1995) · G7 (1975)_
 | **ANSSI** – National Cybersecurity Agency of France<br>_Agence nationale de la sécurité des systèmes d'information_<br>[cyber.gouv.fr](https://cyber.gouv.fr/) | French national cyber-security authority. The annual 'Panorama de la cybermenace' and CERT-FR threat reports cover state-sponsored attacks, ransomware and threats by sector. | Panorama de la cybermenace, activity report | [fr series](https://cyber.gouv.fr/nous-connaitre/publications/panoramas-de-la-cybermenace/) · [fr series](https://www.cert.ssi.gouv.fr/cti/) · [fr archive](https://cyber.gouv.fr/nous-connaitre/publications/) · [en archive](https://cyber.gouv.fr/en/publications/) |
 | **VIGINUM** – Service for Vigilance and Protection against Foreign Digital Interference<br>_Service de vigilance et de protection contre les ingérences numériques étrangères_<br>[www.sgdsn.gouv.fr](https://www.sgdsn.gouv.fr/) | French agency detecting foreign information-manipulation campaigns. Technical reports on specific disinformation operations targeting France and Europe. | FIMI threat reports, activity report | [fr current](https://www.sgdsn.gouv.fr/viginum/publications) |
 | **IRSEM** – Institute for Strategic Research (IRSEM)<br>_Institut de recherche stratégique de l'École militaire_<br>[www.irsem.fr](https://www.irsem.fr/) | The French Ministry of the Armed Forces' strategic research institute. Études, research papers and reports – incl. on information manipulation and Chinese and Russian influence operations. | études, notes de recherche, rapports | [fr archive](https://www.irsem.fr/publications) · [en archive](https://www.irsem.fr/en/publications) · [en archive](https://www.irsem.fr/en/publications?page=2) |
+| **SSMSI** – Interior Ministry Statistical Service for Internal Security<br>_Service statistique ministériel de la sécurité intérieure_<br>[statistiques.interieur.gouv.fr/ssmsi](https://statistiques.interieur.gouv.fr/ssmsi/) | The French interior ministry's statistical service. Its yearly report Insécurité et délinquance (since 2016) with a departmental atlas, key figures, and reports on human trafficking and on racist, xenophobic and anti-religious offences. | Insécurité et délinquance – bilan statistique, atlas départemental, chiffres clés | [fr archive](https://statistiques.interieur.gouv.fr/ssmsi/publications-et-infographies/interstats-references) |
 
 ## Italy
 
@@ -528,6 +529,7 @@ _NATO IP4 (2022)_
 |---|---|---|---|
 | **NIS** – National Intelligence Service<br>_국가정보원_<br>[eng.nis.go.kr](https://eng.nis.go.kr/) | South Korea's intelligence service and national cyber-security coordinator (NCSC). Cyber-security reports and white papers on North Korean and other state cyber threats. | National Information Security White Paper, cyber reports<br>_robots.txt disallows crawling – open in a browser and add reports manually._ | [en current](https://eng.nis.go.kr/EAF/1_7.do) · [ko current](https://www.nis.go.kr/) |
 | **MOIS** – Ministry of the Interior and Safety<br>_행정안전부_<br>[www.mois.go.kr](https://www.mois.go.kr/) | South Korea's ministry for disaster and safety management. Its Disaster Yearbook (재해연보), published each December, records the year's natural disasters, the damage and the recovery costs, with ten-year statistics. | 재해연보 / Disaster Yearbook<br>_The yearbooks (2012–2024) are listed on the Safety Korea portal; each file downloads through a script call (safeKorea.fileDown), not a link the crawler can follow: collect by hand._ | [ko archive](https://www.safekorea.go.kr/safekorea-kor/cmmn/bbs/bbsList.do?menuSn=45) |
+| **KNPA** – Korean National Police Agency<br>_경찰청_<br>[www.police.go.kr](https://www.police.go.kr/) | South Korea's national police. Its yearly Police White Paper (경찰백서) covers crime trends, organised and cyber crime, drugs, counter-terrorism, public order and the police's work of the year. | 경찰백서 / Police White Paper<br>_The white-paper board is built by JavaScript; each chapter is its own PDF._ | [ko current](https://www.police.go.kr/user/bbs/BD_selectBbsList.do?q_bbsCode=1113) |
 
 ## Taiwan
 
