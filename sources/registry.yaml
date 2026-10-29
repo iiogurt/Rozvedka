@@ -1963,6 +1963,7 @@
 
 - country: GB
   agency: NCA
+  name_local: "National Crime Agency"
   name_en: "National Crime Agency"
   homepage: "https://www.nationalcrimeagency.gov.uk/"
   description: "The UK's national law-enforcement agency against serious and organised crime. Its yearly National Strategic Assessment sets out the threat from organised crime, fraud, drugs, firearms, people smuggling, child sexual abuse and money laundering; plus the Suspicious Activity Reports annual report."
@@ -2169,6 +2170,7 @@
 
 - country: AU
   agency: ACIC
+  name_local: "Australian Criminal Intelligence Commission"
   name_en: "Australian Criminal Intelligence Commission"
   homepage: "https://www.acic.gov.au/"
   description: "Australia's national criminal intelligence agency. Its yearly Illicit Drug Data Report, its estimates of the costs of serious and organised crime and other unclassified intelligence reports cover drug markets, organised crime groups, financial crime and firearms."
