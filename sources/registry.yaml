@@ -878,6 +878,20 @@
   pages:
     - {lang: it, kind: archive, url: "https://www.protezionecivile.gov.it/it/pubblicazioni/"}
 
+- country: IT
+  agency: DIA
+  name_local: "Direzione Investigativa Antimafia"
+  name_en: "Anti-Mafia Investigation Directorate"
+  homepage: "https://direzioneinvestigativaantimafia.interno.gov.it/"
+  description: "Italy's police directorate against the Mafia. The Interior Minister's half-yearly report to Parliament on its work maps the Mafia organisations region by region, their infiltration of the economy and their links abroad; recent editions also in English, French, Spanish and Portuguese."
+  hq: {address: "Via di Priscilla 101, 00199 Roma, Italy", lat: 41.92998, lon: 12.50934, precision: city}
+  type: police-ct
+  access: auto
+  frequency: half-yearly
+  report_types: [Relazione semestrale al Parlamento]
+  pages:
+    - {lang: it, kind: archive, url: "https://direzioneinvestigativaantimafia.interno.gov.it/relazioni-semestrali/"}
+
 # ════════════════════════ SPAIN ════════════════════════
 - country: ES
   agency: DSN
@@ -1918,6 +1932,20 @@
     - {lang: en, kind: archive, url: "https://isc.independent.gov.uk/"}
     - {lang: en, kind: archive, url: "https://isc.independent.gov.uk/news/"}
 
+- country: GB
+  agency: NCA
+  name_en: "National Crime Agency"
+  homepage: "https://www.nationalcrimeagency.gov.uk/"
+  description: "The UK's national law-enforcement agency against serious and organised crime. Its yearly National Strategic Assessment sets out the threat from organised crime, fraud, drugs, firearms, people smuggling, child sexual abuse and money laundering; plus the Suspicious Activity Reports annual report."
+  hq: {address: "Tinworth Street, Vauxhall, London, United Kingdom", lat: 51.48977, lon: -0.12211, precision: city}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [National Strategic Assessment of Serious and Organised Crime, SARs Annual Report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.nationalcrimeagency.gov.uk/nsa", note: "the current edition with links to 2019–2025"}
+    - {lang: en, kind: archive, url: "https://www.nationalcrimeagency.gov.uk/who-we-are/publications"}
+
 # ════════════════════════ UNITED STATES ════════════════════════
 - country: US
   agency: ODNI
@@ -2218,6 +2246,26 @@
     - {lang: nb, kind: series, url: "https://www.dsb.no/ros-og-beredskap/samfunnssikkerhet-og-samordning/analyser-av-krisescenarioer/"}
     - {lang: nb, kind: archive, url: "https://www.dsb.no/rapporter-og-publikasjoner/"}
 
+- country: "NO"
+  agency: POD
+  name_local: "Politidirektoratet"
+  name_en: "Norwegian Police Directorate"
+  homepage: "https://www.politiet.no/"
+  description: "The directorate of the Norwegian police. The yearly Police Threat Assessment (Politiets trusselvurdering), written by Kripos, covers organised crime, drugs, fraud, cybercrime, violence and the criminal networks behind them."
+  hq: {address: "Hammersborggata 12, 0181 Oslo, Norway", lat: 59.91536, lon: 10.75077, precision: address}
+  type: police-ct
+  access: browser-js
+  frequency: yearly
+  report_types: [Politiets trusselvurdering / Police Threat Assessment]
+  notes: "The page is built by JavaScript and links only the current edition; earlier editions come from the file-name pattern."
+  pages:
+    - {lang: nb, kind: current, url: "https://www.politiet.no/om-politiet/tall-og-fakta/politiets-trusselvurdering-2025"}
+    - {lang: nb, kind: archive, url: "https://www.politiet.no/globalassets/tall-og-fakta/politiets-trusselvurdering-ptv/2021-02-12-o-ptv-2021.pdf", note: "Politiets trusselvurdering 2021"}
+  url_pattern:
+    template: "https://www.politiet.no/globalassets/tall-og-fakta/politiets-trusselvurdering-ptv/politiets-trusselvurdering-{year}.pdf"
+    years: [2022, 2026]
+    langs: [nb]
+
 # ════════════════════════ SWITZERLAND ════════════════════════
 - country: CH
   agency: NDB
@@ -2263,6 +2311,24 @@
   pages:
     - {lang: de, kind: archive, url: "https://www.babs.admin.ch/de/unterlagen-gefahrdungen-und-risiken"}
 
+- country: CH
+  agency: fedpol
+  name_local: "Bundesamt für Polizei"
+  name_en: "Federal Office of Police"
+  homepage: "https://www.fedpol.admin.ch/"
+  description: "Switzerland's federal police. Its annual report covers organised crime, terrorism, money laundering, cybercrime, human trafficking and the cases and figures of the year."
+  hq: {address: "Guisanplatz 1A, 3014 Bern, Switzerland", lat: 46.96083, lon: 7.46388, precision: address}
+  domains: ["fedpol.report"]
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Jahresbericht fedpol / annual report]
+  pages:
+    - {lang: de, kind: current, url: "https://fedpol.report/de/", note: "each year's report is a web edition with a printable PDF"}
+    - {lang: de, kind: archive, url: "https://fedpol.report/de/report-2024/", note: "2020–2023 are web editions without a PDF"}
+    - {lang: de, kind: archive, url: "https://www.fedpol.admin.ch/de/jahresbericht-fedpol", note: "web editions 2020–2024, PDFs 2014–2019"}
+    - {lang: en, kind: archive, url: "https://www.fedpol.admin.ch/en/fedpol-annual-report"}
+
 # ════════════════════════ JAPAN ════════════════════════
 - country: JP
   agency: PSIA
@@ -2307,6 +2373,25 @@
   pages:
     - {lang: en, kind: archive, url: "https://www.bousai.go.jp/en/documentation/white_paper/index.html"}
     - {lang: ja, kind: archive, url: "https://www.bousai.go.jp/kaigirep/hakusho/index.html"}
+
+- country: JP
+  agency: NPA
+  name_local: "警察庁"
+  name_en: "National Police Agency"
+  homepage: "https://www.npa.go.jp/"
+  description: "Japan's national police agency. Its Security Bureau's yearly review and outlook (治安の回顧と展望) and Focus (焦点) cover public-security threats, foreign espionage, international terrorism and cyber attacks; half-yearly reports on threats in cyberspace (also in English); the yearly crime and organised-crime situation; the English White Paper on Police."
+  hq: {address: "2-1-2 Kasumigaseki, Chiyoda-ku, Tokyo, Japan", lat: 35.67349, lon: 139.75018, precision: street}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [治安の回顧と展望 / security review and outlook, 焦点 / Focus, サイバー空間をめぐる脅威の情勢 / cyber threats, 犯罪情勢 / crime situation, 組織犯罪の情勢 / organised crime, White Paper on Police]
+  notes: "The Japanese White Paper on Police is a web edition without PDFs; its English full text is on the English publications page."
+  pages:
+    - {lang: ja, kind: archive, url: "https://www.npa.go.jp/bureau/security/publications/index.html", note: "治安の回顧と展望 and 焦点"}
+    - {lang: ja, kind: archive, url: "https://www.npa.go.jp/publications/statistics/cybersecurity/index.html", note: "half-yearly cyber threat reports, some in English"}
+    - {lang: ja, kind: current, url: "https://www.npa.go.jp/publications/statistics/index.html", follow: "crime/situation-reports\\.html", note: "the latest crime situation; earlier ones since 2018 on the followed page (the other statistics – traffic, licences, suicides – are left out)"}
+    - {lang: ja, kind: archive, url: "https://www.npa.go.jp/publications/statistics/kikakubunseki/index.html", note: "組織犯罪の情勢 – organised crime, drugs and firearms, boryokudan, crimes by foreign visitors"}
+    - {lang: en, kind: archive, url: "https://www.npa.go.jp/english/publication/index.html"}
 
 # ════════════════════════ SOUTH KOREA ════════════════════════
 - country: KR
