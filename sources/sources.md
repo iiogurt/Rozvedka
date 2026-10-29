@@ -1,6 +1,6 @@
 # Rozvedka – report sources: official agencies and ◆ independent think tanks
 
-Generated from `sources/registry.yaml` — 206 sources, 340 pages.
+Generated from `sources/registry.yaml` — 207 sources, 341 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
@@ -594,6 +594,7 @@ _EU (2004) · NATO (2004) · Schengen (2007) · JEF (2014)_
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **Päästeamet** – Estonian Rescue Board<br>_Päästeamet_<br>[www.rescue.ee](https://www.rescue.ee/) | Estonian rescue and civil-protection authority (fire safety, rescue, crisis management, explosive ordnance disposal). The yearbook reports on incidents, prevention, supervision and preparedness. | yearbook | [et archive](https://www.rescue.ee/et/juhend/vaeljaanded/aastaraamatud) |
+| **JDM** – Ministry of Justice and Digital Affairs of Estonia<br>_Justiits- ja Digiministeerium_<br>[www.kriminaalpoliitika.ee](https://www.kriminaalpoliitika.ee/) | Estonia's justice ministry, which sets criminal policy. Its yearly review Kuritegevus Eestis (Crime in Estonia, since 2006) covers the year's crime, organised and drug crime, violence and the work of the police and prosecutors. | Kuritegevus Eestis / Crime in Estonia<br>_PDF editions 2006–2017; since 2018 the review is a web edition on kriminaalpoliitika.ee, which the crawler does not keep._ | [et archive](https://www.kriminaalpoliitika.ee/et/statistika-ja-uuringud/kuritegevus-eestis) |
 
 ## Latvia
 

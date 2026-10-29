@@ -3060,6 +3060,22 @@
   pages:
     - {lang: et, kind: archive, url: "https://www.rescue.ee/et/juhend/vaeljaanded/aastaraamatud"}
 
+- country: EE
+  agency: JDM
+  name_local: "Justiits- ja Digiministeerium"
+  name_en: "Ministry of Justice and Digital Affairs of Estonia"
+  homepage: "https://www.kriminaalpoliitika.ee/"
+  description: "Estonia's justice ministry, which sets criminal policy. Its yearly review Kuritegevus Eestis (Crime in Estonia, since 2006) covers the year's crime, organised and drug crime, violence and the work of the police and prosecutors."
+  hq: {address: "Suur-Ameerika 1, 10122 Tallinn, Estonia", lat: 59.42763, lon: 24.73539, precision: address}
+  domains: ["justdigi.ee"]
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Kuritegevus Eestis / Crime in Estonia]
+  notes: "PDF editions 2006–2017; since 2018 the review is a web edition on kriminaalpoliitika.ee, which the crawler does not keep."
+  pages:
+    - {lang: et, kind: archive, url: "https://www.kriminaalpoliitika.ee/et/statistika-ja-uuringud/kuritegevus-eestis"}
+
 - country: LV
   agency: VUGD
   name_local: "Valsts ugunsdzēsības un glābšanas dienests"
