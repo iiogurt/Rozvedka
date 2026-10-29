@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.5] – 2026-10-29
+
+### Added
+- **Korea's Disaster Yearbook** (재해연보, Ministry of the Interior and Safety) is in the registry for hand collection:
+  the yearbooks 2012–2024 are listed on the Safety Korea portal, but each file downloads through a script call the
+  crawler does not follow.
+
+### Changed
+- **Three coverage-grid retries settled:** Romania's civil-protection reports (old.igsu.ro is gone, the new igsu.ro
+  disallows its files to crawlers) and Ukraine's (dsns.gov.ua refuses the crawler) are marked for hand collection;
+  Türkiye's cyber strategies stay on retry while their server does not answer.
+
 ## [0.93.4] – 2026-10-27
 
 ### Security
@@ -1858,7 +1870,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.4...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.5...HEAD
+[0.93.5]: https://github.com/iiogurt/Rozvedka/compare/v0.93.4...v0.93.5
 [0.93.4]: https://github.com/iiogurt/Rozvedka/compare/v0.93.3...v0.93.4
 [0.93.3]: https://github.com/iiogurt/Rozvedka/compare/v0.93.2...v0.93.3
 [0.93.2]: https://github.com/iiogurt/Rozvedka/compare/v0.93.1...v0.93.2

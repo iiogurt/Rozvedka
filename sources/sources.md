@@ -1,6 +1,6 @@
 # Rozvedka – report sources: official agencies and ◆ independent think tanks
 
-Generated from `sources/registry.yaml` — 192 sources, 314 pages.
+Generated from `sources/registry.yaml` — 193 sources, 315 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
@@ -520,6 +520,7 @@ _NATO IP4 (2022)_
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **NIS** – National Intelligence Service<br>_국가정보원_<br>[eng.nis.go.kr](https://eng.nis.go.kr/) | South Korea's intelligence service and national cyber-security coordinator (NCSC). Cyber-security reports and white papers on North Korean and other state cyber threats. | National Information Security White Paper, cyber reports<br>_robots.txt disallows crawling – open in a browser and add reports manually._ | [en current](https://eng.nis.go.kr/EAF/1_7.do) · [ko current](https://www.nis.go.kr/) |
+| **MOIS** – Ministry of the Interior and Safety<br>_행정안전부_<br>[www.mois.go.kr](https://www.mois.go.kr/) | South Korea's ministry for disaster and safety management. Its Disaster Yearbook (재해연보), published each December, records the year's natural disasters, the damage and the recovery costs, with ten-year statistics. | 재해연보 / Disaster Yearbook<br>_The yearbooks (2012–2024) are listed on the Safety Korea portal; each file downloads through a script call (safeKorea.fileDown), not a link the crawler can follow: collect by hand._ | [ko archive](https://www.safekorea.go.kr/safekorea-kor/cmmn/bbs/bbsList.do?menuSn=45) |
 
 ## Taiwan
 

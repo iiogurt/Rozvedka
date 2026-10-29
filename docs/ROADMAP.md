@@ -25,7 +25,7 @@ Written 2026-10-06 at version 0.29.0 (the previous assessment was made at 0.16.0
 |---|---|---|
 | **Hand-collected sources still empty** | **all 47** manual sources have no report: Säpo, PET, CSIS, ASIO, VSD/AOTD, DE BMI, KR NIS, three Ukrainian agencies, NATO STO and ACT, FATF, IAEA, CERT-EU, EUDA, Eurojust … | A5 – collected by hand on *To collect* (needs the owner) |
 | **Türkiye in name only** | its only source (EGM Narkotik, manual) lists 50 reports; 49 are blocked by robots.txt, 1 is gone (404) | A2 – a fetchable official publisher is needed (USOM, AFAD), or hand collection |
-| Open slots in the coverage grid | 87 country × agency-type slots neither covered nor checked (2026-10-27; 106 before): police / counter-terrorism 39, military intelligence 38, civil intelligence 10, cyber 0, civil protection 0; 35 checked as not published, 4 of them for a retry | `/sources/grid`; A3, A4 |
+| Open slots in the coverage grid | 87 country × agency-type slots neither covered nor checked (2026-10-27; 106 before): police / counter-terrorism 39, military intelligence 38, civil intelligence 10, cyber 0, civil protection 0; 34 checked as not published, 1 of them for a retry (TR cyber; RO, UA and KR settled 2026-10-29) | `/sources/grid`; A3, A4 |
 | Failed downloads | 61: Türkiye 49 (robots.txt), Public Safety Canada 24, CCCS 5, IRSEM 4, IPCC 5, single ones elsewhere | dead addresses and robots.txt – re-check the listing pages |
 | Open in a browser only | 30 (E-tjenesten 20 behind a bot challenge, Canada 8, BSI 1, CCDCOE 1) | not circumvented |
 | Reports without any topic | 185 of 3,866 real reports (4.8 %; reports, annual reports, assessments, strategies, bulletins); 101 more among forms, guides, legal, finance and statements | B4 target (below 5 %) still met, only just |
@@ -291,10 +291,13 @@ Updated 2026-10-26 at 0.92.0, after F5 – F12 (0.88.0 – 0.92.0):
    2026-10-26 or 10-27 – retry); ✅ (0.93.2) the cyber and civil-protection columns of `/sources/grid` have no open
    slots left. Still open: civil intelligence (10, mostly states without a public intelligence report), police /
    counter-terrorism (39) and military intelligence (38) – most will be "checked, none published"; police crime and
-   organised-crime reports (e.g. Iceland's national police risk assessments) are the likeliest finds. The four
-   retries on the grid (RO, TR, UA, KR) need a second attempt or browser rendering (✅ 0.93.3: rendering works again,
-   through headless Firefox – headless Chromium stopped finishing remote navigations in October 2026).
-3. **A5 (owner)** – hand-collect the blocked flagships through *To collect*: Säpo, PET, CSIS, ASIO, VSD/AOTD first.
+   organised-crime reports (e.g. Iceland's national police risk assessments) are the likeliest finds. Of the four
+   retries on the grid, ✅ (0.93.5) KR is registered for hand collection (the Disaster Yearbook downloads through a
+   script call), RO and UA are settled as hand collection (old.igsu.ro is gone and igsu.ro disallows its files;
+   dsns.gov.ua answers 403); TR cyber still waits for hgm.uab.gov.tr to answer. Rendering works again through headless
+   Firefox (✅ 0.93.3).
+3. **A5 (owner)** – hand-collect the blocked flagships through *To collect*: Säpo, PET, CSIS, ASIO, VSD/AOTD first; then the Korean Disaster Yearbooks (2012–2024), Romania's IGSU risk assessments and
+   Ukraine's DSNS national safety reports.
 4. **Features still open** – C2 research notes and citations; E4 caching (cross-language search ~3 s on the Pi); G9 UK
    Companies House (needs an API key from the owner); G7 the network as of a year (waits for dated links).
 
