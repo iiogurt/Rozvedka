@@ -1,6 +1,6 @@
 # Rozvedka – report sources: official agencies and ◆ independent think tanks
 
-Generated from `sources/registry.yaml` — 204 sources, 338 pages.
+Generated from `sources/registry.yaml` — 206 sources, 340 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
@@ -488,6 +488,7 @@ _Five Eyes (1956) · NATO IP4 (2022)_
 | **NZSIS** – New Zealand Security Intelligence Service<br>_New Zealand Security Intelligence Service / Te Pā Whakamarumaru_<br>[www.nzsis.govt.nz](https://www.nzsis.govt.nz/) | New Zealand's security intelligence service. The annual 'New Zealand's Security Threat Environment' covers foreign interference, espionage, violent extremism and insider threats, with case studies. | New Zealand's Security Threat Environment | [en archive](https://www.nzsis.govt.nz/our-work/new-zealands-security-threat-environment)<br>pattern: `https://www.nzsis.govt.nz/assets/NZSIS-Documents/New-Zealands-Security-Threat-Environment-{year}.pdf` 2023–2026 |
 | **GCSB / NCSC-NZ** – Government Communications Security Bureau – National Cyber Security Centre<br>_Government Communications Security Bureau / Te Tira Tiaki – National Cyber Security Centre_<br>[www.ncsc.govt.nz](https://www.ncsc.govt.nz/) | New Zealand's signals intelligence and cyber-security agency. Cyber threat reports on state-sponsored and criminal activity, and GCSB annual reports. | Cyber Threat Report, annual report | [en archive](https://www.ncsc.govt.nz/news/) · [en archive](https://www.gcsb.govt.nz/publications/annual-reports) |
 | **NEMA** – National Emergency Management Agency<br>_National Emergency Management Agency / Te Rākau Whakamarumaru_<br>[www.civildefence.govt.nz](https://www.civildefence.govt.nz/) | New Zealand's emergency-management agency. National hazard and preparedness resources, emergency-management plans and public guidance. | preparedness resources | [en archive](https://www.civildefence.govt.nz/resources/) |
+| **NZ Police** – New Zealand Police<br>_New Zealand Police – Ngā Pirihimana o Aotearoa_<br>[www.police.govt.nz](https://www.police.govt.nz/) | New Zealand's national police. Its annual reports cover crime, organised crime and gangs, family harm, road policing and counter-terrorism work. | Annual report | [en archive](https://www.police.govt.nz/about-us/publications/corporate/annual-report) |
 
 ## Norway
 
@@ -601,6 +602,7 @@ _EU (2004) · NATO (2004) · Schengen (2007) · JEF (2014)_
 | Agency | What they publish | Reports | Links |
 |---|---|---|---|
 | **VUGD** – State Fire and Rescue Service<br>_Valsts ugunsdzēsības un glābšanas dienests_<br>[www.vugd.gov.lv](https://www.vugd.gov.lv/) | Latvian fire-safety, rescue and civil-protection service under the Ministry of the Interior. Annual public reports on fires, rescues, civil protection, prevention and supervision, 2002 onwards. | public report | [lv archive](https://www.vugd.gov.lv/lv/gada-publiskie-parskati) |
+| **Valsts policija** – State Police of Latvia<br>_Valsts policija_<br>[www.vp.gov.lv](https://www.vp.gov.lv/) | Latvia's national police. Its yearly public report (publiskais pārskats) covers crime, organised and economic crime, drugs, public order and the year's main events and operations. | Publiskais pārskats / public report | [lv archive](https://www.vp.gov.lv/lv/publikacijas-un-parskati) |
 
 ## Lithuania
 

@@ -2263,6 +2263,20 @@
   pages:
     - {lang: en, kind: archive, url: "https://www.civildefence.govt.nz/resources/"}
 
+- country: NZ
+  agency: NZ Police
+  name_local: "New Zealand Police – Ngā Pirihimana o Aotearoa"
+  name_en: "New Zealand Police"
+  homepage: "https://www.police.govt.nz/"
+  description: "New Zealand's national police. Its annual reports cover crime, organised crime and gangs, family harm, road policing and counter-terrorism work."
+  hq: {address: "180 Molesworth Street, Wellington, New Zealand", lat: -41.27336, lon: 174.77808, precision: address}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Annual report]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.police.govt.nz/about-us/publications/corporate/annual-report", follow: "publication/annual-report-\\d{4}$"}
+
 # ════════════════════════ NORWAY ════════════════════════
 - country: "NO"
   agency: PST
@@ -3059,6 +3073,20 @@
   report_types: [public report]
   pages:
     - {lang: lv, kind: archive, url: "https://www.vugd.gov.lv/lv/gada-publiskie-parskati"}
+
+- country: LV
+  agency: Valsts policija
+  name_local: "Valsts policija"
+  name_en: "State Police of Latvia"
+  homepage: "https://www.vp.gov.lv/"
+  description: "Latvia's national police. Its yearly public report (publiskais pārskats) covers crime, organised and economic crime, drugs, public order and the year's main events and operations."
+  hq: {address: "Čiekurkalna 1. līnija 1, Rīga, Latvia", lat: 56.98341, lon: 24.15547, precision: address}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Publiskais pārskats / public report]
+  pages:
+    - {lang: lv, kind: archive, url: "https://www.vp.gov.lv/lv/publikacijas-un-parskati", note: "reports since 2003"}
 
 - country: LT
   agency: PAGD
