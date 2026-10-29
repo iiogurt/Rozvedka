@@ -559,6 +559,20 @@
     - {lang: sv, kind: archive, url: "https://mpf.se/publikationer", follow: "mpf\\.se/publikationer/publikationer/[^/]+$"}
     - {lang: en, kind: archive, url: "https://mpf.se/psychological-defence-agency/publications", follow: "psychological-defence-agency/publications/archive/[^/]+$"}
 
+- country: SE
+  agency: Polisen NOA
+  name_local: "Polismyndigheten – Nationella operativa avdelningen"
+  name_en: "Swedish Police Authority – National Operations Department"
+  homepage: "https://polisen.se/"
+  description: "Sweden's police; its National Operations Department (NOA) keeps the national picture of organised crime. Situation reports on vulnerable areas (every two years), on criminal influence in society and a national overview of criminal networks."
+  hq: {address: "Polhemsgatan 30, 112 30 Stockholm, Sweden", lat: 59.33161, lon: 18.03747, precision: address}
+  type: police-ct
+  access: auto
+  frequency: periodic
+  report_types: [Lägesbild över utsatta områden, Lägesbild över kriminell påverkan i samhället, Nationell översikt av kriminella nätverk]
+  pages:
+    - {lang: sv, kind: archive, url: "https://polisen.se/om-polisen/polisens-arbete/utsatta-omraden/"}
+
 # ════════════════════════ DENMARK ════════════════════════
 - country: DK
   agency: PET
@@ -2137,6 +2151,19 @@
   pages:
     - {lang: en, kind: current, url: "https://www.nema.gov.au/about-us/governance-and-reporting/reporting-and-publications"}
     - {lang: en, kind: archive, url: "https://www.nema.gov.au/about-us/governance-and-reporting/reporting-and-publications/archived-publications"}
+
+- country: AU
+  agency: ACIC
+  name_en: "Australian Criminal Intelligence Commission"
+  homepage: "https://www.acic.gov.au/"
+  description: "Australia's national criminal intelligence agency. Its yearly Illicit Drug Data Report, its estimates of the costs of serious and organised crime and other unclassified intelligence reports cover drug markets, organised crime groups, financial crime and firearms."
+  hq: {address: "4 National Circuit, Barton ACT 2600, Australia", lat: -35.30592, lon: 149.13405, precision: address}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Illicit Drug Data Report, costs of serious and organised crime, intelligence reports]
+  pages:
+    - {lang: en, kind: archive, url: "https://www.acic.gov.au/publications/intelligence-reports", follow: "publications/intelligence-reports/[\\w-]+$", follow_limit: 40}
 
 # ════════════════════════ NEW ZEALAND ════════════════════════
 - country: NZ

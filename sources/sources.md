@@ -1,6 +1,6 @@
 # Rozvedka – report sources: official agencies and ◆ independent think tanks
 
-Generated from `sources/registry.yaml` — 198 sources, 329 pages.
+Generated from `sources/registry.yaml` — 200 sources, 331 pages.
 
 Link label = `language · kind` (current = latest edition, archive = older editions, series = one report series). ⚠ = bot-protected, open in browser.
 
@@ -109,6 +109,7 @@ _EU (1995) · NATO (2024) · Schengen (2001) · JEF (2017)_
 | **MCF (ex-MSB)** – Swedish Civil Defence and Resilience Agency<br>_Myndigheten för civilt försvar_<br>[www.mcf.se](https://www.mcf.se/) | Swedish civil-defence and emergency-preparedness agency (formerly MSB). National risk and capability assessments and crisis-preparedness guidance such as 'In case of crisis or war'. | national risk and capability assessment, preparedness guidance | [sv archive](https://www.mcf.se/sv/publikationer/) · [en archive](https://www.mcf.se/en/publications/) |
 | **NCSC-SE** – National Cyber Security Centre of Sweden<br>_Nationellt cybersäkerhetscenter_<br>[www.ncsc.se](https://www.ncsc.se/) | Swedish national cyber-security centre (with CERT-SE). Annual reports on reported IT incidents. | Årsrapport om it-incidenter | [sv archive](https://www.ncsc.se/sv/radgivning-och-stod/hantera-och-rapportera-it-incidenter-och-cyberangrepp/arsrapporter-om-it-incidenter/) |
 | **MPF** – Swedish Psychological Defence Agency<br>_Myndigheten för psykologiskt försvar_<br>[mpf.se](https://mpf.se/) | Swedish agency for psychological defence (since 2022): identifies and counters foreign malign information influence. Reports on Russian and Chinese information influence, AI-driven influence operations, election interference and psychological defence. | rapporter, reports | [sv archive](https://mpf.se/publikationer) · [en archive](https://mpf.se/psychological-defence-agency/publications) |
+| **Polisen NOA** – Swedish Police Authority – National Operations Department<br>_Polismyndigheten – Nationella operativa avdelningen_<br>[polisen.se](https://polisen.se/) | Sweden's police; its National Operations Department (NOA) keeps the national picture of organised crime. Situation reports on vulnerable areas (every two years), on criminal influence in society and a national overview of criminal networks. | Lägesbild över utsatta områden, Lägesbild över kriminell påverkan i samhället, Nationell översikt av kriminella nätverk | [sv archive](https://polisen.se/om-polisen/polisens-arbete/utsatta-omraden/) |
 
 ## Denmark
 
@@ -473,6 +474,7 @@ _Five Eyes (1956) · AUKUS (2021) · NATO IP4 (2022)_
 | **ASIO** – Australian Security Intelligence Organisation<br>[www.asio.gov.au](https://www.asio.gov.au/) | Australia's security intelligence service. The Director-General's Annual Threat Assessment covers espionage, foreign interference, sabotage, terrorism and politically motivated violence. | Annual Threat Assessment, annual report | [en archive ⚠](https://www.asio.gov.au/resources/speeches-and-statements) |
 | **ASD ACSC** – Australian Signals Directorate – Australian Cyber Security Centre<br>[www.cyber.gov.au](https://www.cyber.gov.au/) | Australia's cyber-security authority within ASD. The Annual Cyber Threat Report covers state-sponsored activity, cybercrime costs, incidents and threats to critical infrastructure. | Annual Cyber Threat Report | [en archive ⚠](https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics) |
 | **NEMA** – National Emergency Management Agency<br>[www.nema.gov.au](https://www.nema.gov.au/) | Australia's federal emergency-management agency (since 2022; before that the National Recovery and Resilience Agency and the drought and flood recovery agencies). Annual reports cover the disaster season, crisis coordination, recovery funding and national preparedness. | annual report, corporate plan | [en current](https://www.nema.gov.au/about-us/governance-and-reporting/reporting-and-publications) · [en archive](https://www.nema.gov.au/about-us/governance-and-reporting/reporting-and-publications/archived-publications) |
+| **ACIC** – Australian Criminal Intelligence Commission<br>[www.acic.gov.au](https://www.acic.gov.au/) | Australia's national criminal intelligence agency. Its yearly Illicit Drug Data Report, its estimates of the costs of serious and organised crime and other unclassified intelligence reports cover drug markets, organised crime groups, financial crime and firearms. | Illicit Drug Data Report, costs of serious and organised crime, intelligence reports | [en archive](https://www.acic.gov.au/publications/intelligence-reports) |
 
 ## New Zealand
 
