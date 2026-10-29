@@ -27,6 +27,21 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.7] – 2026-10-29
+
+### Added
+- **Five more police sources:** An Garda Síochána's annual reports (1980 on; the scanned Commissioner's reports of
+  1947–1979 are kept but hidden, as their years cannot be told from the list), the Icelandic National Police
+  Commissioner's organised-crime risk assessments (2021, 2025; 2015 and 2019 sit on a host that no longer exists), the
+  Latvian State Police's yearly reports (2016–2025), Estonia's yearly review *Kuritegevus Eestis* (2006–2017) and the
+  New Zealand Police annual reports (for hand collection: the site answers the crawler with "too many requests").
+
+### Fixed
+- **Files on island.is** (kept on its content system's file host, often without a file extension) are recognised as
+  documents.
+- **Whistle-blowing statistics** (annual reports on protected disclosures) are hidden by default with the other
+  housekeeping papers.
+
 ## [0.93.6] – 2026-10-29
 
 ### Added
@@ -1890,7 +1905,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.6...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.7...HEAD
+[0.93.7]: https://github.com/iiogurt/Rozvedka/compare/v0.93.6...v0.93.7
 [0.93.6]: https://github.com/iiogurt/Rozvedka/compare/v0.93.5...v0.93.6
 [0.93.5]: https://github.com/iiogurt/Rozvedka/compare/v0.93.4...v0.93.5
 [0.93.4]: https://github.com/iiogurt/Rozvedka/compare/v0.93.3...v0.93.4
