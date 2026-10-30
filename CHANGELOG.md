@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.9] – 2026-10-30
+
+### Added
+- **Three more police / counter-terrorism sources:** Public Safety Canada's Public Reports on the Terrorist Threat to
+  Canada (2014–2018, the series' last edition), Brazil's yearly Mapa da Segurança Pública from the justice ministry's
+  national crime statistics (2025 and 2026; the 2024 edition's link opens a web page and the 2023 half-year link is
+  broken) and Lithuania's interior-ministry report on the state of public security (for hand collection: the site
+  answers the crawler with 403).
+
+### Fixed
+- **Files on gov.br** and other Plone sites, linked as `<name>.pdf/` or `<name>.pdf/@@download/file`, are recognised
+  as documents.
+
 ## [0.93.8] – 2026-10-30
 
 ### Added
@@ -1920,7 +1933,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.8...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.9...HEAD
+[0.93.9]: https://github.com/iiogurt/Rozvedka/compare/v0.93.8...v0.93.9
 [0.93.8]: https://github.com/iiogurt/Rozvedka/compare/v0.93.7...v0.93.8
 [0.93.7]: https://github.com/iiogurt/Rozvedka/compare/v0.93.6...v0.93.7
 [0.93.6]: https://github.com/iiogurt/Rozvedka/compare/v0.93.5...v0.93.6

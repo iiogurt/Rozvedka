@@ -23,7 +23,8 @@ DOC_RE = re.compile(
     r"/library/\?itemid=|"            # Episerver media libraries (Icelandic government: stjornarradid.is/library/?itemid=…)
     r"/ND_fileDownload\.do\?|"         # Korean government sites' file servlet: /component/file/ND_fileDownload.do?q_fileSn=…
     r"//assets\.ctfassets\.net/|"      # Contentful's file host (island.is), often without an extension; images are elsewhere
-    r"[?&]subor=\d+",                  # Slovak Interior Ministry's file links: minv.sk/?Spravy_PT&subor=…
+    r"[?&]subor=\d+|"                  # Slovak Interior Ministry's file links: minv.sk/?Spravy_PT&subor=…
+    r"\.pdf/(@@download/file)?($|[?#])",  # Plone file objects (gov.br): <name>.pdf/ serves the file itself; …/view is a page
     re.I)
 JUNK_RE = re.compile(
     r"cookie|privacy|gdpr|ochrana-osobnich|osobnych-udajov|datenschutz|impressum|"
