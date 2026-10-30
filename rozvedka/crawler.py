@@ -22,7 +22,8 @@ DOC_RE = re.compile(
     r"/bitstreams?/[^?#]+/download|"  # DSpace repositories: /bitstreams/<uuid>/download
     r"/library/\?itemid=|"            # Episerver media libraries (Icelandic government: stjornarradid.is/library/?itemid=…)
     r"/ND_fileDownload\.do\?|"         # Korean government sites' file servlet: /component/file/ND_fileDownload.do?q_fileSn=…
-    r"//assets\.ctfassets\.net/",       # Contentful's file host (island.is), often without an extension; images are elsewhere
+    r"//assets\.ctfassets\.net/|"      # Contentful's file host (island.is), often without an extension; images are elsewhere
+    r"[?&]subor=\d+",                  # Slovak Interior Ministry's file links: minv.sk/?Spravy_PT&subor=…
     re.I)
 JUNK_RE = re.compile(
     r"cookie|privacy|gdpr|ochrana-osobnich|osobnych-udajov|datenschutz|impressum|"
@@ -88,8 +89,9 @@ LOW_RELEVANCE_RE = re.compile((
     r"reasonable accommodation|personal assistance services|child safety statement|emissions reduction plan|"
     r"employer statement|work safety statement|(aps|events) code of conduct|audit and risk committee|disclosure log|"
     r"\bfoi\W{0,3}\d{3,4}|gender pay gap|terms and conditions|how to register|protected disclosures?|"
-    r"podcast transcript|seigo"   # outreach material; errata sheets (file names *seigo*: 正誤表 – the titles of
+    r"podcast transcript|seigo|"   # outreach material; errata sheets (file names *seigo*: 正誤表 – the titles of
     # whole Japanese white-paper rows list 正誤表 too, so only the file name tells)
+    r"розгляду запитів на інформацію|аудиту наборів даних"   # Ukrainian access-to-information and open-data audit reports
 ).replace(" ", r"[\s_-]+"), re.I)   # filenames use _ or - where titles use spaces
 
 

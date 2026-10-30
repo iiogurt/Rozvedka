@@ -88,6 +88,9 @@ def test_real_titles_not_generic(title):
     ("令和４年版防災白書（ html 、 PDF ）、正誤表（ PDF ） https://www.bousai.go.jp/kaigirep/hakusho/pdf/R4_honbun.pdf", False),
     ("令和７年における組織犯罪の情勢（7.3MB）", False),
     ("National Strategic Assessment of Serious and Organised Crime 2026", False),
+    ("Інформація про стан розгляду запитів на інформацію в Національній поліції за ІІ квартал 2026 року", True),
+    ("Звіт за результатами проведення інформаційного аудиту наборів даних", True),
+    ("Звіт Національної поліції України про результати роботи у 2025 році", False),
 ])
 def test_low_relevance(text, low):
     assert bool(LOW_RELEVANCE_RE.search(text)) is low
@@ -319,6 +322,9 @@ def test_korean_file_servlet_links_are_documents():
     # Contentful's file host: island.is links reports there, without a file extension
     assert DOC_RE.search("https://assets.ctfassets.net/8k0h54kbe6bj/4PAOb3h3QXthUt0cF3P7yU/b6bdb5/Ný%5Fskýrsla-2")
     assert not DOC_RE.search("https://images.ctfassets.net/8k0h54kbe6bj/logo.png")
+    # the Slovak Interior Ministry serves files as ?<page>&subor=<id>
+    assert DOC_RE.search("https://www.minv.sk/?Spravy_PT&subor=571129")
+    assert not DOC_RE.search("https://www.minv.sk/?Spravy_PT")
 
 
 @pytest.mark.parametrize("url,expected", [

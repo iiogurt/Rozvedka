@@ -27,6 +27,21 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.8] – 2026-10-30
+
+### Added
+- **Seven more police sources:** the Grand Ducal Police of Luxembourg's activity reports (2010–2025), the Hellenic
+  Police's reports on organised crime in Greece (2012–2024), the Cyprus Police annual reports (2005–2024), the Slovak
+  Police Force's yearly reports on the investigation of extremism (2020–2025), the National Police of Ukraine's annual
+  reports (2016–2025, the latest also in English) and cyber-security reports, the National Police of Colombia's
+  management reports (2023–2025) and Peru's statistical yearbooks of criminality and citizen security (INEI, with the
+  police, prosecutors and judiciary).
+
+### Fixed
+- **Files on the Slovak Interior Ministry's site** (links ending in `&subor=<number>`) are recognised as documents.
+- **Ukrainian access-to-information and open-data audit reports** are hidden by default with the other housekeeping
+  papers.
+
 ## [0.93.7] – 2026-10-29
 
 ### Added
@@ -1905,7 +1920,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.7...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.8...HEAD
+[0.93.8]: https://github.com/iiogurt/Rozvedka/compare/v0.93.7...v0.93.8
 [0.93.7]: https://github.com/iiogurt/Rozvedka/compare/v0.93.6...v0.93.7
 [0.93.6]: https://github.com/iiogurt/Rozvedka/compare/v0.93.5...v0.93.6
 [0.93.5]: https://github.com/iiogurt/Rozvedka/compare/v0.93.4...v0.93.5
