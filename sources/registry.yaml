@@ -2214,6 +2214,21 @@
     - {lang: en, kind: current, url: "https://www.publicsafety.gc.ca/cnt/rsrcs/pblctns/2023-nrp-pnr/index-en.aspx"}
     - {lang: fr, kind: current, url: "https://www.publicsafety.gc.ca/cnt/rsrcs/pblctns/2023-nrp-pnr/index-fr.aspx"}
 
+- country: CA
+  agency: Public Safety Canada (terrorism)
+  name_local: "Public Safety Canada / Sécurité publique Canada"
+  name_en: "Public Safety Canada – Public Reports on the Terrorist Threat to Canada"
+  homepage: "https://www.publicsafety.gc.ca/cnt/ntnl-scrt/cntr-trrrsm/index-en.aspx"
+  description: "Canada's public-safety department, which coordinates counter-terrorism. Its Public Report on the Terrorist Threat to Canada (2013–2018) covered the threat environment, extremist travellers, attack methods, the national terrorism threat level and Canada's counter-terrorism response."
+  hq: {address: "269 Laurier Avenue West, Ottawa, Ontario, Canada", lat: 45.41912, lon: -75.69851, precision: address}
+  type: police-ct
+  access: auto
+  frequency: periodic
+  report_types: [Public Report on the Terrorist Threat to Canada]
+  notes: "The series stopped after the 2018 edition."
+  pages:
+    - {lang: en, kind: archive, url: "https://www.publicsafety.gc.ca/cnt/ntnl-scrt/cntr-trrrsm/pblc-rprts-trrrst-thrt-en.aspx", follow: "pblctns/[\\w-]*trrrs[\\w-]*/index-en", note: "2013–2018, each on its own page"}
+
 # ════════════════════════ AUSTRALIA ════════════════════════
 - country: AU
   agency: ASIO
@@ -2701,6 +2716,21 @@
   pages:
     - {lang: pt+es+en, kind: current, url: "https://repositorio.enap.gov.br/handle/1/9285", note: "Desafios de Inteligência 2026"}
     - {lang: pt+es+en, kind: archive, url: "https://repositorio.enap.gov.br/handle/1/8216", note: "Desafios de Inteligência 2025"}
+
+- country: BR
+  agency: MJSP
+  name_local: "Ministério da Justiça e Segurança Pública"
+  name_en: "Ministry of Justice and Public Security of Brazil"
+  homepage: "https://www.gov.br/mj/"
+  description: "Brazil's justice and public-security ministry, which runs the national public-security information system (Sinesp). Its yearly Mapa da Segurança Pública reports homicides, violent and property crime, drug seizures and police killings by state, from the states' Sinesp data."
+  hq: {address: "Esplanada dos Ministérios, Bloco T, Brasília, DF, Brazil", lat: -15.77545, lon: -47.79709, precision: city}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Mapa da Segurança Pública / Public Security Map]
+  pages:
+    - {lang: pt, kind: archive, url: "https://www.gov.br/mj/pt-br/assuntos/sua-seguranca/seguranca-publica/estatistica", follow: "dados-nacionais-1/MAPA-", note: "the latest edition, 2024 and the first half of 2023 (the 2025 edition's page asks for a login)"}
+    - {lang: pt, kind: archive, url: "https://www.gov.br/mj/pt-br/assuntos/noticias/mapa-da-seguranca-publica-2025-brasil-reduz-homicidios-dolosos-e-bate-recorde-em-apreensoes-de-drogas", follow: "mapa-da-seguranca-publica-2025\\.pdf", note: "the 2025 edition, linked from its launch news"}
 
 # ════════════════════════ CHILE ════════════════════════
 - country: CL
