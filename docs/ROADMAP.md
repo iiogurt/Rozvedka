@@ -25,7 +25,7 @@ Written 2026-10-06 at version 0.29.0 (the previous assessment was made at 0.16.0
 |---|---|---|
 | **Hand-collected sources still empty** | **all 47** manual sources have no report: Säpo, PET, CSIS, ASIO, VSD/AOTD, DE BMI, KR NIS, three Ukrainian agencies, NATO STO and ACT, FATF, IAEA, CERT-EU, EUDA, Eurojust … | A5 – collected by hand on *To collect* (needs the owner) |
 | **Türkiye in name only** | its only source (EGM Narkotik, manual) lists 50 reports; 49 are blocked by robots.txt, 1 is gone (404) | A2 – a fetchable official publisher is needed (USOM, AFAD), or hand collection |
-| Open slots in the coverage grid | 73 country × agency-type slots neither covered nor checked (2026-10-29; 87 before): police / counter-terrorism 25, military intelligence 38, civil intelligence 10, cyber 0, civil protection 0; 34 checked as not published, 1 of them for a retry (TR cyber; RO, UA and KR settled 2026-10-29) | `/sources/grid`; A3, A4 |
+| Open slots in the coverage grid | 66 country × agency-type slots neither covered nor checked (2026-10-30; 73 before): police / counter-terrorism 18, military intelligence 38, civil intelligence 10, cyber 0, civil protection 0; 34 checked as not published, 1 of them for a retry (TR cyber; RO, UA and KR settled 2026-10-29) | `/sources/grid`; A3, A4 |
 | Failed downloads | 61: Türkiye 49 (robots.txt), Public Safety Canada 24, CCCS 5, IRSEM 4, IPCC 5, single ones elsewhere | dead addresses and robots.txt – re-check the listing pages |
 | Open in a browser only | 30 (E-tjenesten 20 behind a bot challenge, Canada 8, BSI 1, CCDCOE 1) | not circumvented |
 | Reports without any topic | 185 of 3,866 real reports (4.8 %; reports, annual reports, assessments, strategies, bulletins); 101 more among forms, guides, legal, finance and statements | B4 target (below 5 %) still met, only just |
@@ -291,10 +291,11 @@ Updated 2026-10-26 at 0.92.0, after F5 – F12 (0.88.0 – 0.92.0):
    2026-10-26 or 10-27 – retry); ✅ (0.93.2) the cyber and civil-protection columns of `/sources/grid` have no open
    slots left. ✅ (0.93.6) police / counter-terrorism: UK NCA, Italian DIA,
    Swiss fedpol, Japanese NPA, Norwegian police, Australian ACIC, Swedish police (NOA), French SSMSI, Korean police;
-   ✅ (0.93.7) Garda, Icelandic police, Latvian police, Estonian justice ministry, New Zealand police (manual: 429) (39 → 25
-   open; Canada's CISC reports are web pages without a list the crawler can read; Slovenia's policija.si did not serve its robots.txt on 2026-10-29, Croatia's MUP statistics page redirects to the
+   ✅ (0.93.7) Garda, Icelandic police, Latvian police, Estonian justice ministry, New Zealand police (manual: 429);
+   ✅ (0.93.8) Luxembourg, Greek, Cypriot, Slovak (extremism reports), Ukrainian and Colombian police, Peru's crime
+   yearbook (INEI) (39 → 18 open; Malta's police site answers 403, Hungary's and Bulgaria's publish statistics only; Canada's CISC reports are web pages without a list the crawler can read; Slovenia's policija.si did not serve its robots.txt on 2026-10-29, Croatia's MUP statistics page redirects to the
    home page, Poland's ministry security report seems to have stopped after 2015 – retry or check). Still open: civil
-   intelligence (10, mostly states without a public intelligence report), police / counter-terrorism (25) and military
+   intelligence (10, mostly states without a public intelligence report), police / counter-terrorism (18) and military
    intelligence (38) – most will be "checked, none published"; police crime and
    organised-crime reports (e.g. Iceland's national police risk assessments) are the likeliest finds. Of the four
    retries on the grid, ✅ (0.93.5) KR is registered for hand collection (the Disaster Yearbook downloads through a
