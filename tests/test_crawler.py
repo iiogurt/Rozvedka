@@ -325,6 +325,10 @@ def test_korean_file_servlet_links_are_documents():
     # the Slovak Interior Ministry serves files as ?<page>&subor=<id>
     assert DOC_RE.search("https://www.minv.sk/?Spravy_PT&subor=571129")
     assert not DOC_RE.search("https://www.minv.sk/?Spravy_PT")
+    # Plone file objects on gov.br: the object URL and its download view serve the PDF, the /view page does not
+    base = "https://www.gov.br/mj/pt-br/assuntos/sua-seguranca/seguranca-publica/estatistica/download/mapa-2026.pdf"
+    assert DOC_RE.search(base + "/") and DOC_RE.search(base + "/@@download/file")
+    assert not DOC_RE.search(base + "/view")
 
 
 @pytest.mark.parametrize("url,expected", [
