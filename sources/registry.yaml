@@ -124,6 +124,20 @@
   pages:
     - {lang: sk, kind: archive, url: "https://www.nbu.gov.sk/urad/o-nas/vyrocne-spravy/"}
 
+- country: SK
+  agency: Policajný zbor
+  name_local: "Policajný zbor Slovenskej republiky"
+  name_en: "Police Force of the Slovak Republic"
+  homepage: "https://www.minv.sk/?policia"
+  description: "Slovakia's national police, part of the Interior Ministry. Its yearly report on the investigation of extremism covers extremist and hate crime, radicalisation and the cases the police investigated."
+  hq: {address: "Račianska 45, 812 72 Bratislava, Slovakia", lat: 48.1635, lon: 17.12454, precision: address}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Správa o stave vyšetrovania na úseku extrémizmu / Report on the investigation of extremism]
+  pages:
+    - {lang: sk, kind: archive, url: "https://www.minv.sk/?Spravy_PT", note: "extremism reports since 2020"}
+
 # ════════════════════════ POLAND ════════════════════════
 - country: PL
   agency: ABW
@@ -2640,6 +2654,20 @@
   pages:
     - {lang: en, kind: archive, url: "https://niss.gov.ua/en/publikacii/analitichni-dopovidi", verified: false}
     - {lang: uk, kind: archive, url: "https://niss.gov.ua/publikacii/analitichni-dopovidi", verified: false}
+
+- country: UA
+  agency: National Police of Ukraine
+  name_local: "Національна поліція України"
+  name_en: "National Police of Ukraine"
+  homepage: "https://npu.gov.ua/"
+  description: "Ukraine's national police. Its yearly report on the results of its work covers crime, organised and cyber crime, war crimes documentation and public order under martial law; a separate yearly report covers the state of cyber security."
+  hq: {address: "Akademika Bohomoltsia St 10, 01601 Kyiv, Ukraine", lat: 50.44098, lon: 30.53361, precision: address}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Звіт про результати роботи / Annual activity report, Cyber-security report]
+  pages:
+    - {lang: uk, kind: archive, url: "https://npu.gov.ua/diyalnist/zvitnist/richni-zviti", note: "annual reports since 2016 (English edition for 2025); access-to-information reports on the same page are hidden"}
 
 # ════════════════════════ MEXICO ════════════════════════
 - country: MX
