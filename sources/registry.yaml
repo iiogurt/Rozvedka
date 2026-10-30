@@ -2762,6 +2762,20 @@
   pages:
     - {lang: es, kind: current, url: "https://www.colcert.gov.co/800/w3-article-433510.html", note: "Tendencias de amenazas cibernéticas 2025"}
 
+- country: CO
+  agency: Policía Nacional
+  name_local: "Policía Nacional de Colombia"
+  name_en: "National Police of Colombia"
+  homepage: "https://www.policia.gov.co/"
+  description: "Colombia's national police. Its yearly management report (Informe integral de gestión) covers crime, drug trafficking, organised armed groups, citizen security and the results of the police's strategic plan."
+  hq: {address: "Carrera 59 No. 26-21, CAN, Bogotá, Colombia", lat: 4.65338, lon: -74.08363, precision: city}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Informe integral de gestión / Annual management report]
+  pages:
+    - {lang: es, kind: archive, url: "https://www.policia.gov.co/contenido/informe-integral-de-gestion", note: "the latest reports (2023–2025); the page also links a directory of offices"}
+
 # ════════════════════════ PERU ════════════════════════
 - country: PE
   agency: INDECI
@@ -2781,6 +2795,23 @@
     template: "https://portal.indeci.gob.pe/direccion-politicas-y-planes/compendios-estadisticos/compendios/{year}-2/"
     years: [1995, 2021]
     langs: [es]
+
+- country: PE
+  agency: INEI
+  name_local: "Instituto Nacional de Estadística e Informática"
+  name_en: "National Institute of Statistics and Informatics of Peru"
+  homepage: "https://www.gob.pe/inei"
+  description: "Peru's statistics office. With the inter-institutional crime statistics committee (CEIC: the national police, public prosecutors, judiciary, prison service and justice ministry) it publishes the yearly Statistical Yearbook of Criminality and Citizen Security, covering crime, victims, the police's complaints and detentions, and prisons."
+  hq: {address: "Avenida General Garzón 658, Jesús María, Lima, Peru", lat: -12.07587, lon: -77.05254, precision: city}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Anuario estadístico de la criminalidad y seguridad ciudadana / Statistical yearbook of criminality and citizen security]
+  notes: "Each edition has its own gob.pe page and the publication search is rendered by script, so new editions are added by hand."
+  pages:
+    - {lang: es, kind: current, url: "https://www.gob.pe/institucion/inei/informes-publicaciones/7526051-peru-anuario-estadistico-de-la-criminalidad-y-seguridad-ciudadana-2024", follow: "anuario-estadistico-de-la-criminalidad"}
+    - {lang: es, kind: archive, url: "https://www.gob.pe/institucion/inei/informes-publicaciones/5346550-peru-anuario-estadistico-de-la-criminalidad-y-seguridad-ciudadana-2018-2022", follow: "anuario-estadistico-de-la-criminalidad"}
+    - {lang: es, kind: archive, url: "https://www.gob.pe/institucion/inei/informes-publicaciones/3980339-peru-anuario-estadistico-de-la-criminalidad-y-seguridad-ciudadana-2017-2021", follow: "anuario-estadistico-de-la-criminalidad"}
 
 # ════════════════════════ ARGENTINA ════════════════════════
 - country: AR
