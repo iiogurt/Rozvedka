@@ -451,6 +451,21 @@
   pages:
     - {lang: lt, kind: archive, url: "https://www.nksc.lt/aktualu.html", verified: false}
 
+- country: LT
+  agency: VRM
+  name_local: "Lietuvos Respublikos vidaus reikalų ministerija"
+  name_en: "Ministry of the Interior of the Republic of Lithuania"
+  homepage: "https://vrm.lrv.lt/"
+  description: "Lithuania's interior ministry, responsible for the police. Its report on the state of public security in Lithuania covers crime and its trends, road safety, fires and rescue work, and residents' sense of security, over a decade at a time (2005–2015, 2015–2024)."
+  hq: {address: "Šventaragio g. 2, 01510 Vilnius, Lithuania", lat: 54.68468, lon: 25.28864, precision: address}
+  type: police-ct
+  access: manual
+  frequency: periodic
+  report_types: [Viešojo saugumo ataskaita / Public security report]
+  notes: "vrm.lrv.lt (like policija.lrv.lt) answers the crawler with 403 – add reports by hand. Known: 'Viešojo saugumo ataskaita 2015–2024' (vrm.lrv.lt/public/canonical/1761280861/10005/) and the 2005–2015 report."
+  pages:
+    - {lang: lt, kind: archive, url: "https://vrm.lrv.lt/lt/veiklos-sritys/viesasis-saugumas/tyrimai-ir-analizes-1/"}
+
 # ════════════════════════ FINLAND ════════════════════════
 - country: FI
   agency: Supo
