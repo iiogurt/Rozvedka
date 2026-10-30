@@ -1200,6 +1200,20 @@
   pages:
     - {lang: en, kind: current, url: "https://cyber.gov.gr/en/"}
 
+- country: GR
+  agency: Hellenic Police
+  name_local: "Ελληνική Αστυνομία"
+  name_en: "Hellenic Police"
+  homepage: "https://www.astynomia.gr/"
+  description: "Greece's national police. Its yearly report on organised crime in Greece (since 2004) covers criminal groups, drug, human and arms trafficking, financial crime and terrorism-related findings."
+  hq: {address: "Leoforos Kanellopoulou 4, 101 77 Athens, Greece", lat: 37.97556, lon: 23.73483, precision: city}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Έκθεση για το οργανωμένο έγκλημα / Organised crime report]
+  pages:
+    - {lang: el, kind: archive, url: "https://www.astynomia.gr/statistikes-epetirides/statistika-stoicheia-2/etisies-ektheseis-organomenou-egklimatos/", note: "organised-crime reports since 2012 as PDFs (2004, 2005 and 2011 are web pages); the page also links an administrative-procedures handbook, hidden"}
+
 # ════════════════════════ CYPRUS ════════════════════════
 # Civil protection (checked 2026-10-06): Civil Defence ran national risk assessments (2016, 2018); moi.gov.cy disallows crawling – none added.
 - country: CY
@@ -1215,6 +1229,20 @@
   report_types: [annual report]
   pages:
     - {lang: el, kind: archive, url: "https://dsa.cy/the-dsa/annual-reports"}
+
+- country: CY
+  agency: Cyprus Police
+  name_local: "Αστυνομία Κύπρου"
+  name_en: "Cyprus Police"
+  homepage: "https://www.gov.cy/police/"
+  description: "The Republic of Cyprus's national police. Its annual report (since 2005) covers crime, drugs, organised crime, migration, counter-terrorism and the work of each police unit."
+  hq: {address: "Police Headquarters, Leoforos Antistratigou Evangelou Floraki, 1478 Nicosia, Cyprus", lat: 35.17465, lon: 33.36388, precision: city}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Ετήσια Έκθεση / Annual report]
+  pages:
+    - {lang: el, kind: archive, url: "https://www.gov.cy/police/documents/etisia-ekthesi-tis-astynomias/", note: "annual reports since 2005 (2021 missing)"}
 
 # ════════════════════════ LUXEMBOURG ════════════════════════
 - country: LU
@@ -1245,6 +1273,21 @@
   report_types: [publications]
   pages:
     - {lang: fr, kind: archive, url: "https://hcpn.gouvernement.lu/fr/actualites/publications.html"}
+
+- country: LU
+  agency: Police grand-ducale
+  name_local: "Police grand-ducale"
+  name_en: "Grand Ducal Police of Luxembourg"
+  homepage: "https://police.public.lu/"
+  description: "Luxembourg's national police. Its yearly activity report (rapport d'activités) covers crime figures, organised and economic crime, drugs, terrorism prevention and the year's police work."
+  hq: {address: "Cité policière Grand-Duc Henri, Rue de Trèves, 2632 Luxembourg", lat: 49.62643, lon: 6.1996, precision: city}
+  type: police-ct
+  access: auto
+  frequency: yearly
+  report_types: [Rapport d'activités / Annual activity report]
+  pages:
+    - {lang: fr, kind: archive, url: "https://police.public.lu/fr/votre-police/rapports-activite.html", follow: "/publications/\\d{4}/rapport", note: "reports since 2018, each on its own page"}
+    - {lang: fr, kind: archive, url: "https://police.public.lu/fr/votre-police/a-propos-de-la-police/rapport-activites.html", follow: "/publications/\\d{4}/(rapport|statistiques)", note: "reports 2010–2017"}
 
 # ════════════════════════ IRELAND ════════════════════════
 - country: IE
