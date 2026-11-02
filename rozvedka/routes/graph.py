@@ -37,7 +37,7 @@ def entity_page(request: Request, id_: str):
     if not e:
         raise HTTPException(404, "no such entity in the network")
     if e["actor"]:
-        return RedirectResponse(f"/actors/{e['actor']}#network", status_code=307)
+        return RedirectResponse("/actors/" + quote(e["actor"], safe="") + "#network", status_code=307)
     return tpl.TemplateResponse(request, "entity.html", {"e": e, "groups": ties.neighbours(id_),
                                                          "lists": {**sanctions.LISTS, **wanted.SOURCES}})
 
