@@ -27,6 +27,13 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.11] – 2026-11-02
+
+### Security
+
+- A folder created from the Data page's folder picker is checked against the allowed folders like its parent before it
+  is made, not only by its name.
+
 ## [0.93.10] – 2026-11-02
 
 ### Security
@@ -1945,7 +1952,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.10...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.11...HEAD
+[0.93.11]: https://github.com/iiogurt/Rozvedka/compare/v0.93.10...v0.93.11
 [0.93.10]: https://github.com/iiogurt/Rozvedka/compare/v0.93.9...v0.93.10
 [0.93.9]: https://github.com/iiogurt/Rozvedka/compare/v0.93.8...v0.93.9
 [0.93.8]: https://github.com/iiogurt/Rozvedka/compare/v0.93.7...v0.93.8
