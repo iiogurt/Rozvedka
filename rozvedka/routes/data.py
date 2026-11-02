@@ -1,5 +1,6 @@
 """Data exchange: export, check and import of the library."""
 import json
+import logging
 import re
 from pathlib import Path
 from fastapi import APIRouter, Form, HTTPException, Request
@@ -9,6 +10,7 @@ from ..config import FILES
 from ..web import tpl
 
 router = APIRouter()
+log = logging.getLogger("rozvedka.data")
 
 
 @router.get("/data")
@@ -35,24 +37,39 @@ def data_page(request: Request):
                                                       "roots": [str(r) for r in folders.roots()], "personal_data": personal_data})
 
 
-def _api_error(e: Exception, status: int = 400):
-    return JSONResponse({"error": str(e)}, status_code=status)
+def _refuse(message: str, status: int = 400):
+    return JSONResponse({"error": message}, status_code=status)
+
+
+def _refused(what: str, path: str, e: Exception, writable: bool = False, file: bool = False):
+    """The answer to a folder or file the portal may not use. The browser gets a message written here from what the
+    user entered and the configured folders; the exception's own text goes to the server log only."""
+    log.info("%s %s refused: %r", what, path, e)
+    if isinstance(e, FileNotFoundError):
+        return _refuse(f"{path}: no such {'file' if file else 'folder'}")
+    if isinstance(e, PermissionError):
+        if writable and folders.allowed(path) is not None:
+            return _refuse(f"{path}: the portal may not write here")
+        return _refuse(f"{path}: outside the folders the portal may use ({', '.join(map(str, folders.roots()))})")
+    return _refuse(f"{path}: the folder could not be read or written – see the portal's log")
 
 
 @router.get("/api/data/folders")
 def api_data_folders(path: str = ""):
     try:
         return folders.listing(path)
-    except (PermissionError, FileNotFoundError, OSError) as e:
-        return _api_error(e)
+    except OSError as e:                                  # PermissionError and FileNotFoundError are OSErrors
+        return _refused("listing", path, e)
 
 
 @router.post("/api/data/folders")
 def api_data_mkdir(parent: str = Form(...), name: str = Form(...)):
     try:
         return {"path": str(folders.make(parent, name))}
-    except (PermissionError, FileNotFoundError, ValueError, OSError) as e:
-        return _api_error(e)
+    except ValueError:
+        return _refuse("a folder name without slashes, not starting with a dot")
+    except OSError as e:
+        return _refused("new folder in", parent, e, writable=True)
 
 
 @router.get("/api/data/estimate")
@@ -74,16 +91,15 @@ def api_data_estimate(what: str = "all", since: str = "", personal: int = 0):
 @router.post("/api/data/export")
 def api_data_export(dest: str = Form(...), what: str = Form("all"), since: str = Form(""), part_size: str = Form("2000"),
                     name: str = Form(""), personal: str = Form("")):
+    if not part_size.isdigit() or not 50 <= int(part_size) <= 100_000:
+        return _refuse("part size must be between 50 MB and 100 GB")
+    if what == "since" and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", since):
+        return _refuse("choose the day from which report files are included")
     try:
-        size_mb = int(part_size)
-        if not 50 <= size_mb <= 100_000:
-            raise ValueError("part size must be between 50 MB and 100 GB")
-        if what == "since" and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", since):
-            raise ValueError("choose the day from which report files are included")
         r = jobrunner.export(dest, files=what != "catalogue", since=since if what == "since" else None,
-                            part_size=size_mb * 1_000_000, name=name.strip(), personal=personal == "1")
-    except (PermissionError, FileNotFoundError, ValueError) as e:
-        return _api_error(e)
+                            part_size=int(part_size) * 1_000_000, name=name.strip(), personal=personal == "1")
+    except OSError as e:
+        return _refused("export to", dest, e, writable=True)
     return r if "error" not in r else JSONResponse(r, status_code=409)
 
 
@@ -91,8 +107,8 @@ def api_data_export(dest: str = Form(...), what: str = Form("all"), since: str =
 def api_data_check(manifest: str = Form(...)):
     try:
         r = jobrunner.check(manifest)
-    except (PermissionError, FileNotFoundError) as e:
-        return _api_error(e)
+    except OSError as e:
+        return _refused("check of", manifest, e, file=True)
     return r if "error" not in r else JSONResponse(r, status_code=409)
 
 
@@ -100,8 +116,8 @@ def api_data_check(manifest: str = Form(...)):
 def api_data_import(manifest: str = Form(...), prefer: str = Form("local")):
     try:
         r = jobrunner.import_(manifest, prefer)
-    except (PermissionError, FileNotFoundError) as e:
-        return _api_error(e)
+    except OSError as e:
+        return _refused("import of", manifest, e, file=True)
     return r if "error" not in r else JSONResponse(r, status_code=409)
 
 

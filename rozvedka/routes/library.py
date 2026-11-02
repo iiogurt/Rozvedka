@@ -1,4 +1,6 @@
 """Logos, years, reports, opening and editing documents, adding reports, jobs."""
+from urllib.parse import urlencode
+
 from fastapi import APIRouter, Form, HTTPException, Request
 from fastapi.responses import FileResponse, RedirectResponse
 from .. import crawler, dating, db, doctypes, downloader, jobs as jobrunner, logos, paging, registry, report
@@ -130,7 +132,7 @@ def add_doc(request: Request, source_id: int = Form(...), url: str = Form(...), 
         doc_id = con.execute("SELECT id FROM documents WHERE url=?", (url,)).fetchone()["id"]
     if fetch_now:
         downloader.download_one(doc_id)
-    return RedirectResponse(f"/documents?source={source_id}", status_code=303)
+    return RedirectResponse("/documents?" + urlencode({"source": source_id}), status_code=303)
 
 
 @router.post("/jobs/crawl")

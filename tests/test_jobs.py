@@ -106,3 +106,20 @@ def test_log_path_only_names_a_log_of_the_logs_folder(tmp_path, monkeypatch):
     assert datajobs.log_path("20261102-update.log") == logs / "20261102-update.log"
     for bad in ("../secret.log", str(tmp_path / "secret.log"), "missing.log", "20261102-update"):
         assert datajobs.log_path(bad) is None
+
+
+def test_data_api_errors_are_written_by_the_portal(roots):
+    """Refusals name what the user entered and the allowed folders – never an exception's own text."""
+    from rozvedka.app import app
+    client = TestClient(app)
+    r = client.get("/api/data/folders", params={"path": "/etc"})
+    assert r.status_code == 400 and r.json()["error"].startswith("/etc: outside the folders") and str(roots) in r.json()["error"]
+    r = client.post("/api/data/folders", data={"parent": str(roots), "name": "a/b"})
+    assert r.json()["error"] == "a folder name without slashes, not starting with a dot"
+    r = client.post("/api/data/check", data={"manifest": str(roots / "none.manifest.json")})
+    assert r.json()["error"] == f"{roots / 'none.manifest.json'}: no such file"
+    for size in ("49", "x", "100001"):
+        r = client.post("/api/data/export", data={"dest": str(roots), "part_size": size})
+        assert r.json()["error"] == "part size must be between 50 MB and 100 GB"
+    r = client.post("/api/data/export", data={"dest": str(roots), "what": "since", "since": "soon"})
+    assert r.json()["error"] == "choose the day from which report files are included"

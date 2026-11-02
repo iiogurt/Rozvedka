@@ -27,6 +27,15 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.12] – 2026-11-02
+
+### Security
+
+- The Data page's folder and dataset answers are written by the portal itself (what you entered, the folders the portal
+  may use, or the rule that was broken); the underlying error goes to the server log only, never to the browser.
+- Every redirect is rebuilt behind a fixed path of the portal ("/", "/graph/leads/", "/documents?"), so a form field or
+  Referer header can never send the browser to another site. This closes the remaining code-scanning alerts.
+
 ## [0.93.11] – 2026-11-02
 
 ### Security
@@ -1952,7 +1961,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.11...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.12...HEAD
+[0.93.12]: https://github.com/iiogurt/Rozvedka/compare/v0.93.11...v0.93.12
 [0.93.11]: https://github.com/iiogurt/Rozvedka/compare/v0.93.10...v0.93.11
 [0.93.10]: https://github.com/iiogurt/Rozvedka/compare/v0.93.9...v0.93.10
 [0.93.9]: https://github.com/iiogurt/Rozvedka/compare/v0.93.8...v0.93.9
