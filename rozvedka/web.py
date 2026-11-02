@@ -213,7 +213,8 @@ def local_url(target: str | None, fallback: str, host: str = "") -> str:
         return fallback
     if not parts.path.startswith("/") or parts.path.startswith("//") or "\\" in parts.path:
         return fallback
-    return parts.path + (f"?{parts.query}" if parts.query else "")
+    # rebuilt behind a fixed "/" so the result can only ever be a path of this site
+    return "/" + parts.path[1:] + ("?" + parts.query if parts.query else "")
 
 
 def referer_url(request: Request, fallback: str) -> str:

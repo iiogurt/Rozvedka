@@ -175,7 +175,7 @@ def lead_review(a: str = Form(...), b: str = Form(...), verdict: str = Form(...)
     if "error" in r:
         raise HTTPException(400, r["error"])
     a, b = sorted((a, b))
-    return RedirectResponse(f"/graph/leads/{quote(a, safe='')}/{quote(b, safe='')}?notice=saved", status_code=303)
+    return RedirectResponse("/graph/leads/" + quote(a, safe="") + "/" + quote(b, safe="") + "?notice=saved", status_code=303)
 
 
 @router.get("/graph/brokers")
