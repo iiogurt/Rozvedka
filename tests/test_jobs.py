@@ -95,3 +95,14 @@ def test_cancel_only_before_changes(tmp_path, monkeypatch):
     assert datajobs.cancel() is False
     j = wait()
     assert j["status"] == "done" and j["progress"]["total"] == 400
+
+
+def test_log_path_only_names_a_log_of_the_logs_folder(tmp_path, monkeypatch):
+    logs = tmp_path / "logs"
+    logs.mkdir()
+    (logs / "20261102-update.log").write_text("ok")
+    (tmp_path / "secret.log").write_text("no")
+    monkeypatch.setattr(datajobs, "logs_dir", lambda: logs)
+    assert datajobs.log_path("20261102-update.log") == logs / "20261102-update.log"
+    for bad in ("../secret.log", str(tmp_path / "secret.log"), "missing.log", "20261102-update"):
+        assert datajobs.log_path(bad) is None

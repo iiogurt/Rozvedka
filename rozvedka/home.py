@@ -25,6 +25,7 @@ OPERATORS = {   # operator → what it filters (shown in the syntax help)
     "lang": "language code – lang:de",
 }
 _OP = re.compile(r'\b(' + "|".join(OPERATORS) + r'):("([^"]*)"|\S+)', re.I)
+_OP_TYPED = re.compile(r'\b(' + "|".join(OPERATORS) + r'):("[^"]*|\S*)$', re.I)   # an operator still being typed
 
 
 def docs_url(**params) -> str:
@@ -161,9 +162,9 @@ def suggest(q: str, limit: int = 6) -> dict:
     The count is what that link lists (the Documents default: active sources, not hidden, not duplicate).
     While an operator is being typed (`actor:fan`) only that operator's values are suggested.
     """
-    q = q or ""
-    last = re.search(r'(\w+):("[^"]*|\S*)$', q)
-    if last and last.group(1).lower() in OPERATORS:      # an operator being typed: suggest its values
+    q = (q or "")[:500]                                  # typed by hand; a cap keeps every pattern below cheap
+    last = _OP_TYPED.search(q)
+    if last:                                             # an operator being typed: suggest its values
         op, term, prefix = last.group(1).lower(), last.group(2).lstrip('"'), q[:last.start()]
     else:                                                 # free text, perhaps after finished operators
         op, term, prefix = "", _OP.sub(" ", q), " ".join(m.group(0) for m in _OP.finditer(q))

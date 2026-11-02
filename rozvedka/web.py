@@ -5,6 +5,7 @@ import hashlib
 import io
 import time
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from fastapi import Request
 from fastapi.responses import PlainTextResponse, RedirectResponse, Response
@@ -203,8 +204,25 @@ tpl.env.globals["header_status"] = header_status
 tpl.env.filters["days_ago"] = lambda ts: (dt.datetime.now() - dt.datetime.fromisoformat(ts[:19])).days
 
 
+def local_url(target: str | None, fallback: str, host: str = "") -> str:
+    """A redirect target that stays on this site: the path and query of `target` (a `back` form field, or a Referer
+    header naming this portal's `host`), else `fallback` – also for paths a browser reads as another host ("//host",
+    "/\\host")."""
+    parts = urlsplit(target or "")
+    if (parts.scheme or parts.netloc) and (not host or parts.netloc != host):
+        return fallback
+    if not parts.path.startswith("/") or parts.path.startswith("//") or "\\" in parts.path:
+        return fallback
+    return parts.path + (f"?{parts.query}" if parts.query else "")
+
+
+def referer_url(request: Request, fallback: str) -> str:
+    """Where the form was sent from – a page of this portal – or `fallback`."""
+    return local_url(request.headers.get("referer"), fallback, request.headers.get("host", ""))
+
+
 def _back_to(request: Request, fallback: str = "/sources/coverage"):
-    return RedirectResponse(request.headers.get("referer") or fallback, status_code=303)
+    return RedirectResponse(referer_url(request, fallback), status_code=303)
 
 
 def _abs(request: Request, link: str) -> str:

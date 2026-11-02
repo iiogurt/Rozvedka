@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.10] – 2026-11-02
+
+### Security
+- **Redirects stay on the portal:** after a form is sent, the portal returns to the page it came from only when that
+  page is on the portal itself; a `back` field or Referer naming another site, or a path a browser reads as another
+  host (`//host`, `/\host`), leads to the default page instead.
+- **File paths from requests are checked before the disk is touched:** job logs and inbox files are picked from their
+  folder's listing by name, and the Data exchange folder picker checks the written path against its allowed roots
+  before resolving it (and again after, so symlinks cannot lead out).
+- **Slow patterns removed:** the check for a sitemap's head no longer backtracks exponentially on comment-like text,
+  the search console's operator pattern runs in linear time on long input, and a file-name pattern is escaped.
+
 ## [0.93.9] – 2026-10-30
 
 ### Added
@@ -1933,7 +1945,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.9...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.10...HEAD
+[0.93.10]: https://github.com/iiogurt/Rozvedka/compare/v0.93.9...v0.93.10
 [0.93.9]: https://github.com/iiogurt/Rozvedka/compare/v0.93.8...v0.93.9
 [0.93.8]: https://github.com/iiogurt/Rozvedka/compare/v0.93.7...v0.93.8
 [0.93.7]: https://github.com/iiogurt/Rozvedka/compare/v0.93.6...v0.93.7

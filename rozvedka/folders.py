@@ -11,11 +11,14 @@ from pathlib import Path
 MANIFEST = ".manifest.json"
 
 
-def roots() -> list[Path]:
+def _candidates() -> list[Path]:
     extra = [Path(p) for p in os.environ.get("ROZVEDKA_EXCHANGE_DIRS", "").split(":") if p]
-    cands = extra + [Path("/media"), Path("/mnt"), Path("/run/media"), Path("/Volumes"), Path.home()]   # /Volumes: macOS
+    return extra + [Path("/media"), Path("/mnt"), Path("/run/media"), Path("/Volumes"), Path.home()]   # /Volumes: macOS
+
+
+def roots() -> list[Path]:
     out = []
-    for c in cands:
+    for c in _candidates():
         try:
             r = c.resolve()
         except OSError:
@@ -25,13 +28,28 @@ def roots() -> list[Path]:
     return out
 
 
+def _under(path: str, root: Path) -> bool:
+    return path == str(root) or path.startswith(str(root).rstrip(os.sep) + os.sep)
+
+
 def allowed(path: str | Path) -> Path | None:
-    """The resolved path if it lies under one of the roots, else None (symlinks cannot lead out)."""
-    try:
-        p = Path(path).expanduser().resolve()
-    except (OSError, RuntimeError):
-        return None
-    return p if any(p == r or p.is_relative_to(r) for r in roots()) else None
+    """The resolved path if it lies under one of the roots, else None. The written path is checked before the file
+    system is asked anything, and again once resolved, so symlinks cannot lead out either."""
+    rs = roots()
+    raw = os.path.normpath(os.path.abspath(os.path.expanduser(str(path))))
+    for base in [str(r) for r in rs] + [os.path.abspath(c) for c in _candidates()]:
+        if raw == base:
+            target = Path(base)
+        elif raw.startswith(base.rstrip(os.sep) + os.sep):
+            target = Path(raw)
+        else:
+            continue
+        try:
+            p = target.resolve()
+        except (OSError, RuntimeError):
+            return None
+        return p if any(_under(str(p), r) for r in rs) else None
+    return None
 
 
 def check(path: str, writable: bool = False, file: bool = False) -> Path:
