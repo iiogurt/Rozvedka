@@ -138,6 +138,8 @@ def make(parent: str, name: str) -> Path:
     name = name.strip()
     if not name or name in (".", "..") or "/" in name or "\\" in name or name.startswith("."):
         raise ValueError("a folder name without slashes, not starting with a dot")
-    new = p / name
+    new = allowed(p / name)                  # the new folder passes the same check as its parent
+    if new is None or new.parent != p:
+        raise PermissionError(f"{name}: not a folder the portal may create")
     new.mkdir(exist_ok=True)
     return new
