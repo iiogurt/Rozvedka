@@ -27,6 +27,13 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.13] – 2026-11-02
+
+### Security
+
+- The last redirects written as templates (back to a report after editing it, old home-page links, a network entity
+  that is an actor) are also rebuilt behind a fixed portal path, with the actor's key escaped.
+
 ## [0.93.12] – 2026-11-02
 
 ### Security
@@ -1961,7 +1968,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.12...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.13...HEAD
+[0.93.13]: https://github.com/iiogurt/Rozvedka/compare/v0.93.12...v0.93.13
 [0.93.12]: https://github.com/iiogurt/Rozvedka/compare/v0.93.11...v0.93.12
 [0.93.11]: https://github.com/iiogurt/Rozvedka/compare/v0.93.10...v0.93.11
 [0.93.10]: https://github.com/iiogurt/Rozvedka/compare/v0.93.9...v0.93.10

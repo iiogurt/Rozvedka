@@ -101,7 +101,7 @@ def hide_doc(request: Request, doc_id: int, hidden: int = Form(1)):
 @router.post("/doc/{doc_id}/type")
 def type_doc(request: Request, doc_id: int, doc_type: str = Form(...)):
     doctypes.set_by_hand(doc_id, doc_type)
-    return _back(request, f"/report/{doc_id}")
+    return _back(request, "/report/" + str(doc_id))
 
 
 @router.post("/doc/{doc_id}/edit")

@@ -10,7 +10,7 @@ router = APIRouter()
 @router.get("/")
 def home_page(request: Request):
     if request.url.query:   # links and bookmarks from before 0.22.0, when the Documents list was the home page
-        return RedirectResponse(f"/documents?{request.url.query}", status_code=307)
+        return RedirectResponse("/documents?" + request.url.query, status_code=307)
     return _home(request)
 
 
