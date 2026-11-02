@@ -24,10 +24,11 @@ DOC_RE = re.compile(
     r"/ND_fileDownload\.do\?|"         # Korean government sites' file servlet: /component/file/ND_fileDownload.do?q_fileSn=…
     r"//assets\.ctfassets\.net/|"      # Contentful's file host (island.is), often without an extension; images are elsewhere
     r"[?&]subor=\d+|"                  # Slovak Interior Ministry's file links: minv.sk/?Spravy_PT&subor=…
+    r"/app/data/doc\?[^#]*detailNo=|"   # Taiwanese government CMS: /ch/app/data/doc?module=…&detailNo=… serves the file
     r"\.pdf/(@@download/file)?($|[?#])",  # Plone file objects (gov.br): <name>.pdf/ serves the file itself; …/view is a page
     re.I)
 JUNK_RE = re.compile(
-    r"cookie|privacy|gdpr|ochrana-osobnich|osobnych-udajov|datenschutz|impressum|"
+    r"cookie|privacy|privacidad|privacidade|gdpr|ochrana-osobnich|osobnych-udajov|datenschutz|impressum|"
     r"formular|formulář|tlacivo|application-form|zadost|vacanc|kari[eé]r|career|stellenangebot|tender|zakázk|"
     r"rfc.?2350|eidas",            # a CERT's RFC 2350 self-description, trust-service lists: not reports
     re.I)
@@ -42,6 +43,8 @@ REPORT_WORDS = re.compile(
     r"sk[yý]rsl|rapor|извешт|проценк|publikacii|yay[iı]nlar",
     re.I)
 YEAR_RE = re.compile(r"(?<!\d)(19[89]\d|20[0-4]\d)(?!\d)")
+# Taiwan counts years of the Republic of China (民國): "113年警政工作年報" is the yearbook of 2024 (113 + 1911)
+ROC_YEAR_RE = re.compile(r"(?<!\d)(?:民國\s*)?(1\d\d)\s*年")
 
 LANG_TOKENS = {
     "en": r"en|eng|english|anglicky|angl|englisch|anglais|engels",
@@ -54,7 +57,7 @@ LANG_TOKENS = {
 GENERIC_TITLES = re.compile(
     r"^\s*((download|stáhnout|stiahnuť|stiahnut|pobierz|herunterladen|télécharger|downloaden|ladda ner|lataa|"
     r"descargar|scarica|descarcă|изтегли|preuzmi|prenesi|letöltés|here|zde|tu|více|more|read more|open|otevřít|"
-    r"view|zobrazit)\s*)?(pdf|file|soubor|dokument|document)?\s*(\(?[\d.,]+\s*[mk]i?b\)?|\(pdf[^)]*\))?\s*$", re.I)
+    r"view|ver|zobrazit)\s*)?(pdf|file|soubor|dokument|document)?\s*(\(?[\d.,]+\s*[mk]i?b\)?|\(pdf[^)]*\))?\s*$", re.I)
 # link texts that are calls to action, not titles ("Click here to access our report")
 _CTA_WORDS = re.compile(
     r"(?<!\w)(click|klikn\w*|cliquez|download\w*|télécharg\w*|herunterladen|stáhn\w*|stiahn\w*|pobierz|scarica|"
@@ -153,6 +156,10 @@ def _followed_by_digit(text: str, prefix: str) -> bool:
 def guess_year(title: str, url: str) -> int | None:
     # years after the current one are horizons ("NATO 2030", "Trends 2035"), not publication years
     now = datetime.now().year
+    if (urlsplit(url).hostname or "").endswith(".tw") and not YEAR_RE.search(title or ""):
+        roc = [1911 + int(y) for y in ROC_YEAR_RE.findall(title or "")]
+        if roc and roc[0] <= now:
+            return roc[0]
     path = unquote(urlsplit(url).path)
     for s in (title, path.rsplit("/", 1)[-1], path):
         if s is path:
@@ -170,11 +177,35 @@ _SIZE_SUFFIX = re.compile(r"\s*(?:[\(\[]\s*(?:pdf[,\s]*)?[\d.,]+\s*[kmg]i?b\s*[\
                           re.I)
 # screen-reader notes at the end of a link ("här pdf, 19.5 MB, öppnas i nytt fönster.")
 _NEW_WINDOW = re.compile(r"[\s,.(–-]*(öppnas i (?:ett )?nytt fönster|opens in (?:a )?new (?:window|tab)|"
-                         r"(?:s')?ouvre dans une nouvelle fenêtre|öffnet in (?:einem )?neuen fenster)[\s.)]*$", re.I)
+                         r"(?:s')?ouvre dans une nouvelle fenêtre|öffnet in (?:einem )?neuen fenster|將?(?:開啟|另開)新視窗)[\s.)]*$", re.I)
+_FORMAT_NOTE = re.compile(r"\s*[(\[](?:pdf|docx?|odt|xlsx?)[)\]]\s*$", re.I)
+
+
+def _tooltip(a) -> str:
+    """The link's title attribute without format and new-window notes ("113年警政工作年報(pdf)(將開啟新視窗)")."""
+    tip = a.get("title") if isinstance(a.get("title"), str) else ""
+    for _ in range(2):
+        tip = _FORMAT_NOTE.sub("", _NEW_WINDOW.sub("", tip.strip()))
+    return " ".join(tip.split())
+
+
+# the button word a list row ends with ("Cuenta pública 2024 CUENTA PÚBLICA 2024 Ver")
+_TRAILING_ACTION = re.compile(r"\s+(?:ver|view|open|download|descargar|baixar|scarica|télécharger|herunterladen|stáhnout)\s*$",
+                              re.I)
+
+
+def _said_once(text: str) -> str:
+    """A name the row gives twice ("Cuenta pública 2024 CUENTA PÚBLICA 2024"), once."""
+    w = text.split()
+    half = len(w) // 2
+    return " ".join(w[:half]) if w and len(w) % 2 == 0 and [x.lower() for x in w[:half]] == [x.lower() for x in w[half:]] else text
 
 
 def _title_for(a) -> str:
     t = _SIZE_SUFFIX.sub("", _NEW_WINDOW.sub("", " ".join(a.get_text(" ", strip=True).split())))
+    tip = _tooltip(a)
+    if len(tip) >= 4 and tip in t and len(t) > len(tip) + 10:
+        t = tip      # the link wraps more than its name (update date, issuing unit …); its title attribute is the name
     if GENERIC_TITLES.match(t) or CALL_TO_ACTION.match(t) or len(t) < 4:
         # the name a download link gives the saved file ("ESET Threat Report H1 2026"), unless it is just a filename
         named = a.get("download") if isinstance(a.get("download"), str) and not re.search(r"\.\w{2,4}$", a.get("download")) else ""
@@ -182,7 +213,7 @@ def _title_for(a) -> str:
     if GENERIC_TITLES.match(t) or CALL_TO_ACTION.match(t) or len(t) < 4:
         parent = a.find_parent(["li", "tr", "article", "div", "p"])
         if parent:
-            t = " ".join(parent.get_text(" ", strip=True).split())[:200]
+            t = _said_once(_TRAILING_ACTION.sub("", " ".join(parent.get_text(" ", strip=True).split())[:200]))
         if CALL_TO_ACTION.match(t):
             t = ""   # the surrounding text is the same call to action – use the filename instead
     if GENERIC_TITLES.match(t) or len(t) < 4 or t.startswith(("/", "http")):
@@ -403,7 +434,12 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
             try:
                 r = get_page(url, src)
                 if r.status == 200 and "pdf" in r.content_type:
-                    docs.append({"url": url, "title": sub_title})
+                    # a short address that redirects to the file on the same site (police.hu/evkonyv2025 →
+                    # …/rendorsegi_evkonyv2024.pdf): keep the file's own address, which names and dates it
+                    same_site = r.url and urlsplit(r.url).hostname == urlsplit(url).hostname
+                    named_by_address = not sub_title or sub_title == humanize_filename(url)
+                    docs.append({"url": r.url if same_site else url,
+                                 "title": humanize_filename(r.url) if same_site and named_by_address else sub_title})
                 elif r.status == 200:
                     sub_docs, _ = extract(r.text, r.url)
                     heading = strip_site_name(page_heading(r.text) or clean_link_text(sub_title), src) if follow else ""
