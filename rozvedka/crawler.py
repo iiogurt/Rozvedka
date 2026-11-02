@@ -42,7 +42,6 @@ REPORT_WORDS = re.compile(
     r"sk[yý]rsl|rapor|извешт|проценк|publikacii|yay[iı]nlar",
     re.I)
 YEAR_RE = re.compile(r"(?<!\d)(19[89]\d|20[0-4]\d)(?!\d)")
-SERIAL_DIR = re.compile(r"([A-Za-z]+)\d+")
 
 LANG_TOKENS = {
     "en": r"en|eng|english|anglicky|angl|englisch|anglais|engels",
@@ -134,6 +133,12 @@ def guess_lang(url: str, text: str, page_lang: str, allowed: set[str]) -> str:
     return default
 
 
+def _serial_prefix(seg: str) -> str:
+    """The letters of a serial-number folder name ("RRA" of "RRA2000"), else ""."""
+    head = seg.rstrip("0123456789")
+    return head if head and len(head) < len(seg) and head.isascii() and head.isalpha() else ""
+
+
 def _followed_by_digit(text: str, prefix: str) -> bool:
     """Whether `prefix` occurs in `text` right before a digit ("RRA" in "/RRA2032-1/…")."""
     i = text.find(prefix)
@@ -154,7 +159,7 @@ def guess_year(title: str, url: str) -> int | None:
             # a folder that groups numbered files ("RRA2000/RRA2032-1/RAND_RRA2032-1.pdf") holds a serial number,
             # not a year
             s = "/".join(seg for seg in path.split("/")
-                         if not ((m := SERIAL_DIR.fullmatch(seg)) and _followed_by_digit(path[path.index(seg) + len(seg):], m[1])))
+                         if not ((head := _serial_prefix(seg)) and _followed_by_digit(path[path.index(seg) + len(seg):], head)))
         years = [y for y in map(int, YEAR_RE.findall(s or "")) if y <= now]
         if years:
             return years[0] if s is title else max(years)

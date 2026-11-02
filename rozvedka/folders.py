@@ -38,12 +38,17 @@ def allowed(path: str | Path) -> Path | None:
     rs = roots()
     raw = os.path.normpath(os.path.abspath(os.path.expanduser(str(path))))
     for base in [str(r) for r in rs] + [os.path.abspath(c) for c in _candidates()]:
-        if raw.startswith(base.rstrip(os.sep) + os.sep) or raw == base:
-            try:
-                p = Path(raw).resolve()
-            except (OSError, RuntimeError):
-                return None
-            return p if any(_under(str(p), r) for r in rs) else None
+        if raw == base:
+            target = Path(base)
+        elif raw.startswith(base.rstrip(os.sep) + os.sep):
+            target = Path(raw)
+        else:
+            continue
+        try:
+            p = target.resolve()
+        except (OSError, RuntimeError):
+            return None
+        return p if any(_under(str(p), r) for r in rs) else None
     return None
 
 
