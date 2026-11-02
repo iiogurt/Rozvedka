@@ -37,13 +37,14 @@ def allowed(path: str | Path) -> Path | None:
     system is asked anything, and again once resolved, so symlinks cannot lead out either."""
     rs = roots()
     raw = os.path.normpath(os.path.abspath(os.path.expanduser(str(path))))
-    if not any(_under(raw, r) for r in rs + [Path(os.path.abspath(r)) for r in _candidates()]):
-        return None
-    try:
-        p = Path(raw).resolve()
-    except (OSError, RuntimeError):
-        return None
-    return p if any(_under(str(p), r) for r in rs) else None
+    for base in [str(r) for r in rs] + [os.path.abspath(c) for c in _candidates()]:
+        if raw.startswith(base.rstrip(os.sep) + os.sep) or raw == base:
+            try:
+                p = Path(raw).resolve()
+            except (OSError, RuntimeError):
+                return None
+            return p if any(_under(str(p), r) for r in rs) else None
+    return None
 
 
 def check(path: str, writable: bool = False, file: bool = False) -> Path:

@@ -134,6 +134,17 @@ def guess_lang(url: str, text: str, page_lang: str, allowed: set[str]) -> str:
     return default
 
 
+def _followed_by_digit(text: str, prefix: str) -> bool:
+    """Whether `prefix` occurs in `text` right before a digit ("RRA" in "/RRA2032-1/…")."""
+    i = text.find(prefix)
+    while i >= 0:
+        j = i + len(prefix)
+        if j < len(text) and text[j].isdigit():
+            return True
+        i = text.find(prefix, i + 1)
+    return False
+
+
 def guess_year(title: str, url: str) -> int | None:
     # years after the current one are horizons ("NATO 2030", "Trends 2035"), not publication years
     now = datetime.now().year
@@ -143,7 +154,7 @@ def guess_year(title: str, url: str) -> int | None:
             # a folder that groups numbered files ("RRA2000/RRA2032-1/RAND_RRA2032-1.pdf") holds a serial number,
             # not a year
             s = "/".join(seg for seg in path.split("/")
-                         if not ((m := SERIAL_DIR.fullmatch(seg)) and re.search(re.escape(m[1]) + r"\d", path[path.index(seg) + len(seg):])))
+                         if not ((m := SERIAL_DIR.fullmatch(seg)) and _followed_by_digit(path[path.index(seg) + len(seg):], m[1])))
         years = [y for y in map(int, YEAR_RE.findall(s or "")) if y <= now]
         if years:
             return years[0] if s is title else max(years)
