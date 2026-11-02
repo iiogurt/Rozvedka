@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Form, HTTPException, Query, Request
 from fastapi.responses import FileResponse, RedirectResponse
 from .. import actor_events, actor_profiles, actors, attributions, cves, db, events, graphs, paging, leads, review, sanctions, ties, timeline, topics, trends, twins
-from ..web import _years_desc, tpl
+from ..web import _years_desc, local_url, tpl
 
 router = APIRouter()
 
@@ -44,8 +44,7 @@ def actors_review_verdict(actor: str = Form(...), doc_id: int = Form(...), verdi
     r = review.record(actor, doc_id, verdict, name, says)
     if "error" in r:
         raise HTTPException(400, r["error"])
-    back = back if back.startswith("/") and not back.startswith("//") else "/actors/review"
-    return RedirectResponse(back, status_code=303)
+    return RedirectResponse(local_url(back, "/actors/review"), status_code=303)
 
 
 @router.get("/actors/names")

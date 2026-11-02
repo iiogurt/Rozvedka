@@ -14,13 +14,13 @@ def test_host_names():
 
 
 def test_same_site():
-    assert guard.same_site("GET", "pi.local:8080", "https://evil.com", None)            # reading is not changing
-    assert guard.same_site("POST", "pi.local:8080", "http://pi.local:8080", None)
+    assert guard.same_site("GET", "portal.example:8080", "https://evil.com", None)            # reading is not changing
+    assert guard.same_site("POST", "portal.example:8080", "http://portal.example:8080", None)
     assert guard.same_site("POST", "192.168.1.5:8080", None, "http://192.168.1.5:8080/update")
-    assert guard.same_site("POST", "pi.local:8080", None, None)                           # curl, scripts
-    assert not guard.same_site("POST", "pi.local:8080", "https://evil.com", None)
-    assert not guard.same_site("POST", "pi.local:8080", None, "https://evil.com/page")
-    assert not guard.same_site("POST", "pi.local:8080", "null", None)
+    assert guard.same_site("POST", "portal.example:8080", None, None)                           # curl, scripts
+    assert not guard.same_site("POST", "portal.example:8080", "https://evil.com", None)
+    assert not guard.same_site("POST", "portal.example:8080", None, "https://evil.com/page")
+    assert not guard.same_site("POST", "portal.example:8080", "null", None)
 
 
 def test_middleware():
@@ -55,3 +55,13 @@ def test_map_tiles_send_a_referer():
     from pathlib import Path
     js = (Path(__file__).resolve().parent.parent / "rozvedka" / "static" / "map.js").read_text(encoding="utf-8")
     assert 'referrerPolicy: "strict-origin-when-cross-origin"' in js and "Referrer-Policy" in guard.HEADERS
+
+
+def test_redirects_stay_on_the_portal():
+    from rozvedka.web import local_url
+    assert local_url("/documents?source=3", "/") == "/documents?source=3"
+    for bad in ("https://evil.example/", "//evil.example/x", "/\\evil.example", "javascript:alert(1)", "", None):
+        assert local_url(bad, "/case") == "/case"
+    # a Referer names the portal's own host: its path is kept; another host's is not
+    assert local_url("http://portal.example:8080/years?y=2024", "/", "portal.example:8080") == "/years?y=2024"
+    assert local_url("http://evil.example/years", "/", "portal.example:8080") == "/"

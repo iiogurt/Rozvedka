@@ -223,8 +223,10 @@ def inbox() -> list[dict]:
 
 
 def import_inbox(rel: str, source_id: int, url: str, **kw) -> dict:
-    path = (INBOX / rel).resolve()
-    if not path.is_relative_to(INBOX.resolve()) or not path.is_file():
+    # picked from the inbox's listing (as inbox() shows it), so a relative path cannot point outside the inbox
+    path = next((f for f in INBOX.rglob("*") if f.is_file() and f.relative_to(INBOX).as_posix() == rel), None) \
+        if INBOX.exists() else None
+    if path is None:
         raise ValueError("file not in the inbox")
     result = add_file(source_id, url, path, via="inbox", original_name=path.name, **kw)
     if result["status"] in ("downloaded", "duplicate"):

@@ -1,5 +1,6 @@
 """The connection graph: overview, the list of links, and a page per entity that is not an actor."""
 import json
+from urllib.parse import quote
 
 from fastapi import APIRouter, Form, HTTPException, Query, Request
 from fastapi.responses import RedirectResponse
@@ -174,7 +175,7 @@ def lead_review(a: str = Form(...), b: str = Form(...), verdict: str = Form(...)
     if "error" in r:
         raise HTTPException(400, r["error"])
     a, b = sorted((a, b))
-    return RedirectResponse(f"/graph/leads/{a}/{b}?notice=saved", status_code=303)
+    return RedirectResponse(f"/graph/leads/{quote(a, safe='')}/{quote(b, safe='')}?notice=saved", status_code=303)
 
 
 @router.get("/graph/brokers")

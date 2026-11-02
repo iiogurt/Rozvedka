@@ -5,7 +5,7 @@ from urllib.parse import urlencode
 from fastapi import APIRouter, File, Form, Request, UploadFile
 from fastapi.responses import RedirectResponse
 from .. import collect, db, jobs as jobrunner, paging, series, updater
-from ..web import _back_to, tpl
+from ..web import _back_to, referer_url, tpl
 
 router = APIRouter()
 
@@ -40,7 +40,7 @@ def _index_new():
 
 
 def _collect_redirect(request: Request, result: dict | None = None, error: str = ""):
-    ref = request.headers.get("referer") or "/collect"
+    ref = referer_url(request, "/collect")
     base = re.sub(r"[?&](added|status|official|error)=[^&#]*", "", ref.split("#")[0])
     q = urlencode({"added": result["doc_id"], "status": result["status"], "official": int(result["official"])}
                   if result else {"error": error[:200]})

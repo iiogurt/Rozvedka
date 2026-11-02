@@ -5,13 +5,13 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import PlainTextResponse, RedirectResponse
 
 from .. import casefile, paths
-from ..web import tpl
+from ..web import local_url, tpl
 
 router = APIRouter()
 
 
 def _back(back: str, notice: str) -> RedirectResponse:
-    back = back if back.startswith("/") and not back.startswith("//") else "/case"
+    back = local_url(back, "/case")
     sep = "&" if "?" in back else "?"
     return RedirectResponse(back + sep + urlencode({"case": notice}), status_code=303)
 

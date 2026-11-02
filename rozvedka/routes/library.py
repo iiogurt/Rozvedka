@@ -3,7 +3,7 @@ from fastapi import APIRouter, Form, HTTPException, Request
 from fastapi.responses import FileResponse, RedirectResponse
 from .. import crawler, dating, db, doctypes, downloader, jobs as jobrunner, logos, paging, registry, report
 from ..config import FILES
-from ..web import tpl
+from ..web import referer_url, tpl
 
 router = APIRouter()
 
@@ -80,7 +80,7 @@ def open_doc(doc_id: int):
 
 
 def _back(request: Request, fallback: str = "/"):
-    return RedirectResponse(request.headers.get("referer") or fallback, status_code=303)
+    return RedirectResponse(referer_url(request, fallback), status_code=303)
 
 
 @router.post("/doc/{doc_id}/download")

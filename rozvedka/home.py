@@ -161,8 +161,8 @@ def suggest(q: str, limit: int = 6) -> dict:
     The count is what that link lists (the Documents default: active sources, not hidden, not duplicate).
     While an operator is being typed (`actor:fan`) only that operator's values are suggested.
     """
-    q = q or ""
-    last = re.search(r'(\w+):("[^"]*|\S*)$', q)
+    q = (q or "")[:500]                                  # typed by hand; a cap keeps every pattern below cheap
+    last = re.search(r'(?<!\w)(\w+):("[^"]*|\S*)$', q)    # an operator starts a word: tried once per word
     if last and last.group(1).lower() in OPERATORS:      # an operator being typed: suggest its values
         op, term, prefix = last.group(1).lower(), last.group(2).lstrip('"'), q[:last.start()]
     else:                                                 # free text, perhaps after finished operators

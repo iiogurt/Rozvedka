@@ -143,7 +143,7 @@ def guess_year(title: str, url: str) -> int | None:
             # a folder that groups numbered files ("RRA2000/RRA2032-1/RAND_RRA2032-1.pdf") holds a serial number,
             # not a year
             s = "/".join(seg for seg in path.split("/")
-                         if not ((m := SERIAL_DIR.fullmatch(seg)) and re.search(rf"{m[1]}\d", path[path.index(seg) + len(seg):])))
+                         if not ((m := SERIAL_DIR.fullmatch(seg)) and re.search(re.escape(m[1]) + r"\d", path[path.index(seg) + len(seg):])))
         years = [y for y in map(int, YEAR_RE.findall(s or "")) if y <= now]
         if years:
             return years[0] if s is title else max(years)
@@ -206,7 +206,8 @@ def unwrap_viewer(url: str) -> str:
     return urljoin(url, target) if target.lower().endswith(".pdf") else url
 
 
-SITEMAP_RE = re.compile(r"\s*(<\?xml[^>]*>\s*)?(<!--.*?-->\s*)*<urlset\b", re.S)
+# a comment's body cannot hold "-->", so the comments of a sitemap's head are matched in one way only (no backtracking)
+SITEMAP_RE = re.compile(r"\s*(<\?xml[^>]*>\s*)?(<!--(?:[^-]|-(?!->))*-->\s*)*<urlset\b")
 
 
 def _cited(a) -> bool:

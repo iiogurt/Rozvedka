@@ -214,5 +214,5 @@ def update(action: str, scope: str, country: str = "", sources=(), stale_days: i
 
 
 def log_path(name: str) -> Path | None:
-    p = (logs_dir() / name).resolve()
-    return p if p.parent == logs_dir().resolve() and p.suffix == ".log" and p.exists() else None
+    """The job log called `name` – picked from the logs folder's listing, so a name cannot point elsewhere."""
+    return next((p for p in logs_dir().glob("*.log") if p.name == name and p.is_file()), None) if logs_dir().is_dir() else None

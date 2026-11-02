@@ -378,3 +378,13 @@ def test_label_only_titles_take_the_file_name(tmp_path, monkeypatch):
     with db.session() as con:
         titles = [r[0] for r in con.execute("SELECT title FROM documents ORDER BY id")]
     assert titles == ["WDR25 Special points of interest", "Español", "World Drug Report 2025"]
+
+
+def test_sitemap_head_is_matched_without_backtracking():
+    import time
+    from rozvedka.crawler import SITEMAP_RE
+    assert SITEMAP_RE.match('<?xml version="1.0"?>\n<!-- generated -->\n<!-- by a plugin --><urlset xmlns="x">')
+    assert not SITEMAP_RE.match("<!-- a -- b --><html>")
+    t = time.perf_counter()
+    assert not SITEMAP_RE.match("<!--" + "-->" * 20000)      # once exponential: comments that never reach <urlset
+    assert time.perf_counter() - t < 1
