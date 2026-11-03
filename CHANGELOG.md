@@ -27,6 +27,30 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.15] – 2026-11-03
+
+### Added
+- **Military and foreign intelligence:** Canada's Communications Security Establishment (annual reports since
+  2020–21, English and French), the Australian Signals Directorate (annual reports since 2018–19), Germany's
+  military counter-intelligence service MAD (MAD-Report 2019–2024, Jahresbericht 2025) and New Zealand's GCSB
+  (annual reports since 2003, for hand collection – its site refuses the crawler).
+- **Civil intelligence:** Colombia's National Intelligence Directorate (DNI) – yearly management reports and reports
+  to Congress since 2018.
+- The intelligence columns of the coverage grid have no open slot left: 34 military / foreign and 9 civil slots
+  checked as none published, each with what was found (services that publish nothing, reports kept classified,
+  services whose report is already in the civil column).
+
+### Fixed
+- **Files a report page cites are not taken for the publisher's reports:** on a report page with a file of its own,
+  files on other sites are left out, and so are files on another registered source's site (CSE's pages link the
+  Cyber Centre's threat assessments) and files the page's text cites from another site (a review agency's report).
+- **Report names:** a size note with an accessibility remark ("PDF, nicht barrierefrei, 5,5 MB") or in octets
+  ("PDF, 52.7 Mo") is removed; an abbreviation tag no longer leaves gaps ("MAD -Report", "( MAD )"); a year split by
+  a tag is joined ("202 6"); a leading "Ver" / "Leer" / "View" before the name goes; a bare "Download" link inside an
+  article takes the file's name, not the article's first sentence; a bilingual agency name is recognised as the site
+  name in page headings; a link text whose words all appear in the page heading adds nothing to it.
+- Australian budget papers ("Portfolio Additional Estimates Statements") are hidden like other budget documents.
+
 ## [0.93.14] – 2026-11-02
 
 ### Added
@@ -2001,7 +2025,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.14...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.15...HEAD
+[0.93.15]: https://github.com/iiogurt/Rozvedka/compare/v0.93.14...v0.93.15
 [0.93.14]: https://github.com/iiogurt/Rozvedka/compare/v0.93.13...v0.93.14
 [0.93.13]: https://github.com/iiogurt/Rozvedka/compare/v0.93.12...v0.93.13
 [0.93.12]: https://github.com/iiogurt/Rozvedka/compare/v0.93.11...v0.93.12

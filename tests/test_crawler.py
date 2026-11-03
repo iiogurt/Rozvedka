@@ -428,6 +428,28 @@ def test_row_text_title_without_button_word_or_repetition():
     assert JUNK_RE.search("Condiciones de uso y políticas de privacidad del sitio")
 
 
+def test_titles_from_bundeswehr_style_links():
+    """Report links on bundeswehr.de: an abbreviation tag inside the name, a size note with an accessibility remark, and a
+    bare "Download" link inside an article (whose first sentence is no name – the filename is used instead)."""
+    from bs4 import BeautifulSoup
+    from rozvedka.crawler import LOW_RELEVANCE_RE, _title_for
+    a = BeautifulSoup('<li><a href="/blob/1/mad-report-2023-data.pdf"><abbr title="Militärischer Abschirmdienst">MAD</abbr>'
+                      '-Report 2023 (PDF, nicht barrierefrei, 5,5 MB)</a></li>', "html.parser").a
+    assert _title_for(a) == "MAD-Report 2023"
+    a = BeautifulSoup('<a href="/r.pdf">Jahresbericht des (<abbr>MAD</abbr>) 2020 PDF, barrierefrei, 9 MB</a>', "html.parser").a
+    assert _title_for(a) == "Jahresbericht des (MAD) 2020"
+    article = ("<div><p>Der Militärische Abschirmdienst (MAD) hat seinen Bericht für das Jahr 2024 veröffentlicht. Dieser "
+               "Report beschreibt die Organisation sowie das Aufgabenspektrum des MAD und bewertet zudem neueste "
+               "Entwicklungen.</p><a download href='/blob/2/mad-report-2024-data.pdf'><span>Download</span> "
+               "<small>PDF, nicht barrierefrei, 17,6 MB</small></a></div>")
+    assert _title_for(BeautifulSoup(article, "html.parser").a) == "mad report 2024 data"
+    # a view verb before the name goes; a year a tag splits is joined (dni.gov.co)
+    a = BeautifulSoup('<a href="/c.pdf">Ver Informe al Congreso 2025–202<span>6</span></a>', "html.parser").a
+    assert _title_for(a) == "Informe al Congreso 2025–2026"
+    assert _title_for(BeautifulSoup('<a href="/informe-2024.pdf">Ver</a>', "html.parser").a) == "informe 2024"
+    assert LOW_RELEVANCE_RE.search("2024-25 Defence Portfolio Additional Estimates Statements: Australian Signals Directorate")
+
+
 def test_a_followed_short_address_that_redirects_to_a_file_is_stored_by_the_file(monkeypatch):
     """police.hu/evkonyv2025 redirects to …/rendorsegi_evkonyv2024.pdf: the file's own address names and dates it. A
     redirect to another host keeps the address the page links."""
@@ -449,3 +471,42 @@ def test_a_followed_short_address_that_redirects_to_a_file_is_stored_by_the_file
                                    "follow": r"x\.hu/evkonyv\d{4}$"}, {"hu"})
     assert set(stored) == {"https://x.hu/files/rendorsegi_evkonyv2024.pdf", "https://x.hu/evkonyv2023"}
     assert crawler.guess_year(stored["https://x.hu/files/rendorsegi_evkonyv2024.pdf"]["title"], "") == 2024
+
+
+def test_a_report_page_keeps_its_own_files_not_the_ones_it_cites(monkeypatch):
+    """CSE's report pages (cse-cst.gc.ca) link the Cyber Centre's assessments (cyber.gc.ca, another registered source)
+    and the review agency's reports (another gc.ca host): a page with a file of its own keeps only that; a file on
+    another source's site is never this source's. French sizes ("Mo") go; a bilingual name strips the site name."""
+    import sqlite3
+    from types import SimpleNamespace
+    from rozvedka import crawler
+    con = sqlite3.connect(":memory:")
+    con.row_factory = sqlite3.Row
+    con.executescript("""CREATE TABLE sources(id INTEGER, homepage TEXT, active INTEGER);
+                         CREATE TABLE pages(id INTEGER, source_id INTEGER, url TEXT);
+                         INSERT INTO sources VALUES (1, 'https://www.cse-cst.gc.ca/', 1), (2, 'https://www.cyber.gc.ca/', 1);
+                         INSERT INTO pages VALUES (1, 1, 'https://www.cse-cst.gc.ca/fr/rapports')""")
+    pages = {
+        "https://www.cse-cst.gc.ca/fr/rapports": '<a href="/fr/rapports/rapport-annuel-2022">Rapport annuel 2022-2023</a>'
+                                                 '<a href="/fr/rapports/rapport-annuel-2020">Rapport annuel 2020-2021</a>',
+        "https://www.cse-cst.gc.ca/fr/rapports/rapport-annuel-2022":
+            "<h1>Rapport annuel du CST 2022-2023 - Centre de la sécurité des télécommunications Canada</h1>"
+            '<a href="/files/cst-rapport-annuel-2022-2023-f.pdf">Rapport annuel du CST 2022-2023 (PDF, 52.7 Mo)</a>'
+            '<p>Voir le <a href="https://nsira-ossnr.gc.ca/rapport-2021.pdf">rapport de l’OSSNR</a> à ce sujet.</p>',
+        "https://www.cse-cst.gc.ca/fr/rapports/rapport-annuel-2020":
+            "<h1>Rapport annuel du CST 2020-2021</h1><ul><li>Juin : le Centre publie un "
+            '<a href="https://cyber.gc.ca/files/HSTB-f.pdf">bulletin sur le secteur de la santé</a></li></ul>'
+            "<p>L’examen de l’OSSNR publié en septembre 2020 décrit les mesures prises par le Centre pour protéger "
+            "les institutions démocratiques, voir le "
+            '<a href="https://nsira-ossnr.gc.ca/PIF_Report_Sept_2020_FR.pdf">rapport</a> pour les détails.</p>'}
+    monkeypatch.setattr(crawler, "get_page", lambda url, src: SimpleNamespace(status=200, content_type="text/html",
+                                                                             text=pages.get(url, ""), url=url))
+    stored = {}
+    monkeypatch.setattr(crawler, "_store", lambda con, sid, pid, docs, *a: stored.update({d["url"]: d for d in docs}) or len(stored))
+    src = {"id": 1, "access": "auto", "homepage": "https://www.cse-cst.gc.ca/", "agency": "CSE", "domains": None,
+           "name_en": "Communications Security Establishment",
+           "name_local": "Centre de la sécurité des télécommunications / Communications Security Establishment"}
+    page = {"url": "https://www.cse-cst.gc.ca/fr/rapports", "id": 1, "lang": "fr", "note": None, "follow": "/rapports/rapport-annuel-"}
+    crawler.crawl_page(con, src, page, {"fr"})
+    assert {u: d["title"] for u, d in stored.items()} == {
+        "https://www.cse-cst.gc.ca/files/cst-rapport-annuel-2022-2023-f.pdf": "Rapport annuel du CST 2022-2023"}
