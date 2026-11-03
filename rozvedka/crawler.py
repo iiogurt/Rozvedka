@@ -80,7 +80,7 @@ ACTION_PREFIX = re.compile(r"^\s*(get publication|hämta publikation|download(?:
 LOW_RELEVANCE_RE = re.compile((
     r"contract|procurement|corrigendum|questionnaire|formulier|zakázk|veřejn[aá] zak|кандидат|конкурс|класиране|"
     r"interes public|acces la informa|poskytov[aá]n[ií] informac|106/1999|access to information|freedom of information|"
-    r"human resources|recruit|n[aá]bor|vacanc|stellenausschreibung|budget|rozpo[cč]et|bilan[tț] contabil|"
+    r"human resources|recruit|n[aá]bor|vacanc|stellenausschreibung|budget|estimates statement|rozpo[cč]et|bilan[tț] contabil|"
     r"sluzebni|služební|výběrov[eé] řízen|ausschreibung|relationarea .* cu publicul|"
     r"protocolo de servicio|política de tratamiento de datos|politica de relacionamiento|política de relacionamiento|"
     r"carta de trato digno|lenguaje claro|participación ciudadana|manuales de comunicación|"
@@ -173,8 +173,10 @@ def guess_year(title: str, url: str) -> int | None:
     return None
 
 
-_SIZE_SUFFIX = re.compile(r"\s*(?:[\(\[]\s*(?:pdf[,\s]*)?[\d.,]+\s*[kmg]i?b\s*[\)\]]|[,–-]?\s*(?<![\w.])pdf[,\s]+[\d.,]+\s*[kmg]i?b)\s*$",
-                          re.I)
+# (with the German accessibility note: "(PDF, nicht barrierefrei, 5,5 MB)"; French sizes in octets: "(PDF, 52.7 Mo)")
+_A11Y = r"(?:(?:nicht\s+)?barrierefrei[,\s]+)?"
+_SIZE_SUFFIX = re.compile(rf"\s*(?:[\(\[]\s*(?:pdf[,\s]*)?{_A11Y}[\d.,]+\s*[kmg]i?[bo]\s*[\)\]]|"
+                          rf"[,–-]?\s*(?<![\w.])pdf[,\s]+{_A11Y}[\d.,]+\s*[kmg]i?[bo])\s*$", re.I)
 # screen-reader notes at the end of a link ("här pdf, 19.5 MB, öppnas i nytt fönster.")
 _NEW_WINDOW = re.compile(r"[\s,.(–-]*(öppnas i (?:ett )?nytt fönster|opens in (?:a )?new (?:window|tab)|"
                          r"(?:s')?ouvre dans une nouvelle fenêtre|öffnet in (?:einem )?neuen fenster|將?(?:開啟|另開)新視窗)[\s.)]*$", re.I)
@@ -201,8 +203,21 @@ def _said_once(text: str) -> str:
     return " ".join(w[:half]) if w and len(w) % 2 == 0 and [x.lower() for x in w[:half]] == [x.lower() for x in w[half:]] else text
 
 
+def _inline_gaps(text: str) -> str:
+    """Spaces that joining an element's pieces put beside inline tags ("<abbr>MAD</abbr>-Report" → "MAD -Report",
+    "(<abbr>MAD</abbr>)" → "( MAD )") – taken out again."""
+    text = re.sub(r"(?<!\d)(19\d|20\d) (\d)(?!\d)", r"\1\2", text)       # a year split by a tag ("202<span>6</span>")
+    return re.sub(r"\(\s+", "(", re.sub(r"\s+\)", ")", re.sub(r"(?<=\w) -(?=[^\W\d_])", "-", text)))
+
+
+# a view / read verb before the report's name ("Ver Informe de gestión 2025", "Leer Informe al Congreso")
+_LEADING_VIEW = re.compile(r"^(?i:ver|leer|view|consultar|visualizar|baixar|descargar|scarica)\s+(?=[A-ZÁÉÍÓÚÑÂÊÔÃÕÇ])")
+
+
 def _title_for(a) -> str:
-    t = _SIZE_SUFFIX.sub("", _NEW_WINDOW.sub("", " ".join(a.get_text(" ", strip=True).split())))
+    t = _SIZE_SUFFIX.sub("", _NEW_WINDOW.sub("", _inline_gaps(" ".join(a.get_text(" ", strip=True).split()))))
+    if len(_LEADING_VIEW.sub("", t).split()) >= 2:
+        t = _LEADING_VIEW.sub("", t)
     tip = _tooltip(a)
     if len(tip) >= 4 and tip in t and len(t) > len(tip) + 10:
         t = tip      # the link wraps more than its name (update date, issuing unit …); its title attribute is the name
@@ -212,8 +227,10 @@ def _title_for(a) -> str:
         t = named or a.get("title") or a.get("aria-label") or ""
     if GENERIC_TITLES.match(t) or CALL_TO_ACTION.match(t) or len(t) < 4:
         parent = a.find_parent(["li", "tr", "article", "div", "p"])
-        if parent:
-            t = _said_once(_TRAILING_ACTION.sub("", " ".join(parent.get_text(" ", strip=True).split())[:200]))
+        row = " ".join(parent.get_text(" ", strip=True).split()) if parent else ""
+        # a list row names the report; a longer block is the article around the link (its first sentence is no name) –
+        # the filename then, until the PDF's own title replaces it
+        t = _said_once(_TRAILING_ACTION.sub("", row)) if len(row) <= 160 else ""
         if CALL_TO_ACTION.match(t):
             t = ""   # the surrounding text is the same call to action – use the filename instead
     if GENERIC_TITLES.match(t) or len(t) < 4 or t.startswith(("/", "http")):
@@ -326,10 +343,15 @@ def page_heading(html: str) -> str:
     return re.split(r"\s+[|–—-]\s+(?=[^|–—-]{0,40}$)", text)[0] if " | " in text or " – " in text else text
 
 
+def _words(text: str) -> set[str]:
+    return set(re.findall(r"\w+", text.lower()))
+
+
 def strip_site_name(title: str, src) -> str:
     """'A European Theory of Victory - HCSS' → 'A European Theory of Victory': a trailing segment that is the
     publisher's own name (or the start of it, when the page cut it short) is dropped."""
-    names = [n.lower() for n in (src["agency"], src["name_en"], src["name_local"]) if n]
+    # a bilingual name ("Centre de la sécurité des télécommunications / Communications Security Establishment") in its halves
+    names = [h.strip().lower() for n in (src["agency"], src["name_en"], src["name_local"]) if n for h in [n, *n.split(" / ")]]
     m = re.match(r"(.+?)\s+[|–—-]\s+([^|–—]{2,90})$", title or "")
     if m:
         tail = m.group(2).strip().lower().rstrip(".…")
@@ -362,6 +384,20 @@ def domain_family(url_or_host: str) -> str:
     """'assets.publishing.service.gov.uk' -> 'gov.uk', 'www.bis.cz' -> 'bis.cz' (government domain families)."""
     host = urlsplit(url_or_host).hostname if "//" in url_or_host else url_or_host
     return ".".join((host or "").lower().split(".")[-2:])
+
+
+def _bare_host(url_or_host: str) -> str:
+    host = (urlsplit(url_or_host).hostname if "//" in url_or_host else url_or_host) or ""
+    return host.lower().removeprefix("www.")
+
+
+def other_sources_hosts(con, src) -> set[str]:
+    """The home hosts of the other registered sources (cyber.gc.ca for CSE: the Cyber Centre's) – the hosts this source
+    itself uses (its pages, home page, listed domains) excepted."""
+    mine = {_bare_host(src["homepage"] or "")} | {_bare_host(d.strip()) for d in (src["domains"] or "").split(",") if d.strip()}
+    mine |= {_bare_host(r["url"]) for r in con.execute("SELECT url FROM pages WHERE source_id=?", (src["id"],))}
+    return {_bare_host(r["homepage"]) for r in con.execute("SELECT homepage FROM sources WHERE active=1 AND id!=? AND "
+                                                           "homepage IS NOT NULL", (src["id"],))} - mine - {""}
 
 
 def official_families(src, page_url: str | None) -> set[str]:
@@ -424,6 +460,7 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
         except Exception as e:  # noqa: BLE001
             log.debug("render fallback failed for %s: %s", page["url"], e)
     followed = 0
+    others = None     # the other sources' home hosts, looked up once a sub-page is followed
     # archive pages often link to one sub-page per report ("Annual report 2021" → its page with the PDF); follow those
     # one level deep when the page has few documents of its own, or more year-specific report pages than documents
     # (the few PDFs then are usually site navigation)
@@ -450,12 +487,23 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
                                  "title": humanize_filename(r.url) if same_site and named_by_address else sub_title})
                 elif r.status == 200:
                     sub_docs, _ = extract(r.text, r.url)
+                    host = urlsplit(r.url or url).hostname
+                    if any(urlsplit(d["url"]).hostname == host for d in sub_docs):
+                        # a report page with its own file: files on other hosts are what it refers to (another
+                        # agency's assessment, the oversight body's review), not this publisher's reports
+                        sub_docs = [d for d in sub_docs if urlsplit(d["url"]).hostname == host]
+                    # a file on another registered source's own site is that source's report, cited here; so is a
+                    # file the page's text cites from another site
+                    if others is None:
+                        others = other_sources_hosts(con, src) if con is not None else set()
+                    sub_docs = [d for d in sub_docs if _bare_host(d["url"]) not in others
+                                and not (follow and d.get("cited") and urlsplit(d["url"]).hostname != host)]
                     heading = strip_site_name(page_heading(r.text) or clean_link_text(sub_title), src) if follow else ""
                     for d in sub_docs:
                         named = ACTION_PREFIX.sub("", d["title"]) if ACTION_PREFIX.match(d["title"]) else ""
                         if follow and d.get("cited"):
-                            # a document the text cites (often the publisher's earlier report): not this page's title –
-                            # its filename until the PDF's own title replaces it (improve-titles)
+                            # a document the text cites from the same site (often the publisher's earlier report): not
+                            # this page's title – its filename until the PDF's own title replaces it (improve-titles)
                             d["title"] = humanize_filename(d["url"])
                         elif (follow and heading and len(sub_docs) > 1 and len(named.split()) >= 3
                                 and named.lower() not in heading.lower() and heading.lower() not in named.lower()):
@@ -468,7 +516,7 @@ def crawl_page(con, src, page, allowed_langs) -> tuple[str, int]:
                             # language hint; a paragraph (the description beside a bare link) says neither
                             own = d["lang_hint"] = d["title"]
                             d["title"] = heading if (len(sub_docs) == 1 or is_poor_title(own, d["url"]) or len(own) > 100
-                                                     or own.lower() in heading.lower()) else f"{heading} – {own}"
+                                                     or _words(own) <= _words(heading)) else f"{heading} – {own}"
                         elif d["title"] == humanize_filename(d["url"]) and sub_title:
                             # a bare filename says little; prefix the title of the page that linked it
                             d["title"] = f"{sub_title} – {d['title']}"
