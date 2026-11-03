@@ -244,7 +244,7 @@
   notes: "One page per report; the 2023 page lists the reports 2019–2023, the newest is linked from the service's page."
   pages:
     - {lang: de, kind: archive, url: "https://www.bundeswehr.de/de/organisation/mad-bundesamt-fuer-den-militaerischen-abschirmdienst/mad-jahresbericht-2023-5836042"}
-    - {lang: de, kind: latest, url: "https://www.bundeswehr.de/de/organisation/mad-bundesamt-fuer-den-militaerischen-abschirmdienst", follow: "abschirmdienst/(?:mad-)?jahresbericht-"}
+    - {lang: de, kind: current, url: "https://www.bundeswehr.de/de/organisation/mad-bundesamt-fuer-den-militaerischen-abschirmdienst", follow: "abschirmdienst/(?:mad-)?jahresbericht-"}
     - {lang: de, kind: archive, url: "https://www.bundeswehr.de/de/organisation/mad-bundesamt-fuer-den-militaerischen-abschirmdienst/jahresbericht-mad-2025-6149146", follow: "abschirmdienst/mad-jahresbericht-2024-"}
 
 - country: DE
