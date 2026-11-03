@@ -231,6 +231,23 @@
     - {lang: de, kind: current, url: "https://www.bmi.bund.de/SharedDocs/downloads/DE/publikationen/themen/sicherheit/BMI26012-vsb2025.html"}
 
 - country: DE
+  agency: MAD
+  name_local: "Bundesamt für den Militärischen Abschirmdienst"
+  name_en: "Federal Office for the Military Counter-Intelligence Service"
+  homepage: "https://www.bundeswehr.de/de/organisation/mad-bundesamt-fuer-den-militaerischen-abschirmdienst"
+  description: "Germany's military counter-intelligence service, protecting the Bundeswehr against espionage, sabotage, extremism and terrorism. Its yearly report (MAD-Report since 2019, Jahresbericht from 2025 under the MAD Act of 2026) covers foreign intelligence activity against the armed forces, extremism among soldiers and insider threats."
+  hq: {address: "Brühler Straße 300, 50968 Köln, Germany", lat: 50.89709, lon: 6.94722, precision: address}
+  type: intelligence-military
+  access: auto
+  frequency: yearly
+  report_types: [MAD-Report, Jahresbericht]
+  notes: "One page per report; the 2023 page lists the reports 2019–2023, the newest is linked from the service's page."
+  pages:
+    - {lang: de, kind: archive, url: "https://www.bundeswehr.de/de/organisation/mad-bundesamt-fuer-den-militaerischen-abschirmdienst/mad-jahresbericht-2023-5836042"}
+    - {lang: de, kind: latest, url: "https://www.bundeswehr.de/de/organisation/mad-bundesamt-fuer-den-militaerischen-abschirmdienst", follow: "abschirmdienst/(?:mad-)?jahresbericht-"}
+    - {lang: de, kind: archive, url: "https://www.bundeswehr.de/de/organisation/mad-bundesamt-fuer-den-militaerischen-abschirmdienst/jahresbericht-mad-2025-6149146", follow: "abschirmdienst/mad-jahresbericht-2024-"}
+
+- country: DE
   agency: BSI
   name_local: "Bundesamt für Sicherheit in der Informationstechnik"
   name_en: "Federal Office for Information Security"
@@ -2300,6 +2317,22 @@
     - {lang: fr, kind: archive, url: "https://www.canada.ca/fr/service-renseignement-securite/organisation/publications.html", verified: false}
 
 - country: CA
+  agency: CSE
+  name_local: "Centre de la sécurité des télécommunications / Communications Security Establishment"
+  name_en: "Communications Security Establishment"
+  homepage: "https://www.cse-cst.gc.ca/"
+  description: "Canada's foreign signals intelligence agency, also in charge of cyber operations and, through the Canadian Centre for Cyber Security, of cyber defence. Its annual report covers foreign intelligence priorities, cyber operations against foreign threats, protection of critical infrastructure and democratic institutions."
+  hq: {address: "1929 Ogilvie Road, Ottawa, Ontario K1J 0B9, Canada", lat: 45.43527, lon: -75.61579, precision: address}
+  type: intelligence-military
+  access: auto
+  frequency: yearly
+  report_types: [Annual report / Rapport annuel]
+  notes: "Each annual report has its own page with the PDF (since 2019–2020; the 2019–2020 and older reports are web pages only)."
+  pages:
+    - {lang: en, kind: archive, url: "https://www.cse-cst.gc.ca/en/accountability/transparency/reports", follow: "/reports/communications-security-establishment(?:-canada)?-annual-report-"}
+    - {lang: fr, kind: archive, url: "https://www.cse-cst.gc.ca/fr/reddition-comptes/transparence/rapports", follow: "/rapports/rapport-annuel-(?:du-)?(?:centre|cst)"}
+
+- country: CA
   agency: CCCS
   name_local: "Canadian Centre for Cyber Security / Centre canadien pour la cybersécurité"
   name_en: "Canadian Centre for Cyber Security"
@@ -2359,6 +2392,21 @@
   report_types: [Annual Threat Assessment, annual report]
   pages:
     - {lang: en, kind: archive, url: "https://www.asio.gov.au/resources/speeches-and-statements", verified: false}
+
+- country: AU
+  agency: ASD
+  name_local: "Australian Signals Directorate"
+  name_en: "Australian Signals Directorate"
+  homepage: "https://www.asd.gov.au/"
+  description: "Australia's foreign signals intelligence, cyber security and offensive cyber agency (its Australian Cyber Security Centre is listed separately as ASD ACSC). The annual report covers foreign intelligence support to government and military operations, cyber operations and the threat environment."
+  hq: {address: "Russell Offices, Russell ACT 2600, Australia", lat: -35.29807, lon: 149.15097, precision: street}
+  type: intelligence-military
+  access: auto
+  frequency: yearly
+  report_types: [Annual report]
+  notes: "Each annual report (since 2018–19) has its own page with the PDF; the list page's budget statements are not collected."
+  pages:
+    - {lang: en, kind: archive, url: "https://www.asd.gov.au/about/accountability-governance/publications", follow: "/publications/asd-annual-report-"}
 
 - country: AU
   agency: ASD ACSC
@@ -2421,6 +2469,21 @@
     template: "https://www.nzsis.govt.nz/assets/NZSIS-Documents/New-Zealands-Security-Threat-Environment-{year}.pdf"
     years: [2023, 2026]
     langs: [en]
+
+- country: NZ
+  agency: GCSB
+  name_local: "Government Communications Security Bureau / Te Tira Tiaki"
+  name_en: "Government Communications Security Bureau"
+  homepage: "https://www.gcsb.govt.nz/"
+  description: "New Zealand's foreign signals intelligence and cyber security agency (its National Cyber Security Centre is listed separately). The annual report to Parliament covers foreign intelligence, cyber security and the threats to New Zealand's interests."
+  hq: {address: "Pipitea House, 1-15 Pipitea Street, Wellington 6011, New Zealand", lat: -41.2888, lon: 174.77721, precision: city}
+  type: intelligence-military
+  access: manual
+  frequency: yearly
+  report_types: [Annual report]
+  notes: "gcsb.govt.nz is behind bot protection (Incapsula) that refuses the crawler – annual reports since 2003 (PDF, /assets/GCSB-Annual-Reports/) for hand collection."
+  pages:
+    - {lang: en, kind: archive, url: "https://www.gcsb.govt.nz/about-us/annual-reports", verified: false}
 
 - country: NZ
   agency: GCSB / NCSC-NZ
@@ -2968,6 +3031,21 @@
   report_types: [Informe de Tendencias de Amenazas Cibernéticas]
   pages:
     - {lang: es, kind: current, url: "https://www.colcert.gov.co/800/w3-article-433510.html", note: "Tendencias de amenazas cibernéticas 2025"}
+
+- country: CO
+  agency: DNI
+  name_local: "Dirección Nacional de Inteligencia"
+  name_en: "National Intelligence Directorate"
+  homepage: "https://dni.gov.co/"
+  description: "Colombia's civilian strategic intelligence service. Its yearly management report and its report to Congress cover intelligence priorities (armed groups, organised crime, threats to the peace process), results and oversight."
+  hq: {address: "Bogotá, Colombia", lat: 4.65338, lon: -74.08363, precision: city}
+  type: intelligence-civil
+  access: auto
+  frequency: yearly
+  report_types: [Informe de gestión, Informe al Congreso]
+  pages:
+    - {lang: es, kind: archive, url: "https://dni.gov.co/transparencia/informes-de-gestion/"}
+    - {lang: es, kind: archive, url: "https://dni.gov.co/transparencia/informes-al-congreso-de-la-republica/"}
 
 - country: CO
   agency: Policía Nacional
