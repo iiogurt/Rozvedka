@@ -118,6 +118,11 @@ def test_poor_titles():
 def test_humanize_filename():
     assert humanize_filename("https://x/content/vyrocni-zprava-archivu_bis-2024-web.pdf") == \
         "vyrocni zprava archivu bis 2024 web"
+    # a year glued to a word is set apart; a serial number after capitals is not a year
+    assert humanize_filename("https://x/files/rendorsegi_evkonyv2023.pdf") == "rendorsegi evkonyv 2023"
+    assert humanize_filename("https://x/RRA2000/RAND_RRA2032-1.pdf") == "RAND RRA2032 1"
+    # a title stored in the older, glued form is still the filename – a better title may replace it
+    assert is_poor_title("rendorsegi evkonyv2023", "https://x/files/rendorsegi_evkonyv2023.pdf")
 
 
 def test_extract_liferay_document_links():
@@ -388,3 +393,59 @@ def test_sitemap_head_is_matched_without_backtracking():
     t = time.perf_counter()
     assert not SITEMAP_RE.match("<!--" + "-->" * 20000)      # once exponential: comments that never reach <urlset
     assert time.perf_counter() - t < 1
+
+
+def test_taiwanese_files_and_roc_years():
+    from rozvedka.crawler import DOC_RE, guess_year
+    npa = "https://www.npa.gov.tw/ch/app/data/doc?module=wg031&detailNo=1452952881236807680&type=s"
+    assert DOC_RE.search(npa)
+    assert not DOC_RE.search("https://www.npa.gov.tw/ch/app/data/list?module=wg031&id=1821")      # the list page
+    assert guess_year("更新日期：114-12-23 發布單位：警政署秘書室 1.113年警政工作年報", npa) == 2024
+    assert guess_year("民國 99 年", npa) is None and guess_year("100年報告", npa) == 2011
+    assert guess_year("2023年 報告 113年", npa) == 2023            # a Western year in the title wins
+    assert guess_year("警察制度100年", "https://www.npa.go.jp/x") is None    # ROC years only on Taiwanese sites
+
+
+def test_link_title_attribute_wins_over_cluttered_link_text():
+    from bs4 import BeautifulSoup
+    from rozvedka.crawler import _title_for
+    a = BeautifulSoup('<a href="/ch/app/data/doc?module=wg031&detailNo=1" title="113年警政工作年報(pdf)(將開啟新視窗)">'
+                      '<p>更新日期：114-12-23</p><p>發布單位：警政署秘書室</p><p>1.113年警政工作年報</p></a>', "html.parser").a
+    assert _title_for(a) == "113年警政工作年報"
+    b = BeautifulSoup('<a href="/x.pdf" title="Download">Annual report 2024</a>', "html.parser").a
+    assert _title_for(b) == "Annual report 2024"          # a title attribute that is not part of the text is ignored
+
+
+def test_row_text_title_without_button_word_or_repetition():
+    from bs4 import BeautifulSoup
+    from rozvedka.crawler import JUNK_RE, _title_for
+    row = BeautifulSoup('<div><h3>Cuenta pública 2024</h3><p>CUENTA PÚBLICA 2024</p>'
+                        '<a href="/cuenta_publica_2024.pdf">Ver</a></div>', "html.parser").a
+    assert _title_for(row) == "Cuenta pública 2024"
+    row = BeautifulSoup('<div><h3>Cuenta pública 2009</h3><p>La policía que queremos</p>'
+                        '<a href="/cuentapublica2009.pdf">Ver</a></div>', "html.parser").a
+    assert _title_for(row) == "Cuenta pública 2009 La policía que queremos"
+    assert JUNK_RE.search("Condiciones de uso y políticas de privacidad del sitio")
+
+
+def test_a_followed_short_address_that_redirects_to_a_file_is_stored_by_the_file(monkeypatch):
+    """police.hu/evkonyv2025 redirects to …/rendorsegi_evkonyv2024.pdf: the file's own address names and dates it. A
+    redirect to another host keeps the address the page links."""
+    from types import SimpleNamespace
+    from rozvedka import crawler
+    final = {"https://x.hu/evkonyv2025": "https://x.hu/files/rendorsegi_evkonyv2024.pdf",
+             "https://x.hu/evkonyv2023": "https://cdn.example/evkonyv2022.pdf"}
+
+    def get_page(url, src):
+        if url in final:
+            return SimpleNamespace(status=200, content_type="application/pdf", text="", url=final[url])
+        return SimpleNamespace(status=200, content_type="text/html", url=url,
+                               text='<a href="/evkonyv2025"><img src="a.jpg"></a><a href="/evkonyv2023"><img src="b.jpg"></a>')
+    monkeypatch.setattr(crawler, "get_page", get_page)
+    stored = {}
+    monkeypatch.setattr(crawler, "_store", lambda con, sid, pid, docs, *a: stored.update({d["url"]: d for d in docs}) or len(stored))
+    src = {"id": 1, "access": "auto", "homepage": "https://x.hu/", "agency": "X", "domains": None}
+    crawler.crawl_page(None, src, {"url": "https://x.hu/evkonyv", "id": 1, "lang": "hu", "note": None,
+                                   "follow": r"x\.hu/evkonyv\d{4}$"}, {"hu"})
+    assert set(stored) == {"https://x.hu/files/rendorsegi_evkonyv2024.pdf", "https://x.hu/evkonyv2023"}
+    assert crawler.guess_year(stored["https://x.hu/files/rendorsegi_evkonyv2024.pdf"]["title"], "") == 2024

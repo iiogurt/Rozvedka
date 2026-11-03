@@ -182,6 +182,20 @@
     - {lang: pl, kind: archive, url: "https://cert.pl/publikacje/"}
     - {lang: en, kind: archive, url: "https://cert.pl/en/publications/"}
 
+- country: PL
+  agency: CBŚP
+  name_local: "Centralne Biuro Śledcze Policji"
+  name_en: "Central Investigation Bureau of the Police"
+  homepage: "https://cbsp.policja.pl/"
+  description: "The Polish police's bureau for organised crime: drug trafficking, economic and fiscal crime, criminal groups, kidnapping, terrorism-related and cross-border crime. Its yearly report describes the groups dismantled, seizures and cases, with statistics."
+  hq: {address: "ul. Puławska 148/150, 02-624 Warszawa, Poland", lat: 52.19004, lon: 21.02386, precision: city}
+  type: police-ct
+  frequency: yearly
+  report_types: [Raport statystyczny / Statistical report]
+  notes: "The Interior Ministry's 'Raport o stanie bezpieczeństwa w Polsce' was last published for 2015 and its page now redirects to gov.pl; the national police's yearly summaries on statystyka.policja.pl are news pages without files."
+  pages:
+    - {lang: pl, kind: archive, url: "https://cbsp.policja.pl/cbs/do-pobrania/raporty-z-dzialalnosci"}
+
 # ════════════════════════ GERMANY ════════════════════════
 - country: DE
   agency: BfV
@@ -665,6 +679,22 @@
     - {lang: da, kind: archive, url: "https://www.brs.dk/da/nyheder-og-publikationer/publikationer2/"}
     - {lang: en, kind: current, url: "https://www.brs.dk/en/nyheder-og-publikationer/publikationer2/alle-publikationer/2022/national-risk-profile/"}
 
+- country: DK
+  agency: Rigspolitiet
+  name_local: "Rigspolitiet"
+  name_en: "Danish National Police"
+  homepage: "https://politi.dk/"
+  description: "Denmark's national police. Yearly reports on the outlaw biker and gang situation (Rocker- og bandesituationen i Danmark), on IT-related economic crime (fraud, phishing, sextortion) and on registered hate crimes."
+  hq: {address: "Polititorvet 14, 1780 København V, Denmark", lat: 55.67018, lon: 12.57027, precision: address}
+  type: police-ct
+  frequency: yearly
+  report_types: [Rocker- og bandesituationen i Danmark / Biker and gang situation, Årsrapport om it-relateret økonomisk kriminalitet / IT-related economic crime, Hadforbrydelser / Hate crimes]
+  notes: "The safety surveys (Tryghedsundersøgelse) stopped in 2019 and are left out, as are one-off evaluations under 'Øvrige udgivelser'."
+  pages:
+    - {lang: da, kind: archive, url: "https://politi.dk/statistik/bander-og-rockere"}
+    - {lang: da, kind: archive, url: "https://politi.dk/statistik/it-relateret-oekonomisk-kriminalitet"}
+    - {lang: da, kind: archive, url: "https://politi.dk/statistik/hadforbrydelser"}
+
 # ════════════════════════ NETHERLANDS ════════════════════════
 - country: NL
   agency: AIVD
@@ -1071,6 +1101,20 @@
   pages:
     - {lang: hu, kind: current, url: "https://www.katasztrofavedelem.hu/26421/kockazatok-azonositasa"}
 
+- country: HU
+  agency: ORFK
+  name_local: "Országos Rendőr-főkapitányság"
+  name_en: "Hungarian National Police Headquarters"
+  homepage: "https://www.police.hu/"
+  description: "Hungary's national police. Its yearbook (Rendőrségi évkönyv) reviews the year's crime situation, public order, organised crime, migration and border policing, traffic safety and police work."
+  hq: {address: "Teve utca 4-6, 1139 Budapest, Hungary", lat: 47.53289, lon: 19.06955, precision: address}
+  type: police-ct
+  frequency: yearly
+  report_types: [Rendőrségi évkönyv / Police yearbook]
+  notes: "The yearbook page links short addresses (police.hu/evkonyv2025) that redirect to the PDF of the previous year's yearbook (rendorsegi_evkonyv2024.pdf)."
+  pages:
+    - {lang: hu, kind: archive, url: "https://www.police.hu/hu/a-rendorsegrol/evkonyv", follow: "police\\.hu/evkonyv\\d{4}$"}
+
 # ════════════════════════ ROMANIA ════════════════════════
 # Civil protection (checked 2026-10-06): IGSU's national risk assessment 2018 and country report 2020 are on old.igsu.ro, which timed out – retry later.
 # (Foreign Intelligence Service SIE publishes no public reports.)
@@ -1122,6 +1166,19 @@
     - {lang: bg, kind: archive, url: "https://www.dans.bg/bg/activities/reports"}
     - {lang: bg, kind: series, url: "https://www.dans.bg/bg/activities/radicalisation-reports"}
 
+- country: BG
+  agency: МВР / MVR
+  name_local: "Министерство на вътрешните работи"
+  name_en: "Ministry of Interior of the Republic of Bulgaria"
+  homepage: "https://www.mvr.bg/"
+  description: "Bulgaria's interior ministry, in charge of the police, border police, fire safety and civil protection. Its yearly activity report covers crime and its trends, organised crime, drug and human trafficking, terrorism and radicalisation, migration pressure and border security, and public order."
+  hq: {address: "ul. 6-ti Septemvri 29, 1000 Sofia, Bulgaria", lat: 42.69547, lon: 23.32514, precision: city}
+  type: police-ct
+  frequency: yearly
+  report_types: [Доклад за дейността на МВР / Activity report]
+  pages:
+    - {lang: bg, kind: archive, url: "https://www.mvr.bg/programni-dokumenti-otcheti-analizi/програмни-документи-отчети-и-анализи/отчети-и-анализи"}
+
 # ════════════════════════ CROATIA ════════════════════════
 - country: HR
   agency: SOA
@@ -1168,6 +1225,21 @@
     - {lang: hr, kind: archive, url: "https://www.cert.hr/tag/godisnji-izvjestaj/"}
     - {lang: hr, kind: current, url: "https://www.cert.hr/"}
 
+- country: HR
+  agency: MUP
+  name_local: "Ministarstvo unutarnjih poslova Republike Hrvatske"
+  name_en: "Ministry of the Interior of the Republic of Croatia"
+  homepage: "https://mup.gov.hr/"
+  description: "Croatia's interior ministry, in charge of the police. Its yearly statistical review of basic security indicators (Statistički pregled temeljnih sigurnosnih pokazatelja i rezultata rada) covers crime, organised crime, drugs, public order, traffic safety and illegal migration, and a ten-year review of the state of public security."
+  hq: {address: "Ulica grada Vukovara 33, 10000 Zagreb, Croatia", lat: 45.80006, lon: 15.96425, precision: address}
+  type: police-ct
+  frequency: yearly
+  report_types: [Statistički pregled temeljnih sigurnosnih pokazatelja / Statistical review of security indicators, Pregled stanja javne sigurnosti / Review of public security]
+  notes: "The statistics page (mup.gov.hr/statistika-228/228) no longer lists the reviews and its sub-page redirects to the home page; the files are on the site but no page links them, so the known ones are registered one by one. An English edition of the 2015–2024 review is in the same folder but its address is not known. Older reviews: data.gov.hr dataset 'Arhiva sigurnosnih pokazatelja'."
+  pages:
+    - {lang: hr, kind: current, url: "https://mup.gov.hr/UserDocsImages/statistika/2024/3/Statisticki_pregled_2023_.pdf", note: "Statistički pregled temeljnih sigurnosnih pokazatelja i rezultata rada u 2023. godini"}
+    - {lang: hr, kind: current, url: "https://mup.gov.hr/UserDocsImages/statistika/2025/statistika%20za%202024%20hrv%20i%20eng/Pregled%20stanja%20javne%20sigurnosti_2015_2024_web_HR.pdf", note: "Pregled stanja javne sigurnosti 2015.–2024."}
+
 # ════════════════════════ SLOVENIA ════════════════════════
 - country: SI
   agency: SOVA
@@ -1211,6 +1283,21 @@
   pages:
     - {lang: sl, kind: current, url: "https://www.gov.si/teme/ocenjevanje-tveganj-za-nesrece/"}
     - {lang: sl, kind: current, url: "https://www.gov.si/teme/ocenjevanje-zmoznosti-obvladovanja-tveganj-za-nesrece/"}
+
+- country: SI
+  agency: Policija
+  name_local: "Policija, Generalna policijska uprava"
+  name_en: "Slovenian Police, General Police Directorate"
+  homepage: "https://www.policija.si/"
+  description: "Slovenia's national police. Its yearly report on the work of the police (Letno poročilo o delu policije) covers crime and organised crime, public order, traffic safety, illegal migration and the state border, with regional reports of the police directorates."
+  hq: {address: "Štefanova ulica 2, 1501 Ljubljana, Slovenia", lat: 46.05366, lon: 14.50351, precision: address}
+  type: police-ct
+  access: manual
+  frequency: yearly
+  report_types: [Letno poročilo o delu policije / Annual report on the work of the police]
+  notes: "policija.si did not serve its robots.txt to the crawler (timeouts on 2026-10-29 and 2026-11-02), and an unreadable robots.txt is no permission – add reports by hand. Known files: images/stories/Statistika/LetnaPorocila/PDF/LetnoPorocilo<year>.pdf (2010–2022) and LetnoPorocilo2024_Publikacija-za-tisk.pdf."
+  pages:
+    - {lang: sl, kind: archive, url: "https://www.policija.si/o-slovenski-policiji/statistika/letna-porocila"}
 
 # ════════════════════════ GREECE ════════════════════════
 # Civil protection (checked 2026-10-06): civilprotection.gov.gr publishes public-preparedness brochures and hazard maps, no risk assessment reports.
@@ -1674,6 +1761,20 @@
   report_types: [Raport vjetor]
   pages:
     - {lang: sq, kind: archive, url: "https://aksk.gov.al/category/raporte/raporte-vjetore/"}
+
+- country: AL
+  agency: MB
+  name_local: "Ministria e Brendshme"
+  name_en: "Ministry of the Interior of Albania"
+  homepage: "https://mb.gov.al/"
+  description: "Albania's interior ministry, in charge of the State Police. Its yearly performance report covers public order and security, crime, the border, migration and asylum, citizenship, territorial control and fire protection and rescue."
+  hq: {address: "Sheshi Skënderbej 3, 1001 Tirana, Albania", lat: 41.32685, lon: 19.81928, precision: address}
+  type: police-ct
+  frequency: yearly
+  report_types: [Raport i performancës vjetore / Annual performance report]
+  notes: "The ministry's report pages (raporte-mujore-dhe-vjetore, raporti-policia-rendi-siguria…) are empty, also when rendered; the 2023 report is registered directly. The State Police (asp.gov.al) publishes daily event reports, no yearly report."
+  pages:
+    - {lang: sq, kind: current, url: "https://mb.gov.al/wp-content/uploads/2024/12/RAPORT-I-PERFORMANCES-VJETORE-2023-MBI-RENDIN-SIGURINE-PUBLIKE-KUFIRIN-MIGRACIONIN-AZILIN-SHTETESINE-etj.pdf", note: "Raport i performancës vjetore 2023 mbi rendin, sigurinë publike, kufirin, migracionin, azilin, shtetësinë"}
 
 - country: MK
   agency: ANB
@@ -2635,6 +2736,38 @@
     - {lang: en, kind: current, url: "https://www.nsb.gov.tw/en/"}
     - {lang: zh, kind: current, url: "https://www.nsb.gov.tw/"}
 
+- country: TW
+  agency: NPA
+  name_local: "內政部警政署"
+  name_en: "National Police Agency, Ministry of the Interior"
+  homepage: "https://www.npa.gov.tw/"
+  description: "Taiwan's national police. Its yearly police work report (警政工作年報) reviews crime and its prevention, fraud, drugs, organised crime, cybercrime, public order, traffic safety and border and protective duties."
+  hq: {address: "No. 7, Sec. 1, Zhongxiao E. Rd., Zhongzheng Dist., Taipei, Taiwan", lat: 25.03752, lon: 121.56368, precision: city}
+  type: police-ct
+  frequency: yearly
+  report_types: [警政工作年報 / Police work yearbook]
+  notes: "Years are given in the Republic of China calendar (113年 = 2024). The list links serve the PDFs directly (…/app/data/doc?module=wg031&detailNo=…). The statistical yearbook (警政統計年報) is tables only and left out."
+  pages:
+    - {lang: zh, kind: archive, url: "https://www.npa.gov.tw/ch/app/data/list?module=wg031&id=1821"}
+
+- country: TW
+  agency: MJIB
+  name_local: "法務部調查局"
+  name_en: "Investigation Bureau, Ministry of Justice"
+  homepage: "https://www.mjib.gov.tw/"
+  description: "Taiwan's investigation bureau for national security, corruption, economic crime, drugs and money laundering. Yearly work reports on anti-money laundering (洗錢防制工作年報), drug prevention (毒品防制工作年報), economic crime prevention and anti-corruption."
+  hq: {address: "No. 74, Zhonghua Rd., Xindian Dist., New Taipei City, Taiwan", lat: 25.08146, lon: 121.47805, precision: city}
+  type: police-ct
+  access: manual
+  frequency: yearly
+  report_types: [洗錢防制工作年報 / Anti-money laundering yearbook, 毒品防制工作年報 / Drug prevention yearbook, 經濟犯罪防制 / Economic crime prevention, 廉政 / Anti-corruption]
+  notes: "The e-book pages build their download links from the site's internal data service in the browser; the crawler does not call it – open each book and use 全文下載 (full-text download). Years are in the ROC calendar (113年 = 2024)."
+  pages:
+    - {lang: zh, kind: archive, url: "https://www.mjib.gov.tw/eBooks/eBooks_Detail?CID=34"}
+    - {lang: zh, kind: archive, url: "https://www.mjib.gov.tw/eBooks/eBooks_Detail?CID=35"}
+    - {lang: zh, kind: archive, url: "https://www.mjib.gov.tw/eBooks/eBooks_Detail?CID=12"}
+    - {lang: zh, kind: archive, url: "https://www.mjib.gov.tw/eBooks/eBooks_Detail?CID=11"}
+
 # ════════════════════════ UKRAINE ════════════════════════
 # Ukrainian government sites answer automated requests with "Access Denied" (CDN bot/geo protection) or forbid
 # crawling of their file uploads in robots.txt – add reports by hand from a browser.
@@ -2715,6 +2848,21 @@
   pages:
     - {lang: es, kind: archive, url: "https://www.cenapred.unam.mx/es/Publicaciones/", verified: false}
 
+- country: MX
+  agency: SESNSP
+  name_local: "Secretariado Ejecutivo del Sistema Nacional de Seguridad Pública"
+  name_en: "Executive Secretariat of the National Public Security System"
+  homepage: "https://www.gob.mx/sesnsp"
+  description: "The body that coordinates Mexico's public-security system and publishes its official crime figures. Yearly reports on crime incidence under federal law (organised crime, drugs, weapons, kidnapping) and under common law, with victims and rates per 100,000 inhabitants."
+  hq: {address: "Avenida General Mariano Escobedo 456, Anzures, Miguel Hidalgo, 11590 Ciudad de México, Mexico", lat: 19.4334, lon: -99.18197, precision: city}
+  type: police-ct
+  frequency: yearly
+  report_types: [Incidencia delictiva del fuero federal / Federal crime incidence, Incidencia delictiva del fuero común / Common-law crime incidence]
+  notes: "Statistical reports, one per year (the current year's report is replaced each month). The monthly report on violence against women replaces itself and is left out."
+  pages:
+    - {lang: es, kind: archive, url: "https://www.gob.mx/sesnsp/documentos/historico-de-incidencia-delictiva-del-fuero-federal?idiom=es"}
+    - {lang: es, kind: archive, url: "https://www.gob.mx/sesnsp/documentos/historico-de-incidencia-delictiva-del-fuero-comun?idiom=es"}
+
 # ════════════════════════ BRAZIL ════════════════════════
 - country: BR
   agency: ABIN
@@ -2777,6 +2925,20 @@
   notes: "The BiblioGRD library forbids crawling in robots.txt – add documents manually."
   pages:
     - {lang: es, kind: archive, url: "https://bibliogrd.senapred.gob.cl/"}
+
+- country: CL
+  agency: PDI
+  name_local: "Policía de Investigaciones de Chile"
+  name_en: "Investigations Police of Chile"
+  homepage: "https://www.pdichile.cl/"
+  description: "Chile's investigative police, in charge of criminal investigation, organised crime, drug trafficking, cybercrime and migration control. Its yearly public account (Cuenta Pública) reports on crime fought, investigations and migration."
+  hq: {address: "General Mackenna 1314, Santiago, Chile", lat: -33.43351, lon: -70.6564, precision: address}
+  type: police-ct
+  frequency: yearly
+  report_types: [Cuenta Pública / Public account]
+  notes: "PDFs for 2007–2009 and from 2017; the 2012–2016 accounts are web pages (cuentapublica/<year>/index.html) and not collected."
+  pages:
+    - {lang: es, kind: archive, url: "https://www.pdichile.cl/centro-de-prensa/cuentas-públicas"}
 
 # ════════════════════════ COLOMBIA ════════════════════════
 - country: CO

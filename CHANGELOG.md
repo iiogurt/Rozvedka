@@ -27,6 +27,39 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.14] – 2026-11-02
+
+### Added
+- **Police / counter-terrorism sources for the last 15 open slots of the coverage grid:**
+  - Taiwan: the National Police Agency's yearly police work report (2013–2024), and the Investigation Bureau's
+    yearbooks on money laundering, drugs, economic crime and corruption (for hand collection: the site builds its
+    download links through an internal data service).
+  - Denmark: the National Police's reports on the biker and gang situation (2007–2025), on IT-related economic
+    crime (2019–2025) and on hate crime (2015–2026).
+  - Mexico: the SESNSP's yearly crime-incidence reports under federal and common law (1997–2026).
+  - Chile: the Investigations Police's (PDI) yearly public accounts (2007–2009, 2017–2026).
+  - Poland: the Central Investigation Bureau's (CBŚP) yearly reports (2002–2025).
+  - Hungary: the national police yearbook (2023–2025).
+  - Bulgaria: the Interior Ministry's yearly activity report (2015–2025).
+  - Croatia: the Interior Ministry's statistical review of security indicators (2023) and its review of public
+    security 2015–2024, registered file by file because no page lists them any more.
+  - Slovenia: the police's yearly work report (for hand collection: policija.si does not serve its robots.txt).
+  - Albania: the Interior Ministry's yearly performance report on public order (2023).
+  - Checked as none published: Finland, Malta, Romania (DIICOT to retry), Montenegro and North Macedonia.
+
+### Fixed
+- **Taiwanese government files** (`…/app/data/doc?module=…&detailNo=…`) are recognised as documents, and years of the
+  Republic of China calendar in their titles (113年 = 2024) are read on Taiwanese sites.
+- **Report names from list rows:** a link whose text wraps more than the report's name (update date, issuing unit)
+  takes the name from its title attribute; a name taken from the row drops a trailing "Ver" / "View" / "Download"
+  and a name written twice; "Ver" counts as a generic link word, like "View".
+- **Short addresses that redirect to a file** on the same site (police.hu/evkonyv2025) are stored under the file's
+  own address, which names and dates it.
+- **Names made from file names** set a year glued to a word apart ("rendorsegi evkonyv 2023", not "…evkonyv2023");
+  serial numbers after capitals ("RRA2032") stay as they are. Names stored the old way still count as file names,
+  so a better name found later replaces them.
+- Privacy statements in Spanish and Portuguese ("privacidad", "privacidade") are skipped like English ones.
+
 ## [0.93.13] – 2026-11-02
 
 ### Security
@@ -1968,7 +2001,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.13...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.14...HEAD
+[0.93.14]: https://github.com/iiogurt/Rozvedka/compare/v0.93.13...v0.93.14
 [0.93.13]: https://github.com/iiogurt/Rozvedka/compare/v0.93.12...v0.93.13
 [0.93.12]: https://github.com/iiogurt/Rozvedka/compare/v0.93.11...v0.93.12
 [0.93.11]: https://github.com/iiogurt/Rozvedka/compare/v0.93.10...v0.93.11
