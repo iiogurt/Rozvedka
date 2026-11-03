@@ -55,6 +55,9 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
   and a name written twice; "Ver" counts as a generic link word, like "View".
 - **Short addresses that redirect to a file** on the same site (police.hu/evkonyv2025) are stored under the file's
   own address, which names and dates it.
+- **Names made from file names** set a year glued to a word apart ("rendorsegi evkonyv 2023", not "…evkonyv2023");
+  serial numbers after capitals ("RRA2032") stay as they are. Names stored the old way still count as file names,
+  so a better name found later replaces them.
 - Privacy statements in Spanish and Portuguese ("privacidad", "privacidade") are skipped like English ones.
 
 ## [0.93.13] – 2026-11-02

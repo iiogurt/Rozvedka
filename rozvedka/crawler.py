@@ -235,10 +235,16 @@ def clean_spaces(text: str) -> str:
     return " ".join(_ODD_SPACE.sub(" ", text).split())
 
 
-def humanize_filename(url: str) -> str:
-    """'/content/vyrocni-zprava-archivu-bis-2024-web.pdf' -> 'vyrocni zprava archivu bis 2024 web'"""
+def humanize_filename(url: str, years_apart: bool = True) -> str:
+    """'/content/vyrocni-zprava-archivu-bis-2024-web.pdf' -> 'vyrocni zprava archivu bis 2024 web'; a year glued to a
+    word is set apart ('rendorsegi_evkonyv2023.pdf' -> 'rendorsegi evkonyv 2023'), a serial number is not ('RRA2032')"""
     stem = unquote(urlsplit(url).path.rsplit("/", 1)[-1]).rsplit(".", 1)[0]
+    if years_apart:
+        stem = _GLUED_YEAR.sub(r" \1", stem)
     return re.sub(r"[-_+]+", " ", stem).strip() or url
+
+
+_GLUED_YEAR = re.compile(r"(?<=[^\W\dA-Z_]{3})((?:19[89]|20[0-4])\d)(?!\d)")
 
 
 VIEWER_RE = re.compile(r"/(?:pdfjs|pdf\.js|viewer)[^?#]*/?\?(?:[^#]*&)?file=([^&#]+)", re.I)
@@ -347,7 +353,9 @@ def is_poor_title(title: str | None, url: str) -> bool:
     return (not title or bool(GENERIC_TITLES.match(title)) or bool(CALL_TO_ACTION.match(title))
             or bool(LABEL_ONLY.fullmatch(title.strip()))
             or (bool(ACTION_PREFIX.match(title)) and not ACTION_PREFIX.sub("", title).strip())
-            or title == humanize_filename(url) or bool(re.fullmatch(r"[\w .%()-]+\.pdf", title, re.I)))
+            # (a title stored before a year glued to a word was set apart is the filename all the same)
+            or title in (humanize_filename(url), humanize_filename(url, years_apart=False))
+            or bool(re.fullmatch(r"[\w .%()-]+\.pdf", title, re.I)))
 
 
 def domain_family(url_or_host: str) -> str:

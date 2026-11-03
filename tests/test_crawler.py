@@ -118,6 +118,11 @@ def test_poor_titles():
 def test_humanize_filename():
     assert humanize_filename("https://x/content/vyrocni-zprava-archivu_bis-2024-web.pdf") == \
         "vyrocni zprava archivu bis 2024 web"
+    # a year glued to a word is set apart; a serial number after capitals is not a year
+    assert humanize_filename("https://x/files/rendorsegi_evkonyv2023.pdf") == "rendorsegi evkonyv 2023"
+    assert humanize_filename("https://x/RRA2000/RAND_RRA2032-1.pdf") == "RAND RRA2032 1"
+    # a title stored in the older, glued form is still the filename – a better title may replace it
+    assert is_poor_title("rendorsegi evkonyv2023", "https://x/files/rendorsegi_evkonyv2023.pdf")
 
 
 def test_extract_liferay_document_links():
