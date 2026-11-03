@@ -42,3 +42,47 @@
 - {country: RO, type: police-ct, checked: 2026-11-02, retry: true, note: "politiaromana.ro's robots.txt disallows everything but /index.php; the police's yearly evaluation (Evaluarea activității) is reported in the press, county reports appear on other sites. DIICOT (organised crime and terrorism prosecutors) publishes yearly activity reports, but its robots.txt answered 503 – retry"}
 - {country: ME, type: police-ct, checked: 2026-11-02, note: "the Police Administration (Uprava policije) has no page on gov.me (404); its yearly work report goes to parliament's security committee and appears only in committee records on zakoni.skupstina.me"}
 - {country: MK, type: police-ct, checked: 2026-11-02, note: "the Interior Ministry's 'Анализи и статистики' page offers one spreadsheet of total crime 2010–2025 (on portal.mdt.gov.mk), no report"}
+# 2026-11-03 – military / foreign and civil intelligence columns
+- {country: BE, type: intelligence-military, checked: 2026-11-03, note: "the General Intelligence and Security Service (ADIV/SGRS) publishes no annual report; the oversight committee's reports (Comité R, listed under other) cover it"}
+- {country: BG, type: intelligence-military, checked: 2026-11-03, note: "the Defence Intelligence Service and the State Intelligence Agency (DAR) publish no reports – their activity is a state secret, reported to the Council of Ministers"}
+- {country: HR, type: intelligence-military, checked: 2026-11-03, note: "the Military Security and Intelligence Agency (VSOA) publishes no public reports"}
+- {country: CY, type: intelligence-military, checked: 2026-11-03, note: "the Cyprus Intelligence Service (KYP) covers foreign intelligence too and publishes no reports"}
+- {country: FI, type: intelligence-military, checked: 2026-11-03, note: "the Finnish Defence Intelligence Agency publishes no public reports"}
+- {country: FR, type: intelligence-military, checked: 2026-11-03, note: "DGSE, DRM and DRSD publish no regular reports; parliament's intelligence delegation (DPR) reports yearly, but it is not an agency"}
+- {country: GR, type: intelligence-military, checked: 2026-11-03, note: "neither EYP (which also covers foreign intelligence) nor the defence staff's intelligence branch publishes reports"}
+- {country: HU, type: intelligence-military, checked: 2026-11-03, note: "the Military National Security Service (KNBSZ) publishes no public reports"}
+- {country: IE, type: intelligence-military, checked: 2026-11-03, note: "the Defence Forces' intelligence directorate (J2) publishes no reports"}
+- {country: IT, type: intelligence-military, checked: 2026-11-03, note: "AISE (foreign intelligence) publishes nothing of its own; its work is in the DIS yearly Relazione, listed in the civil column"}
+- {country: LT, type: intelligence-military, checked: 2026-11-03, note: "the Second Investigation Department (AOTD) writes the National Threat Assessment with VSD – listed as 'VSD + AOTD' in the civil column"}
+- {country: LU, type: intelligence-military, checked: 2026-11-03, note: "no military or foreign intelligence service of its own beyond SRE (civil column)"}
+- {country: MT, type: intelligence-military, checked: 2026-11-03, note: "no military or foreign intelligence service that publishes reports"}
+- {country: PL, type: intelligence-military, checked: 2026-11-03, note: "the Foreign Intelligence Agency (AW), Military Counter-Intelligence (SKW) and Military Intelligence (SWW) publish no activity reports"}
+- {country: PT, type: intelligence-military, checked: 2026-11-03, note: "SIED and the military intelligence centre (CISMIL) publish no reports; SIRP management reports are classified (Decreto-Lei 172/2026)"}
+- {country: SK, type: intelligence-military, checked: 2026-11-03, note: "Military Intelligence (Vojenské spravodajstvo) reports to parliament once a year; the report is not published"}
+- {country: SI, type: intelligence-military, checked: 2026-11-03, note: "the Intelligence and Security Service of the Ministry of Defence (OVS) publishes no reports"}
+- {country: ES, type: intelligence-military, checked: 2026-11-03, note: "CNI (civil and foreign intelligence) and the armed forces' CIFAS publish no regular reports"}
+- {country: IS, type: intelligence-military, checked: 2026-11-03, note: "Iceland has no military or foreign intelligence service"}
+- {country: CH, type: intelligence-military, checked: 2026-11-03, note: "the Federal Intelligence Service (NDB) is civil and foreign intelligence in one – its yearly 'Switzerland's Security' is in the civil column; the army's military intelligence publishes no reports"}
+- {country: UA, type: intelligence-military, checked: 2026-11-03, note: "Defence Intelligence (HUR) and the Foreign Intelligence Service publish statements and news, no regular reports"}
+- {country: GB, type: intelligence-military, checked: 2026-11-03, note: "SIS, GCHQ and Defence Intelligence publish no annual reports; their oversight is in the ISC (civil column) and IPCO (other) reports"}
+- {country: AL, type: intelligence-military, checked: 2026-11-03, note: "the defence intelligence and security agency publishes no reports"}
+- {country: ME, type: intelligence-military, checked: 2026-11-03, note: "no military intelligence reports published by the Ministry of Defence"}
+- {country: MK, type: intelligence-military, checked: 2026-11-03, note: "the Military Service for Security and Intelligence publishes no reports; the Intelligence Agency (ANB) is in the civil column"}
+- {country: TR, type: intelligence-military, checked: 2026-11-03, note: "MİT (also foreign intelligence) publishes no reports"}
+- {country: AR, type: intelligence-military, checked: 2026-11-03, note: "the armed forces' intelligence directorates publish no reports"}
+- {country: BR, type: intelligence-military, checked: 2026-11-03, note: "the armed forces' intelligence services publish no reports; ABIN is in the civil column"}
+- {country: CL, type: intelligence-military, checked: 2026-11-03, note: "the defence intelligence directorates publish no reports"}
+- {country: CO, type: intelligence-military, checked: 2026-11-03, note: "military intelligence publishes no reports; the DNI is in the civil column"}
+- {country: MX, type: intelligence-military, checked: 2026-11-03, note: "the defence and navy intelligence services publish no reports"}
+- {country: PE, type: intelligence-military, checked: 2026-11-03, note: "the armed forces' intelligence services publish no reports"}
+- {country: KR, type: intelligence-military, checked: 2026-11-03, note: "NIS (civil and foreign intelligence) is in the civil column; the Defense Intelligence Agency publishes no reports"}
+- {country: TW, type: intelligence-military, checked: 2026-11-03, note: "the National Security Bureau (civil column) is the foreign and strategic intelligence agency; the Military Intelligence Bureau publishes no reports"}
+- {country: CY, type: intelligence-civil, checked: 2026-11-03, note: "the Cyprus Intelligence Service (KYP) publishes no reports"}
+- {country: IE, type: intelligence-civil, checked: 2026-11-03, note: "no separate civil intelligence agency; the Garda's security intelligence publishes no reports"}
+- {country: PT, type: intelligence-civil, checked: 2026-11-03, note: "the Security Intelligence Service (SIS) publishes no reports; SIRP management reports are classified (Decreto-Lei 172/2026); the yearly internal-security report (RASI) is in the police column"}
+- {country: ES, type: intelligence-civil, checked: 2026-11-03, note: "CNI publishes no regular reports; the yearly National Security Report of the DSN is in the civil-protection column"}
+- {country: IS, type: intelligence-civil, checked: 2026-11-03, note: "Iceland has no intelligence service; the police's risk assessments are in the police column"}
+- {country: AR, type: intelligence-civil, checked: 2026-11-03, note: "the intelligence secretariat (SIDE, formerly AFI) publishes no regular reports"}
+- {country: CL, type: intelligence-civil, checked: 2026-11-03, note: "the National Intelligence Agency (ANI) publishes no reports of its own; its yearly management balance is published by the budget office (DIPRES), not by the agency"}
+- {country: MX, type: intelligence-civil, checked: 2026-11-03, note: "the National Intelligence Centre (CNI) publishes no reports"}
+- {country: PE, type: intelligence-civil, checked: 2026-11-03, note: "the National Intelligence Directorate (DINI) publishes no annual report"}
