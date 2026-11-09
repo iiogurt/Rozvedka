@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.16] – 2026-11-09
+
+### Added
+- **Romania's DIICOT** (organised-crime and terrorism prosecutors) – yearly activity reports since 2007, for hand
+  collection: diicot.ro now answers the crawler with a JavaScript browser check.
+
+### Fixed
+- The coverage grid has no retry left: Türkiye's cyber slot is checked as none published (USOM publishes no
+  reports; the host of the national cyber-security strategies has not answered since 2026-10-26).
+- New Zealand's cyber-security centre no longer lists GCSB's annual-report page, which belongs to GCSB's own entry
+  and could not be crawled.
+
 ## [0.93.15] – 2026-11-03
 
 ### Added
@@ -2025,7 +2037,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.15...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.16...HEAD
+[0.93.16]: https://github.com/iiogurt/Rozvedka/compare/v0.93.15...v0.93.16
 [0.93.15]: https://github.com/iiogurt/Rozvedka/compare/v0.93.14...v0.93.15
 [0.93.14]: https://github.com/iiogurt/Rozvedka/compare/v0.93.13...v0.93.14
 [0.93.13]: https://github.com/iiogurt/Rozvedka/compare/v0.93.12...v0.93.13
