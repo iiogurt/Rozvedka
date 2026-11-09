@@ -23,9 +23,9 @@ Written 2026-10-06 at version 0.29.0 (the previous assessment was made at 0.16.0
 
 | Gap | Size | Notes |
 |---|---|---|
-| **Hand-collected sources still empty** | **all 47** manual sources have no report: Säpo, PET, CSIS, ASIO, VSD/AOTD, DE BMI, KR NIS, three Ukrainian agencies, NATO STO and ACT, FATF, IAEA, CERT-EU, EUDA, Eurojust … | A5 – collected by hand on *To collect* (needs the owner) |
+| **Hand-collected sources still empty** | **all 53** manual sources have no report (2026-11-09): Säpo, PET, CSIS, ASIO, VSD/AOTD, DE BMI, KR NIS, three Ukrainian agencies, NATO STO and ACT, FATF, IAEA, CERT-EU, EUDA, Eurojust … | A5 – collected by hand on *To collect* (needs the owner) |
 | **Türkiye in name only** | its only source (EGM Narkotik, manual) lists 50 reports; 49 are blocked by robots.txt, 1 is gone (404) | A2 – a fetchable official publisher is needed (USOM, AFAD), or hand collection |
-| Open slots in the coverage grid | 0 country × agency-type slots open (2026-11-03; 48 on 2026-11-02, 63 on 2026-10-30): every slot is covered or checked as not published – 82 checked, 2 of them for a retry (TR cyber, RO police – DIICOT) | `/sources/grid`; A3, A4 |
+| Open slots in the coverage grid | 0 country × agency-type slots open and no retry left (2026-11-09; 48 open on 2026-11-02, 63 on 2026-10-30): every slot is covered or checked as not published – 81 checked | `/sources/grid`; A3, A4 |
 | Failed downloads | 61: Türkiye 49 (robots.txt), Public Safety Canada 24, CCCS 5, IRSEM 4, IPCC 5, single ones elsewhere | dead addresses and robots.txt – re-check the listing pages |
 | Open in a browser only | 30 (E-tjenesten 20 behind a bot challenge, Canada 8, BSI 1, CCDCOE 1) | not circumvented |
 | Reports without any topic | 185 of 3,866 real reports (4.8 %; reports, annual reports, assessments, strategies, bulletins); 101 more among forms, guides, legal, finance and statements | B4 target (below 5 %) still met, only just |
@@ -302,16 +302,16 @@ Updated 2026-10-26 at 0.92.0, after F5 – F12 (0.88.0 – 0.92.0):
    Investigation Bureau's yearbooks for hand collection), Danish gang, IT-crime and hate-crime reports, Mexico's SESNSP
    crime-incidence reports, Chile's PDI public accounts, Poland's CBŚP reports, the Hungarian police yearbook, the
    Bulgarian and Croatian interior ministries' reports, Slovenia's police reports (manual: robots.txt unreadable) and
-   Albania's interior-ministry performance report; Finland, Malta, Romania (retry DIICOT), Montenegro and North
+   Albania's interior-ministry performance report; Finland, Malta, Romania, Montenegro and North
    Macedonia checked as none published. ✅ (0.93.15) the intelligence columns have no open slot left: Canada's CSE,
    the Australian Signals Directorate, Germany's MAD and New Zealand's GCSB (manual: bot protection) for military /
    foreign intelligence, Colombia's DNI for civil intelligence; 34 military and 9 civil slots checked as none
    published (services that publish nothing, classified reports, or one service for both columns). Of the four
    retries on the grid, ✅ (0.93.5) KR is registered for hand collection (the Disaster Yearbook downloads through a
    script call), RO and UA are settled as hand collection (old.igsu.ro is gone and igsu.ro disallows its files;
-   dsns.gov.ua answers 403); TR cyber still waits for hgm.uab.gov.tr to answer. Rendering works again through headless
+   dsns.gov.ua answers 403); ✅ (0.93.16) the last two are settled: Romania's DIICOT is registered for hand collection (a JavaScript browser check guards diicot.ro), and TR cyber is checked as none published (USOM publishes no reports; the strategies' host hgm.uab.gov.tr has not answered since 2026-10-26). Rendering works again through headless
    Firefox (✅ 0.93.3).
-3. **A5 (owner)** – hand-collect the blocked flagships through *To collect*: Säpo, PET, CSIS, ASIO, VSD/AOTD first; then the Korean Disaster Yearbooks (2012–2024), Romania's IGSU risk assessments and
+3. **A5 (owner)** – hand-collect the blocked flagships through *To collect*: Säpo, PET, CSIS, ASIO, VSD/AOTD first; then Romania's DIICOT activity reports (2007–2025), New Zealand's GCSB annual reports, the Korean Disaster Yearbooks (2012–2024), Romania's IGSU risk assessments and
    Ukraine's DSNS national safety reports, New Zealand Police annual reports, Iceland's organised-crime assessments 2015 and
    2019 (their old host dev.logreglan.is is gone).
 4. **Features still open** – C2 research notes and citations; E4 caching (cross-language search ~3 s on the Pi); G9 UK

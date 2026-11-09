@@ -20,7 +20,7 @@
 - {country: ME, type: cyber, checked: 2026-10-06, note: "CIRT.ME: no regular public reports found (cirt.me did not resolve)"}
 - {country: TR, type: intelligence-civil, checked: 2026-10-06, note: "MİT publishes no reports"}
 - {country: TR, type: civil-protection, checked: 2026-10-26, note: "AFAD: no activity-report page found; its documents (e.g. disaster statistics) sit under /kurumlar/, which afad.gov.tr's robots.txt disallows – as on narkotik.pol.tr"}
-- {country: TR, type: cyber, checked: 2026-10-27, retry: true, note: "USOM publishes no reports (figures only in ministry press statements); the national cyber security strategies 2013–2028 are on hgm.uab.gov.tr, which still timed out on 2026-10-27 and 10-29 (the ministry site uab.gov.tr answers but does not carry them) – retry, then add as a strategy source"}
+- {country: TR, type: cyber, checked: 2026-11-09, note: "USOM publishes no reports (figures only in ministry press statements); the national cyber security strategies 2013–2028 are only on hgm.uab.gov.tr, which has not answered since 2026-10-26 (again timed out on 2026-11-09), and the ministry site uab.gov.tr does not carry them – no regular report; the strategies can be added by hand if the host comes back"}
 - {country: LU, type: cyber, checked: 2026-10-08, note: "CIRCL publishes conference slides, no regular report"}
 - {country: KR, type: cyber, checked: 2026-10-08, note: "KISA: no regular report found"}
 - {country: TW, type: cyber, checked: 2026-10-08, note: "TWCERT/CC: no regular report found"}
@@ -39,7 +39,6 @@
 - {country: BR, type: cyber, checked: 2026-10-27, note: "CTIR Gov (GSI) publishes alerts and recommendations, and the E-Ciber strategy once; no regular report"}
 - {country: FI, type: police-ct, checked: 2026-11-02, note: "poliisi.fi and intermin.fi answer the crawler with 403; no regular police report found – the National Bureau of Investigation (KRP) gives statements to parliament, and the organised-crime situation report (Järjestäytyneen rikollisuuden tilannekuva) is published by the University of Helsinki's Institute of Criminology, not by the police"}
 - {country: MT, type: police-ct, checked: 2026-11-02, note: "pulizija.gov.mt and homeaffairs.gov.mt answer 403; no annual police report found – only the police magazine Il-Pulizija, held by the University of Malta's repository"}
-- {country: RO, type: police-ct, checked: 2026-11-02, retry: true, note: "politiaromana.ro's robots.txt disallows everything but /index.php; the police's yearly evaluation (Evaluarea activității) is reported in the press, county reports appear on other sites. DIICOT (organised crime and terrorism prosecutors) publishes yearly activity reports, but its robots.txt answered 503 – retry"}
 - {country: ME, type: police-ct, checked: 2026-11-02, note: "the Police Administration (Uprava policije) has no page on gov.me (404); its yearly work report goes to parliament's security committee and appears only in committee records on zakoni.skupstina.me"}
 - {country: MK, type: police-ct, checked: 2026-11-02, note: "the Interior Ministry's 'Анализи и статистики' page offers one spreadsheet of total crime 2010–2025 (on portal.mdt.gov.mk), no report"}
 # 2026-11-03 – military / foreign and civil intelligence columns
