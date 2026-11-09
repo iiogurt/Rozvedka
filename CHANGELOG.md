@@ -27,6 +27,12 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.17] – 2026-11-09
+
+### Security
+- pypdf 6.21.4 (from 6.21.3): fixes three high-severity flaws a malformed PDF could trigger while being read – two
+  endless loops and a very large memory use. Every downloaded report passes through pypdf. pytest 9.2.0 for development.
+
 ## [0.93.16] – 2026-11-09
 
 ### Added
@@ -2037,7 +2043,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.16...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.17...HEAD
+[0.93.17]: https://github.com/iiogurt/Rozvedka/compare/v0.93.16...v0.93.17
 [0.93.16]: https://github.com/iiogurt/Rozvedka/compare/v0.93.15...v0.93.16
 [0.93.15]: https://github.com/iiogurt/Rozvedka/compare/v0.93.14...v0.93.15
 [0.93.14]: https://github.com/iiogurt/Rozvedka/compare/v0.93.13...v0.93.14
