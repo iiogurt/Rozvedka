@@ -1165,6 +1165,21 @@
   pages:
     - {lang: ro, kind: archive, url: "https://www.dnsc.ro/doc/raport", verified: false}
 
+- country: RO
+  agency: DIICOT
+  name_local: "Direcția de Investigare a Infracțiunilor de Criminalitate Organizată și Terorism"
+  name_en: "Directorate for Investigating Organised Crime and Terrorism"
+  homepage: "https://www.diicot.ro/"
+  hq: {address: "București, Romania", lat: 44.43614, lon: 26.10268, precision: city}
+  description: "Romania's specialised prosecutors' directorate for organised crime, drug trafficking, cybercrime and terrorism. Its yearly activity report (since 2007) covers the cases, the criminal groups and the trends it investigated."
+  type: police-ct
+  access: manual
+  frequency: yearly
+  report_types: [raport de activitate]
+  notes: "diicot.ro answers every request, robots.txt included, with a JavaScript browser check (503) that the crawler does not pass – the yearly reports 2007–2025 (PDF, /images/documents/rapoarte_activitate/) are for hand collection."
+  pages:
+    - {lang: ro, kind: archive, url: "https://www.diicot.ro/informatii-de-interes-public/raport-de-activitate", verified: false}
+
 # ════════════════════════ BULGARIA ════════════════════════
 # Civil protection (checked 2026-10-06): only strategies and programmes on strategy.bg; no published national risk assessment found.
 - country: BG
@@ -2490,15 +2505,14 @@
   name_local: "Government Communications Security Bureau / Te Tira Tiaki – National Cyber Security Centre"
   name_en: "Government Communications Security Bureau – National Cyber Security Centre"
   homepage: "https://www.ncsc.govt.nz/"
-  description: "New Zealand's signals intelligence and cyber-security agency. Cyber threat reports on state-sponsored and criminal activity, and GCSB annual reports."
+  description: "New Zealand's signals intelligence and cyber-security agency. Cyber threat reports on state-sponsored and criminal activity (GCSB's annual reports are listed under GCSB)."
   hq: {address: "Pipitea House, 1 Pipitea Street, Wellington, New Zealand", lat: -41.2755, lon: 174.77882, precision: street}
   type: cyber
   access: auto
   frequency: yearly
-  report_types: [Cyber Threat Report, annual report]
+  report_types: [Cyber Threat Report]
   pages:
     - {lang: en, kind: archive, url: "https://www.ncsc.govt.nz/news/"}
-    - {lang: en, kind: archive, url: "https://www.gcsb.govt.nz/publications/annual-reports"}
 
 - country: NZ
   agency: NEMA
