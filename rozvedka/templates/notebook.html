@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ nb.name }} · Notebooks · Rozvedka{% endblock %}
+{% block main %}
+<div class="viz-head"><h1 class="page-h">{{ nb.name }}{% if nb.current %} <span class="ctag" title="New passages go here">current</span>{% endif %}</h1>
+  {% if nb.notes %}<div class="viz-actions">
+    <a href="/notebooks/{{ nb.slug }}/export.md" title="The passages, your notes and a numbered list of sources">Export as Markdown</a>
+    <a href="/notebooks/{{ nb.slug }}/print" target="_blank" title="A page laid out for printing – choose “Save as PDF” in the print dialog">Print / PDF</a>
+  </div>{% endif %}</div>
+<p class="lede">{{ nb.notes|length }} passage{{ 's' if nb.notes|length != 1 }} from {{ nb.reports }} report{{ 's' if nb.reports != 1 }}{% if nb.kinds %},
+  publishers: {{ nb.kinds|join(', ') }}{% endif %}{% if nb.created %} · created {{ nb.created }}{% endif %}.</p>
+{% if notice %}<p class="h-problems case-toast" role="status">{{ notice }}</p>{% endif %}
+
+{% if not nb.notes %}<p class="empty">No passage yet. Open a report and quote a passage under <i>Quote in a notebook</i>, or use
+  <i>＋ notebook</i> beside a passage it shows{% if not nb.current %}; make this notebook current first, on <a href="/notebooks">Notebooks</a>{% endif %}.</p>{% endif %}
+
+<ol class="nb-notes">
+{% for x in nb.notes %}<li class="nb-note" id="n-{{ x.id }}">
+  <div class="nb-src">{% if x.src %}<a href="/report/{{ x.doc }}"><b>{{ x.src.title or 'untitled' }}</b></a>
+    <span class="muted small">{{ x.src.agency }} · {{ x.src.country }} · {{ x.src.year or 'n.d.' }}{% if x.page %} · {{ page_name(x.doc, x.page) }}{% endif %}</span>
+    {{ pub_mark(x.src.source_id) }}{% else %}<b>Report {{ x.doc }}</b> <span class="err small">no longer in the library</span>{% endif %}</div>
+  <blockquote class="p-text">{{ x.quote }}</blockquote>
+  <p class="nb-cite small"><span class="muted">[{{ x.n }}]</span> {{ x.cite.text }}{% if x.cite.url %} <a href="{{ x.cite.url }}" target="_blank" rel="noopener">official address ↗</a>{% endif %}
+    {% if x.pdf %} · <a href="{{ x.pdf }}" target="_blank">open the PDF{{ ' at ' ~ page_name(x.doc, x.page) if x.page }}</a>{% endif %}
+    {% if x.cite.warn %} · <span class="err">{{ x.cite.warn }}</span>{% endif %}</p>
+  <div class="nb-tools">
+    <form class="case-note" method="post" action="/notebooks/note"><input type="hidden" name="slug" value="{{ nb.slug }}"><input type="hidden" name="id" value="{{ x.id }}">
+      <textarea name="note" rows="{{ 2 if x.note|length < 160 else 4 }}" maxlength="4000" placeholder="your note on this passage (optional)">{{ x.note }}</textarea>
+      <button class="pin-btn">Save note</button></form>
+    <div class="nb-move">
+      {% for step, label, what in ((-1, '↑', 'up'), (1, '↓', 'down')) %}<form class="inline" method="post" action="/notebooks/move">
+        <input type="hidden" name="slug" value="{{ nb.slug }}"><input type="hidden" name="id" value="{{ x.id }}"><input type="hidden" name="step" value="{{ step }}">
+        <button class="pin-btn" title="Move {{ what }}" {{ 'disabled' if (step < 0 and x.n == 1) or (step > 0 and x.n == nb.notes|length) }}>{{ label }}</button></form>{% endfor %}
+      <form class="inline" method="post" action="/notebooks/remove" onsubmit="return confirm('Remove this passage from the notebook?')">
+        <input type="hidden" name="slug" value="{{ nb.slug }}"><input type="hidden" name="id" value="{{ x.id }}">
+        <button class="pin-btn" title="Remove from the notebook">✕</button></form>
+    </div>
+  </div>
+</li>{% endfor %}
+</ol>
+
+<section class="viz-card">
+  <h2 class="viz-title">This notebook</h2>
+  <form class="path-form" method="post" action="/notebooks/rename"><input type="hidden" name="slug" value="{{ nb.slug }}">
+    <label>Name <input name="name" value="{{ nb.name }}" size="40" maxlength="120" required></label><button>Rename</button></form>
+  <div class="path-form">
+  {% if not nb.current %}<form class="inline" method="post" action="/notebooks/current"><input type="hidden" name="slug" value="{{ nb.slug }}">
+    <input type="hidden" name="back" value="/notebooks/{{ nb.slug }}"><button title="New passages go to this notebook">Make current</button></form>{% endif %}
+  <form class="inline" method="post" action="/notebooks/delete" onsubmit='return confirm({{ ("Delete the notebook “" ~ nb.name ~ "” and its " ~ nb.notes|length ~ " passages? This cannot be undone.")|tojson }})'>
+    <input type="hidden" name="slug" value="{{ nb.slug }}"><button class="small">Delete the notebook</button></form>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ nb.name }} – notebook</title>
+  <style>
+    /* paper, not screen: dark text on white in both themes, serif body, sources numbered as in the text */
+    body { font: 11pt/1.45 Georgia, "Times New Roman", serif; color: #111; background: #fff; max-width: 46em; margin: 2em auto; padding: 0 1.5em; }
+    h1 { font-size: 19pt; margin: 0 0 .2em; }
+    h2 { font-size: 12pt; margin: 1.6em 0 .3em; page-break-after: avoid; }
+    .meta, .src { color: #444; font-size: 9.5pt; }
+    blockquote { margin: .4em 0 .4em 0; padding: .1em 0 .1em .9em; border-left: 3px solid #999; page-break-inside: avoid; }
+    .note { margin: .3em 0 0; }
+    ol.sources { font-size: 9.5pt; padding-left: 1.6em; }
+    ol.sources li { margin: .25em 0; word-break: break-word; }
+    a { color: #111; }
+    .tools { margin: 1em 0; font: 10pt sans-serif; }
+    @media print { .tools { display: none; } body { margin: 0 auto; } a { text-decoration: none; } }
+  </style>
+</head>
+<body>
+<p class="tools"><button onclick="window.print()">Print / save as PDF</button> · <a href="/notebooks/{{ nb.slug }}">back to the notebook</a></p>
+<h1>{{ nb.name }}</h1>
+<p class="meta">{{ nb.notes|length }} passage{{ 's' if nb.notes|length != 1 }} from {{ nb.reports }} report{{ 's' if nb.reports != 1 }}{% if nb.kinds %}
+  · publishers: {{ nb.kinds|join(', ') }}{% endif %} · from Rozvedka ({{ base }}). Every passage is quoted as worded in the library's text
+  of the report; the page is the page of the file.</p>
+{% for x in nb.notes %}
+<h2>{{ x.n }}. {{ x.src.title if x.src else 'Report ' ~ x.doc }}</h2>
+<blockquote>{{ x.quote }} <span class="src">[{{ x.n }}]</span></blockquote>
+{% if x.note %}<p class="note">{{ x.note }}</p>{% endif %}
+{% endfor %}
+<h2>Sources</h2>
+<ol class="sources">
+{% for x in nb.notes %}<li>{{ x.cite.text }}{% if x.cite.url %} {{ x.cite.url }}{% endif %}{% if x.cite.kind and x.cite.kind != 'official' %} – {{ x.cite.kind }}{% endif %}{% if x.cite.warn %} – {{ x.cite.warn }}{% endif %}</li>
+{% endfor %}</ol>
+</body>
+</html>

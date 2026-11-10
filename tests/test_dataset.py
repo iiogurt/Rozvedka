@@ -298,3 +298,25 @@ def test_the_case_file_travels_only_in_personal_backups(a, tmp_path, monkeypatch
     r = dataset.import_dataset(tmp_path / "mine", index=False)
     assert r["files"]["case_file"] == "0 pins added" and "case file: 0 pins added" in dataset.describe(r)
     assert {x["id"]: x["note"] for x in casefile.load()} == {"Q1": "why", "Q2": "mine"}     # an empty note filled
+
+
+def test_notebooks_travel_only_in_personal_backups(a, tmp_path, monkeypatch):
+    from rozvedka import notebooks
+    assert "added" in notebooks.add_text(1, "text of report 1", note="why")
+    with db.session() as con:
+        assert any("notebooks (1 notebook, 1 quoted passage)" in x for x in dataset.personal_holdings(con))
+    export(tmp_path, "mine", personal=True)
+    export(tmp_path, "share")
+    use(monkeypatch, tmp_path / "B")
+    r = dataset.import_dataset(tmp_path / "share", index=False)
+    assert "notebooks" not in r["files"] and notebooks.load()["notebooks"] == []
+    use(monkeypatch, tmp_path / "C")                       # a library of its own: the report gets another id here
+    with db.session() as con:
+        con.execute("INSERT INTO sources(id,key,country,agency,type,active) VALUES(3,'CZ/BIS','CZ','BIS','intelligence-civil',1)")
+        add_doc(con, config.FILES, 7, 3, "https://bis.cz/own.pdf", body=b"%PDF own")
+    r = dataset.import_dataset(tmp_path / "mine", index=False)
+    assert r["files"]["notebooks"] == "1 passage added" and "notebooks: 1 passage added" in dataset.describe(r)
+    note = notebooks.notebook("notes")["notes"][0]
+    with db.session() as con:
+        here = con.execute("SELECT id FROM documents WHERE url='https://bis.cz/2024.pdf'").fetchone()[0]
+    assert note["doc"] == here and note["note"] == "why" and note["quote"] == "text of report 1"

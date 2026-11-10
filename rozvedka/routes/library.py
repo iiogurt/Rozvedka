@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 
 from fastapi import APIRouter, Form, HTTPException, Request
 from fastapi.responses import FileResponse, RedirectResponse
-from .. import crawler, dating, db, doctypes, downloader, jobs as jobrunner, logos, paging, registry, report
+from .. import crawler, dating, db, doctypes, downloader, jobs as jobrunner, logos, paging, notebooks, registry, report
 from ..config import FILES
 from ..web import referer_url, tpl
 
@@ -64,7 +64,7 @@ def report_page(request: Request, doc_id: int):
     d = report.detail(doc_id)
     if d is None:
         raise HTTPException(404, "unknown report")
-    return tpl.TemplateResponse(request, "report.html", d)
+    return tpl.TemplateResponse(request, "report.html", d | {"notebooks": notebooks.overview()})
 
 
 @router.get("/doc/{doc_id}")

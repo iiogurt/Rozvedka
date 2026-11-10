@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from . import __version__, collect, db, registry
-from .routes import actors, books as books_routes, briefings as briefing_routes, case, citations, collect as collect_routes, cves, data, documents, events as events_routes, graph, home, library, maps, misc, series, sources, techniques, threat_levels, trends, update, views, watch
+from .routes import actors, books as books_routes, briefings as briefing_routes, case, citations, notebooks as notebook_routes, collect as collect_routes, cves, data, documents, events as events_routes, graph, home, library, maps, misc, series, sources, techniques, threat_levels, trends, update, views, watch
 from .web import (HERE, TYPE_NAMES, _age_cache, _independent, request_guard, static_cache, tpl)   # noqa: F401 – re-exported (tests, home.py)
 
 def startup():
@@ -30,5 +30,5 @@ app.middleware("http")(static_cache)
 
 
 # order matters where paths overlap (/actors/sanctions before /actors/{key}); each module keeps its own order
-for module in (home, data, update, watch, documents, sources, series, collect_routes, misc, trends, actors, graph, case, cves, techniques, threat_levels, events_routes, books_routes, citations, maps, briefing_routes, library, views):
+for module in (home, data, update, watch, documents, sources, series, collect_routes, misc, trends, actors, graph, case, notebook_routes, cves, techniques, threat_levels, events_routes, books_routes, citations, maps, briefing_routes, library, views):
     app.include_router(module.router)
