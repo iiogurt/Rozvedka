@@ -99,11 +99,7 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
         where.append("s.id=?"); args.append(source)
     # a search word naming a concept also finds its names in other languages (Wikidata) – unless the search is
     # exact, or comes from a Trends chart, which counts terms literally as typed
-    expansions: list[dict] = []
-    if q.strip() and not exact and not indexed:
-        fts, expansions = concepts.expand(q)
-    else:
-        fts = trends.or_query(q) if q.strip() else ""
+    fts, expansions = full_text(q, exact, indexed)
     if q.strip() and indexed:
         # link from a Trends chart: exactly the full-text match the chart counted
         where.append("d.id IN (SELECT rowid FROM doc_text WHERE doc_text MATCH ?)"); args.append(fts or '""')
@@ -121,6 +117,25 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
             where.append("d.id IN (SELECT doc_id FROM doc_topics WHERE topic=?)"); args.append(t)
     return {"where": where, "args": args, "chosen": chosen, "fts": fts, "expansions": expansions, "base_where": base_where,
             "base_args": base_args, "editions": editions, "series_row": series_row, "actor_row": actor_row}
+
+
+def full_text(q: str, exact: int = 0, indexed: int = 0) -> tuple[str, list[dict]]:
+    """The full-text query of a search, and the other-language names it was widened by."""
+    if q.strip() and not exact and not indexed:
+        return concepts.expand(q)
+    return (trends.or_query(q) if q.strip() else ""), []
+
+
+@db.cached
+def snippets(fts: str, ids: tuple) -> dict[int, str]:
+    """Report id → an excerpt around its best matches, the matches between \\x02 and \\x03. FTS5 gathers every
+    occurrence of the search words in each report, so a page of excerpts can take seconds on the Pi when the
+    search was widened to other languages: kept until the data changes, and loaded after the list (/documents/snippets)."""
+    if not fts or not ids:
+        return {}
+    with db.session() as con:
+        return dict(con.execute(f"""SELECT rowid, snippet(doc_text, 1, char(2), char(3), '…', 14) FROM doc_text
+                                    WHERE doc_text MATCH ? AND rowid IN ({','.join('?' * len(ids))})""", (fts, *ids)))
 
 
 def count(**params) -> int:

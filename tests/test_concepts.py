@@ -84,3 +84,24 @@ def test_documents_search_in_all_languages(library):
     assert re.search(r"<b>3</b> documents match", t) and "Q484000" in t and "Search only the words as typed" in t
     t = client.get("/documents?q=Drohne&exact=1").text
     assert re.search(r"<b>1</b> documents match", t) and "Also find it in other languages" in t
+
+
+def test_excerpts_load_after_the_list_and_are_kept(library):
+    """Excerpts in other languages take seconds on the Pi: the list comes first and asks for them; once made they
+    are shown with the list."""
+    from rozvedka.app import app
+    client = TestClient(app)
+    t = client.get("/documents?q=Drohne").text
+    m = re.search(r'fetch\("(/documents/snippets\?[^"]+)"\)', t)
+    assert m and 'data-snippet-for="2"' in t and "<mark>" not in t
+    url = m.group(1).replace("\\u0026", "&")
+    snips = client.get(url).json()
+    assert set(snips) == {"1", "2", "3"} and "<mark>Drones</mark>" in snips["2"] and "<mark>Bezpilotní letoun</mark>" in snips["3"]
+    t = client.get("/documents?q=Drohne").text            # now cached: excerpts in the page, nothing to load
+    assert "<mark>Drohne</mark>" in t and "/documents/snippets" not in t
+    # the report text is escaped; only the markers become HTML
+    with db.session() as con:
+        con.execute("INSERT INTO documents(id,source_id,url,title,lang,year,status,local_path) VALUES(5,1,'https://x/5.pdf','R5','de',2025,'downloaded','f5.pdf')")
+        con.execute("INSERT INTO doc_text(rowid,title,body) VALUES(5,'','<script>x</script> Drohne')")
+    assert "&lt;script&gt;" in client.get("/documents/snippets", params={"q": "Drohne", "ids": "5,x,5"}).json()["5"]
+    assert client.get("/documents/snippets", params={"q": "", "ids": "1"}).json() == {}
