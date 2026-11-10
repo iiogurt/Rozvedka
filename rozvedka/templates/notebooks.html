@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Notebooks · Rozvedka{% endblock %}
+{% block main %}
+<div class="viz-head"><h1 class="page-h">Notebooks</h1></div>
+<p class="lede">Passages you marked in reports and books, with your notes, in named notebooks. Each can be exported with a
+  citation for every passage.</p>
+<details class="how"><summary>How this works</summary>
+<p class="muted small">Mark a passage on a report's page in two ways: paste it under <i>Quote in a notebook</i>, or use <i>＋ notebook</i>
+  beside a passage the page shows. Pasted text is found in the library's text of the report, whatever its line breaks
+  and case, and is kept as worded there, with its page. A passage the page shows is widened to its whole sentence. New
+  passages go to the notebook marked <b>current</b>. A citation names the agency, the title, the year, the page of the
+  file and the official address the report was downloaded from, with the date. Think tanks ◆, commercial analysts ■ and
+  books are marked as such. There is one set of notebooks for the whole portal, kept in <code>data/{{ file }}</code>.
+  That file is never committed and only personal backups carry it, because what you quote says what you are working on.</p></details>
+{% if notice %}<p class="h-problems case-toast" role="status">{{ notice }}</p>{% endif %}
+
+<form class="path-form" method="post" action="/notebooks/new" autocomplete="off">
+  <label>New notebook <input name="name" size="34" maxlength="120" placeholder="e.g. Russian sabotage in Europe 2024" required></label>
+  <button>Create</button>
+</form>
+
+{% if not o.notebooks %}<p class="empty">No notebook yet. Create one here, or open a report and quote a passage: a notebook called
+  “Notes” is made for it.</p>{% else %}
+<section class="viz-card">
+  <h2 class="viz-title">Notebooks <span class="muted small">{{ o.notebooks|length }}</span></h2>
+  <table class="nb-list">
+    <thead><tr><th>Notebook</th><th class="n">Passages</th><th class="n">Reports</th><th>Last added</th><th>Created</th><th></th></tr></thead>
+    {% for b in o.notebooks %}<tr>
+      <th><a href="/notebooks/{{ b.slug }}">{{ b.name }}</a>{% if b.slug == o.current %} <span class="ctag" title="New passages go here">current</span>{% endif %}</th>
+      <td class="n"><a href="/notebooks/{{ b.slug }}">{{ b.n }}</a></td><td class="n">{{ b.reports }}</td>
+      <td class="muted">{{ b.last or '–' }}</td><td class="muted">{{ b.created or '' }}</td>
+      <td>{% if b.slug != o.current %}<form class="inline" method="post" action="/notebooks/current"><input type="hidden" name="slug" value="{{ b.slug }}">
+        <button class="pin-btn" title="New passages go to this notebook">make current</button></form>{% endif %}</td>
+    </tr>{% endfor %}
+  </table>
+</section>{% endif %}
+{% endblock %}

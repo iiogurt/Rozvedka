@@ -44,7 +44,7 @@ SHOTS = {
     "new": ("/new", 1300, [], None),
     "watch": ("/watch", 1300, [], None),
     "compare": (f"/compare?actor={WAGNER}", 1300, [], None),
-    "cross-language": ("/documents?q=Drohne", 900, [("eval", "document.querySelector('.xl-names').open = true; 1")], None),
+    "cross-language": ("/documents?q=Drohne", 900, [("eval", "document.querySelector('.xl-names').open = true; 1"), ("sleep", 4)], None),
     "doc-works": ("/documents?country=CH&type=intelligence-civil", 760, [], None),
     "doc-types": ("/documents?doc_type=all&country=GB", 900, [], None),
     "years": ("/years?kind=stamp", 1000, [], None),
@@ -99,6 +99,7 @@ SHOTS = {
     "rings": ("/graph/rings?e=Q41053", 1350, [], None),               # Hezbollah: links on two rings, a sector per source
     "rings-matrix": ("/graph/rings/matrix?e=Q41053", 1350, [], None),  # its neighbours as a matrix, communities as blocks
     "offshore": ("/graph/offshore", 1100, [], None),                    # listed companies and people in ICIJ's leaked records
+    "notebook": ("/notebooks/sabotage-in-europe-2024-2025", 1000, [], None),   # quoted passages with citations (fill a notebook first)
     "case": ("/case", 1500, [], None),                                  # pinned entities and the chain of every pair (pin some first)
     "map": ("/map", 800, [("sleep", 5)], None),
     "democracy-map": ("/map/democracy?measure=vdem_regime&year=2025", 900, [("sleep", 6)], None),

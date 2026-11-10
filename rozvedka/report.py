@@ -53,7 +53,7 @@ def detail(doc_id: int) -> dict | None:
                     row = con.execute("SELECT body FROM doc_text WHERE rowid=?", (doc_id,)).fetchone()
                     body = (row[0] if row else "") or ""
                 s, e = json.loads(r["spans"])[0]
-                item.update(actors._snippet(body, s, e), page=topics.page_of(offsets, s))
+                item.update(actors._snippet(body, s, e), page=topics.page_of(offsets, s), span=(s, e))
             named.append(item)
     # series: the edition, its neighbours and other languages, and what changed against the previous edition
     ed = series.doc_index().get(doc_id)

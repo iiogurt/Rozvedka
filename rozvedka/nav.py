@@ -12,6 +12,7 @@ GROUPS = [
         ("Series", "/series", (), "Report series and their editions: what is out, what is missing."),
         ("Books", "/books", (), "The local book library: books searched and matched like the reports, never counted as reports."),
         ("Watchlist", "/watch", (), "Searches you follow: new reports that match."),
+        ("Notebooks", "/notebooks", (), "Passages you marked in reports, with your notes – export with a citation for each."),
     ]),
     ("topics", "Topics & trends", "/topics", [
         ("Topics", "/topics", (), "The 64 topics and the reports behind each."),

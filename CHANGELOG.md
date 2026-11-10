@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.94.0] – 2026-11-10
+
+### Added
+- **Notebooks** (`/notebooks`): collect passages from reports in named notebooks, each with your note and a citation
+  (agency, title, year, page, the official address it was downloaded from, the date). On a report's page, paste a
+  passage under *Quote in a notebook*: it is found in the report's text whatever the line breaks and case, and kept
+  as worded there with its page. Or press **＋ notebook** beside an actor's passage to take its whole sentence.
+  Passages can be noted, moved and removed. Export a notebook as Markdown with numbered sources, or print it and
+  save it as PDF. Think tanks, commercial analysts, books and files from outside an agency's official domains are
+  marked as such.
+- The notebooks live in `data/notebooks.yaml`, never committed. Only personal backups carry them, as they do the case
+  file. On import each passage is tied to the receiving library's copy of its report, by address and checksum.
+
 ## [0.93.18] – 2026-11-10
 
 ### Changed
@@ -2057,7 +2070,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.18...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.94.0...HEAD
+[0.94.0]: https://github.com/iiogurt/Rozvedka/compare/v0.93.18...v0.94.0
 [0.93.18]: https://github.com/iiogurt/Rozvedka/compare/v0.93.17...v0.93.18
 [0.93.17]: https://github.com/iiogurt/Rozvedka/compare/v0.93.16...v0.93.17
 [0.93.16]: https://github.com/iiogurt/Rozvedka/compare/v0.93.15...v0.93.16

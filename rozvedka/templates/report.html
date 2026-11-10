@@ -15,6 +15,7 @@
 <p class="rp-actions">
   {% if d.local_path %}<a class="rp-btn rp-primary" href="/doc/{{ d.id }}" target="_blank">Open the {{ 'EPUB' if (d.local_path or '').endswith('.epub') else 'PDF' }}</a>{% endif %}
   {% if not book %}<a class="rp-btn" href="{{ d.url }}" target="_blank" rel="noopener">Official address ↗</a>{% endif %}
+  {% if index and index.chars %}<a class="rp-btn" href="#quote" title="Mark a passage of this report in a notebook, with its page and citation">✎ Quote in a notebook</a>{% endif %}
   {% if d.hidden %}<span class="badge-warn">hidden from lists and counts</span>{% endif %}</p>
 
 <div class="rp-grid">
@@ -199,10 +200,33 @@
   {% for a in actors %}<li><div><i class="kdot kind-{{ a.kind }}"></i><a href="/actors/{{ a.key }}"><b>{{ a.label }}</b></a>
       <span class="muted small">{{ a.kind_name }} · {{ a.hits }} mention{{ 's' if a.hits != 1 }} · as {{ a.names.keys()|list|join(', ') }}</span></div>
     {% if a.match %}<blockquote class="snippet small">{{ a.before }}<mark>{{ a.match }}</mark>{{ a.after }}
-      {% if d.local_path %}<a class="muted" href="/doc/{{ d.id }}{{ '#page=' ~ a.page if a.page }}" target="_blank">{{ page_name(d.id, a.page) if a.page else 'open' }}</a>{% endif %}</blockquote>{% endif %}</li>{% endfor %}
+      {% if d.local_path %}<a class="muted" href="/doc/{{ d.id }}{{ '#page=' ~ a.page if a.page }}" target="_blank">{{ page_name(d.id, a.page) if a.page else 'open' }}</a>{% endif %}
+      {% if a.span %}<form class="inline" method="post" action="/notebooks/add"><input type="hidden" name="doc" value="{{ d.id }}">
+        <input type="hidden" name="start" value="{{ a.span[0] }}"><input type="hidden" name="end" value="{{ a.span[1] }}"><input type="hidden" name="widen" value="1">
+        <input type="hidden" name="back" value="/report/{{ d.id }}#a-{{ loop.index }}">
+        <button class="pin-btn" id="a-{{ loop.index }}" title="Mark the sentence naming {{ a.label }} in {{ ('the notebook “' ~ (notebooks.notebooks|selectattr('slug', 'equalto', notebooks.current)|first).name ~ '”') if notebooks.current else 'a new notebook “Notes”' }}">＋ notebook</button></form>{% endif %}</blockquote>{% endif %}</li>{% endfor %}
   </ol>
   {% else %}<p class="muted small">No actor named{% if not index %} – the report has no text in the library yet{% endif %}.</p>{% endif %}
   {% if countries %}<p class="small rp-chips"><span class="muted">Countries named:</span>
     {% for c in countries %}<a class="mchip" href="/actors/{{ c.key }}">{{ c.label }}&nbsp;<span class="muted">{{ c.hits }}</span></a> {% endfor %}</p>{% endif %}
 </section>
+
+{% if index and index.chars %}
+<section class="viz-card" id="quote">
+  <h2 class="viz-title">Quote in a notebook</h2>
+  <p class="muted small viz-sub">Paste a sentence or two as it appears in the {{ 'EPUB' if (d.local_path or '').endswith('.epub') else 'PDF' }}.
+    It is found in the library's text of this report, and kept as worded there with its page and a citation.
+    <a href="/notebooks">All notebooks</a>.</p>
+  <form class="nb-quote" method="post" action="/notebooks/add-text" autocomplete="off">
+    <input type="hidden" name="doc" value="{{ d.id }}"><input type="hidden" name="back" value="/report/{{ d.id }}#quote">
+    <textarea name="text" rows="3" maxlength="3000" required placeholder="the passage, copied from the report"></textarea>
+    <textarea name="note" rows="2" maxlength="4000" placeholder="your note (optional)"></textarea>
+    <div class="path-form"><label>into <select name="slug">
+      {% for b in notebooks.notebooks %}<option value="{{ b.slug }}" {{ 'selected' if b.slug == notebooks.current }}>{{ b.name }} ({{ b.n }})</option>{% endfor %}
+      {% if not notebooks.notebooks %}<option value="">a new notebook “Notes”</option>{% endif %}
+    </select></label> <button>✎ Add to the notebook</button>
+    {% if notebooks.notebooks %}<a class="small" href="/notebooks">new notebook…</a>{% endif %}</div>
+  </form>
+</section>
+{% endif %}
 {% endblock %}

@@ -44,7 +44,7 @@ local library, so you can follow how state security, social resilience and disas
 
 ## Features
 
-**Finding your way.** The side rail has six groups – *Overview*, *Library* (documents, what's new, series, watchlist), *Topics & trends*,
+**Finding your way.** The side rail has six groups – *Overview*, *Library* (documents, what's new, series, watchlist, notebooks), *Topics & trends*,
 *Actors & threats* (actors, connections, sanctions, attributions, threat levels, CVEs, ATT&CK techniques), *Sources* (agencies, think
 tanks, maps, ratings, citations) and *Maintain* (update, coverage, upkeep, data exchange). Hover a group for its pages, each with a
 line on what it answers; tabs under the command bar show the section you are in, and the command bar (`rz>`) searches from every page. **All views** (`/views`) lists every page with the
@@ -127,7 +127,9 @@ The library itself (`/documents`): every report with its agency, country, langua
 - Filter by country, coalition (EU, NATO, Five Eyes, G7, Schengen, AUKUS, JEF, NATO IP4), agency type, language,
   year or year range, download status, topic (several at once) and actor.
 - **Full-text search inside the reports** – `"quoted phrases"`, `OR` for your own alternatives, results with
-  highlighted snippets, sorted by relevance, year or date added.
+  highlighted snippets, sorted by relevance, year or date added. The results come first; the snippets follow a second
+  or two later on a Raspberry Pi (finding the words in long reports is the slow part) and are kept until the library
+  changes, so a page seen before comes back with them at once.
 - **Cross-language search** – a word that names one of ~100 security concepts (`sources/concepts.yaml`) also finds
   its names in the other languages of the library: *Drohne* finds 449 reports instead of 25 (drone, dron, дрон,
   bezpilotní letoun, mehitamata õhusõiduk …). The names are the labels and aliases of the concept's Wikidata item,
@@ -187,6 +189,27 @@ previous edition" box): actors named for the first time or no longer, each with 
 clearly more or less often, and topics that are new, gone or now (no longer) among the main ones, with their scores.
 
 <img src="docs/images/edition-changes.png" alt="Edition changes of an annual report series: actors named for the first time, each with the passage and page" width="900">
+
+### 📝 Notebooks – quote, note, cite
+
+<img src="docs/images/notebook.png" alt="A notebook: four quoted passages from Austrian, Danish, Swiss and Estonian reports, each with its page, citation, official address and a note" width="900">
+
+**Collect the passages that matter, with a citation for each** (`/notebooks`):
+
+- **Quote a passage:** on a report's page, paste a sentence or two under *Quote in a notebook*, as copied from the
+  PDF. The portal finds it in the report's text, whatever the line breaks, hyphens and case, and keeps it as worded
+  there, with its page. Or press **＋ notebook** beside a passage the page shows; it is widened to its whole sentence.
+- **Named notebooks:** new passages go to the *current* notebook. Each passage can take a note and be moved or
+  removed.
+- **Citations** are formed from the library: the agency, the title, the year, the page of the file, the official
+  address the report was downloaded from and the date. A file added by hand from an address outside the agency's
+  official domains is flagged. Think tanks ◆, commercial analysts ■ and books are marked as such.
+- **Export:** *Export as Markdown* gives the passages, the notes and a numbered list of sources. *Print / PDF* gives a
+  page laid out for paper; choose *Save as PDF* in the browser's print dialog.
+
+There is one set of notebooks for the whole portal, kept in `data/notebooks.yaml`. Like the case file, it is never
+committed and only **personal backups** carry it. A note records the report's address and checksum, so a backup
+restored into another library ties each passage to that library's copy of the report.
 
 ### 🏛️ Sources
 
@@ -820,7 +843,8 @@ to crawl the agencies – and either side can crawl on from there.
   picker over USB disks (`/media`, `/mnt`) and the home folder, with free space and *new folder*; *options* – the
   largest file (4 GB … 100 MB, 2 GB fits most transfer services) and a label. A meter shows whether it fits.
 - **Personal backup or a dataset to share**: tick *Personal backup* to include the data this library keeps for
-  personal use only: the book library (files, text and what the books say) and RSF's press-freedom scores. The
+  personal use only: the book library (files, text and what the books say), RSF's press-freedom scores, the case
+  file and the notebooks. The
   page lists what this library holds of it. Such a dataset's file names end in `-personal`; the import list marks it
   *personal backup*, and the import report says what it holds. Leave the box off for a dataset to hand on: it then
   carries the country ratings without RSF and no books.
@@ -1121,6 +1145,7 @@ flowchart LR
 | `rozvedka/identity.py`, `vendors.py`, `twins.py` | one target across sanctions lists and the details they share; vendors' names of threat groups (MISP); toolkit twins |
 | `rozvedka/rings.py` | Rings and the neighbourhood matrix: an entity's links on two rings, one sector per layer; its neighbours as a matrix ordered by Louvain communities |
 | `rozvedka/casefile.py` | the case file: pins with notes in `data/case_file.yaml`, the chain of every pair, connectors, the Markdown export with citations |
+| `rozvedka/notebooks.py` | research notebooks in `data/notebooks.yaml`: passages found in a report's text, widened to sentences, cited (agency, title, year, page, official address), exported as Markdown or a print page, merged from personal backups |
 | `rozvedka/paths.py` | Find a connection: the most specific chains between two entities (hub-penalised shortest paths, alternatives on other routes), name resolution |
 | `rozvedka/ties.py` | the network of stated links: entities and links from the sanctions lists, Wikidata, Wikipedia, ATT&CK and the reports, each with its evidence |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |

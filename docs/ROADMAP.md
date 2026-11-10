@@ -40,7 +40,7 @@ Written 2026-10-06 at version 0.29.0 (the previous assessment was made at 0.16.0
 The reading, network and visualisation plans (C, F, G, H) are built. The weak spots are again **completeness inside the
 declared scope** – the hand-collected sources hold nothing yet, Türkiye has no fetchable source, 106 slots of the coverage
 grid are unchecked – and keeping the measured quality as the library grows. So the order is: **A (sources) → B (quality
-kept under its targets) → the open feature items (C2, G7, G9; E4 done in 0.93.18) as useful**, with each item one PR.
+kept under its targets) → the open feature items (G7, G9; E4 done in 0.93.18, C2 in 0.94.0) as useful**, with each item one PR.
 
 ## 3. Roadmap
 
@@ -99,7 +99,8 @@ Each item: why · what · done when · version step.
 
 1. ✅ (0.30.0) **Report page** – one page per report: metadata and provenance, series and editions, main topics, actors with
    passages, what changed against the previous edition, open/original links. Today a report is only a row and a PDF. · minor
-2. **Research notes and citations** (old C13, adapted to *no user-based features*: one shared notebook) – mark
+2. ✅ (0.94.0: `/notebooks` – pasted passages found in the report's text, ＋ notebook on actor passages, Markdown and a
+   print page for PDF; personal backups carry them) **Research notes and citations** (old C13, adapted to *no user-based features*: one shared notebook) – mark
    passages into named notebooks, export as Markdown / PDF with formatted citations (agency, title, year, page,
    official URL). · minor
 3. ✅ (0.46.0) **Actor timeline** (old C14) – first and last mention per agency, mentions per year by reporting country, how the
@@ -317,7 +318,7 @@ Updated 2026-10-26 at 0.92.0, after F5 – F12 (0.88.0 – 0.92.0):
 3. **A5 (owner)** – hand-collect the blocked flagships through *To collect*: Säpo, PET, CSIS, ASIO, VSD/AOTD first; then Romania's DIICOT activity reports (2007–2025), New Zealand's GCSB annual reports, the Korean Disaster Yearbooks (2012–2024), Romania's IGSU risk assessments and
    Ukraine's DSNS national safety reports, New Zealand Police annual reports, Iceland's organised-crime assessments 2015 and
    2019 (their old host dev.logreglan.is is gone).
-4. **Features still open** – C2 research notes and citations; ✅ (0.93.18) E4 caching; G9 UK
+4. **Features still open** – ✅ (0.94.0) C2 research notes and citations; ✅ (0.93.18) E4 caching; G9 UK
    Companies House (needs an API key from the owner); G7 the network as of a year (waits for dated links).
 
 Done from the earlier list: E1 (0.48.0, off by the owner's decision), A1 + A2 (0.29.1), B1 (0.46.1), B2 / B3 (0.32–0.33),

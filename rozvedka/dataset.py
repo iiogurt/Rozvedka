@@ -203,6 +203,10 @@ def personal_holdings(con) -> list[str]:
     from . import casefile
     if (pins := casefile.load()):
         out.append(f"the case file ({len(pins)} pinned entit{'ies' if len(pins) != 1 else 'y'} with notes)")
+    from . import notebooks
+    if (books := notebooks.load()["notebooks"]):
+        n = sum(len(b["notes"]) for b in books)
+        out.append(f"the notebooks ({len(books)} notebook{'s' if len(books) != 1 else ''}, {n} quoted passage{'s' if n != 1 else ''})")
     return out
 
 
@@ -338,6 +342,9 @@ def _write_stream(writer, manifest: dict, gz: Path, logo_rows: list, chosen: lis
         from . import casefile
         if personal and casefile.path().exists():
             tar.add(casefile.path(), arcname="case/case_file.yaml")
+        from . import notebooks
+        if personal and notebooks.path().exists():
+            tar.add(notebooks.path(), arcname="case/notebooks.yaml")
         for r in logo_rows:
             p = _logos_dir() / r["logo_path"]
             if p.exists():
@@ -834,6 +841,13 @@ def _extract(tar, plan: dict, m: dict) -> dict:
                 theirs = (yaml.safe_load(src.read().decode("utf-8")) or {}).get("pins") or []
             n = casefile.merge(theirs)
             stats["case_file"] = f"{n} pin{'s' if n != 1 else ''} added"
+        elif name == "case/notebooks.yaml":         # a personal backup's notebooks: their passages added to these
+            from . import notebooks
+            with tar.extractfile(member) as src:
+                theirs = yaml.safe_load(src.read().decode("utf-8")) or {}
+            r = notebooks.merge(theirs if isinstance(theirs, dict) else {})
+            stats["notebooks"] = (f"{r['added']} passage{'s' if r['added'] != 1 else ''} added"
+                                  + (f", {r['missing']} of reports not in this library left out" if r["missing"] else ""))
         elif name.startswith("sources/") and Path(name).name in PORTAL_LISTS:
             folder = config.DATA / "imports" / f"{m['dataset_id']}-lists"
             folder.mkdir(parents=True, exist_ok=True)
@@ -1060,6 +1074,8 @@ def describe(r: dict, cli: bool = True) -> str:
         lines.append(f"  country ratings: {r['files']['ratings']}")
     if r["files"].get("case_file"):
         lines.append(f"  case file: {r['files']['case_file']}")
+    if r["files"].get("notebooks"):
+        lines.append(f"  notebooks: {r['files']['notebooks']}")
     for k, v in (r.get("lists") or {}).items():
         lines.append(f"  {k}: {v}")
     if a.get("conflicts"):
