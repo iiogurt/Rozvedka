@@ -98,7 +98,9 @@ def version() -> tuple:
     for suffix in ("", "-wal"):
         try:
             st = DB_PATH.with_name(DB_PATH.name + suffix).stat()
-            out += [st.st_mtime_ns, st.st_size]
+            # an empty write-ahead log holds no data: it appears when a connection opens and goes when the last
+            # closes, so counting it would make results cached inside a session differ from those outside
+            out += [st.st_mtime_ns, st.st_size] if st.st_size or not suffix else [0, 0]
         except OSError:
             out += [0, 0]
     try:        # hand-edited data files (series, registry, taxonomy …) count as part of the data
@@ -123,7 +125,13 @@ def cached(fn):
                 store.clear()
             hit = store[key] = (v, fn(*args, **kw))
         return copy.deepcopy(hit[1])
+
+    def peek(*args, **kw):
+        """The cached result if it is still valid, else None – without computing it."""
+        hit = store.get((args, tuple(sorted(kw.items()))))
+        return copy.deepcopy(hit[1]) if hit is not None and hit[0] == version() else None
     wrapper.cache_clear = store.clear
+    wrapper.peek = peek
     return wrapper
 
 

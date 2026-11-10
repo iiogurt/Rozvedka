@@ -286,3 +286,22 @@ def test_cached_results_follow_the_database(library):
     with dbm.session() as con:
         con.execute("INSERT INTO documents(id,source_id,url,year,status) VALUES(99,1,'u99',2024,'downloaded')")
     assert count(1) == [7] and calls == [1, 1]         # a write to the database drops the cache
+
+
+def test_cached_results_are_shared_inside_and_outside_a_session(library):
+    """The empty write-ahead log an open connection leaves is no change: a result cached outside a session is
+    used inside one (the Documents page asked for the series index three times and computed it three times)."""
+    from rozvedka import db as dbm
+    calls = []
+
+    @dbm.cached
+    def count():
+        calls.append(1)
+        with dbm.session() as con:
+            return con.execute("SELECT COUNT(*) FROM documents").fetchone()[0]
+
+    count()
+    with dbm.session() as con:
+        con.execute("SELECT 1").fetchone()
+        assert count() == 6
+    assert count() == 6 and calls == [1]

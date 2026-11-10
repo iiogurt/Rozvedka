@@ -40,7 +40,7 @@ Written 2026-10-06 at version 0.29.0 (the previous assessment was made at 0.16.0
 The reading, network and visualisation plans (C, F, G, H) are built. The weak spots are again **completeness inside the
 declared scope** – the hand-collected sources hold nothing yet, Türkiye has no fetchable source, 106 slots of the coverage
 grid are unchecked – and keeping the measured quality as the library grows. So the order is: **A (sources) → B (quality
-kept under its targets) → the open feature items (C2, E4, G7, G9) as useful**, with each item one PR.
+kept under its targets) → the open feature items (C2, G7, G9; E4 done in 0.93.18) as useful**, with each item one PR.
 
 ## 3. Roadmap
 
@@ -269,7 +269,10 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
 3. ✅ (0.47.2) **Split `app.py`** into route modules – `rozvedka/routes/` (13 areas) and `rozvedka/web.py` (shared); a migration helper is still open. · patch
 4. **Performance** – cache actor and network results per index version (1–3 s pages); the home page takes ~0.7 s;
    (0.47.1: Actors page, actor pages and home page now 0.1–0.3 s on repeat visits) a cross-language search takes ~3 s on the Pi (highlighting ~40 alternatives) against ~1 s as typed. ✅ (0.39.0) the
-   topic mind map's data: one query instead of one per topic, ~11 s → ~0.8 s. · patch
+   topic mind map's data: one query instead of one per topic, ~11 s → ~0.8 s. ✅ (0.93.18) Documents list ~1 s → ~0.3 s;
+   a cross-language search ~3.9 s → ~0.6 s for the list, its excerpts loaded after it (FTS5 snippets over the prefix
+   alternatives are the cost – a prefix index did not help them and tripled the index) and kept per data version; the
+   cache key no longer changes with the empty write-ahead log. · patch
 5. **Optional remote access** – stays LAN-only; if wanted, through a VPN (WireGuard / Tailscale), never exposed. · docs
 
 ### Done since 0.16.0
@@ -314,7 +317,7 @@ Updated 2026-10-26 at 0.92.0, after F5 – F12 (0.88.0 – 0.92.0):
 3. **A5 (owner)** – hand-collect the blocked flagships through *To collect*: Säpo, PET, CSIS, ASIO, VSD/AOTD first; then Romania's DIICOT activity reports (2007–2025), New Zealand's GCSB annual reports, the Korean Disaster Yearbooks (2012–2024), Romania's IGSU risk assessments and
    Ukraine's DSNS national safety reports, New Zealand Police annual reports, Iceland's organised-crime assessments 2015 and
    2019 (their old host dev.logreglan.is is gone).
-4. **Features still open** – C2 research notes and citations; E4 caching (cross-language search ~3 s on the Pi); G9 UK
+4. **Features still open** – C2 research notes and citations; ✅ (0.93.18) E4 caching; G9 UK
    Companies House (needs an API key from the owner); G7 the network as of a year (waits for dated links).
 
 Done from the earlier list: E1 (0.48.0, off by the owner's decision), A1 + A2 (0.29.1), B1 (0.46.1), B2 / B3 (0.32–0.33),

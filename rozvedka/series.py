@@ -267,7 +267,17 @@ def get(series_id: str) -> dict | None:
 
 
 def doc_index() -> dict[int, dict]:
-    """document id → the confirmed series it is an edition of (for badges and the documents filter)."""
+    """document id → the confirmed series it is an edition of (for badges and the documents filter).
+    Kept until the database or the series file changes – every Documents page asks for it up to three times."""
+    try:
+        stamp = SERIES_FILE.stat().st_mtime_ns
+    except OSError:
+        stamp = 0
+    return _doc_index(str(SERIES_FILE), stamp)
+
+
+@db.cached
+def _doc_index(path: str, stamp: int) -> dict[int, dict]:
     out = {}
     with db.session() as con:
         for s in load()["series"]:

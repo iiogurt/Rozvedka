@@ -27,6 +27,20 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.93.18] – 2026-11-10
+
+### Changed
+- **Faster Documents list and search on the Raspberry Pi.** The list opens in ~0.3 s instead of ~1 s. A search
+  widened to other languages shows its results in ~0.6 s instead of 3–4 s; the excerpts around the found words
+  follow a second or two later (finding them in long reports is the slow part). A page seen before comes back
+  with its excerpts in ~0.5 s.
+
+### Fixed
+- Cached results were often recomputed. The database's empty write-ahead log, which comes and goes with every
+  open connection, counted as a change to the data, so a result cached outside a request was not reused inside
+  one. The series index alone was rebuilt three times for every Documents page.
+- The topic counts beside the Documents list are worked out from the matching reports first (~0.5 s → ~0.07 s).
+
 ## [0.93.17] – 2026-11-09
 
 ### Security
@@ -2043,7 +2057,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.17...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.93.18...HEAD
+[0.93.18]: https://github.com/iiogurt/Rozvedka/compare/v0.93.17...v0.93.18
 [0.93.17]: https://github.com/iiogurt/Rozvedka/compare/v0.93.16...v0.93.17
 [0.93.16]: https://github.com/iiogurt/Rozvedka/compare/v0.93.15...v0.93.16
 [0.93.15]: https://github.com/iiogurt/Rozvedka/compare/v0.93.14...v0.93.15

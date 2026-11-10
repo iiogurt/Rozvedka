@@ -1,5 +1,6 @@
 """Report series: title stems, proposals, coverage states and the confirmations written to series.yaml."""
 import datetime as dt
+import os
 
 import pytest
 import yaml
@@ -132,3 +133,20 @@ def test_series_reading_views(library):
         docs = client.get(f"/documents?series={sid}")
         assert docs.status_code == 200 and "editions of CZ/BIS – Annual Report" in docs.text
         assert client.get("/series/nope").status_code == 404
+
+
+def test_series_index_cached_until_the_series_file_changes(library, monkeypatch):
+    """Every Documents page asks for the series index up to three times; it is computed once per data version."""
+    with db.session() as con:
+        series.confirm(series.propose(con)[0], name="Annual Report")
+    calls = []
+    real = series.coverage
+    monkeypatch.setattr(series, "coverage", lambda con, s: calls.append(s["name"]) or real(con, s))
+    first = series.doc_index()
+    assert first and calls == ["Annual Report"]
+    first.clear()                                                  # callers get their own copy
+    assert series.doc_index() and calls == ["Annual Report"]       # served from the cache
+    series.mark_absent("CZ/BIS", "Annual Report", 2021, "en", "no English edition")
+    os.utime(series.SERIES_FILE, ns=(1, 1))                        # a different stamp even within one clock tick
+    series.doc_index()
+    assert calls == ["Annual Report"] * 2                          # the edited file is read again

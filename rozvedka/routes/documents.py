@@ -93,19 +93,25 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
             for r in con.execute(f"""SELECT doc_id, topic, score FROM doc_topics WHERE doc_id IN ({','.join('?' * len(ids))})
                                      ORDER BY score DESC""", ids):
                 by_doc.setdefault(r["doc_id"], []).append(r["topic"])
-            if fts:
-                for r in con.execute(f"""SELECT rowid, snippet(doc_text, 1, char(2), char(3), '…', 14) AS snip FROM doc_text
-                                         WHERE doc_text MATCH ? AND rowid IN ({','.join('?' * len(ids))})""", (fts, *ids)):
-                    for d in docs:
-                        if d["id"] == r["rowid"]:
-                            d["snippet"] = highlight(r["snip"])
+        snippets_url = ""
+        if fts and ids:
+            # excerpts already made are shown at once; otherwise the page loads them after the list (seconds on the Pi)
+            ready = doclist.snippets.peek(fts, tuple(ids))
+            if ready is None:
+                snippets_url = "/documents/snippets?" + urlencode(
+                    {k: v for k, v in (("q", q), ("exact", exact), ("indexed", indexed), ("ids", ",".join(map(str, ids)))) if v})
+            for d in docs:
+                if ready and d["id"] in ready:
+                    d["snippet"] = highlight(ready[d["id"]])
         for d in docs:
             d["ocr"] = json.loads(d["ocr"]) if d.get("ocr") else None
         for d in docs:   # subject topics first (by score), meta topics such as "agency activity" last
             d["topics"] = sorted(by_doc.get(d["id"], []), key=lambda t: bool(tax.get(t, {}).get("meta")))
+        # the reports first, then their topics: filtering each topic row by the full filter took ~0.5 s on the Pi
         topic_counts = dict(con.execute(
-            f"""SELECT t.topic, COUNT(DISTINCT t.doc_id) FROM doc_topics t JOIN documents d ON d.id=t.doc_id
-                JOIN sources s ON s.id=d.source_id WHERE {base_where} GROUP BY t.topic""", base_args).fetchall())
+            f"""SELECT topic, COUNT(DISTINCT doc_id) FROM doc_topics WHERE doc_id IN
+                (SELECT d.id FROM documents d JOIN sources s ON s.id=d.source_id WHERE {base_where}) GROUP BY topic""",
+            base_args).fetchall())
         facets = {
             "country": con.execute("SELECT DISTINCT country FROM sources WHERE active=1 ORDER BY country").fetchall(),
             "type": con.execute("SELECT DISTINCT type FROM sources WHERE active=1 ORDER BY type").fetchall(),
@@ -121,12 +127,20 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
     return tpl.TemplateResponse(request, "index.html", {"year_conflicts": len(dating.conflicts()),
         "type_counts": type_counts, "DOC_TYPES": doctypes.TYPES, "NOT_REPORTS": doctypes.NOT_REPORTS,
         "other_files": other_files, "independent": independent, "commercial": commercial, "expansions": flt["expansions"],
-        "docs": docs, "total": total, "pg": pg,
+        "docs": docs, "total": total, "pg": pg, "snippets_url": snippets_url,
         "facets": facets, "f": params, "counts": counts, "qs": qs,
         "TOPICS": tax, "CATEGORIES": topics.taxonomy()["categories"], "topic_counts": topic_counts,
         "actor_row": actor_row, "editions": editions, "series_row": series_row, "event_row": events.detail(event) if event else None,
         "watch_query": watch.to_query({**params, "topic": chosen}) if total else None,
     })
+
+
+@router.get("/documents/snippets")
+def documents_snippets(q: str = "", exact: int = 0, indexed: int = 0, ids: str = ""):
+    """Excerpts of the listed reports around the search words – {report id: HTML}, loaded after the list."""
+    want = tuple(dict.fromkeys(int(i) for i in ids.split(",") if i.strip().isdigit()))[:paging.PER_PAGE_CHOICES[-1]]
+    fts = doclist.full_text(q, exact, indexed)[0]
+    return {str(k): highlight(v) for k, v in doclist.snippets(fts, want).items()}
 
 
 def highlight(snippet: str) -> str:
