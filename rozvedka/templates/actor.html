@@ -41,11 +41,17 @@
   {% set peak = dated|sort(attribute='docs')|last %}<a href="{{ peak.link }}"><span>Most named</span><b>{{ peak.year }}</b><em>{{ peak.docs }} reports</em></a>{% endif %}
   <a href="{{ '#attributions' if attributions else '/actors/attributions' }}"><span>Official attributions</span><b>{{ attributions|length }}</b><em>government statements</em></a>
   <a href="{{ '#sanctions' if sanctions else '/actors/sanctions' }}"><span>Sanctions entries</span><b>{{ sanctions|length }}</b><em>EU, UK, UN, US lists</em></a>
-  <a href="/graph/ties?entity={{ a.key }}"><span>Network links</span><b>{{ net_layers|sum(attribute='n') }}</b><em>{{ net_layers|length }} layer{{ 's' if net_layers|length != 1 }}</em></a>
-  <a class="kpi-go" href="/actors/{{ a.key }}/timeline"><span>Timeline</span><b>→</b><em>events, reports, who reports</em></a>
 </section>
+<nav class="lens" data-tabs aria-label="Views of {{ a.label }}">
+  <a href="#tab-overview">Overview</a>
+  <a href="#tab-reports">Reports <span class="lens-n">{{ docs|num }}</span></a>
+  <a href="#tab-relations">Relations{% if net_layers %} <span class="lens-n">{{ net_layers|sum(attribute='n')|num }}</span>{% endif %}</a>
+  <a href="#tab-events">Events{% if events_of and events_of.total %} <span class="lens-n">{{ events_of.total|num }}</span>{% endif %}</a>
+  <a href="#tab-reference">Reference data</a>
+  <span class="lens-out"><a href="/actors/{{ a.key }}/timeline">Timeline →</a> {% if net_layers %}<a href="/graph/rings?e={{ a.key }}">Rings →</a> <a href="/graph/path?a={{ a.key }}">Find a connection →</a>{% endif %}</span>
+</nav>
 <div class="actor-grid">
-<section class="viz-card">
+<section class="viz-card" data-tab="overview">
   <h2 class="viz-title">In the reports</h2>
   <p class="viz-sub muted small"><b>{{ docs }}</b> reports by <b>{{ agencies|length }}</b> agencies mention {{ a.label }}
     · <a href="/documents?actor={{ a.key }}">list them</a> · <a href="/compare?actor={{ a.key }}">compare what agencies say</a>
@@ -93,7 +99,16 @@
   {% endif %}
 </section>
 
-<section class="viz-card facts" id="reference">
+{% if links_all %}
+<section class="viz-card" id="connected" data-tab="overview">
+  <h2 class="viz-title">Connected to <span class="muted small"><a href="#tab-relations">every link with its evidence →</a></span></h2>
+  <p class="muted small viz-sub">Each kind of link that a source states about {{ a.label }}: how many, the first few, and who states it.
+    A number opens the full list.</p>
+  {% from "_ties.html" import connected %}{{ connected(links_all, a.label) }}
+</section>
+{% endif %}
+
+<section class="viz-card facts" id="reference" data-tab="reference">
   <h2 class="viz-title">Reference data</h2>
   <table class="facts-t">
     {% if a.wikidata %}<tr><th>Wikidata</th><td><a href="{{ a.wikidata.url }}">{{ a.qid }}</a></td>
@@ -138,7 +153,7 @@
 
 {% macro src_links(sources) %}{% set wp = sources|selectattr('type', 'equalto', 'wikipedia')|list %}{% set wd = sources|selectattr('type', 'equalto', 'wikidata')|list %}{% if wp %}<a class="src-tag" href="{{ wp[0].revision_url or wp[0].url }}" title="English Wikipedia: {{ wp[0].article }}, infobox field “{{ wp|map(attribute='field')|unique|join('”, “') }}”, revision {{ wp[0].revision }}, retrieved {{ wp[0].retrieved }}">WP</a>{% endif %}{% if wd %}<a class="src-tag" href="{{ wd[0].url }}" title="Wikidata statement{{ 's' if wd|length > 1 }} {{ wd|map(attribute='property')|unique|join(', ') }}, retrieved {{ wd[0].retrieved }}">WD</a>{% set refs = wd|selectattr('ref')|list %}{% if refs %}<a class="src-tag" href="{{ refs[0].ref }}" rel="noopener" title="Reference cited by Wikidata{{ ' (' ~ refs|length ~ ')' if refs|length > 1 }}">ref{{ refs|length if refs|length > 1 }}</a>{% endif %}{% endif %}{% endmacro %}
 {% if sanctions %}
-<section class="viz-card" id="sanctions">
+<section class="viz-card" id="sanctions" data-tab="relations">
   <h2 class="viz-title">Sanctions and designations <span class="muted small">{{ sanctions|length }}</span></h2>
   <p class="muted small viz-sub">Entries of the official consolidated lists whose name matches this actor's name – a name match, not an
     identification: read the entry before relying on it. <b>Name</b> = the list's own name for the entry; <b>alias</b> = the
@@ -154,7 +169,7 @@
 </section>
 {% endif %}
 {% if events_of and events_of.total %}
-<section class="viz-card" id="events">
+<section class="viz-card" id="events" data-tab="events">
   <h2 class="viz-title">Events <span class="muted small">{{ events_of.total|num }}</span>
     <span class="small"> · <a href="/timeline?lane={{ events_of.lane }}">on the timeline</a>{% if not events_of.iso %} · <a href="/events?actor={{ a.key }}">all of them</a>{% else %} · <a href="/events?country={{ events_of.iso }}">in the state</a>{% endif %}</span></h2>
   <p class="muted small">{% if events_of.iso %}Events in the state or with it as a participant{% else %}Events that name it as participant, perpetrator, initiator or side{% endif %}:
@@ -167,7 +182,7 @@
 </section>
 {% endif %}
 {% if attributions %}
-<section class="viz-card" id="attributions">
+<section class="viz-card" id="attributions" data-tab="relations">
   <h2 class="viz-title">Official attributions <span class="muted small">{{ attributions|length }}</span></h2>
   <p class="muted small viz-sub">Statements of government bodies that name {{ a.label }} – with the passage quoted from the published
     page, and when the page was last checked for it. Hand-listed (<code>sources/attributions.yaml</code>), not every statement
@@ -185,7 +200,7 @@
 </section>
 {% endif %}
 {% if cve_rows %}
-<section class="viz-card" id="cves">
+<section class="viz-card" id="cves" data-tab="events">
   <h2 class="viz-title">Vulnerabilities named near it <span class="muted small">{{ cve_rows|length }}{{ '+' if cve_rows|length >= 25 }}</span></h2>
   <p class="muted small viz-sub">CVE numbers that reports name within one passage of {{ a.label }} (the same nearness as "actors named together") –
     <b>a nearness in the text, not a statement that the actor used the vulnerability</b>. KEV = on CISA's list of vulnerabilities known to
@@ -201,7 +216,7 @@
 {% endif %}
 {% if network %}
 {% from "_network.html" import network as net %}
-<section class="viz-card" id="network">
+<section class="viz-card" id="network" data-tab="relations">
   <h2 class="viz-title">Network <span class="muted small"><a href="/graph/ties?entity={{ a.key }}">{{ net_layers|sum(attribute='n') }} links</a></span></h2>
   {% for w in wanted_notices %}<p class="small"><b>Wanted</b><span class="tag wanted-tag">official</span> <a href="{{ w.url }}" rel="noopener">{{ 'FBI' if w.source == 'FBI' else 'Europe’s Most Wanted' }}: {{ w.title }}</a>{% if w.charges %} – {{ w.charges }}{% endif %}{% if w.published %} <span class="muted">· published {{ w.published }}</span>{% endif %}</p>{% endfor %}
   <p class="muted small viz-sub">What official sanctions lists, wanted notices and MITRE ATT&amp;CK state about {{ a.label }}'s ties – each with the
@@ -214,7 +229,7 @@
 </section>
 {% endif %}
 {% if leads %}
-<section class="viz-card" id="leads">
+<section class="viz-card" id="leads" data-tab="relations">
   <h2 class="viz-title">Leads <span class="ctag warn-tag">hypotheses</span></h2>
   <p class="muted small viz-sub">Actors no report names together with {{ a.label }} and no source links to it, but that share neighbours
     with it in the stated network – a reason to look, not a finding. Each opens the shared neighbours with the evidence on both sides,
@@ -228,7 +243,7 @@
 </section>
 {% endif %}
 {% if twins %}
-<section class="viz-card" id="twins">
+<section class="viz-card" id="twins" data-tab="relations">
   <h2 class="viz-title">Toolkit twins</h2>
   <p class="muted small viz-sub">Groups whose MITRE ATT&amp;CK toolkit – techniques and software – is most like {{ a.label }}'s, rare items
     counting more than common ones (1.0 = identical). Alike is not linked: groups copy and buy the same tools. Each number
@@ -241,7 +256,7 @@
 </section>
 {% endif %}
 {% if connections %}
-<section class="viz-card" id="connections">
+<section class="viz-card" id="connections" data-tab="relations">
   <h2 class="viz-title">Connections</h2>
   <p class="muted small viz-sub">People and organisations linked to {{ a.label }} in the infobox of its English Wikipedia article
     and in Wikidata statements (each with its source). Where the other side is in the actor index: the reports naming it, and
@@ -268,7 +283,7 @@
 </section>
 {% endif %}
 
-<section class="viz-card" id="passages">
+<section class="viz-card" id="passages" data-tab="reports">
   <h2 class="viz-title">Passages</h2>
   <p class="muted small viz-sub">The first mention in each report, newest reports first (<a href="/documents?actor={{ a.key }}">as a document list</a>).
     "p." opens the downloaded report at that page; "original" is the agency's own copy.</p>
@@ -302,7 +317,7 @@
 </section>
 
 {% if reviewed_out %}
-<section class="viz-card">
+<section class="viz-card" data-tab="reports">
   <h2 class="viz-title">Not counted: reports reviewed as meaning something else</h2>
   <p class="muted small viz-sub">Passages checked in the portal (<a href="/actors/review">Actors → Review</a>), kept with the passage
     as evidence in <code>sources/actor_reviews.yaml</code>; these {{ reviewed_out|length }} reports are left out of every count.</p>
@@ -312,7 +327,7 @@
 {% endif %}
 
 {% if before %}
-<section class="viz-card">
+<section class="viz-card" data-tab="reports">
   <h2 class="viz-title">Not counted: reports from before {{ row.since_year }}</h2>
   <p class="muted small viz-sub">{{ a.label }} was founded in {{ row.since_year }} (<a href="{{ a.wikidata.url }}#P571">Wikidata P571</a>).
     These {{ before|length }} reports are dated earlier, so the name most likely means something else there; they are left
@@ -323,7 +338,7 @@
 </section>
 {% endif %}
 
-<section class="viz-card">
+<section class="viz-card" data-tab="reference">
   <h2 class="viz-title">Names used to find {{ a.label }}</h2>
   <p class="muted small viz-sub">Matching is by name only. Names that would likely mean something else are not used; the
     reason is given. Change the rules in <code>sources/actors.yaml</code>.</p>

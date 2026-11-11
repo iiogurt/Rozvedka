@@ -18,8 +18,14 @@
   {% if index and index.chars %}<a class="rp-btn" href="#quote" title="Mark a passage of this report in a notebook, with its page and citation">✎ Quote in a notebook</a>{% endif %}
   {% if d.hidden %}<span class="badge-warn">hidden from lists and counts</span>{% endif %}</p>
 
+<nav class="lens" data-tabs aria-label="Views of this report">
+  <a href="#tab-overview">Overview</a>
+  <a href="#tab-contents">Contents{% if actors %} <span class="lens-n">{{ actors|length }} actors</span>{% endif %}</a>
+  <a href="#tab-citations">Citations</a>
+  <a href="#tab-quote">Quote</a>
+</nav>
 <div class="rp-grid">
-<section class="viz-card">
+<section class="viz-card" data-tab="overview">
   <h2 class="viz-title">Where it comes from</h2>
   <table class="kv small">
     <tr><th>Publisher</th><td><a href="/sources#s-{{ d.source_id }}">{{ d.agency }}</a>{{ pub_mark(d.source_id) }}{% if d.name_en %} – {{ d.name_en }}{% endif %}
@@ -56,7 +62,7 @@
   </table>
 </section>
 
-<section class="viz-card">
+<section class="viz-card" data-tab="overview">
   <h2 class="viz-title">Series and editions</h2>
   {% if series %}
   <p class="small">Edition <b>{{ edition.year }}</b> ({{ edition.lang }}) of <a href="/series/{{ edition.id }}">“{{ series.name }}”</a>
@@ -85,7 +91,7 @@
 </div>
 
 {% if book %}
-<section class="viz-card" id="chapters">
+<section class="viz-card" id="chapters" data-tab="contents">
   <h2 class="viz-title">Chapters <span class="muted small">{{ book.chapters|length }}{% if book.chapters_from %} · from {{ book.chapters_from }}{% endif %}</span></h2>
   {% if book.chapters %}
   <table class="pc-table small">
@@ -99,7 +105,7 @@
   {% else %}<p class="muted small">No chapters found: the file has no bookmarks or table of contents the library can read.</p>{% endif %}
 </section>
 
-<section class="viz-card" id="meanings">
+<section class="viz-card" id="meanings" data-tab="contents">
   <h2 class="viz-title">What it says <span class="small"> · <a href="/books/{{ d.id }}/statements">{{ book.meanings.n_statements|num }} dated statements</a>
     · <a href="/books/{{ d.id }}/relations">{{ book.meanings.n_relations|num }} stated relations</a></span></h2>
   <p class="muted small">Read from the text, never written anew. Per {{ 'chapter' if book.chapters|length >= 2 else 'block of 25 pages' }}: its
@@ -116,7 +122,7 @@
   </table>{% else %}<p class="muted small">Not read yet – run <code>python -m rozvedka index-books</code>.</p>{% endif %}
 </section>
 
-<section class="viz-card" id="book-index">
+<section class="viz-card" id="book-index" data-tab="contents">
   <h2 class="viz-title">The book's own index <span class="muted small">{{ book.index|length }} headwords{% if book.index %} · {{ book.index|selectattr('actor_key')|list|length }} matched to actors{% endif %}</span></h2>
   {% if book.index %}
   <p class="muted small">Read from the index at the back of the book ({{ page_name(d.id, book.index_from) }} on) – the editor's own list of what each page is about.
@@ -128,7 +134,7 @@
 {% endif %}
 
 {% if cites.links %}
-<section class="viz-card" id="citations">
+<section class="viz-card" id="citations" data-tab="citations">
   <h2 class="viz-title">Links to other sources <span class="muted small">{{ cites.links }}</span></h2>
   <p class="muted small viz-sub">Web addresses in the text, tied to the library where they point into it (a minimum: addresses broken across lines are not recovered). <a href="/citations">Who cites whom</a>.</p>
   {% if cites.cited %}<p class="small"><b>Library reports it links to</b> (<a href="/documents?cite=by:{{ d.id }}&indexed=1">{{ cites.cited|length }}</a>): {% for c in cites.cited %}<a href="/report/{{ c.id }}">{{ c.title }}</a> <span class="muted">{{ c.agency }} {{ c.year or '' }}</span>{{ '; ' if not loop.last }}{% endfor %}</p>{% endif %}
@@ -137,13 +143,13 @@
 </section>
 {% endif %}
 {% if cites.cited_by %}
-<section class="viz-card" id="cited-by">
+<section class="viz-card" id="cited-by" data-tab="citations">
   <h2 class="viz-title">Cited by <span class="muted small">{{ cites.cited_by|length }}</span></h2>
   <p class="small">Library reports whose text links to this one (<a href="/documents?cite=doc:{{ d.id }}&indexed=1">list</a>): {% for c in cites.cited_by %}<a href="/report/{{ c.id }}">{{ c.title }}</a> <span class="muted">{{ c.agency }} {{ c.year or '' }}</span>{{ '; ' if not loop.last }}{% endfor %}</p>
 </section>
 {% endif %}
 {% if techniques %}
-<section class="viz-card" id="techniques">
+<section class="viz-card" id="techniques" data-tab="contents">
   <h2 class="viz-title">ATT&amp;CK techniques named <span class="muted small">{{ techniques|length }}</span></h2>
   <p class="muted small viz-sub">Attacker techniques of MITRE's ATT&amp;CK catalog this report names by number, found by pattern.
     <a href="/techniques">All techniques in the reports</a>.</p>
@@ -151,7 +157,7 @@
 </section>
 {% endif %}
 {% if cves %}
-<section class="viz-card" id="cves">
+<section class="viz-card" id="cves" data-tab="contents">
   <h2 class="viz-title">CVE numbers named <span class="muted small">{{ cves|length }}</span></h2>
   <p class="muted small viz-sub">Software vulnerabilities this report names, found by pattern. <b>KEV</b> = on CISA's list of vulnerabilities known to be exploited.
     <a href="/cves">All CVE numbers in the reports</a>.</p>
@@ -160,7 +166,7 @@
 {% endif %}
 
 {% if files %}
-<section class="viz-card" id="files">
+<section class="viz-card" id="files" data-tab="overview">
   <h2 class="viz-title">Files of this report <span class="muted small">{{ files|length }}</span></h2>
   <p class="muted small viz-sub">Language versions, summaries and file variants grouped into one report (<code>rozvedka/works.py</code>).
     The report is counted once, through the file with most text (English preferred unless another version has 30 % more text){% if d.work_id != d.id %} – that is
@@ -177,7 +183,7 @@
 </section>
 {% endif %}
 
-<section class="viz-card">
+<section class="viz-card" data-tab="contents">
   <h2 class="viz-title">Topics</h2>
   {% if topics %}
   <p class="muted small viz-sub">Found by keywords from <code>sources/topics.yaml</code>. Score = keyword hits weighted by distinct terms and title;
@@ -191,7 +197,7 @@
   {% else %}<p class="muted small">No topic found{% if not index %} – the report has no text in the library yet{% endif %}.</p>{% endif %}
 </section>
 
-<section class="viz-card">
+<section class="viz-card" data-tab="contents">
   <h2 class="viz-title">Actors named <span class="muted small">{{ actors|length }}</span></h2>
   {% if actors %}
   <p class="muted small viz-sub">Names matched by the rules on the <a href="/actors">Actors</a> page; the agency itself and actors founded after the report's year are left out.
@@ -212,7 +218,7 @@
 </section>
 
 {% if index and index.chars %}
-<section class="viz-card" id="quote">
+<section class="viz-card" id="quote" data-tab="quote">
   <h2 class="viz-title">Quote in a notebook</h2>
   <p class="muted small viz-sub">Paste a sentence or two as it appears in the {{ 'EPUB' if (d.local_path or '').endswith('.epub') else 'PDF' }}.
     It is found in the library's text of this report, and kept as worded there with its page and a citation.

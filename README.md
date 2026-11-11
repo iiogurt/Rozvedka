@@ -398,7 +398,11 @@ column; <i>over-emphasis</i> shows how much more or less often a row carries a t
 
 ### 🕵️ Actors
 
-<img src="docs/images/actor.png" alt="Actor page: profile with photo, key facts and Wikipedia lead, mentions per year, reporting agencies and sourced reference data" width="900">
+<img src="docs/images/actor.png" alt="Actor page: profile and key numbers, the tab bar, and on the Overview the mentions per year beside every kind of stated link with its source" width="900">
+
+An actor's page (and a report's) is in tabs under its key numbers – *Overview*, *Reports*, *Relations*, *Events*, *Reference data* –
+one at a time instead of one long page; a link to a part of the page opens the tab it is on. The Overview sets the reports
+beside **Connected to**: every kind of link a source states, how many, the first few and who states it.
 
 - An index of state services, cyber threat groups, terrorist-designated and armed groups, organised crime,
   movements and key people, built from **Wikidata**, **Wikipedia** and **MITRE ATT&CK**, and found by name in the

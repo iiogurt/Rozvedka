@@ -27,6 +27,20 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.96.0] – 2026-11-11
+
+### Added
+- **An actor's and a report's page in tabs.** Under the key numbers, an actor has *Overview*, *Reports*, *Relations*,
+  *Events* and *Reference data*; a report has *Overview*, *Contents*, *Citations* and *Quote*. One tab shows at a
+  time instead of one long page. Links to a part of the page (`#passages`, `#sanctions`, `#quote`) open the tab it is
+  on, so every address still works; without scripts the page is the long page it was.
+- **Connected to** on an actor's Overview: every kind of link a source states about it – what it says, how many, the
+  first few at the other end and who states it (official list, MITRE ATT&CK, Wikidata, Wikipedia marked "not
+  official", the reports). A number opens the full list; the evidence for each link is on the Relations tab.
+
+### Changed
+- An actor's key numbers are six; the timeline, rings and find-a-connection links moved to the tab bar.
+
 ## [0.95.0] – 2026-11-11
 
 ### Added
@@ -2099,7 +2113,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.95.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.96.0...HEAD
+[0.96.0]: https://github.com/iiogurt/Rozvedka/compare/v0.95.0...v0.96.0
 [0.95.0]: https://github.com/iiogurt/Rozvedka/compare/v0.94.1...v0.95.0
 [0.94.1]: https://github.com/iiogurt/Rozvedka/compare/v0.94.0...v0.94.1
 [0.94.0]: https://github.com/iiogurt/Rozvedka/compare/v0.93.18...v0.94.0

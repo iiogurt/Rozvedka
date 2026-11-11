@@ -268,6 +268,14 @@ def test_actor_timeline(library):
     assert 'class="tlc-bars"' in t and "Reports naming it" in t
     assert client.get("/actors/nope/timeline").status_code == 404
     assert "/actors/Q3/timeline" in client.get("/actors/Q3").text
+    # the actor's page is tabbed: every section is on a tab that the bar offers, and the old in-page addresses stay
+    t = client.get("/actors/Q3").text
+    import re
+    offered = set(re.findall(r'href="#tab-([a-z]+)"', t))
+    assert offered >= {"overview", "reports", "relations", "events", "reference"} and "data-tabs" in t
+    assert set(re.findall(r'data-tab="([a-z]+)"', t)) <= offered
+    assert 'id="passages" data-tab="reports"' in t and 'id="reference" data-tab="reference"' in t
+    assert "tabs.js" in t
 
 
 def test_cached_results_follow_the_database(library):
