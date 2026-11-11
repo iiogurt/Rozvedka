@@ -76,8 +76,7 @@ SHOTS = {
     "cve-lag": ("/cves", 620, [], "#lag"),                             # how old the named CVEs are; against CISA's listing
     "cve": ("/cves/CVE-2021-26855", 1000, [], None),                   # one CVE: CISA entry, reports with passages, actors nearby
     "threat-levels": ("/threat-levels", 1300, [], None),               # official levels with the passage behind each
-    "menu": ("/cves", 520, [("eval", "var s=document.createElement('style');s.textContent='.rgrp:nth-of-type(4) .drop{display:block!important}';"
-                                      "document.head.appendChild(s); 1")], None),   # a group's pages open under the header
+    "menu": ("/graph/path", 520, [], None),                            # the side menu, and a thing's views as tabs
     "views": ("/views", 1000, [], None),                               # every page, grouped like the menu
     "techniques": ("/techniques", 1000, [], None),                     # ATT&CK techniques named in reports
     "attack-grid": ("/techniques", 1250, [], "#grid"),                  # the ATT&CK matrix as the reports name it

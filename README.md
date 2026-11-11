@@ -44,13 +44,17 @@ local library, so you can follow how state security, social resilience and disas
 
 ## Features
 
-**Finding your way.** The side rail has six groups – *Overview*, *Library* (documents, what's new, series, watchlist, notebooks), *Topics & trends*,
-*Actors & threats* (actors, connections, sanctions, attributions, threat levels, CVEs, ATT&CK techniques), *Sources* (agencies, think
-tanks, maps, ratings, citations) and *Maintain* (update, coverage, upkeep, data exchange). Hover a group for its pages, each with a
-line on what it answers; tabs under the command bar show the section you are in, and the command bar (`rz>`) searches from every page. **All views** (`/views`) lists every page with the
-number it holds. On a phone the groups open from one Menu button.
+**Finding your way.** The side menu follows the things the library holds, not the tools that draw them: *Reports*, *Agencies*,
+*Countries*, *Actors*, *Network*, *Topics* and *Events*, each with its mark (a shape and a colour, the same wherever that kind of
+thing appears) and, where its page states one, its count. The views of a thing are the tabs under the header – *Actors* has the
+list, who is named together, sanctions, attributions and the comparison; *Network* the stated links, paths, rings, twins, leads and
+brokers. Below come *Technical* (CVEs, ATT&CK techniques) and the *Workbench* (case file, notebooks, watchlist, books); upkeep is
+under *Maintain* at the foot. The search bar is on every page, and **All views** (`/views`) lists every page with the number it
+holds. On a phone the menu opens from one Menu button.
 
-<img src="docs/images/menu.png" alt="The side rail: Actors and threats open, with its seven pages and a line on each" width="900">
+The interface is monochrome – warm near-black, bone text, hairlines – with one sand accent, so that colour is left to the data.
+
+<img src="docs/images/menu.png" alt="The side menu: the things to browse with their marks and counts, Technical and Workbench below; the tabs of the section under the header" width="900">
 
 
 ### 🛰️ Home – search console and dashboards

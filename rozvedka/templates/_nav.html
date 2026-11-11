@@ -1,12 +1,12 @@
-{# the side rail: six groups, each an icon and a short name; hover or keyboard focus opens its pages, the name goes to its main page #}
+{# the side menu: the things the library holds, each with its glyph and count; then the technical lists and the workbench #}
+{% set rc = rail_counts() %}
 <nav class="rail" aria-label="Sections">
-  <a class="rail-logo" href="/" title="Rozvedka – overview">RZ</a>
-  {% for g in nav.groups %}
-  <div class="rgrp{{ ' on' if g.on }}{{ ' rgrp-maint' if g.key == 'maintain' }}">
-    <a class="rail-l" href="{{ g.hub }}"{% if g.on %} aria-current="true"{% endif %} title="{{ g.label }}">{{ ico(g.key) }}<span>{{ g.short }}</span></a>
-    {% if g.pages|length > 1 %}
-    <div class="drop"><p class="drop-h">{{ g.label }}</p>{% for i in g.pages %}<a href="{{ i.href }}" class="{{ 'on' if i.on }}"><b>{{ i.label }}</b><span>{{ i.blurb }}</span></a>{% endfor %}</div>
-    {% endif %}
-  </div>
+  <a class="rail-mark{{ ' on' if request.url.path == '/' }}" href="/" title="Rozvedka – overview">ROZVEDKA</a>
+  <p class="rail-h">Browse</p>
+  {% for g in nav.browse %}<a class="rail-l{{ ' on' if g.on }}" href="{{ g.hub }}"{% if g.on %} aria-current="true"{% endif %} title="{{ g.pages|map(attribute='label')|join(' · ') }}"><i class="gl gl-{{ g.key }}" aria-hidden="true"></i>{{ g.label }}{% if rc.get(g.key) is not none %}<span class="rail-n">{{ rc[g.key]|num }}</span>{% endif %}</a>
   {% endfor %}
+  {% for g in nav.blocks %}<p class="rail-h">{{ g.label }}</p>
+  {% for i in g.pages %}<a class="rail-l{{ ' on' if i.on }}" href="{{ i.href }}" title="{{ i.blurb }}">{{ i.label }}{% if rc.get(i.href) is not none %}<span class="rail-n">{{ rc[i.href]|num }}</span>{% endif %}</a>
+  {% endfor %}{% endfor %}
+  <p class="rail-foot"><a class="{{ 'on' if nav.maintain.on }}" href="{{ nav.maintain.hub }}">Maintain</a><a href="/views">All views</a><a href="/changelog" title="What's new">v{{ VERSION }}</a></p>
 </nav>

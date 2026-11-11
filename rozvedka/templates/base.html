@@ -8,7 +8,7 @@
   <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
   <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="16x16 32x32">
   <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
-  <meta name="theme-color" content="#0b0e12">
+  <meta name="theme-color" content="#0c0d0e">
   <link rel="stylesheet" href="{{ asset('style.css') }}">
   <script src="{{ asset('logos.js') }}"></script>
   <link rel="alternate" type="application/atom+xml" title="Rozvedka – new reports" href="/feed.atom">
@@ -23,7 +23,7 @@
   <a class="brand{{ ' on' if request.url.path == '/' }}" href="/" title="Home – search and what is new">Rozvedka</a>
   {% if request.url.path != '/' %}
   <form class="top-search" method="get" action="/search" role="search">
-    <label for="top-q" class="top-ps1">rz&gt;</label>
+    <label for="top-q" class="top-ps1" title="Search the reports">{{ ico("search") }}</label>
     <input id="top-q" type="search" name="q" placeholder="search the reports – words, &quot;a phrase&quot;, country:DE actor:&quot;Fancy Bear&quot; year:2023..2025" autocomplete="off">
   </form>
   {% else %}<span class="top-fill"></span>{% endif %}
