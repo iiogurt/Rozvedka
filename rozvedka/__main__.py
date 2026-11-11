@@ -30,7 +30,7 @@ def main():
     sv.add_argument("--host", default="0.0.0.0", help="address the service listens on (default 0.0.0.0 = home network)")
     sv.add_argument("--port", type=int, default=8080)
     sub.add_parser("stats", help="print document counts")
-    sub.add_parser("improve-titles", help="replace poor document titles with the title stored in the PDF")
+    sub.add_parser("improve-titles", help="tidy stored document titles and replace poor ones with the title stored in the PDF")
     ix = sub.add_parser("index-topics", help="extract report text (full-text search) and tag documents with topics")
     ix.add_argument("--reextract", action="store_true", help="extract text again for all documents")
     ix.add_argument("--limit", type=int, help="only extract this many new documents (for trying it out)")

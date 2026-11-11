@@ -984,7 +984,7 @@ failure. Starting it after a reboot with nobody logged in needs `loginctl enable
 | `fetch-actor-profiles [--refresh]` | pictures (flag, logo or photo, with author and licence), key facts and Wikipedia leads of every actor the reports name, from Wikipedia, Wikidata and Wikimedia Commons (network; part of `fetch-actors`; `--refresh` downloads the pictures again) |
 | `index-actors [--rematch]` | find the actors in the report texts (offline) |
 | `fetch-logos [--refresh]` | download agency logos from their home pages |
-| `improve-titles` | replace poor document titles with the title stored in the PDF |
+| `improve-titles` | tidy stored document titles (file size, format and date notes off) and replace poor ones with the title stored in the PDF |
 | `export DIR [--no-files] [--since DATE] [--part-size 2G] [--name LABEL] [--personal]` | write the whole library as a dataset – parts of at most 2 GB plus a manifest – to hand to someone else, or with `--personal` as a backup for yourself that also holds the data for personal use only (books, RSF scores) |
 | `import PATH [--check] [--prefer local\|dataset] [--no-index]` | verify a dataset, compare it with the library (newer / older / mixed / complementing), then restore it into an empty library or merge it into this one |
 | `serve [--host] [--port]` | run the portal (default `127.0.0.1:8080` – this computer only; `--host 0.0.0.0` for the home network) |

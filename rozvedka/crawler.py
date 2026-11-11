@@ -56,7 +56,7 @@ LANG_TOKENS = {
 }
 GENERIC_TITLES = re.compile(
     r"^\s*((download|stáhnout|stiahnuť|stiahnut|pobierz|herunterladen|télécharger|downloaden|ladda ner|lataa|"
-    r"descargar|scarica|descarcă|изтегли|preuzmi|prenesi|letöltés|here|zde|tu|více|more|read more|open|otevřít|"
+    r"descargar|scarica|descarcă|изтегли|preuzmi|prenesi|letöltés|laadi alla|here|zde|tu|více|more|read more|open|otevřít|"
     r"view|ver|zobrazit)\s*)?(pdf|file|soubor|dokument|document)?\s*(\(?[\d.,]+\s*[mk]i?b\)?|\(pdf[^)]*\))?\s*$", re.I)
 # link texts that are calls to action, not titles ("Click here to access our report")
 _CTA_WORDS = re.compile(
@@ -74,7 +74,7 @@ class _CallToAction:
 
 CALL_TO_ACTION = _CallToAction()
 # the action words a link text starts with before the publication's name ("Get publication The Last European Colonial Empire")
-ACTION_PREFIX = re.compile(r"^\s*(get publication|hämta publikation|download(?: the)?(?: full)?(?: report| pdf| publication)?|"
+ACTION_PREFIX = re.compile(r"^\s*(get publication|hämta publikation|download(?: the)?(?: full)?(?: report| pdf| publication| file)?|"
                            r"ladda ner|lataa|télécharger|herunterladen|descargar|read(?: the)?(?: full)? report)\b\s*[:–-]?\s*", re.I)
 # kept but hidden by default: administrative documents that are not security reports
 LOW_RELEVANCE_RE = re.compile((
@@ -179,8 +179,8 @@ _SIZE_SUFFIX = re.compile(rf"\s*(?:[\(\[]\s*(?:pdf[,\s]*)?{_A11Y}[\d.,]+\s*[kmg]
                           rf"[,–-]?\s*(?<![\w.])pdf[,\s]+{_A11Y}[\d.,]+\s*[kmg]i?[bo])\s*$", re.I)
 # screen-reader notes at the end of a link ("här pdf, 19.5 MB, öppnas i nytt fönster.")
 _NEW_WINDOW = re.compile(r"[\s,.(–-]*(öppnas i (?:ett )?nytt fönster|opens in (?:a )?new (?:window|tab)|"
-                         r"(?:s')?ouvre dans une nouvelle fenêtre|öffnet in (?:einem )?neuen fenster|將?(?:開啟|另開)新視窗)[\s.)]*$", re.I)
-_FORMAT_NOTE = re.compile(r"\s*[(\[](?:pdf|docx?|odt|xlsx?)[)\]]\s*$", re.I)
+                         r"(?:s')?ouvre (?:dans )?une nouvelle fenêtre|nouvelle fenêtre|öffnet (?:in|im) (?:einem )?neuen fenster|將?(?:開啟|另開)新視窗)[\s.)]*$", re.I)
+_FORMAT_NOTE = re.compile(r"\s*[(\[]\s*(?:pdf|docx?|odt|xlsx?)\s*[)\]]\s*$", re.I)
 
 
 def _tooltip(a) -> str:
@@ -235,7 +235,7 @@ def _title_for(a) -> str:
             t = ""   # the surrounding text is the same call to action – use the filename instead
     if GENERIC_TITLES.match(t) or len(t) < 4 or t.startswith(("/", "http")):
         t = humanize_filename(a["href"])
-    return clean_spaces(t)[:300]
+    return (tidy_title(t) or clean_spaces(t))[:300]
 
 
 _INVISIBLE = re.compile("[\u00ad\u200b-\u200d\u2060\ufeff]")      # soft hyphen, zero-width characters
@@ -250,6 +250,79 @@ def clean_spaces(text: str) -> str:
     text = _INVISIBLE.sub("", unescape(text))
     text = _LABEL_GAP.sub(r"\1", text)
     return " ".join(_ODD_SPACE.sub(" ", text).split())
+
+
+# What a download link says about the file rather than the report: format, size, date of upload, pages, accessibility.
+_SIZE = re.compile(r"(?<![\w.,])(?:\d{1,3}(?:[ ]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)*)\s?(?:[kmg]i?[bo]|bytes?)\b", re.I)
+_OPEN, _CLOSE = r"[(\[（【]", r"[)\]）】]"
+_PDF_WORD = r"(?:all\s+)?\.?(?:pdf|docx?|xlsx?|pptx?|odt|csv|zip|jpe?g|png)(?:[- ]?(?:documents?|dokument|version|file))?"
+_DL_WORD = r"(?:herunterladen|download|télécharger)"
+_NOTE_DATE = (r"(?:\d{1,2}[./-]\s?\d{1,2}[./-]\s?\d{2,4}|\d{1,2}\.?\s[^\W\d_]+\.?\s\d{4}|\d{4}\s?年\s?\d{1,2}\s?月\s?\d{1,2}\s?日)")
+_NOTE_PAGES = r"\d+\s(?:pages?|pagina(?:'s)?|seiten|sider|sidor|sivua|stran|strony)"
+_NOTE_A11Y = (r"(?:(?:datei\sist\s)?(?:nicht\s)?barrierefrei(?:[⁄/]barrierearm)?|"
+              r"file\s(?:does\snot\s)?meets?\saccessibility\sstandards)")
+_NOTE_SIGNED = r"(?:pgp|デジタル|署名付?)"                                  # the signature offered beside the file
+_NOTE_GAP = r"[\s,;:|·/–-]"
+_NOTE_AFTER = re.compile(rf"(?:{_NOTE_GAP}|{_OPEN}|{_CLOSE}|{_PDF_WORD}|{_DL_WORD}|{_NOTE_DATE}|{_NOTE_PAGES}|{_NOTE_A11Y}|{_NOTE_SIGNED})*", re.I)
+_NOTE_BEFORE = re.compile(rf"(?:{_NOTE_GAP}|{_OPEN}|(?<![\w.]){_PDF_WORD}|(?<!\w){_DL_WORD})*$", re.I)
+_OPEN_LABEL = re.compile(rf"\s*{_OPEN}[^()\[\]（）【】]{{0,20}}$")        # "(FR, Pdf – 697 Ko)", "(ALL PDF:11.8MB)"
+_LEADING_NOTE = re.compile(rf"^(?:{_DL_WORD}\s*)?(?:{_OPEN}[^()\[\]]{{0,15}}?)?{_PDF_WORD}[\s,–-]*{_SIZE.pattern}\s*{_CLOSE}?\s+", re.I)
+_ROW_TYPE_DATE = re.compile(r"\s+[^\W\d_][\w-]*(?:\s[a-z][\w-]*)?\s+\d{2}-\d{2}-\d{4}$")    # "… Jaarverslag 24-04-2025" before "PDF-document"
+_FILE_EXT = re.compile(r"\.(?:pdf|docx?|odt|pptx?|xlsx?)$", re.I)
+_IN_LANGUAGE = re.compile(r"^download in (?:het )?[^\W\d_]{4,12}:\s*(?=\S)", re.I)   # "Download in het Engels: …"
+_QUOTED_NAME = re.compile(r'(?:artikel\s+)?"([^"]{4,})"', re.I)             # the BSI's 'Artikel "…" Herunterladen'
+_SAID_AFTER_DASH = re.compile(rf"^(.{{4,}}?)\s[–-]\s(?:{_DL_WORD}\s)?\1$", re.I)
+
+
+def _file_note(t: str) -> str:
+    """The title without the note on the file that ends it ("… PDF 1.19 MB 24 August 2026", "(PDF, 492KB)",
+    "| 410.74 KB | pdf", "PDF-document 2.69 MB 64 pagina's"). A size with neither brackets nor "PDF" counts only as
+    the last word, in bytes ("… 1.92MB"; not "Ready 2 Go")."""
+    sizes = list(_SIZE.finditer(t))
+    if not sizes:
+        return t
+    m = sizes[-1]
+    if not _NOTE_AFTER.fullmatch(t, m.end()):
+        return t
+    head = _NOTE_BEFORE.sub("", t[:m.start()])
+    cut = t[len(head):m.start()]
+    marked = bool(re.search(rf"{_PDF_WORD}|{_OPEN}|{_NOTE_SIGNED}", cut + t[m.end():], re.I))
+    if not marked and (m.end() != len(t) or m.group()[-1] not in "bB"):
+        return t
+    labelled = _OPEN_LABEL.search(head)
+    if labelled and re.search(_OPEN, cut):
+        pass                                     # the bracket around the note was opened right before it
+    elif labelled and not re.search(_CLOSE, head[labelled.start():]):
+        head = head[:labelled.start()]
+    if re.search(r"pdf[- ]?documents?", cut, re.I):
+        head = _ROW_TYPE_DATE.sub("", head)      # the row's kind and date stand between the name and the note
+    return _NOTE_BEFORE.sub("", head).strip()
+
+
+def tidy_title(t: str, file_names: bool = False) -> str:
+    """A link text as a report's name: without what it says about the file (format, size, upload date, pages), the
+    new-window note and the download word before the name. An empty result means the text named nothing but the file.
+    A file name keeps its extension – that marks it as a poor title, which the title inside the PDF replaces – unless
+    `file_names` asks for it as words ("Raport_privind_accesul_2025.pdf" → "Raport privind accesul 2025")."""
+    t = clean_spaces(t or "")
+    for _ in range(4):
+        before = t
+        t = _FORMAT_NOTE.sub("", _NEW_WINDOW.sub("", t))
+        t = _LEADING_NOTE.sub("", _file_note(t))
+        t = _SAID_AFTER_DASH.sub(r"\1", t)
+        if file_names and _FILE_EXT.search(t):
+            t = _FILE_EXT.sub("", t).rstrip(" .")
+        if t == before:
+            break
+    if file_names and t and " " not in t and "_" in t:
+        t = " ".join(t.split("_"))               # a file name with underscores for spaces
+    t = _IN_LANGUAGE.sub("", t)
+    named = ACTION_PREFIX.sub("", t)
+    if named != t and len(named.split()) >= 2 and not named[0].islower():     # not "Download in het Engels: …"
+        t = named
+    t = t.strip(" –-|,;:")
+    quoted = _QUOTED_NAME.fullmatch(t)
+    return " ".join(quoted[1].split()) if quoted else t
 
 
 def humanize_filename(url: str, years_apart: bool = True) -> str:
@@ -371,13 +444,21 @@ def clean_link_text(text: str) -> str:
 LABEL_ONLY = re.compile(r"(?:(?:true|false|null|en|fr|es|sp|ar|de|ru|zh|english|español|français|русский|中文|عرب|عربي)\s*)+", re.I)
 
 
+def not_a_name(title: str | None) -> bool:
+    """Text that names no report at all: nothing, language labels, a publication's details box (ISBN, format, pages,
+    size), a row of download links, a path on its author's disk."""
+    t = (title or "").strip()
+    return (not t or bool(LABEL_ONLY.fullmatch(t)) or len(re.findall(r"\b(?:ISBN|DOI|Year|Format|Pages|Size):", t)) >= 3
+            or len(re.findall(r"\(pdf\)", t, re.I)) >= 3 or bool(re.match(r"[A-Za-z]:\\", t)))
+
+
 def is_poor_title(title: str | None, url: str) -> bool:
     return (not title or bool(GENERIC_TITLES.match(title)) or bool(CALL_TO_ACTION.match(title))
             or bool(LABEL_ONLY.fullmatch(title.strip()))
             or (bool(ACTION_PREFIX.match(title)) and not ACTION_PREFIX.sub("", title).strip())
             # (a title stored before a year glued to a word was set apart is the filename all the same)
             or title in (humanize_filename(url), humanize_filename(url, years_apart=False))
-            or bool(re.fullmatch(r"[\w .%()-]+\.pdf", title, re.I)))
+            or bool(re.fullmatch(r"[\w .%()-]+\.pdf", title, re.I)) or not_a_name(title))
 
 
 def domain_family(url_or_host: str) -> str:

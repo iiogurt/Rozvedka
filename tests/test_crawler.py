@@ -510,3 +510,59 @@ def test_a_report_page_keeps_its_own_files_not_the_ones_it_cites(monkeypatch):
     crawler.crawl_page(con, src, page, {"fr"})
     assert {u: d["title"] for u, d in stored.items()} == {
         "https://www.cse-cst.gc.ca/files/cst-rapport-annuel-2022-2023-f.pdf": "Rapport annuel du CST 2022-2023"}
+
+
+def test_a_title_without_what_the_link_says_about_the_file():
+    from rozvedka.crawler import is_poor_title, tidy_title
+    for said, name in [
+        ("NCSC Semi-Annual Report 2026/1 PDF 1.19 MB 24 August 2026", "NCSC Semi-Annual Report 2026/1"),
+        ("Jahresbericht BACS 2025 PDF 2.99 MB 16. Februar 2026", "Jahresbericht BACS 2025"),
+        ("Verfassungsschutzbericht 2024 (PDF / 4MB, Datei ist barrierefrei⁄barrierearm, öffnet im neuen Fenster)",
+         "Verfassungsschutzbericht 2024"),
+        ('Artikel "Cybersicher im Praxisalltag" Herunterladen (PDF, 821KB, Datei ist barrierefrei⁄barrierearm)',
+         "Cybersicher im Praxisalltag"),
+        ("Download: AIVD Jaarverslag 2024 Jaarverslag 24-04-2025 PDF-document 2.69 MB 64 pagina's", "AIVD Jaarverslag 2024"),
+        ("Download in het Engels: Advisory on phishing Publicatie 15-09-2026 PDF-document 211 Bytes 10 pagina's", "Advisory on phishing"),
+        ("Situation in cyberspace – April 2025 | 410.74 KB | pdf", "Situation in cyberspace – April 2025"),
+        ("Relazione Annuale Intelligence 2007.pdf (13.3 MB)", "Relazione Annuale Intelligence 2007.pdf"),
+        ("DEFENSE OF JAPAN 2020 (English)（PDF【195MB】）", "DEFENSE OF JAPAN 2020 (English)"),
+        ("焦点第290号 ‐「警備」(10.57MB)(2020年３月６日)", "焦点第290号 ‐「警備」"),
+        ("Incident Handling Report [January 1, 2025 - March 31, 2025] 1.92MB", "Incident Handling Report [January 1, 2025 - March 31, 2025]"),
+        ("Télécharger (FR, Pdf - 697 Ko) Rapport d'activité 2024 du SRE - Nouvelle fenêtre", "Rapport d'activité 2024 du SRE"),
+        ("RAPPORT 2016 – Télécharger RAPPORT 2016 (Français - Pdf - 1,76 Mo) - Nouvelle fenêtre", "RAPPORT 2016"),
+        ("Le premier rapport public PDF Version (6 791 Ko)", "Le premier rapport public"),
+        ("Panorama de la cybermenace 2025 Ouvre une nouvelle fenêtre", "Panorama de la cybermenace 2025"),
+        ("T21-Bund (xlsx, 575KB)", "T21-Bund"), ("Plan pripravnosti ( pdf ) \u200b", "Plan pripravnosti"),
+        ("PDF - 2.6\u00a0MB", ""), ("1.99MB デジタル 署名付", ""),
+        # … and names that only look like it are kept
+        ("Ready 2 Go", "Ready 2 Go"), ("Storage beyond 5 GB in 2024", "Storage beyond 5 GB in 2024"),
+        ("Trends 2035 (English)", "Trends 2035 (English)"), ("Download in het kort", "Download in het kort"),
+    ]:
+        assert tidy_title(said) == name, said
+        assert tidy_title(name) == name
+    # a file name stays one (a poor title, for the PDF's own to replace) until it is asked for as words
+    assert tidy_title("Raport_privind_accesul_2025.pdf", file_names=True) == "Raport privind accesul 2025"
+    u = "https://x.example/f/a1.pdf"
+    assert is_poor_title("Relazione Annuale Intelligence 2007.pdf", u)
+    assert is_poor_title("Publication details ISBN: 978-9 Year: 2026 Format: PDF Pages: 194 Size: 38.41 MB Read online", u)
+    assert is_poor_title("D:\\00 Work\\CIIP\\[FINAL] Enabling.pdf", u) and not is_poor_title("Annual Report 2024", u)
+
+
+def test_improve_titles_repairs_stored_titles(tmp_path, monkeypatch):
+    from rozvedka import db, downloader
+    monkeypatch.setattr(db, "DB_PATH", tmp_path / "t.db")
+    db.init()
+    with db.session() as con:
+        con.execute("INSERT INTO sources(id,key,country,agency,type,active) VALUES(1,'CH/BACS','CH','BACS','cyber',1)")
+        for i, (title, url) in enumerate([("Jahresbericht BACS 2025 PDF 2.99 MB 16. Februar 2026", "https://x.example/a.pdf"),
+                                          ("PDF - 2.6\u00a0MB", "https://x.example/f/vyrocni-zprava-2024.pdf"),
+                                          ("Annual Report 2024", "https://x.example/c.pdf"),
+                                          ("Raport_SRI_2025.pdf", "https://x.example/d/1"),      # not downloaded yet: kept
+                                          ("Raport_SRI_2024.pdf", "https://x.example/d/2")], 1):
+            con.execute("INSERT INTO documents(id,source_id,url,title,local_path) VALUES(?,?,?,?,?)",
+                        (i, 1, url, title, "f.pdf" if i == 5 else None))
+    monkeypatch.setattr(downloader, "pdf_info", lambda path: (3, None))
+    assert downloader.improve_titles() == 3 and downloader.improve_titles() == 0
+    with db.session() as con:
+        assert [r[0] for r in con.execute("SELECT title FROM documents ORDER BY id")] == [
+            "Jahresbericht BACS 2025", "vyrocni zprava 2024", "Annual Report 2024", "Raport_SRI_2025.pdf", "Raport SRI 2024"]

@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.94.1] – 2026-11-11
+
+### Fixed
+- **Report titles without the link's note on the file.** A title no longer carries the format, size, upload date,
+  page count or accessibility note of its download link ("… PDF 1.19 MB 24 August 2026", "(PDF, 492KB)",
+  "| 410.74 KB | pdf", "PDF-document 2.69 MB 64 pagina's", "(PDF / 4MB, Datei ist barrierefrei, öffnet im neuen
+  Fenster)"), nor the "Download:" before the name or a name said twice around a dash. A text that named nothing but
+  the file ("PDF - 2.6 MB"), a publication's details box or a path on its author's disk gives way to the title
+  inside the PDF, or else to the file's name.
+- `improve-titles`, which every update runs, now repairs titles already stored the same way, and shows a file name
+  as words ("Raport_privind_accesul_2025.pdf" → "Raport privind accesul 2025") when the PDF holds no better title.
+
 ## [0.94.0] – 2026-11-10
 
 ### Added
@@ -2070,7 +2082,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.94.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.94.1...HEAD
+[0.94.1]: https://github.com/iiogurt/Rozvedka/compare/v0.94.0...v0.94.1
 [0.94.0]: https://github.com/iiogurt/Rozvedka/compare/v0.93.18...v0.94.0
 [0.93.18]: https://github.com/iiogurt/Rozvedka/compare/v0.93.17...v0.93.18
 [0.93.17]: https://github.com/iiogurt/Rozvedka/compare/v0.93.16...v0.93.17
