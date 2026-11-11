@@ -435,7 +435,7 @@ table.actors th { font-size: 12px; color: var(--muted); font-weight: 600; }
 .actor-lead { flex-basis: 100%; margin: 6px 0 0; font-size: 13.5px; max-width: 80ch; }
 @media (max-width: 640px) { .actor-head.has-pic { grid-template-columns: 1fr; } }
 .src { color: var(--muted); font-size: 12px; }
-.actor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr)); gap: 14px; }
+.actor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 14px; }
 .chart-actor { height: 170px; }
 .actor-list { list-style: none; margin: 4px 0; padding: 0; display: grid; gap: 3px; font-size: 13px; }
 .actor-list.cols { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
@@ -1701,3 +1701,17 @@ table.lag { border-collapse: collapse; width: 100%; }
 .lag td.lag-kev-after span { background: var(--muted); }
 
 input[type=checkbox], input[type=radio], input[type=range], progress { accent-color: var(--accent); }
+
+/* ── A thing's views as tabs (static/tabs.js): under its key numbers, one tab's sections at a time ── */
+.lens { display: flex; flex-wrap: wrap; gap: 0 22px; align-items: baseline; margin: 0 0 14px; border-bottom: 1px solid var(--line); }
+.lens > a { padding: 7px 0 8px; margin-bottom: -1px; color: var(--muted); border-bottom: 2px solid transparent; }
+.lens > a:hover { color: var(--ink); text-decoration: none; }
+.lens > a.on { color: var(--ink); border-bottom-color: var(--ink); }
+.lens-n { font: 11px var(--mono); font-variant-numeric: tabular-nums; opacity: .7; margin-left: 3px; }
+.lens-out { margin-left: auto; display: flex; gap: 16px; font-size: 12px; }
+.actor-grid:not(:has(> [data-tab="overview"]:not([hidden]))), .rp-grid:has(> [hidden]) { grid-template-columns: 1fr; }
+.conn-row { display: grid; grid-template-columns: minmax(110px, 170px) 44px 1fr; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+.conn-row:last-child { border-bottom: 0; }
+.conn-says { color: var(--muted); } .conn-n { text-align: right; font: 13px var(--mono); font-variant-numeric: tabular-nums; }
+.conn-who { margin: 0; display: flex; flex-wrap: wrap; gap: 2px 14px; } .conn-who a { color: var(--ink); } .conn-who a:hover { color: var(--accent); }
+.conn-by { margin: 2px 0 0; font: 10.5px var(--mono); color: var(--muted); opacity: .8; }

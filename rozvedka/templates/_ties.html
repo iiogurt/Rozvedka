@@ -21,3 +21,18 @@
   {%- endif -%}
 {% endmacro %}
 {% macro pin(id, back, label="📌 Pin") %}<form class="inline pin-form" method="post" action="/case/pin"><input type="hidden" name="e" value="{{ id }}"><input type="hidden" name="back" value="{{ back }}"><button class="pin-btn" title="Pin to the case file (/case)">{{ label }}</button></form>{% endmacro %}
+
+{# every stated link of one thing at a glance: a row per kind of link – what it says, how many, the first few at the other
+   end, and which source states it; the number opens that layer's full list #}
+{% macro connected(layers, label, more="") %}
+<div class="conn">
+  {% for l in layers %}{% for r in l.rels %}
+  <div class="conn-row">
+    <span class="conn-says">{{ r.says }}</span>
+    <a class="conn-n" href="{{ l.link }}" title="All {{ l.name }} links of {{ label }}">{{ r.n|num }}</a>
+    <div><p class="conn-who">{% for x in r.rows[:5] %}<a href="{{ x.other_href }}">{{ x.other_label|truncate(34) }}</a>{% endfor %}{% if r.n > 5 %}<span class="muted">+{{ (r.n - 5)|num }}</span>{% endif %}</p>
+      <p class="conn-by">{{ l.name }}{% if l.group == 'official' %} · official{% elif l.group == 'leaks' %} · leaked records, not official{% elif l.layer in ('wikipedia', 'wikitext') %} · not official{% endif %}</p></div>
+  </div>
+  {% endfor %}{% endfor %}
+</div>
+{% endmacro %}

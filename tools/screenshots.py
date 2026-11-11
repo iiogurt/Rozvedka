@@ -68,7 +68,7 @@ SHOTS = {
     "actor-search": ("/actors", 760, [("eval", "document.getElementById('ac-q').focus(); 1"), ("type", "prigozin"),
                                       ("sleep", 2)], None),
     "actor-precision": ("/actors", 470, [], None),                 # the measured precision above the list
-    "actor": ("/actors/Q7747", 1200, [("sleep", 3)], None),        # a profile with a photo and facts
+    "actor": ("/actors/Q20757678", 1200, [("sleep", 3)], None),        # a profile with a photo and facts
     "connections": (f"/actors/{WAGNER}", 900, [("sleep", 3)], "#connections"),
     "actor-timeline": ("/actors/Q38799/timeline", 1300, [], None),   # Hamas: agencies, countries, neighbours
     "attributions": ("/actors/Q20757678", 900, [("sleep", 3)], "#attributions"),   # APT28: statements of the UK NCSC
@@ -157,6 +157,9 @@ async def shoot(ws, name: str, base: str, path: str, height: int, steps: list, c
     if clip_from:
         r = await call("Runtime.evaluate", returnByValue=True, expression=
                        f"(() => {{ const e = document.querySelector('{clip_from}'); "
+                       # a section on another tab of the page (static/tabs.js): open that tab first
+                       f"const t = e && e.closest('[data-tab]'); if (t && t.hidden) {{ location.hash = '#tab-' + t.dataset.tab; "
+                       f"window.dispatchEvent(new Event('hashchange')); }} "
                        f"return e ? e.getBoundingClientRect().top + window.scrollY - 12 : 0; }})()")
         y = max(0, int(r.get("result", {}).get("value") or 0))
     # the viewport already has the picture's size; capturing beyond it (only for a section further down) resizes the
