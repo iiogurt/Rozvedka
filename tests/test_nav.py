@@ -31,10 +31,12 @@ def test_locate_picks_the_longest_match():
     assert nav.locate("/") == ("overview", "/")
     assert nav.locate("/actors/Q1/timeline") == ("actors", "/actors")
     assert nav.locate("/actors/sanctions") == ("actors", "/actors/sanctions")
+    assert nav.locate("/graph/path") == ("network", "/graph/path") and nav.locate("/entity/x") == ("network", "/graph")
+    assert nav.locate("/cves/CVE-2024-1") == ("technical", "/cves") and nav.locate("/notebooks/n") == ("workbench", "/notebooks")
     assert nav.locate("/sources/coverage") == ("maintain", "/sources/coverage")
-    assert nav.locate("/sources") == ("sources", "/sources")
-    assert nav.locate("/report/12") == ("library", "/documents")
-    assert nav.locate("/publisher/3") == ("sources", "/publishers")
+    assert nav.locate("/sources") == ("agencies", "/sources")
+    assert nav.locate("/report/12") == ("reports", "/documents")
+    assert nav.locate("/publisher/3") == ("agencies", "/publishers")
     assert nav.locate("/trends/terms") == ("topics", "/trends/terms")
     assert nav.locate("/nowhere") == (None, None)
 
@@ -52,8 +54,11 @@ def test_header_and_section_tabs(empty_library):
     from rozvedka.app import app
     c = TestClient(app)
     t = c.get("/cves").text
-    assert 'class="rgrp on"' in t
-    assert 'class="subnav sectionnav" aria-label="Actors &amp; threats"' in t and 'class="on" title="Vulnerabilities' in t
+    assert 'class="rail-l on" href="/cves"' in t and 'class="rail-l on" href="/actors"' not in t
+    assert 'class="subnav sectionnav" aria-label="Technical"' in t and 'class="on" title="Vulnerabilities' in t
+    t = c.get("/graph/path").text                 # a thing to browse: its row is lit, its views are the tabs
+    assert 'class="rail-l on" href="/graph" aria-current="true"' in t and 'aria-label="Network"' in t
+    assert 'class="rail-n"' in t                  # the rows carry the library's counts
     assert "sectionnav" not in c.get("/").text
     v = c.get("/views").text
     assert 'id="maintain"' in v and "/techniques" in v
@@ -72,8 +77,9 @@ def test_every_list_page_has_a_title(empty_library):
 def test_breadcrumbs_lead_back_from_pages_below_a_menu_entry():
     assert nav.menu("/documents")["crumbs"] == []                     # a menu page: the section tabs show where it is
     assert nav.menu("/report/12")["crumbs"] == [{"label": "Documents", "href": "/documents"}]
-    assert nav.menu("/entity/x")["crumbs"] == [{"label": "Actors & threats", "href": "/actors"},
-                                                {"label": "Network", "href": "/graph"}]
+    assert nav.menu("/entity/x")["crumbs"] == [{"label": "Network", "href": "/graph"}]
+    assert nav.menu("/actors/sanctions/x")["crumbs"] == [{"label": "Actors", "href": "/actors"},
+                                                         {"label": "Sanctions", "href": "/actors/sanctions"}]
     assert nav.menu("/ratings/DE")["crumbs"][-1] == {"label": "Ratings", "href": "/ratings"}
     assert nav.menu("/nowhere")["crumbs"] == []
 

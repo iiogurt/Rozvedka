@@ -1,55 +1,68 @@
-"""The portal's menu: one table drives the header menus, the section tabs under the header, the highlight of the page you
-are on and the /views overview. A test fails when a page is missing from it, so no page can become unreachable."""
+"""The portal's menu: one table drives the side menu, the section tabs under the header, the highlight of the page you
+are on and the /views overview. A test fails when a page is missing from it, so no page can become unreachable.
+
+The menu follows the things the library holds – reports, agencies, countries, actors, topics, events – rather than
+the tools that draw them: each thing is a group, and the views of it are that group's tabs."""
 
 # group: (key, label, hub link, [(label, link, other paths that belong to it, what it answers)])
 GROUPS = [
     ("overview", "Overview", "/", [
         ("Overview", "/", (), "Search, the library at a glance, what changed lately."),
     ]),
-    ("library", "Library", "/documents", [
+    ("reports", "Reports", "/documents", [
         ("Documents", "/documents", ("/report", "/doc", "/search"), "Every report, with filters, full-text search and the file."),
         ("What's new", "/new", ("/feed.atom",), "Reports added to the library, by day."),
         ("Series", "/series", (), "Report series and their editions: what is out, what is missing."),
-        ("Books", "/books", (), "The local book library: books searched and matched like the reports, never counted as reports."),
-        ("Watchlist", "/watch", (), "Searches you follow: new reports that match."),
-        ("Notebooks", "/notebooks", (), "Passages you marked in reports, with your notes – export with a citation for each."),
+        ("Citations", "/citations", (), "Which agencies and reports cite which."),
     ]),
-    ("topics", "Topics & trends", "/topics", [
+    ("agencies", "Agencies", "/sources", [
+        ("Agencies", "/sources", (), "The official agencies the library follows, by country."),
+        ("Think tanks & analysts", "/publishers", ("/publisher",), "Think tanks and commercial analysts with their credibility profile."),
+        ("Map", "/map", (), "Where the agencies are."),
+    ]),
+    ("countries", "Countries", "/countries", [
+        ("Countries", "/countries", (), "One page per state: its agencies, what their reports emphasise, who reports about it, its ratings."),
+        ("Ratings", "/ratings", ("/ratings/",), "Ratings of the states: democracy, security and governance."),
+        ("Ratings map", "/map/democracy", (), "Democracy, security and governance ratings of the states, over time."),
+        ("Who reports on which country", "/map/mentions", (), "Where agencies' reports point."),
+        ("Topics by country", "/trends/matrix", (), "Which agencies emphasise which topics."),
+        ("Threat levels", "/threat-levels", (), "Official terrorism threat levels, with the quote."),
+    ]),
+    ("actors", "Actors", "/actors", [
+        ("Actors", "/actors", (), "Groups, states, people and services named in the reports."),
+        ("Named together", "/network", (), "Who the reports name together with whom."),
+        ("Sanctions", "/actors/sanctions", (), "EU, UK, UN and US lists matched with the actors."),
+        ("Attributions", "/actors/attributions", (), "Official statements that name who is behind a cyber attack."),
+        ("Compare agencies", "/compare", (), "Two agencies, or two actors, side by side."),
+    ]),
+    ("network", "Network", "/graph", [
+        ("Network", "/graph", ("/entity",), "Stated links between groups, people, companies, malware: sanctions lists, Wikidata, ATT&CK."),
+        ("Find a connection", "/graph/path", (), "How two groups, people or companies are linked: the most specific chains of links."),
+        ("Rings", "/graph/rings", (), "One entity in the middle: its links on the inner ring, two steps away on the outer, a sector per source."),
+        ("Toolkit twins", "/graph/twins", (), "Threat groups that use the same techniques and software (MITRE ATT&CK)."),
+        ("Leads", "/graph/leads", (), "Hypotheses: actors never named together that share neighbours – to review."),
+        ("Brokers", "/graph/brokers", (), "Entities whose links reach several worlds: state, cyber, terror, armed, crime."),
+        ("Offshore leaks", "/graph/offshore", (), "Listed companies and people in ICIJ's leaked records – journalistic, not official; people to confirm."),
+    ]),
+    ("topics", "Topics", "/topics", [
         ("Topics", "/topics", (), "The 64 topics and the reports behind each."),
         ("Mind map", "/topics/map", (), "Topics and how they cluster."),
         ("Over time", "/trends", (), "How much attention each topic gets, year by year."),
         ("Terms", "/trends/terms", (), "Any word or phrase over time."),
-        ("Topics by country", "/trends/matrix", (), "Which agencies emphasise which topics."),
-        ("Compare agencies", "/compare", (), "Two agencies, or two actors, side by side."),
     ]),
-    ("actors", "Actors & threats", "/actors", [
-        ("Actors", "/actors", (), "Groups, states, people and services named in the reports."),
-        ("Network", "/graph", ("/entity",), "Stated links between groups, people, companies, malware: sanctions lists, Wikidata, ATT&CK."),
-        ("Find a connection", "/graph/path", (), "How two groups, people or companies are linked: the most specific chains of links."),
-        ("Rings", "/graph/rings", (), "One entity in the middle: its links on the inner ring, two steps away on the outer, a sector per source."),
-        ("Case file", "/case", (), "Pinned entities and how every pair of them is connected – export with citations."),
-        ("Offshore leaks", "/graph/offshore", (), "Listed companies and people in ICIJ's leaked records – journalistic, not official; people to confirm."),
-        ("Toolkit twins", "/graph/twins", (), "Threat groups that use the same techniques and software (MITRE ATT&CK)."),
-        ("Leads", "/graph/leads", (), "Hypotheses: actors never named together that share neighbours – to review."),
-        ("Brokers", "/graph/brokers", (), "Entities whose links reach several worlds: state, cyber, terror, armed, crime."),
-        ("Named together", "/network", (), "Who the reports name together with whom."),
-        ("Sanctions", "/actors/sanctions", (), "EU, UK, UN and US lists matched with the actors."),
-        ("Attributions", "/actors/attributions", (), "Official statements that name who is behind a cyber attack."),
-        ("Threat levels", "/threat-levels", (), "Official terrorism threat levels, with the quote."),
+    ("events", "Events", "/timeline", [
         ("Timeline", "/timeline", (), "States and actors on one time axis: events, records and reports – full screen for big screens."),
         ("Events", "/events", (), "Dated events from Wikidata, EuRepoC (cyber incidents) and UCDP (organised violence)."),
+    ]),
+    ("technical", "Technical", "/cves", [
         ("CVEs", "/cves", (), "Vulnerabilities named in reports, with CISA's exploited list."),
         ("ATT&CK techniques", "/techniques", (), "Attacker techniques named in reports, with MITRE's catalog."),
     ]),
-    ("sources", "Sources", "/sources", [
-        ("Agencies", "/sources", (), "The official agencies the library follows, by country."),
-        ("Countries", "/countries", (), "One page per state: its agencies, what their reports emphasise, who reports about it, its ratings."),
-        ("Think tanks & analysts", "/publishers", ("/publisher",), "Think tanks and commercial analysts with their credibility profile."),
-        ("Map", "/map", (), "Where the agencies are."),
-        ("Ratings map", "/map/democracy", (), "Democracy, security and governance ratings of the states, over time."),
-        ("Who reports on which country", "/map/mentions", (), "Where agencies' reports point."),
-        ("Ratings", "/ratings", ("/ratings/",), "Ratings of the states: democracy, security and governance."),
-        ("Citations", "/citations", (), "Which agencies and reports cite which."),
+    ("workbench", "Workbench", "/case", [
+        ("Case file", "/case", (), "Pinned entities and how every pair of them is connected – export with citations."),
+        ("Notebooks", "/notebooks", (), "Passages you marked in reports, with your notes – export with a citation for each."),
+        ("Watchlist", "/watch", (), "Searches you follow: new reports that match."),
+        ("Books", "/books", (), "The local book library: books searched and matched like the reports, never counted as reports."),
     ]),
     ("maintain", "Maintain", "/views#maintain", [
         ("Update", "/update", ("/jobs",), "Check the agencies for new reports and refresh the indexes."),
@@ -64,6 +77,9 @@ GROUPS = [
         ("All views", "/views", (), "Every page of the portal, with counts."),
     ]),
 ]
+# the side menu: the things to browse (a row per group, with its glyph and count), then two blocks that list their pages
+BROWSE = ("reports", "agencies", "countries", "actors", "network", "topics", "events")
+BLOCKS = ("technical", "workbench")
 # a menu for pages of the portal that no menu item names (links in lists)
 EXEMPT = ("/api/", "/actor-image", "/logo")
 
@@ -91,7 +107,9 @@ def menu(path: str) -> dict:
     groups = [{"key": k, "label": label, "short": label.split(" ")[0], "hub": hub, "on": k == group,
                "pages": [{"label": i[0], "href": i[1], "blurb": i[3], "on": i[1] == link} for i in items]}
               for k, label, hub, items in GROUPS]
-    return {"groups": groups, "group": group, "link": link, "crumbs": _crumbs(path, groups, link)}
+    by = {g["key"]: g for g in groups}
+    return {"groups": groups, "group": group, "link": link, "crumbs": _crumbs(path, groups, link),
+            "browse": [by[k] for k in BROWSE], "blocks": [by[k] for k in BLOCKS], "maintain": by["maintain"]}
 
 
 def _crumbs(path: str, groups: list[dict], link: str | None) -> list[dict]:

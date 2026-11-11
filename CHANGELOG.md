@@ -27,6 +27,23 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.95.0] – 2026-11-11
+
+### Added
+- **A menu that follows the things in the library.** The side menu now lists *Reports*, *Agencies*, *Countries*,
+  *Actors*, *Network*, *Topics* and *Events* by name, each with its mark and – where its page states one – its count,
+  then *Technical* (CVEs, ATT&CK techniques) and the *Workbench* (case file, notebooks, watchlist, books). The views of
+  a thing are its tabs: the 17 tabs of "Actors & threats" became *Actors* (5), *Network* (7), *Events* (2) and
+  *Technical* (2); ratings, the ratings map, topics by country and threat levels moved to *Countries*; citations to
+  *Reports*. Every page is where it was – only the menu changed. First stage of the interface redesign
+  (drafts in `docs/design/`).
+
+### Changed
+- **New look.** Monochrome interface in both themes – warm near-black ground, bone text and hairlines in the dark
+  theme; paper and ink in the light one – with a single sand (dark) or ochre (light) accent in place of green, squarer
+  corners, and a wider side menu with names instead of icons. Colour is left to the data: each kind of thing has a
+  fixed colour and shape, checked for colour-blind separation. Heat scales follow the accent.
+
 ## [0.94.1] – 2026-11-11
 
 ### Fixed
@@ -2082,7 +2099,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.94.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.95.0...HEAD
+[0.95.0]: https://github.com/iiogurt/Rozvedka/compare/v0.94.1...v0.95.0
 [0.94.1]: https://github.com/iiogurt/Rozvedka/compare/v0.94.0...v0.94.1
 [0.94.0]: https://github.com/iiogurt/Rozvedka/compare/v0.93.18...v0.94.0
 [0.93.18]: https://github.com/iiogurt/Rozvedka/compare/v0.93.17...v0.93.18

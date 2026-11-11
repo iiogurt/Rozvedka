@@ -26,6 +26,19 @@ def counts() -> dict[str, str]:
     return out
 
 
+def rail_counts() -> dict[str, int]:
+    """The numbers beside the side menu's rows – the ones the linked pages show (the same as on All views), so a row
+    never states a count its page does not. Things whose page states no single total carry none."""
+    c = counts()
+    n = {key: int(c[link].split()[0].replace(",", "")) for key, link in
+         (("reports", "/documents"), ("agencies", "/sources"), ("events", "/events"), ("/cves", "/cves"),
+          ("/techniques", "/techniques"), ("/books", "/books")) if c.get(link)}
+    return {k: v for k, v in n.items() if v or not k.startswith("/")}
+
+
+tpl.env.globals["rail_counts"] = rail_counts
+
+
 @router.get("/views")
 def views(request: Request):
     return tpl.TemplateResponse(request, "views.html", {"c": counts()})

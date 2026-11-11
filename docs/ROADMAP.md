@@ -261,6 +261,19 @@ ICIJ Offshore Leaks), always marked as such and loaded only for names already in
    composite score. Left out: IEP's Global Peace and Terrorism indices (request form only). Steps H3a–H3d; H3a needs
    only configuration. · minor
 
+### I. Interface redesign (owner's request 2026-11-11: easier to browse, relations easy to follow, a new dense dark look)
+
+Drafts of three screens are in `docs/design/` (an actor, the Reports list, a country). The pages keep their addresses.
+
+| # | Stage | State |
+|---|---|---|
+| I1 | Menu by the things the library holds (reports, agencies, countries, actors, network, topics, events), new monochrome look in both themes | **done 0.95.0** |
+| I2 | One page shape for every thing: identity, six key numbers, then its views as tabs (overview, reports, relations, timeline, map) | open |
+| I3 | One "Connected to" block: every link by kind, with count and source – actor and entity pages merged | open |
+| I4 | Preview pane: a selected row shows the report with its passages and pages without leaving the list; keyboard moves | open |
+| I5 | Trail of hops and a scope (publisher kind, years, countries) kept between pages; jump-to-anything box | open |
+| I6 | Home page in the new look (the console banner goes) | open |
+
 ### E. Engineering and operations
 
 1. ✅ (0.48.0: optional, tested, **not activated** – the owner does not want it) **The portal starts after a reboot** – install `deploy/rozvedka-web.service` as a user service with
