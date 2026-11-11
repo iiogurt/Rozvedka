@@ -11,7 +11,7 @@ from urllib.parse import unquote, urlsplit
 
 from . import db, fetch, progress
 from .config import FILES, MAX_FILE_MB
-from .crawler import LABEL_ONLY, humanize_filename, is_poor_title
+from .crawler import humanize_filename, is_poor_title, not_a_name, tidy_title
 
 log = logging.getLogger("rozvedka.download")
 
@@ -46,21 +46,25 @@ def good_pdf_title(t: str | None) -> bool:
 
 
 def improve_titles() -> int:
-    """Replace poor titles of already-downloaded documents with the title stored inside the PDF."""
+    """Stored titles as report names. What a link said about the file (format, size, upload date, pages) is taken off;
+    a title that is still poor is replaced by the title stored inside the PDF; without one, a file name is shown as
+    words and a text that names nothing gives way to the file's name."""
     changed = 0
     with db.session() as con:
-        rows = con.execute("SELECT id, title, url, local_path FROM documents WHERE local_path IS NOT NULL").fetchall()
+        rows = con.execute("SELECT id, title, url, local_path FROM documents").fetchall()
         for r in rows:
-            if not is_poor_title(r["title"], r["url"]):
-                continue
-            _, pdf_title = pdf_info(FILES / r["local_path"])
-            # the PDF's own title must itself be a real title (some PDFs store just their filename)
-            if good_pdf_title(pdf_title) and not is_poor_title(pdf_title.strip(), r["url"]):
-                con.execute("UPDATE documents SET title=? WHERE id=?", (pdf_title.strip()[:300], r["id"]))
-                changed += 1
-            elif LABEL_ONLY.fullmatch((r["title"] or "").strip()) and re.search(r"[^\W\d_]{3,}", name := humanize_filename(r["url"])):
-                # a link text of language labels or "true true" says nothing; the file name at least names the report
-                con.execute("UPDATE documents SET title=? WHERE id=?", (name[:300], r["id"]))
+            new = tidy_title(r["title"] or "")
+            if is_poor_title(new, r["url"]):
+                _, pdf_title = pdf_info(FILES / r["local_path"]) if r["local_path"] else (None, None)
+                # the PDF's own title must itself be a real title (some PDFs store just their filename)
+                if good_pdf_title(pdf_title) and not is_poor_title(pdf_title.strip(), r["url"]):
+                    new = pdf_title.strip()
+                elif not_a_name(new) and re.search(r"[^\W\d_]{3,}", name := humanize_filename(r["url"])):
+                    new = name    # the link text said nothing of the report; the file name at least names it
+            if r["local_path"]:
+                new = tidy_title(new, file_names=True)         # a file name the PDF had no better title for: as words
+            if new and new[:300] != r["title"]:
+                con.execute("UPDATE documents SET title=? WHERE id=?", (new[:300], r["id"]))
                 changed += 1
     return changed
 
