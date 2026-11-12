@@ -672,44 +672,20 @@ ol.editions li { border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .yr-est { border-bottom: 1px dotted var(--muted); cursor: help; }
 .badge-ocr { font-size: 10.5px; padding: 0 5px; border-radius: 2px; border: 1px dashed var(--muted); color: var(--muted); margin-left: 6px; cursor: help; }
 
-/* Home page: banner with ASCII radar and word mark, search console, dashboards.
-   The ASCII art needs every glyph at the same width, so it uses a bundled subset of DejaVu Sans Mono
-   (static/vendor/fonts, Bitstream Vera licence) instead of whatever monospace font the viewer has. */
+/* Home page: head, search box, dashboards. Its monospace is a bundled subset of DejaVu Sans Mono
+   (static/vendor/fonts, Bitstream Vera licence), so the numbers look the same on every system. */
 @font-face { font-family: "RzMono"; src: url("/static/vendor/fonts/DejaVuSansMono-subset.woff2") format("woff2");
              font-weight: 400; font-display: block; }
 @font-face { font-family: "RzMono"; src: url("/static/vendor/fonts/DejaVuSansMono-Bold-subset.woff2") format("woff2");
              font-weight: 700; font-display: block; }
 body.home { --mono: "RzMono", "DejaVu Sans Mono", Menlo, Consolas, monospace; }
-.h-banner { display: flex; align-items: center; gap: clamp(16px, 3vw, 40px); margin: 6px 0 18px; padding: 16px 20px;
-            background: var(--panel); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
-body.home { --sig: var(--accent); --sig-hot: var(--accent-2); }   /* "signal" colour of the banner and the prompt */
-.h-banner pre { margin: 0; font: 12px/1.15 var(--mono); font-variant-ligatures: none; font-kerning: none; letter-spacing: 0; }
-.h-radar { color: var(--muted); flex: none; }
-.h-radar .r { color: var(--sig); }
-.h-radar .g { color: var(--line); }
-:root[data-theme="dark"] .h-radar .g { color: #3b4350; }
-.h-radar .s { color: var(--sig); }
-.h-radar .b { color: var(--muted); }
-.h-radar .bh { color: var(--sig-hot); font-weight: 700; }
-.h-id { min-width: 0; }
-.h-word { color: var(--sig); font-size: clamp(5px, 1.05vw, 13px) !important; line-height: 1 !important; }
-.h-name { font-size: 14px; margin: 8px 0 6px; font-weight: 600; letter-spacing: .04em; }
-.h-name span { color: var(--muted); font-weight: 400; }
-.h-term { font: 12.5px/1.6 var(--mono); color: var(--muted); }
-.h-term b { color: var(--ink); }
-.h-term a b { color: var(--accent); }
-.h-prompt { color: var(--sig); margin-right: 4px; }
-.h-cursor { color: var(--sig); animation: h-blink 1.1s steps(1) infinite; margin-left: 4px; }
-@keyframes h-blink { 50% { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .h-cursor { animation: none; } }
-@media (max-width: 900px) { .h-radar { display: none; } }
+body.home { --sig: var(--accent); --sig-hot: var(--accent-2); }   /* "signal" colour of the search box */
 
 .h-search { margin: 0 0 18px; }
 .h-console { display: flex; align-items: center; gap: 0; background: var(--panel); border: 1px solid var(--line);
              border-radius: 3px; padding: 6px 6px 6px 14px; font: 15px var(--mono); }
 .h-console:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
-.h-ps1 { color: var(--sig); white-space: nowrap; margin-right: 10px; }
-.h-ps1 span { color: var(--muted); }
+.h-ps1 { color: var(--muted); display: inline-flex; margin-right: 10px; }
 .h-field { position: relative; flex: 1; min-width: 0; }
 .h-console input[type=search] { width: 100%; max-width: none; border: 0; background: transparent; font: inherit; padding: 8px 4px; outline: none; }
 .h-console button { font: 14px system-ui, sans-serif; padding: 8px 16px; background: var(--accent); color: var(--panel); border-color: var(--accent); }
@@ -765,7 +741,6 @@ table.h-bars, table.h-rise { width: 100%; border-collapse: collapse; font-size: 
 .h-health { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; }
 .h-health .st { margin-right: 4px; }
 @media (max-width: 600px) {
-  .h-banner { padding: 12px; }
   .h-console { flex-wrap: wrap; padding: 8px; }
   .h-ps1 { width: 100%; font-size: 12px; }
   .h-suggest { left: 0; right: 0; }
@@ -1217,9 +1192,6 @@ main { max-width: 1600px; }
 .h-rise thead th.dumb-h { text-align: left; text-transform: none; letter-spacing: 0; font-weight: 400; }
 
 /* ── Overview as a console: a compact banner, a strip of key numbers, panels joined by 1 px lines ── */
-body.home .h-banner { padding: 10px 18px; margin: 0 0 14px; border-radius: 3px; }
-body.home .h-banner pre.h-radar { font-size: 8px; }
-body.home .h-word { font-size: clamp(4px, .7vw, 9px) !important; }
 body.home .h-search { margin-bottom: 14px; }
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; margin: 0 0 14px;
         background: var(--line); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
@@ -1796,3 +1768,17 @@ dialog.jump ul { list-style: none; margin: 0; padding: 4px 0; overflow-y: auto; 
 .trail b { font-weight: 500; color: var(--ink); max-width: 30ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .trail-x { border: 0; background: none; color: var(--muted); font-size: 11px; padding: 0 2px; cursor: pointer; }
 .trail-x:hover { color: var(--ink); }
+
+/* the home page's head: the name, what the library is, when it was last checked */
+.home-head { margin: 4px 0 16px; }
+.home-head h1 { margin: 0 0 8px; font: 500 15px var(--mono); letter-spacing: .32em; text-transform: uppercase; }
+.home-head h1 span { margin-left: 14px; font-weight: 400; letter-spacing: .06em; text-transform: none; color: var(--muted); font-size: 12px; }
+.home-what { margin: 0 0 8px; max-width: 78ch; font-size: 19px; line-height: 1.4; }
+.home-state { margin: 0; font: 11px var(--mono); color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.home-state i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.home-state i.old { background: var(--warn); }
+.home-state b { color: var(--ink); font-weight: 500; }
+.h-console { padding-top: 8px; padding-bottom: 8px; }
+.home-ind { color: var(--indep); }
+.home-com { color: var(--com); }
+body.home .kpis { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); }

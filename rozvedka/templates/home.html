@@ -11,30 +11,19 @@
     <span class="lang">{{ r.lang or '?' }}</span></li>
 {% endmacro %}
 {% block main %}
-<section class="h-banner" aria-labelledby="h-name">
-  <pre class="h-radar" id="radar" aria-hidden="true"></pre>
-  <div class="h-id">
-<pre class="h-word" aria-hidden="true">                                   ▀█▄ ▄█▀
-                                     ▀▀▀
-██████╗  ██████╗ ███████╗██╗   ██╗███████╗██████╗ ██╗  ██╗ █████╗
-██╔══██╗██╔═══██╗╚══███╔╝██║   ██║██╔════╝██╔══██╗██║ ██╔╝██╔══██╗
-██████╔╝██║   ██║  ███╔╝ ██║   ██║█████╗  ██║  ██║█████╔╝ ███████║
-██╔══██╗██║   ██║ ███╔╝  ╚██╗ ██╔╝██╔══╝  ██║  ██║██╔═██╗ ██╔══██║
-██║  ██║╚██████╔╝███████╗ ╚████╔╝ ███████╗██████╔╝██║  ██╗██║  ██║
-╚═╝  ╚═╝ ╚═════╝ ╚══════╝  ╚═══╝  ╚══════╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝</pre>
-    <h1 id="h-name" class="h-name">Rozvedka <span>· разведка · reconnaissance</span></h1>
-    <div class="h-term">
-      <div><span class="h-prompt">&gt;</span> OPEN-SOURCE INTELLIGENCE · official reports of intelligence, security, cyber and civil-protection agencies, ◆ independent think tanks and ■ commercial analysts</div>
-      <div><span class="h-prompt">&gt;</span> last crawl
-        {% if d.fresh.last_crawl %}<b>{{ d.fresh.last_crawl[:10] }}</b> ({{ d.fresh.crawl_days }} day{{ 's' if d.fresh.crawl_days != 1 }} ago){% else %}never{% endif %}
-        · updates run by hand (<code>python -m rozvedka update</code>)<span class="h-cursor" aria-hidden="true">▌</span></div>
-    </div>
-  </div>
-</section>
+<header class="home-head">
+  <h1 id="h-name">Rozvedka <span>разведка · reconnaissance</span></h1>
+  <p class="home-what">An open-source intelligence library: the public reports of intelligence, security, cyber and
+    civil-protection agencies, with <span class="home-ind">◆ independent think tanks</span> and
+    <span class="home-com">■ commercial analysts</span> kept apart from the official ones.</p>
+  <p class="home-state"><i class="{{ 'old' if d.fresh.crawl_days is not none and d.fresh.crawl_days >= 7 }}" aria-hidden="true"></i>last check
+    {% if d.fresh.last_crawl %}<b>{{ d.fresh.last_crawl[:10] }}</b> · {{ d.fresh.crawl_days }} day{{ 's' if d.fresh.crawl_days != 1 }} ago{% else %}<b>never</b>{% endif %}
+    · updates run by hand – <a href="/update">Update</a></p>
+</header>
 
 <section class="h-search" aria-label="Search">
   <form method="get" action="/search" class="h-console" role="search" autocomplete="off">
-    <label for="hq" class="h-ps1">rozvedka<span>:~$</span> search</label>
+    <label for="hq" class="h-ps1" title="Search the reports">{{ ico("search") }}</label>
     <div class="h-field">
       <input id="hq" name="q" type="search" value="{{ q }}" spellcheck="false"
              placeholder='words, "a phrase", or filters such as country:DE actor:"Fancy Bear" year:2023..2025'
@@ -99,7 +88,7 @@
   <article class="viz-card h-card">
     <h2 class="viz-title">Reports by publication year</h2>
     <p class="viz-sub muted small">The last 15 years; every listed report is in one row below. Bars are split into reports of
-      <span class="key-off">official agencies</span>, of <span class="key-ind">◆ think tanks</span> and of <span class="key-com">■ commercial analysts</span>; each part opens its list.</p>
+      <span class="key-off">official agencies</span>, of <span class="key-ind">◆ think tanks</span> and of <span class="home-com">■ commercial analysts</span>; each part opens its list.</p>
     <table class="h-bars">
       {% for y in d.years %}<tr><th>{{ y.year }}{% if y.partial %}<span class="muted" title="The year is not over"> so far</span>{% endif %}</th>
         <td class="bar"><span class="stack" style="width: {{ (100 * y.n / d.years_max)|round(1) }}%">{% if y.n_off %}<a class="seg off" style="flex: {{ y.n_off }}" href="{{ y.url_off }}" title="{{ y.n_off|num }} from official agencies"></a>{% endif %}{% if y.n_ind %}<a class="seg ind" style="flex: {{ y.n_ind }}" href="{{ y.url_ind }}" title="{{ y.n_ind|num }} from think tanks"></a>{% endif %}{% if y.n_com %}<a class="seg com" style="flex: {{ y.n_com }}" href="{{ y.url_com }}" title="{{ y.n_com|num }} from commercial analysts"></a>{% endif %}</span></td>
