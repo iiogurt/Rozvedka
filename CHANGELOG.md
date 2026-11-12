@@ -27,6 +27,13 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.101.1] – 2026-11-12
+
+### Changed
+- **The home page in the new look**: the console banner (ASCII radar, block-letter word mark, terminal lines) is gone.
+  The page opens with what the library is, when the agencies were last checked with a link to Update, and the search
+  box; the seven key numbers stay in one row at 1280 px.
+
 ## [0.101.0] – 2026-11-12
 
 ### Added
@@ -2174,7 +2181,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.101.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.101.1...HEAD
+[0.101.1]: https://github.com/iiogurt/Rozvedka/compare/v0.101.0...v0.101.1
 [0.101.0]: https://github.com/iiogurt/Rozvedka/compare/v0.100.0...v0.101.0
 [0.100.0]: https://github.com/iiogurt/Rozvedka/compare/v0.99.0...v0.100.0
 [0.99.0]: https://github.com/iiogurt/Rozvedka/compare/v0.98.0...v0.99.0

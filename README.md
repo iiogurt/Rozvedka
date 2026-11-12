@@ -18,7 +18,7 @@ collected, searchable, indexed by topic and actor, and traceable back to the pag
 
 [Contributing](CONTRIBUTING.md) · [Code of conduct](CODE_OF_CONDUCT.md) · [Security policy](SECURITY.md) · [MIT licence](LICENSE)
 
-<img src="docs/images/home.png" alt="Home page: ASCII radar and word mark, the search console, and dashboards of the newest reports" width="900">
+<img src="docs/images/home.png" alt="Home page: what the library is and when it was last checked, the search box, the key numbers and dashboards of the newest reports" width="900">
 
 </div>
 
@@ -69,7 +69,7 @@ going back to one cuts the trail there, ✕ forgets it. It is kept in the tab's 
 
 ### 🛰️ Home – search console and dashboards
 
-The start page (`/`): an ASCII radar and word mark, one search box for the whole library, and what is new.
+The start page (`/`): what the library is and when it was last checked, one search box for the whole library, and what is new.
 
 - **Search console** – type words, `"a phrase"`, or filters: `country:DE`, `coalition:NATO`, `agency:BIS`,
   `type:cyber`, `topic:ransomware`, `actor:"Fancy Bear"`, `year:2020..2025`, `lang:de`. The search opens the

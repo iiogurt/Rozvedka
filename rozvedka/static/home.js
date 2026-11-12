@@ -1,51 +1,9 @@
-/* Home page: the ASCII radar in the banner and the search console's suggestions.
-   The radar is decoration only (aria-hidden); it stands still for viewers who prefer reduced motion.
+/* Home page: the search box's suggestions.
    Suggestions come from /api/suggest; each one opens the Documents list it counts. Recent searches are kept in
    this browser only (localStorage) and can be cleared. */
 (function () {
   "use strict";
   const $ = (s, el = document) => el.querySelector(s);
-
-  // ------------------------------------------------------------------ radar
-  function radar(pre) {
-    const W = 39, H = 17, cx = (W - 1) / 2, cy = (H - 1) / 2, R = 8;      // a cell is about twice as tall as wide
-    const TRAIL = ["█", "▓", "▒", "░", "·"];
-    const blips = [[0.7, 0.62], [2.1, 0.35], [2.9, 0.8], [4.2, 0.55], [5.3, 0.9], [5.9, 0.28]].map(([a, r]) => ({
-      x: Math.round(cx + Math.cos(a) * r * R * 2), y: Math.round(cy - Math.sin(a) * r * R)}));
-    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let sweep = 1.0;
-
-    function frame() {
-      let out = "";
-      for (let y = 0; y < H; y++) {
-        for (let x = 0; x < W; x++) {
-          const dx = (x - cx) / 2, dy = cy - y, d = Math.hypot(dx, dy);
-          const a = (Math.atan2(dy, dx) + 2 * Math.PI) % (2 * Math.PI);
-          const behind = (sweep - a + 2 * Math.PI) % (2 * Math.PI);          // radians since the beam passed
-          const blip = blips.find((b) => b.x === x && b.y === y);
-          let ch = " ", cls = "";
-          if (Math.abs(d - R) < 0.45) { ch = "·"; cls = "r"; }
-          else if (d > R) { ch = " "; }
-          else if (blip) { ch = behind < 2.2 ? "◉" : "∘"; cls = behind < 2.2 ? "bh" : "b"; }
-          else if (x === cx && y === cy) { ch = "+"; cls = "r"; }
-          else if (behind < 0.9 && d > 0.6) { ch = TRAIL[Math.min(4, Math.floor(behind / 0.18))]; cls = "s"; }
-          else if (Math.abs(d - R / 2) < 0.4) { ch = "·"; cls = "g"; }
-          else if (y === cy) { ch = "-"; cls = "g"; }
-          else if (x === cx) { ch = "¦"; cls = "g"; }
-          out += cls ? `<span class="${cls}">${ch}</span>` : ch;
-        }
-        out += "\n";
-      }
-      pre.innerHTML = out;
-    }
-    let last = 0;
-    function tick(t) {
-      if (t - last > 70) { sweep = (sweep - 0.07 + 2 * Math.PI) % (2 * Math.PI); frame(); last = t; }  // clockwise
-      requestAnimationFrame(tick);
-    }
-    frame();
-    if (!still) requestAnimationFrame(tick);
-  }
 
   // ------------------------------------------------------------------ search console
   const RECENT = "rz-recent-searches";
@@ -145,8 +103,6 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    const pre = $("#radar");
-    if (pre) radar(pre);
     const form = $(".h-console");
     if (form) consoleSearch(form);
   });

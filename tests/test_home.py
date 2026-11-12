@@ -109,7 +109,7 @@ def test_every_dashboard_count_matches_its_list(library):
 def test_pages_and_redirects(library):
     client = TestClient(app())
     r = client.get("/")
-    assert r.status_code == 200 and "OPEN-SOURCE INTELLIGENCE" in r.text and 'action="/search"' in r.text
+    assert r.status_code == 200 and "open-source intelligence library" in r.text and "last check" in r.text and "h-radar" not in r.text and 'action="/search"' in r.text
     r = client.get("/?country=CZ&topic=drones", follow_redirects=False)        # old Documents links keep working
     assert r.status_code == 307 and r.headers["location"] == "/documents?country=CZ&topic=drones"
     r = client.get("/search", params={"q": "country:CZ Annual"}, follow_redirects=False)
