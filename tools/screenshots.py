@@ -48,6 +48,9 @@ SHOTS = {
     "doc-works": ("/documents?country=CH&type=intelligence-civil", 760, [], None),
     "doc-types": ("/documents?doc_type=all&country=GB", 900, [], None),
     "doc-preview": ("/documents?q=sabotage&country=NO", 900, [("eval", "['j', 'j', ' '].forEach((k) => document.dispatchEvent(new KeyboardEvent('keydown', {key: k}))); scrollTo(0, 0); 1"), ("sleep", 3)], None),
+    # the jump box over a page reached through two others, so the trail shows
+    "jump": ("/countries/EE", 720, [("eval", "sessionStorage.setItem('rz-trail', JSON.stringify([{u: '/documents?q=sabotage', t: 'Documents'}, {u: '/agency/20', t: 'RIA'}])); location.reload(); 1"),
+                                    ("sleep", 7), ("eval", "document.querySelector('.jump-open').click(); 1"), ("type", "sandw"), ("sleep", 3)], None),
     "years": ("/years?kind=stamp", 1000, [], None),
     "report": ("/report/2964", 1250, [], None),
     "sources-independent": ("/sources", 1000, [("eval", "document.querySelectorAll('section.country[id^=\"c-\"], "

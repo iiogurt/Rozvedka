@@ -1764,3 +1764,35 @@ span.conn-n { color: var(--muted); }
   body.pv-open .docs td.src a, body.pv-open .docs td.src * { white-space: normal; }
   body.pv-open .docs td.src a { flex-wrap: wrap; }
   body.pv-open .docs .topic-chip { white-space: normal; } }
+
+/* jump to anything (Ctrl K) and the trail of pages opened in this tab – static/jump.js */
+.jump-open { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 2px;
+  background: transparent; color: var(--muted); font: 12px var(--mono); white-space: nowrap; cursor: pointer; }
+.jump-open:hover { color: var(--ink); border-color: var(--muted); }
+.jump-open kbd { font: 10px var(--mono); padding: 1px 4px; border: 1px solid var(--line); border-radius: 2px; }
+@media (max-width: 1100px) { .jump-open kbd { display: none; } }
+dialog.jump { width: min(640px, 94vw); max-height: 76vh; margin: 12vh auto auto; padding: 0; border: 1px solid var(--line); border-radius: 3px;
+  background: var(--panel); color: var(--ink); box-shadow: 0 24px 60px rgba(0, 0, 0, .45); overflow: hidden; }
+dialog.jump[open] { display: flex; flex-direction: column; }
+dialog.jump::backdrop { background: rgba(0, 0, 0, .5); }
+dialog.jump input { flex: none; width: 100%; max-width: none; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent;
+  padding: 14px 16px; font: 15px var(--mono); color: var(--ink); outline: none; }
+dialog.jump ul { list-style: none; margin: 0; padding: 4px 0; overflow-y: auto; flex: 1; }
+.jump .jp-g { padding: 9px 16px 3px; font-size: 10px; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); }
+.jump .jp-none { padding: 10px 16px 2px; color: var(--muted); font-size: 13px; }
+.jump li[role=option] a { display: flex; align-items: baseline; gap: 8px; padding: 5px 16px; color: var(--ink); font-size: 13.5px; }
+.jump li[role=option] a:hover { text-decoration: none; background: var(--chip); }
+.jump li[aria-selected=true] a { background: var(--chip); box-shadow: inset 2px 0 0 var(--accent); }
+.jump .gl { flex: none; align-self: center; }
+.jump .flag-sm { flex: none; align-self: center; }
+.jump .jp-l { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.jump .jp-s { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 12px; }
+.jump-keys { margin: 0; padding: 8px 16px; border-top: 1px solid var(--line); font: 11px var(--mono); color: var(--muted); }
+.trail { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 0 0 8px; font-size: 12px; color: var(--muted); }
+.trail[hidden] { display: none; }
+.trail-l { font: 10px var(--mono); text-transform: uppercase; letter-spacing: .09em; margin-right: 4px; }
+.trail a { color: var(--muted); max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trail a:hover { color: var(--accent); }
+.trail b { font-weight: 500; color: var(--ink); max-width: 30ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trail-x { border: 0; background: none; color: var(--muted); font-size: 11px; padding: 0 2px; cursor: pointer; }
+.trail-x:hover { color: var(--ink); }
