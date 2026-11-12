@@ -28,7 +28,7 @@
 <section class="viz-card" data-tab="overview">
   <h2 class="viz-title">Where it comes from</h2>
   <table class="kv small">
-    <tr><th>Publisher</th><td><a href="/sources#s-{{ d.source_id }}">{{ d.agency }}</a>{{ pub_mark(d.source_id) }}{% if d.name_en %} – {{ d.name_en }}{% endif %}
+    <tr><th>Publisher</th><td><a href="/agency/{{ d.source_id }}">{{ d.agency }}</a>{{ pub_mark(d.source_id) }}{% if d.name_en %} – {{ d.name_en }}{% endif %}
       <span class="muted">({{ d.country }}, {{ d.type }})</span></td></tr>
     {% if book %}<tr><th>Authors</th><td>{% for a in book.authors %}{% if a.wikidata %}<a href="https://www.wikidata.org/wiki/{{ a.wikidata }}" target="_blank" rel="noopener">{{ a.name }}</a>{% else %}{{ a.name }}{% endif %}{{ ', ' if not loop.last }}{% else %}<span class="muted">not known</span>{% endfor %}
       {% if book.meta.authors and book.meta.authors['from'] %}<span class="muted">– from {{ book.meta.authors['from'] }}</span>{% endif %}</td></tr>

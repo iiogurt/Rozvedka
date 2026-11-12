@@ -1724,3 +1724,7 @@ ol.bf-rank { list-style: none; margin: 0; padding: 0; }
 .kw-list { display: flex; flex-wrap: wrap; gap: 4px 6px; }
 .kw-list code { white-space: nowrap; padding: 1px 6px; background: var(--chip); border-radius: 2px; }
 span.conn-n { color: var(--muted); }
+/* one agency's years: a single kind of publisher, so no key and the accent colour */
+.one-kind .bf-key { display: none; } .one-kind .bf-off { background: var(--accent); }
+.card .acr a { color: inherit; } .card .acr a:hover { color: var(--accent); }
+.actor-head .topic-chip .flag-sm { vertical-align: -1px; }

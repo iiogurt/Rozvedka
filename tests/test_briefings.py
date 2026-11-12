@@ -75,3 +75,23 @@ def test_numbers_open_their_lists(library, monkeypatch):
     with db.session() as con:                                 # a state whose agencies have no reports yet
         con.execute("INSERT INTO sources(id,key,country,agency,type) VALUES(9,'MT/X','MT','X','other')")
     assert c.get("/countries/MT").status_code == 200
+
+
+def test_agency_page(library, monkeypatch):
+    _actors(monkeypatch)
+    cz = briefings.country("CZ")
+    sid = cz["sources"][0]["id"]
+    a = briefings.agency(sid)
+    assert a["n"] == cz["sources"][0]["n"] == a["listed"] and a["s"]["publisher"] == "official"
+    assert sum(y["official"] for y in a["years"]) <= a["n"] and all(y["independent"] == 0 for y in a["years"])
+    assert briefings.agency(99999) is None
+    from rozvedka.app import app
+    c = TestClient(app)
+    for label, n, url in briefings.figures("ransomware", "CZ"):          # its numbers open their lists too
+        if label.startswith("agency"):
+            assert f"<b>{n}</b> documents match" in c.get(url).text, (label, n, url)
+    t = c.get(f"/agency/{sid}").text
+    assert all(f'href="#tab-{x}"' in t for x in ("overview", "reports", "series", "collect")) and 'class="kpis"' in t
+    assert 'action="/jobs/crawl"' in t and 'href="/countries/CZ"' in t
+    assert c.get("/agency/99999").status_code == 404
+    assert f'href="/agency/{sid}"' in c.get("/countries/CZ").text and f'href="/agency/{sid}"' in c.get("/sources").text

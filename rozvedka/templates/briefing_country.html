@@ -40,7 +40,7 @@
 
 <div class="bf-grid">
 <section class="viz-card" id="agencies" data-tab="overview"><h2 class="viz-title">Agencies <span class="muted small">{{ d.sources|length }} · <a href="/sources#c-{{ d.code }}">on Agencies</a></span></h2>
-  {% macro sl(r) %}<a href="/sources#s-{{ r.id }}">{{ r.agency }}</a> <span class="muted">{{ r.name_en if r.name_en and r.name_en != r.agency }}</span>{% if r.publisher == 'independent' %} <span class="pub-count">◆</span>{% elif r.publisher == 'commercial' %} <span class="pub-count-com">■</span>{% endif %}{% endmacro %}
+  {% macro sl(r) %}<a href="/agency/{{ r.id }}">{{ r.agency }}</a> <span class="muted">{{ r.name_en if r.name_en and r.name_en != r.agency }}</span>{% if r.publisher == 'independent' %} <span class="pub-count">◆</span>{% elif r.publisher == 'commercial' %} <span class="pub-count-com">■</span>{% endif %}{% endmacro %}
   {% macro st(r) %}{{ r.type|replace('-', ' ') }}{% endmacro %}
   {{ ranked(d.sources, sl, st, "bf-wide") }}</section>
 <section class="viz-card" id="standing" data-tab="overview"><h2 class="viz-title">Standing <span class="muted small">what outside sources state about it</span></h2>

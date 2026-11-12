@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% from "_briefing.html" import years, ranked %}
+{% from "_ties.html" import ent %}
+{% from "_series.html" import grid, legend %}
+{% block title %}{{ s.agency }} · Agencies · Rozvedka{% endblock %}
+{% block main %}
+{% set what = kind.name if kind else 'agency' %}
+<header class="actor-head">
+  <h1><i class="gl gl-agencies h-gl" aria-hidden="true"></i>{{ s.name_en or s.agency }}{{ pub_mark(s.id) }}</h1>
+  {% if s.name_en and s.name_en != s.agency %}<span class="topic-chip on">{{ s.agency }}</span>{% endif %}
+  <a class="topic-chip" href="/countries/{{ s.country }}"><img class="flag-sm" src="{{ flag_url(s.country) }}" alt="" width="16" height="12"> {{ d.country_name }}</a>
+  <span class="topic-chip">{{ TYPE_NAMES.get(s.type, s.type) }}</span>
+  {% if s.name_local and s.name_local != s.name_en %}<span class="muted">{{ s.name_local }}</span>{% endif %}
+  {% if s.description %}<p class="actor-desc">{{ s.description }}
+    <span class="src">– the registry of sources{% if s.homepage %} · <a href="{{ s.homepage }}" target="_blank" rel="noopener">{{ s.homepage.split('//')[1].rstrip('/') }}</a>{% endif %}</span></p>{% endif %}
+</header>
+{% if prof %}<p class="pub-banner pub-lv-{{ prof.level }}"><b>{{ kind.mark }} {{ 'Commercial analyst' if s.publisher == 'commercial' else 'Independent publisher' }} – {{ prof.label }}.</b>
+  {{ s.agency }} is {{ kind.about }}{% if prof.reasons %}: {{ prof.reasons|join('; ') }}{% endif %}.
+  <a href="/publisher/{{ s.id }}">Its credibility profile, check by check →</a></p>{% endif %}
+
+<section class="kpis" aria-label="{{ s.agency }} in numbers">
+  <a href="{{ d.link }}"><span>Reports</span><b>{{ d.n|num }}</b><em>one file per report, text read</em></a>
+  <a href="{{ d.listed_link }}"><span>Listed</span><b>{{ d.listed|num }}</b><em>{{ d.downloaded|num }} downloaded</em></a>
+  {% if d.years %}<a href="{{ d.years[0].link }}"><span>Since</span><b>{{ d.years[0].year }}</b><em>its earliest dated report here</em></a>{% endif %}
+  {% if d.peak %}<a href="{{ d.peak.link }}"><span>Most reports</span><b>{{ d.peak.year }}</b><em>{{ d.peak.official }} reports</em></a>{% endif %}
+  <a href="#languages"><span>Languages</span><b>{{ d.langs|length }}</b><em>{{ d.langs[:4]|map(attribute='lang')|join(' · ') }}</em></a>
+  <a href="#series"><span>Series</span><b>{{ series_of|length }}</b><em>followed edition by edition</em></a>
+</section>
+<nav class="lens" data-tabs aria-label="Views of {{ s.agency }}">
+  <a href="#tab-overview">Overview</a>
+  <a href="#tab-reports">Reports <span class="lens-n">{{ d.n|num }}</span></a>
+  <a href="#tab-series">Series <span class="lens-n">{{ series_of|length }}</span></a>
+  <a href="#tab-collect">Where they come from <span class="lens-n">{{ d.pages|length }}</span></a>
+  <span class="lens-out">{% if d.actor_link %}<a href="{{ d.actor_link }}">As an actor in the reports →</a> {% endif %}{% if s.lat is not none %}<a href="/map#s-{{ s.id }}">On the map →</a> {% endif %}<a href="/sources#s-{{ s.id }}">On Agencies →</a></span>
+</nav>
+<details class="how"><summary>How this is counted</summary>
+<p class="muted small">The listed reports of {{ s.agency }}, one file per report, whose text the library has read. <b>Topics</b> and
+  <b>actors</b> are ranked by how much more often its reports name them than all {{ d.n_all|num }} reports do (lift), times how many
+  reports – its own emphasis, not what every report says; at least {{ d.min_docs }} reports; countries left out, and
+  {{ 'the agencies of its own state' if s.publisher == 'official' else 'its own name' }} ({{ d.own }}), since an agency names itself.
+  <b>Languages</b> count every file, since a report can come in several. Every number opens its reports.</p></details>
+
+<section class="viz-card" data-tab="overview"><h2 class="viz-title">Year by year</h2>
+  {% if d.years %}<div class="one-kind">{{ years(d.years, 'Reports of ' ~ s.agency) }}</div>{% else %}<p class="muted small">No dated report read yet.</p>{% endif %}</section>
+
+{% macro ts(r) %}×{{ r.lift|round(1) }}{% endmacro %}
+<div class="bf-grid">
+<section class="viz-card" id="topics" data-tab="overview"><h2 class="viz-title">Topics its reports emphasise</h2>
+  {% macro tl(r) %}<a href="{{ r.href }}">{{ r.label }}</a>{% endmacro %}
+  {% if d.topics %}{{ ranked(d.topics, tl, ts) }}{% else %}<p class="muted small">Too few classified reports.</p>{% endif %}</section>
+<section class="viz-card" id="actors" data-tab="overview"><h2 class="viz-title">Actors its reports emphasise</h2>
+  {% macro al(r) %}{{ ent(r.label, r.kind, r.href) }}{% endmacro %}
+  {% if d.actors %}{{ ranked(d.actors, al, ts) }}{% else %}<p class="muted small">Too few classified reports.</p>{% endif %}</section>
+</div>
+
+<section class="viz-card" id="newest" data-tab="reports"><h2 class="viz-title">Newest reports <span class="muted small"><a href="{{ d.listed_link }}">all {{ d.listed|num }} listed →</a></span></h2>
+  <ul class="plain small rings-list">{% for r in d.newest %}<li><a href="/report/{{ r.id }}">{{ r.title }}</a> <span class="muted">· {{ r.year or 'undated' }}{% if r.lang %} · {{ r.lang }}{% endif %}</span></li>{% endfor %}</ul>
+  {% if not d.newest %}<p class="muted small">No report listed yet.</p>{% endif %}</section>
+<section class="viz-card" id="languages" data-tab="reports"><h2 class="viz-title">Files by language <span class="muted small">a report can come in several</span></h2>
+  {% macro ll(r) %}{{ r.lang }}{% endmacro %}
+  {% if d.langs %}{{ ranked(d.langs, ll) }}{% else %}<p class="muted small">No file with a language yet.</p>{% endif %}</section>
+
+<section class="viz-card" id="series" data-tab="series"><h2 class="viz-title">Series <span class="muted small">{{ series_of|length }} · <a href="/sources/coverage?source={{ s.key|urlencode }}">coverage</a></span></h2>
+  {% for c in series_of %}<div class="src-series"><h4><a href="/series/{{ sid(c.series) }}">{{ c.series.name }}</a>{% if c.complete %} <span class="sg-have small">complete</span>{% endif %}</h4>{{ grid(c) }}</div>{% endfor %}
+  {% if series_of %}{{ legend() }}{% else %}<p class="muted small">No series of {{ s.agency }} is followed edition by edition yet – series are
+    proposed on <a href="/series">Series</a> from reports with recurring titles.</p>{% endif %}</section>
+
+<section class="viz-card" id="collect" data-tab="collect"><h2 class="viz-title">Report pages <span class="muted small">{{ d.pages|length }} · the pages the crawler checks</span></h2>
+  <table class="pc-table small">
+    <thead><tr><th>Lang</th><th>Kind</th><th>Page</th><th>Last check</th></tr></thead>
+    {% for p in d.pages %}<tr><td>{{ p.lang }}</td><td>{{ p.kind }}</td>
+      <td><a href="{{ p.url }}" target="_blank" rel="noopener">{{ p.note or p.url }}</a>{% if not p.verified %} <span class="warn" title="bot-protected – open in a browser">⚠</span>{% endif %}</td>
+      <td class="muted">{{ p.last_status or 'not checked yet' }}{% if p.last_crawled %} · {{ p.last_crawled }}{% endif %}</td></tr>{% endfor %}
+  </table>
+  <p class="muted small">Published {{ s.frequency or '–' }}{% if s.access == 'manual' %} · access <b>manual</b>: the site is bot-protected, so its reports are collected by hand{% elif s.access and s.access != 'auto' %} · access <b>{{ s.access }}</b>{% endif %}{% if s.notes %} · {{ s.notes }}{% endif %}</p>
+  <div class="actions-row">
+    <form method="post" action="/jobs/crawl" class="inline" title="Check this agency's report pages now – followed on the Update page">
+      <input type="hidden" name="source_id" value="{{ s.id }}"><button>Check now</button></form>
+  </div>
+  <form method="post" action="/add" class="addform">
+    <input type="hidden" name="source_id" value="{{ s.id }}">
+    <input name="url" placeholder="https://… .pdf" required>
+    <input name="title" placeholder="Title">
+    <input name="lang" placeholder="lang" size="3"><input name="year" placeholder="year" size="5">
+    <label class="chk"><input type="checkbox" name="fetch_now" value="1" checked> download now</label>
+    <button>Add document</button>
+  </form></section>
+{% endblock %}

@@ -37,6 +37,7 @@ def test_locate_picks_the_longest_match():
     assert nav.locate("/sources") == ("agencies", "/sources")
     assert nav.locate("/report/12") == ("reports", "/documents")
     assert nav.locate("/publisher/3") == ("agencies", "/publishers")
+    assert nav.locate("/agency/3") == ("agencies", "/sources")
     assert nav.locate("/trends/terms") == ("topics", "/trends/terms")
     assert nav.locate("/nowhere") == (None, None)
 

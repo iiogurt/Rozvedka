@@ -59,7 +59,7 @@
         {% else %}<span class="initials">{{ initials(s.agency) }}</span>{% endif %}
       </div>
       <div class="names">
-        <div class="acr">{{ s.agency }}{{ pub_mark(s.id) }}</div>
+        <div class="acr"><a href="/agency/{{ s.id }}" title="{{ s.agency }} on one page: its reports, what they emphasise, its series">{{ s.agency }}</a>{{ pub_mark(s.id) }}</div>
         <div class="name-en">{{ s.name_en or '' }}</div>
         {% if s.name_local and s.name_local != s.name_en %}<div class="name-local">{{ s.name_local }}</div>{% endif %}
       </div>

@@ -15,7 +15,7 @@ import datetime as dt
 import json
 import math
 
-from . import actors, countries, db, events, ratings, threat_levels, topics, trends
+from . import actors, countries, db, events, ratings, threat_levels, topics, trends, works
 from .trends import CLASSIFIED, COMMERCIAL, LISTED, OFFICIAL, THINK_TANK, docs_url
 
 MIN_DOCS = 3            # an actor or topic needs this many reports in the briefing's set to be ranked by lift
@@ -200,6 +200,65 @@ def country(code: str) -> dict | None:
             "events": events.of_country(code), "levels": levels, "profile": prof}
 
 
+def agency(source_id: int) -> dict | None:
+    """One agency (or think tank, or commercial analyst) on one page: its reports year by year, the topics and actors
+    its reports emphasise compared with all reports, its languages, its newest reports and the pages they come from."""
+    with db.session() as con:
+        topics.init()
+        actors.init()
+        s = con.execute("SELECT * FROM sources WHERE id=? AND active=1", (source_id,)).fetchone()
+        if s is None:
+            return None
+        s = dict(s)
+        s["publisher"] = s["publisher"] or "official"
+        where, args = f"{LISTED} AND d.source_id=?", [source_id]
+        p = {"source": source_id}
+        cw = f"{where} AND {CLASSIFIED}"
+        n = _base(con, cw, args)
+        listed = _base(con, where, args)
+        got = _base(con, f"{where} AND d.status='downloaded'", args)
+        aw = f"{LISTED} AND {CLASSIFIED}"
+        n_all = _base(con, aw, [])
+        years = _years(con, cw, args, p)
+        for y in years:                                # one publisher: the bar is its own reports, whatever its kind
+            y["official"], y["independent"] = y["official"] + y["independent"], 0
+            y["link"] = y["link_all"]
+            y["share"] = None
+        tax = topics.taxonomy()["topics"]
+        tps = _lift(con, "topic", cw, args, n, aw, [], n_all) if n else []
+        for r in tps:
+            r.update(label=tax.get(r["key"], {}).get("name", r["key"]), link=docs_url(p, topic=r["key"]), href=f"/topics/{r['key']}")
+        labels = dict(con.execute("SELECT key, label FROM actors").fetchall())
+        kinds_of = dict(con.execute("SELECT key, kind FROM actors").fetchall())
+        mine = {(s["agency"] or "").casefold(), (s["name_en"] or "").casefold(), (s.get("name_local") or "").casefold()} - {""}
+        own = {k for k, label in labels.items() if label.casefold() in mine}                  # it names itself
+        own |= {r["key"] for r in con.execute("SELECT key, data FROM actors WHERE kind='state'")
+                if s["publisher"] == "official"
+                and any(c.get("iso") == s["country"] for c in json.loads(r["data"] or "{}").get("countries") or [])}
+        acts = _lift(con, "actor", cw, args, n, aw, [], n_all, skip=own) if n else []
+        for r in acts:
+            r.update(label=labels.get(r["key"], r["key"]), kind=kinds_of.get(r["key"]), link=docs_url(p, actor=r["key"]),
+                     href=f"/actors/{r['key']}")
+        files = LISTED.replace(f" AND {works.PRIMARY}", "")     # every file: a language lists its versions, as Documents does
+        langs = [dict(r) for r in con.execute(
+            f"""SELECT d.lang, COUNT(*) n FROM documents d JOIN sources s ON s.id=d.source_id
+                WHERE {files} AND d.source_id=? AND {CLASSIFIED} AND COALESCE(d.lang, '') != ''
+                GROUP BY d.lang ORDER BY n DESC, d.lang""", args)]
+        for r in langs:
+            r["link"] = docs_url(p, lang=r["lang"])
+        newest = [dict(r) for r in con.execute(
+            f"""SELECT d.id, d.title, d.year, d.lang FROM documents d JOIN sources s ON s.id=d.source_id
+                WHERE {where} ORDER BY d.year DESC NULLS LAST, d.discovered_at DESC, d.id DESC LIMIT ?""", (*args, NEWEST))]
+        pages = [dict(r) for r in con.execute("SELECT * FROM pages WHERE source_id=? AND active=1 ORDER BY lang, kind", (source_id,))]
+        me = next((k for k, label in labels.items() if label.casefold() == (s["name_en"] or "").casefold()
+                   and kinds_of.get(k) != "country"), None) if s["name_en"] else None
+    return {"s": s, "n": n, "link": docs_url(p), "listed": listed, "listed_link": f"/documents?source={source_id}",
+            "downloaded": got, "n_all": n_all, "years": years, "peak": _peak(years), "topics": tps, "actors": acts,
+            "langs": langs, "newest": newest, "pages": pages, "min_docs": MIN_DOCS, "own": len(own),
+            "country_name": countries.names().get(s["country"], s["country"]),
+            "actor_link": f"/actors/{me}" if me else ""}
+
+
 def index() -> list[dict]:
     """Every state with agencies in the library: its agencies and official reports."""
     names = countries.names()
@@ -225,6 +284,13 @@ def figures(topic_key: str, code: str) -> list[tuple[str, int, str]]:
         out += [(f"topic {topic_key} actor {r['key']}", r["n"], r["link"]) for r in t["actors"][:5]]
         out += [(f"topic {topic_key} {y['year']}", y["official"], y["link"]) for y in t["years"][-3:]]
     c = country(code)
+    for sid in ([c["sources"][0]["id"]] if c and c["sources"] else []):       # the state's first agency, on its own page
+        a = agency(sid)
+        out.append((f"agency {sid}", a["n"], a["link"]))
+        out += [(f"agency {sid} topic {r['key']}", r["n"], r["link"]) for r in a["topics"][:5]]
+        out += [(f"agency {sid} actor {r['key']}", r["n"], r["link"]) for r in a["actors"][:5]]
+        out += [(f"agency {sid} {y['year']}", y["official"], y["link"]) for y in a["years"][-3:]]
+        out += [(f"agency {sid} lang {r['lang']}", r["n"], r["link"]) for r in a["langs"][:3]]
     if c:
         out.append((f"country {code}", c["n"], c["link"]))
         out += [(f"country {code} topic {r['key']}", r["n"], r["link"]) for r in c["topics"][:5]]
