@@ -110,3 +110,22 @@ def test_edition_changes(library):
     assert client.get(f"/series/{sid}/changes").status_code == 200
     assert client.get("/series/nope/changes").status_code == 404
     assert f"/series/{sid}/changes?old=2023" in client.get("/report/5").text
+
+
+def test_preview_pane(library):
+    # the list's search → the excerpt that matches, with its page; the list's actor → that actor's passage
+    p = report.preview(3, q="Ransomware", exact=1)
+    assert p["hit"] and "\x02Ransomware\x03" in p["hit"]["text"] and p["hit"]["page"] == 1 and p["named"] is None
+    p = report.preview(3, actor="Q1")
+    assert p["hit"] is None and p["named"]["match"] == "Wagner Group" and p["named"]["n"] == 1 and p["named"]["page"] == 1
+    assert report.preview(3, q='"unbalanced')["hit"] is None and report.preview(999) is None
+    from rozvedka.app import app
+    client = TestClient(app)
+    t = client.get("/report/3/preview?q=Ransomware&exact=1").text
+    assert "<html" not in t and "<mark>Ransomware</mark>" in t and 'href="/doc/3#page=1"' in t      # a piece of a page
+    assert 'href="/report/3"' in t and "Wagner Group" in t and 'href="/agency/1"' in t and "40 pages" in t
+    assert "<mark>Wagner Group</mark>" in client.get("/report/3/preview?actor=Q1").text
+    assert "Most named: Wagner Group" in client.get("/report/3/preview").text
+    assert "&lt;b&gt;" in client.get("/report/3/preview?q=<b>").text and client.get("/report/999/preview").status_code == 404
+    lst = client.get("/documents").text
+    assert 'data-doc="1"' in lst and 'id="pv"' in lst and "preview.js" in lst and 'class="pv-btn"' in lst

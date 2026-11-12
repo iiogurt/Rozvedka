@@ -1,0 +1,31 @@
+{# one report in the Reports list's preview pane (static/preview.js) – a piece of a page, not a page #}
+{% from "_ties.html" import ent %}
+{% set d = doc %}
+<p class="pv-kicker"><span>Preview · report</span><button type="button" class="pv-close" title="Close the preview (Esc)">esc ✕</button></p>
+<h2 class="pv-title"><a href="/report/{{ d.id }}">{{ d.title }}</a></h2>
+<p class="pv-by"><img class="flag-sm" src="{{ flag_url(d.country) }}" alt="{{ d.country }}" width="16" height="12">
+  <a href="/agency/{{ d.source_id }}">{{ d.agency }}</a>{{ pub_mark(d.source_id) }} <span class="muted">· {{ TYPE_NAMES.get(d.type, d.type) }}</span></p>
+<p class="rp-actions"><a class="rp-btn rp-primary" href="/report/{{ d.id }}">Open report</a>
+  {% if d.local_path %}<a class="rp-btn" href="/doc/{{ d.id }}" target="_blank">{{ 'EPUB' if d.local_path.endswith('.epub') else 'PDF' }}</a>{% endif %}
+  {% if not book %}<a class="rp-btn" href="{{ d.url }}" target="_blank" rel="noopener">Official address ↗</a>{% endif %}</p>
+<table class="kv small pv-facts">
+  <tr><th>Year</th><td>{{ d.year or 'undated' }}{% if d.year_source %} <span class="muted">· {{ d.year_source }}</span>{% endif %}</td></tr>
+  <tr><th>Length</th><td>{% if d.pages_count %}{{ d.pages_count }} pages · {% endif %}{{ d.lang or 'language unknown' }}{% if index and index.words %} · {{ index.words|num }} words{% endif %}{% if ocr %} · <span class="badge-ocr">OCR</span>{% endif %}</td></tr>
+  <tr><th>Names</th><td>{% if index and index.chars %}<a href="/report/{{ d.id }}#tab-contents">{{ actors|length }}{{ '+' if actors|length == actors_shown }} actors · {{ topics|length }} topics</a>{% if countries %} · {{ countries|length }} countries{% endif %}{% else %}<span class="muted">{{ 'not downloaded' if not d.local_path else 'text not read yet' }}</span>{% endif %}</td></tr>
+  {% if series and edition %}<tr><th>Series</th><td><a href="/series/{{ edition.id }}">{{ series.name }}</a> · {{ edition.year }}</td></tr>{% endif %}
+  {% if files and files|length > 1 %}<tr><th>Files</th><td><a href="/report/{{ d.id }}#files">{{ files|length }} language versions and summaries</a></td></tr>{% endif %}
+  <tr><th>Status</th><td>{{ d.status }}{% if d.downloaded_at %} <span class="muted">· {{ d.downloaded_at[:10] }}</span>{% endif %}</td></tr>
+</table>
+{% macro at(page) %}{% if page %}<a class="pv-pg" href="/doc/{{ d.id }}#page={{ page }}" target="_blank" title="Open the file at this page">p. {{ page }}</a>{% endif %}{% endmacro %}
+{% if q %}<h3 class="pv-h">“{{ q }}” in this report</h3>
+  {% if hit %}<blockquote class="snippet pv-pass">{{ hit.html|safe }} {{ at(hit.page) }}</blockquote>
+  {% else %}<p class="muted small">No excerpt: the search matched its title or its text is not read.</p>{% endif %}{% endif %}
+{% if named %}<h3 class="pv-h">{{ named.label }} in this report <span class="muted">· named {{ named.n }}×</span></h3>
+  <blockquote class="snippet pv-pass">{{ named.before }}<mark>{{ named.match }}</mark>{{ named.after }} {{ at(named.page) }}</blockquote>{% endif %}
+{% if not q and not named and actors and actors[0].match %}{% set a = actors[0] %}<h3 class="pv-h">Most named: {{ a.label }} <span class="muted">· {{ a.hits }}×</span></h3>
+  <blockquote class="snippet pv-pass">{{ a.before }}<mark>{{ a.match }}</mark>{{ a.after }} {{ at(a.page) }}</blockquote>{% endif %}
+{% if main %}<h3 class="pv-h">Main topics</h3>
+  <p class="pv-chips">{% for t in main %}<a class="topic-chip" href="/topics/{{ t.topic }}">{{ t.name }}</a>{% endfor %}</p>{% endif %}
+{% if actors %}<h3 class="pv-h">Named here</h3>
+  <p class="pv-named">{% for a in actors[:shown] %}{{ ent(a.label, a.kind, '/actors/' ~ a.key) }}{% endfor %}{% if actors|length > shown %}<a class="muted" href="/report/{{ d.id }}#tab-contents">more →</a>{% endif %}</p>{% endif %}
+<p class="pv-keys">↑ ↓ or j k move · space preview · enter open · esc close</p>

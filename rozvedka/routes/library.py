@@ -6,6 +6,7 @@ from fastapi.responses import FileResponse, RedirectResponse
 from .. import crawler, dating, db, doctypes, downloader, jobs as jobrunner, logos, paging, notebooks, registry, report
 from ..config import FILES
 from ..web import referer_url, tpl
+from .documents import highlight
 
 router = APIRouter()
 
@@ -65,6 +66,17 @@ def report_page(request: Request, doc_id: int):
     if d is None:
         raise HTTPException(404, "unknown report")
     return tpl.TemplateResponse(request, "report.html", d | {"notebooks": notebooks.overview()})
+
+
+@router.get("/report/{doc_id}/preview")
+def report_preview(request: Request, doc_id: int, q: str = "", exact: int = 0, indexed: int = 0, actor: str = ""):
+    """The report as the Reports list's preview pane shows it – a piece of a page, fetched by static/preview.js."""
+    d = report.preview(doc_id, q, exact, indexed, actor)
+    if d is None:
+        raise HTTPException(404, "unknown report")
+    if d["hit"]:
+        d["hit"]["html"] = highlight(d["hit"]["text"])
+    return tpl.TemplateResponse(request, "report_preview.html", d)
 
 
 @router.get("/doc/{doc_id}")

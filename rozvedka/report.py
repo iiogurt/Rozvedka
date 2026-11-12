@@ -114,3 +114,40 @@ def _book(doc_id: int) -> dict | None:
     from . import meanings
     b["meanings"] = meanings.of_book(doc_id)
     return b
+
+
+PREVIEW_ACTORS = 12     # actors and topics named in the preview pane; the rest on the report's page
+PREVIEW_WORDS = 48      # words of the excerpt around a search's matches
+
+
+def preview(doc_id: int, q: str = "", exact: int = 0, indexed: int = 0, actor: str = "") -> dict | None:
+    """What the Reports list's preview pane shows of one report: its facts and, for the list's search or actor, the
+    passage that matches – with its page, so the PDF opens there."""
+    d = detail(doc_id)
+    if d is None:
+        return None
+    from . import doclist                                   # doclist builds on the same modules as this one
+    offsets = json.loads(d["index"]["pages"]) if d["index"] and d["index"].get("pages") else None
+    hit, named = None, None
+    with db.session() as con:
+        fts = doclist.full_text(q, exact, indexed)[0] if q.strip() else ""
+        if fts:
+            try:
+                row = con.execute(f"""SELECT snippet(doc_text, 1, char(2), char(3), '…', {PREVIEW_WORDS}), body FROM doc_text
+                                      WHERE doc_text MATCH ? AND rowid=?""", (fts, doc_id)).fetchone()
+            except db.sqlite3.OperationalError:              # a search FTS5 cannot read: no excerpt
+                row = None
+            if row and row[0]:
+                plain = row[0].replace("\x02", "").replace("\x03", "").strip("…")
+                at = (row[1] or "").find(plain) if plain else -1
+                hit = {"text": row[0], "page": topics.page_of(offsets, at) if at >= 0 else None}
+        if actor:
+            r = con.execute("""SELECT da.spans, a.label, a.kind FROM doc_actors da JOIN actors a ON a.key=da.actor_key
+                               WHERE da.doc_id=? AND da.actor_key=?""", (doc_id, actor)).fetchone()
+            spans = json.loads(r["spans"] or "[]") if r else []
+            if spans:
+                body = (con.execute("SELECT body FROM doc_text WHERE rowid=?", (doc_id,)).fetchone() or [""])[0] or ""
+                s, e = spans[0]
+                named = {"key": actor, "label": r["label"], "kind": r["kind"], "n": len(spans),
+                         **actors._snippet(body, s, e), "page": topics.page_of(offsets, s)}
+    return {**d, "q": q.strip(), "hit": hit, "named": named, "shown": PREVIEW_ACTORS}
