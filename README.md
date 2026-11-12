@@ -54,6 +54,16 @@ holds. On a phone the menu opens from one Menu button.
 
 The interface is monochrome – warm near-black, bone text, hairlines – with one sand accent, so that colour is left to the data.
 
+**Jump to anything.** <kbd>Ctrl</kbd> <kbd>K</kbd> (or *Jump to…* in the header) opens a box on every page: type a name and
+get the page of the country, agency, actor, topic, report or network entity that carries it, or a page of the portal –
+move with <kbd>↑</kbd> <kbd>↓</kbd>, open with <kbd>enter</kbd>. It looks at names only and answers while you type; the
+search bar reads the full text. With nothing typed it lists where you have been.
+
+**Trail.** Above each page is the row of pages you came through in this tab (Documents → RIA → Estonia), each a link back;
+going back to one cuts the trail there, ✕ forgets it. It is kept in the tab's own storage and never leaves the browser.
+
+<img src="docs/images/jump.png" alt="The jump box over a country page: an actor and network entities whose names match what was typed, and the full-text search as the last choice" width="900">
+
 <img src="docs/images/menu.png" alt="The side menu: the things to browse with their marks and counts, Technical and Workbench below; the tabs of the section under the header" width="900">
 
 
@@ -1189,6 +1199,7 @@ flowchart LR
 | `rozvedka/casefile.py` | the case file: pins with notes in `data/case_file.yaml`, the chain of every pair, connectors, the Markdown export with citations |
 | `rozvedka/notebooks.py` | research notebooks in `data/notebooks.yaml`: passages found in a report's text, widened to sentences, cited (agency, title, year, page, official address), exported as Markdown or a print page, merged from personal backups |
 | `rozvedka/paths.py` | Find a connection: the most specific chains between two entities (hub-penalised shortest paths, alternatives on other routes), name resolution |
+| `rozvedka/jump.py` | jump to anything: names of pages, countries, agencies, actors, topics, reports and network entities → their pages (`/api/jump`, `static/jump.js`, which also keeps the trail) |
 | `rozvedka/ties.py` | the network of stated links: entities and links from the sanctions lists, Wikidata, Wikipedia, ATT&CK and the reports, each with its evidence |
 | `rozvedka/graphs.py` | network associations and clusters, who-reports-on-whom and topic mind map data, with the same links |
 | `rozvedka/updater.py` | the Update page: plan (pages, duration), the update steps, every source's last check, history |

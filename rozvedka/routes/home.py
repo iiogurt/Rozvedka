@@ -1,7 +1,7 @@
 """Home page, search and the What's new / Compare pages."""
 from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
-from .. import compare as compare_mod, db, home, paging, topics, updates
+from .. import compare as compare_mod, db, home, jump, paging, topics, updates
 from ..web import COUNTRY_NAMES, flag_url, tpl
 
 router = APIRouter()
@@ -38,6 +38,17 @@ def api_suggest(q: str = ""):
         for it in g["items"]:
             if it.get("country"):
                 it["flag"] = flag_url(it["country"])
+    return out
+
+
+@router.get("/api/jump")
+def api_jump(q: str = ""):
+    """Jump to anything (Ctrl K): the pages of the things whose names match – static/jump.js."""
+    out = jump.find(q)
+    for g in out["groups"]:
+        for it in g["items"]:
+            if it.get("country"):
+                it["flag"] = flag_url(it.pop("country"))
     return out
 
 

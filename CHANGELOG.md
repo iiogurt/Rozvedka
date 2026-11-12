@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.101.0] – 2026-11-12
+
+### Added
+- **Jump to anything** – Ctrl K, or *Jump to…* in the header, on every page: type a name and get the page of the
+  country, agency, actor (also by its other names), topic, report or network entity that carries it, or a page of the
+  portal. ↑ ↓ move, enter opens; the last choice searches the full text. Names only, so it answers while typing.
+  With nothing typed it lists the pages you have been on.
+- **Trail** – above each page, the pages you came through in this tab, each a link back; returning to one cuts the
+  trail there and ✕ forgets it. Kept in the browser tab only.
+
 ## [0.100.0] – 2026-11-12
 
 ### Added
@@ -2164,7 +2174,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.100.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.101.0...HEAD
+[0.101.0]: https://github.com/iiogurt/Rozvedka/compare/v0.100.0...v0.101.0
 [0.100.0]: https://github.com/iiogurt/Rozvedka/compare/v0.99.0...v0.100.0
 [0.99.0]: https://github.com/iiogurt/Rozvedka/compare/v0.98.0...v0.99.0
 [0.98.0]: https://github.com/iiogurt/Rozvedka/compare/v0.97.0...v0.98.0

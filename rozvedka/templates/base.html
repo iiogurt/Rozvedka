@@ -27,6 +27,7 @@
     <input id="top-q" type="search" name="q" placeholder="search the reports – words, &quot;a phrase&quot;, country:DE actor:&quot;Fancy Bear&quot; year:2023..2025" autocomplete="off">
   </form>
   {% else %}<span class="top-fill"></span>{% endif %}
+  <button type="button" class="jump-open" title="Jump to a country, agency, actor, topic, report or page by its name">Jump to… <kbd>Ctrl K</kbd></button>
   {% set hs = header_status() %}
   <span class="top-age {{ 'old' if hs.days is not none and hs.days >= 7 }}" title="Every source checked since {{ (hs.last or 'never')[:16].replace('T', ' ') }}; latest check {{ (hs.latest or 'never')[:16].replace('T', ' ') }}"><i aria-hidden="true"></i>{% if hs.days is none %}never checked{% else %}data {{ 'today' if hs.days == 0 else hs.days ~ ' d old' }}{% endif %}</span>
   <a class="upd-btn {{ 'on' if request.url.path == '/update' }} {{ 'busy' if hs.job }}" href="/update"
@@ -41,12 +42,20 @@
 </header>
 {% include "_sectionnav.html" %}
 <main>{% if request.query_params.get("case") and request.url.path != "/case" %}<p class="h-problems case-toast" role="status">{{ request.query_params.get("case") }} · <a href="/case">open the case file</a></p>{% endif %}{% if request.query_params.get("nb") and not request.url.path.startswith("/notebooks") %}<p class="h-problems case-toast" role="status">{{ request.query_params.get("nb") }} · <a href="/notebooks">open the notebooks</a></p>{% endif %}
+<nav class="trail" id="trail" aria-label="The pages you came through" hidden></nav>
 {% if nav.crumbs %}<nav class="crumbs" aria-label="Breadcrumb">{% for c in nav.crumbs %}<a href="{{ c.href }}">{{ c.label }}</a><span aria-hidden="true">›</span>{% endfor %}{% block crumbs %}{% endblock %}</nav>{% endif %}
 {% block main %}{% endblock %}</main>
 <footer class="foot">Rozvedka <a href="/views">all views</a> · <a href="/changelog" title="What's new">v{{ VERSION }}</a>{% if BUILD != VERSION %}
   <span class="muted" title="Build: commits after the release (git)">· build {{ BUILD.split('+', 1)[1] }}</span>{% endif %}</footer>
 </div>
 </div>
+<dialog class="jump" id="jump" aria-label="Jump to anything">
+  <input type="search" placeholder="Jump to a country, agency, actor, topic, report, page…" autocomplete="off" spellcheck="false"
+         role="combobox" aria-expanded="true" aria-controls="jump-list" aria-autocomplete="list">
+  <ul id="jump-list" role="listbox"></ul>
+  <p class="jump-keys">↑ ↓ move · enter open · esc close · names only – the search box reads the full text</p>
+</dialog>
 <script src="{{ asset('tabs.js') }}"></script>
+<script src="{{ asset('jump.js') }}"></script>
 </body>
 </html>
