@@ -238,6 +238,20 @@ One card per agency: flag, logo, official name in the original language and in E
 description of what its reports cover, coalition tags with the year each country joined, the report pages it is
 crawled from (with language and current/archive), and a link to its headquarters on the map.
 
+<img src="docs/images/agency.png" alt="Agency page of the Estonian Information System Authority: six key numbers, tabs, reports year by year, the topics and actors its reports emphasise" width="900">
+
+**Every agency has a page of its own** (`/agency/20`, opened from its name on a card, on a country's or topic's page
+and on a report), in the shape of an actor's page – name, six key numbers, then tabs:
+
+- **Overview** – its reports year by year, and the topics and actors its reports emphasise compared with all reports
+  (lift × reports; its own name and its state's agencies are left out);
+- **Reports** – the newest, and its files by language;
+- **Series** – each of its series as a grid of years × languages: in the library, missing, expected;
+- **Where they come from** – the report pages the crawler checks, with the result of the last check, *Check now* and
+  the form for adding a report by hand.
+
+A think tank's or commercial analyst's page carries its credibility banner and links to the full profile.
+
 ### ◆ ■ Think tanks and commercial analysts – credibility profiles
 
 <img src="docs/images/think-tanks.png" alt="Think tanks: each with its credibility rating and the checks behind it" width="900">

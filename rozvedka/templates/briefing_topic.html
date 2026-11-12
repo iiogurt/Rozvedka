@@ -45,7 +45,7 @@
   {% macro cs(r) %}{{ (100 * r.n / r.of)|round(0)|int if r.of else 0 }} % of {{ r.of }}{% endmacro %}
   {{ ranked(d.countries, cl, cs) }}</section>
 <section class="viz-card" id="agencies" data-tab="who"><h2 class="viz-title">Agencies{% if d.n_agencies > d.agencies|length %} <span class="muted small">the first {{ d.agencies|length }} of {{ d.n_agencies }} · <a href="{{ d.compare_link }}">compare them all</a></span>{% endif %}</h2>
-  {% macro al(r) %}<a href="/sources#s-{{ r.id }}">{{ r.agency }}</a> <span class="muted">{{ r.country }}</span>{% if r.publisher == 'independent' %} <span class="pub-count">◆</span>{% elif r.publisher == 'commercial' %} <span class="pub-count-com">■</span>{% endif %}{% endmacro %}
+  {% macro al(r) %}<a href="/agency/{{ r.id }}">{{ r.agency }}</a> <span class="muted">{{ r.country }}</span>{% if r.publisher == 'independent' %} <span class="pub-count">◆</span>{% elif r.publisher == 'commercial' %} <span class="pub-count-com">■</span>{% endif %}{% endmacro %}
   {{ ranked(d.agencies, al) }}</section>
 </div>
 

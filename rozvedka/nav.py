@@ -16,7 +16,7 @@ GROUPS = [
         ("Citations", "/citations", (), "Which agencies and reports cite which."),
     ]),
     ("agencies", "Agencies", "/sources", [
-        ("Agencies", "/sources", (), "The official agencies the library follows, by country."),
+        ("Agencies", "/sources", ("/agency",), "The official agencies the library follows, by country."),
         ("Think tanks & analysts", "/publishers", ("/publisher",), "Think tanks and commercial analysts with their credibility profile."),
         ("Map", "/map", (), "Where the agencies are."),
     ]),
