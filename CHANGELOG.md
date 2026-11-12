@@ -27,6 +27,15 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.100.0] – 2026-11-12
+
+### Added
+- **Preview pane on the Reports list.** Click a row or move with ↑ ↓ (or j k) and press space: a pane beside the list
+  shows the selected report without leaving the list – publisher, year, length, how many actors and topics it names,
+  **the passage that matches the list's search or actor, with its page** (the page number opens the PDF there), its main
+  topics and the actors it names. Enter opens the report, esc closes the pane. On a narrow screen the pane lies over
+  the list. An address ending `#pv-<report id>` opens with that preview.
+
 ## [0.99.0] – 2026-11-12
 
 ### Added
@@ -2155,7 +2164,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.99.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.100.0...HEAD
+[0.100.0]: https://github.com/iiogurt/Rozvedka/compare/v0.99.0...v0.100.0
 [0.99.0]: https://github.com/iiogurt/Rozvedka/compare/v0.98.0...v0.99.0
 [0.98.0]: https://github.com/iiogurt/Rozvedka/compare/v0.97.0...v0.98.0
 [0.97.0]: https://github.com/iiogurt/Rozvedka/compare/v0.96.0...v0.97.0

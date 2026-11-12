@@ -164,6 +164,14 @@ The library itself (`/documents`): every report with its agency, country, langua
 
   <img src="docs/images/doc-types.png" alt="Documents with every type shown: press notices marked as statements not counted, a risk register as an assessment" width="900">
 
+- **Preview beside the list**: click a row or move with <kbd>↑</kbd> <kbd>↓</kbd> (or <kbd>j</kbd> <kbd>k</kbd>),
+  press <kbd>space</kbd>, and a pane beside the list shows the selected report – publisher, year, length, how many actors
+  and topics it names, the passage that matches the list's search or actor with its page (the page number opens the PDF
+  there), its main topics and the actors it names. <kbd>enter</kbd> opens the report, <kbd>esc</kbd> closes the pane; the
+  list keeps its place. An address ending `#pv-<report id>` opens with that preview.
+
+  <img src="docs/images/doc-preview.png" alt="The Reports list searched for sabotage with a report selected and the preview pane beside it: its facts, the matching passage with its page, main topics and named actors" width="900">
+
 - **Year conflicts** (`/years`, linked from the Documents summary): reports whose stored year is contradicted by strong
   evidence – a Japanese era year in the title, a date stamp in the file name, a report heading on the cover naming
   another year – with the evidence and one click to use the year found or keep the stored one. Nothing changes

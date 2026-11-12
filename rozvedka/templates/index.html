@@ -101,12 +101,13 @@
 </div>
 
 <div class="tablewrap">
+{% if docs %}<p class="pv-hint muted small">Click a row or press <kbd>↑</kbd> <kbd>↓</kbd> to select · <kbd>space</kbd> preview beside the list · <kbd>enter</kbd> open</p>{% endif %}
 {{ pager(pg, "documents") }}
 <table class="docs">
   <thead><tr><th>Year</th><th>Source</th><th>Title</th><th>Lang</th><th>Status</th><th></th></tr></thead>
   <tbody>
   {% for d in docs %}
-    <tr class="{{ 'hidden' if d.hidden }}">
+    <tr class="{{ 'hidden' if d.hidden }}" data-doc="{{ d.id }}">
       <td class="num">{% if d.year and d.year_source %}<span class="yr-est" title="Year {{ 'set by hand' if d.year_source == 'set by hand' else 'from the report – ' ~ d.year_source }}">{{ '≈' if 'publication date' in d.year_source }}{{ d.year }}</span>{% else %}{{ d.year or '—' }}{% endif %}</td>
       <td class="src"><a href="/documents?{{ qs(source=d.source_id, page=1) }}" title="{{ d.name_en or '' }}">
         <img class="flag-sm" src="{{ flag_url(d.country) }}" alt="{{ d.country }}" width="20" height="15">
@@ -133,6 +134,7 @@
       <td><span class="lang">{{ d.lang or '?' }}</span></td>
       <td><span class="st st-{{ d.status }}">{{ d.status }}</span></td>
       <td class="actions">
+        <button type="button" class="pv-btn" title="Preview beside the list (space)" aria-label="Preview" aria-pressed="false">◨</button>
         {% if d.status != 'downloaded' %}
         <form method="post" action="/doc/{{ d.id }}/download"><button title="Download now" aria-label="Download now">{{ ico("download") }}</button></form>
         {% endif %}
@@ -153,6 +155,8 @@
 </div>
 
 {{ pager(pg, "documents") }}
+<aside class="pv" id="pv" aria-label="Preview of the selected report" aria-live="polite" hidden></aside>
+<script src="{{ asset('preview.js') }}" defer></script>
 {% if snippets_url %}
 <script>
   // excerpts around the search words come after the list: finding them in long reports takes seconds on the Pi

@@ -1728,3 +1728,39 @@ span.conn-n { color: var(--muted); }
 .one-kind .bf-key { display: none; } .one-kind .bf-off { background: var(--accent); }
 .card .acr a { color: inherit; } .card .acr a:hover { color: var(--accent); }
 .actor-head .topic-chip .flag-sm { vertical-align: -1px; }
+
+/* the Reports list's preview pane (static/preview.js): beside the list on a wide screen, over it on a narrow one */
+.docs tbody tr[data-doc] { cursor: default; }
+.docs tbody tr.sel > td { background: var(--chip); }
+.docs tbody tr.sel > td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
+.pv-btn { border: 0; background: none; color: var(--muted); padding: 2px 4px; font-size: 14px; line-height: 1; cursor: pointer; }
+.pv-btn:hover, .pv-btn[aria-pressed="true"] { color: var(--accent); }
+.pv-hint { margin: 0 0 6px; }
+.pv-hint kbd, .pv-keys kbd { font: 11px var(--mono); padding: 0 4px; border: 1px solid var(--line); border-radius: 2px; background: var(--chip); }
+.pv { position: fixed; top: 0; right: 0; bottom: 0; width: min(430px, 94vw); z-index: 40; overflow-y: auto; padding: 14px 18px 18px;
+  background: var(--panel); border-left: 1px solid var(--line); box-shadow: -12px 0 28px rgba(0, 0, 0, .28); font-size: 13px; }
+@media (min-width: 1200px) { body.pv-open .col { margin-right: 430px; } .pv { box-shadow: none; } }
+.pv-kicker { display: flex; justify-content: space-between; align-items: center; margin: 0 0 10px; font: 10px var(--mono);
+  text-transform: uppercase; letter-spacing: .09em; color: var(--muted); }
+.pv-close { border: 0; background: none; color: var(--muted); font: inherit; text-transform: inherit; letter-spacing: inherit; cursor: pointer; padding: 2px 0; }
+.pv-close:hover { color: var(--ink); }
+.pv-title { margin: 0 0 6px; font-size: 17px; line-height: 1.3; font-weight: 600; }
+.pv-title a { color: var(--ink); }
+.pv-by { margin: 0 0 10px; }
+.pv .rp-actions { margin: 0 0 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+.pv-facts { width: 100%; margin: 0 0 4px; }
+.pv-facts th { width: 74px; }
+.pv-h { margin: 14px 0 5px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 10px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: .09em; color: var(--muted); }
+.pv-h .muted { text-transform: none; letter-spacing: 0; }
+.pv-pass { margin: 0; padding: 0 0 0 10px; border-left: 2px solid var(--line); font-size: 13px; line-height: 1.5; opacity: 1; }
+.pv-pg { font: 11px var(--mono); white-space: nowrap; margin-left: 4px; }
+.pv-chips, .pv-named { margin: 0; display: flex; flex-wrap: wrap; gap: 5px 12px; }
+.pv-chips { gap: 5px; }
+.pv-keys { margin: 16px 0 0; padding-top: 10px; border-top: 1px solid var(--line); font: 11px var(--mono); color: var(--muted); }
+@media (min-width: 1200px) { /* beside the pane the list keeps year, publisher and title; the pane says the rest */
+  body.pv-open .docs th:nth-child(n+4), body.pv-open .docs td:nth-child(n+4) { display: none; }
+  body.pv-open .docs td.src { max-width: 150px; }
+  body.pv-open .docs td.src a, body.pv-open .docs td.src * { white-space: normal; }
+  body.pv-open .docs td.src a { flex-wrap: wrap; }
+  body.pv-open .docs .topic-chip { white-space: normal; } }
