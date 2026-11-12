@@ -1075,10 +1075,25 @@ def layer_counts(id_: str) -> list[dict]:
             for k, v in LAYERS.items() if got.get(k)]
 
 
+def profile(id_: str) -> dict:
+    """An entity's links in numbers, each with the list it counts: all of them, the different things at the other end,
+    and how many each group of sources states (official lists, reference data, leaked records, the reports)."""
+    by = {l["layer"]: l for l in layer_counts(id_)}
+    groups = [{"key": g, "name": name, "n": sum(l["n"] for l in by.values() if l["group"] == g),
+               "layers": [l["name"] for l in by.values() if l["group"] == g], "link": ties_url(entity=id_, group=g)}
+              for g, name in GROUPS.items()]
+    return {"total": sum(l["n"] for l in by.values()), "others": others(entity=id_) if by else 0, "layers": list(by.values()),
+            "groups": {g["key"]: g for g in groups}, "link": ties_url(entity=id_)}
+
+
 def figures() -> list[tuple[str, int, str]]:
     """(label, number, link) of the Network page's numbers, for tools/check_links.py."""
     s = summary()
     out = [(f"layer {l['key']}", l["ties"], l["link"]) for l in s["layers"] if l["ties"]]
+    for r in ranking("official", "", 3):                    # the key numbers of three sample entity pages
+        p = profile(r["id"])
+        out += [(f"entity {r['label']}", p["total"], p["link"]), (f"entity {r['label']} (others)", -p["others"], p["link"])]
+        out += [(f"entity {r['label']} {g['key']}", g["n"], g["link"]) for g in p["groups"].values() if g["n"]]
     for r in crossroads(10):
         out.append((f"crossroads {r['label']}", r["n"], r["link"]))
     for r in ranking("official", "", 10):

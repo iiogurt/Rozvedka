@@ -178,7 +178,18 @@ def test_pages(library):
         assert "<b>5</b> links with <b>5</b> others" in page and "Linked To: HIZBALLAH" in page     # 2 of them wanted notices
         assert client.get("/graph/ties?layer=uk").status_code == 200
         assert "Ivan PETROV is a director" in client.get("/graph/ties?q=Rostec").text
-        assert "Mimikatz" in client.get("/entity/S0002").text
+        page = client.get("/entity/S0002").text
+        assert "Mimikatz" in page
+        # the entity's page in the common shape: key numbers that open their lists, tabs, "Connected to", links with evidence
+        p = ties.profile("S0002")
+        assert p["total"] == ties.count(entity="S0002") > 0 and p["others"] == ties.others(entity="S0002")
+        assert sum(g["n"] for g in p["groups"].values()) == p["total"]
+        assert all(g["n"] == ties.count(entity="S0002", group=g["key"]) for g in p["groups"].values())
+        assert f'<a href="/graph/ties?entity=S0002"><span>Links</span><b>{p["total"]}</b>' in page
+        assert 'href="/graph/ties?entity=S0002&group=reference"><span>Reference data</span>' in page.replace("&amp;", "&")
+        assert 'data-tabs' in page and 'id="connected" data-tab="overview"' in page and 'id="network" data-tab="links"' in page
+        assert "on no sanctions or wanted list" in page and "MITRE ATT&amp;CK" in page
+        assert ties.profile("NOPE")["total"] == 0
         r = client.get("/entity/Q2", follow_redirects=False)
         assert r.status_code == 307 and r.headers["location"] == "/actors/Q2#network"
         actor = client.get("/actors/Q2").text
