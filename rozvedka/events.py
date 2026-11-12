@@ -851,6 +851,26 @@ def sample(n: int = 50, seed: int = 1) -> list[dict]:
         return out
 
 
+def of_country(iso: str, limit: int = 10) -> dict:
+    """The events held in a state: how many (as /events?country=… lists them), by source, and the heaviest few – for
+    the country page."""
+    init()
+    rk = ranks()
+    with db.session() as con:
+        rows = [dict(r) for r in con.execute(
+            """SELECT e.key, e.label, e.start, e.source, e.kind FROM events e
+               WHERE e.key IN (SELECT event_key FROM event_countries WHERE iso=?)""", (iso,))]
+        by_source: dict[str, int] = {}
+        for r in rows:
+            by_source[r["source"]] = by_source.get(r["source"], 0) + 1
+        top = sorted(rows, key=lambda r: -rk.get(r["key"], 0))[:limit]
+        reports = report_counts(con, [r["key"] for r in top])
+    for r in top:
+        r["reports"] = reports.get(r["key"], 0)
+    return {"total": len(rows), "by_source": by_source, "top": sorted(top, key=lambda r: r["start"] or "", reverse=True),
+            "lane": f"country:{iso}", "link": f"/events?country={iso}"}
+
+
 def of_actor(key: str, limit: int = 8) -> dict:
     """The events an actor is linked to (participant, perpetrator, initiator, side – or, for a state, held in it): how
     many, by source, and the heaviest few – for the actor page."""

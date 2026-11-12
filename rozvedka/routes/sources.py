@@ -147,6 +147,22 @@ def ratings_page(request: Request, sort: str = "", group: str = "democracy"):
                                                          "meta": ratings.load(), "docs_url": home.docs_url})
 
 
+def rating_groups(country: str, p: dict) -> list[tuple]:
+    """A state's measures by group, each with the state's official reports on the matching topic – for its ratings page
+    and the Ratings tab of its country page."""
+    tax = topics.taxonomy()["topics"]
+    with db.session() as con:
+        topics.init()
+        n_topic = dict(con.execute(f"""SELECT t.topic, COUNT(DISTINCT d.id) FROM doc_topics t JOIN documents d ON d.id=t.doc_id
+                                       JOIN sources s ON s.id=d.source_id
+                                       WHERE {trends.LISTED} AND {trends.OFFICIAL} AND s.country=? GROUP BY t.topic""",
+                                   (country,)).fetchall())
+    return [(g, name, about, [p["measures"][k] | {"topic_name": tax.get(m.get("topic") or "", {}).get("name"),
+                                                  "n_topic": n_topic.get(m.get("topic"), 0)}
+                              for k, m in ratings.of_group(g).items() if k in p["measures"]])
+            for g, (name, about) in ratings.GROUPS.items()]
+
+
 @router.get("/ratings/{country}")
 def ratings_country(request: Request, country: str):
     """Every rating of one state: one small chart per measure on its own scale, with the latest value, the state's
@@ -155,17 +171,7 @@ def ratings_country(request: Request, country: str):
     p = ratings.profile(country)
     if not p or country not in COUNTRY_NAMES:
         raise HTTPException(404, "no ratings for this state")
-    tax = topics.taxonomy()["topics"]
-    with db.session() as con:
-        topics.init()
-        n_topic = dict(con.execute(f"""SELECT t.topic, COUNT(DISTINCT d.id) FROM doc_topics t JOIN documents d ON d.id=t.doc_id
-                                       JOIN sources s ON s.id=d.source_id
-                                       WHERE {trends.LISTED} AND {trends.OFFICIAL} AND s.country=? GROUP BY t.topic""",
-                                   (country,)).fetchall())
-    groups = [(g, name, about, [p["measures"][k] | {"topic_name": tax.get(m.get("topic") or "", {}).get("name"),
-                                                     "n_topic": n_topic.get(m.get("topic"), 0)}
-                                for k, m in ratings.of_group(g).items() if k in p["measures"]])
-              for g, (name, about) in ratings.GROUPS.items()]
+    groups = rating_groups(country, p)
     return tpl.TemplateResponse(request, "ratings_country.html", {
         "p": p, "country": country, "name": COUNTRY_NAMES[country], "groups": groups, "meta": ratings.load(),
         "docs_url": home.docs_url})

@@ -352,26 +352,35 @@ no periodic job.
 
 ### 📋 Briefings – one topic or one country on one page
 
-<img src="docs/images/briefing-topic.png" alt="Topic briefing for ransomware: reports year by year, the countries and agencies writing most about it, the actors and related topics its reports emphasise" width="900">
+<img src="docs/images/briefing-topic.png" alt="Topic page for ransomware: six key numbers, tabs, reports year by year, the actors and related topics its reports emphasise" width="900">
 
-- **A topic** (`/topics/ransomware`, opened from the Topics page) shows:
-  - its reports year by year, official agencies apart from think tanks ◆ and commercial analysts ■;
-  - the countries writing most about it, with the share of each state's own reports;
-  - the agencies writing most about it;
-  - the **actors** and **related topics** its reports emphasise, ranked by lift × reports: how much more often than all
-    reports, so neither the names every report mentions nor one-off mentions come first. For ransomware these are LockBit,
-    Fancy Bear, Sandworm, Conti and Akira;
-  - its newest reports, with the words that tagged them.
-- **A country** (`/countries/DE`, Sources → Countries) shows:
-  - its agencies and their reports year by year;
-  - the topics and actors its official reports emphasise compared with all official reports. Its own agencies are left out,
-    since they name themselves. For Germany these are crime statistics, anti-government and conspiracy movements, and
-    antisemitism, and the Reichsbürger, AfD and Die Heimat;
-  - which other states' reports name it;
-  - its regime type, ratings, events and threat levels.
-- Every number opens the Documents list it counts. `tools/check_links.py` compares two sample briefings with their lists.
+Both pages have the shape of an actor's page: the name, six key numbers, then the views as tabs.
 
-<img src="docs/images/briefing-country.png" alt="Country briefing for Germany: agencies, reports by year, emphasised topics and actors, who reports about it" width="900">
+- **A topic** (`/topics/ransomware`, opened from the Topics page):
+  - key numbers: its reports and their share of all classified reports; official agencies, think tanks ◆ and commercial
+    analysts ■ apart; the year with most reports; the states whose agencies write on it;
+  - **Overview** – reports year by year, and the **actors** and **related topics** its reports emphasise, ranked by
+    lift × reports: how much more often than all reports, so neither the names every report mentions nor one-off mentions
+    come first. For ransomware these are LockBit, Fancy Bear, Sandworm, Conti and Akira;
+  - **Reports** – its newest reports, with the words that tagged them;
+  - **Who writes about it** – the countries, with the share of each state's own reports, and the agencies;
+  - **Keywords** – the words that tag a report with the topic, language by language.
+- **A country** (`/countries/DE`, menu → Countries):
+  - key numbers: official reports, agencies, the year with most reports, the other states whose reports name it, the
+    events held in it, its regime type;
+  - **Overview** – reports year by year, its agencies, the topics and actors its official reports emphasise compared with
+    all official reports (its own agencies are left out, since they name themselves – for Germany crime statistics,
+    anti-government and conspiracy movements, antisemitism, and the Reichsbürger, AfD and Die Heimat), and **Standing**:
+    its coalitions with the year of joining, regime type, latest terrorism threat level and events, each with its source;
+  - **Reports** – the newest, and the count by agency;
+  - **Named abroad** – every other state whose official reports name it;
+  - **Events** – the heaviest events the event sources place in it;
+  - **Ratings and threat level** – the latest official threat-level statement with its quote, and every rating as a
+    small chart, without leaving the page.
+- A link to a part of either page opens the tab it is on. Every number opens the list it counts.
+  `tools/check_links.py` compares two sample briefings with their lists.
+
+<img src="docs/images/briefing-country.png" alt="Country page for Germany: six key numbers, tabs, reports by year, agencies, standing, emphasised topics and actors" width="900">
 
 ### 📈 Trends
 

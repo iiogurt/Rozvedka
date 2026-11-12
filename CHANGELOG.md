@@ -27,6 +27,23 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.97.0] – 2026-11-12
+
+### Added
+- **A country's and a topic's page in tabs**, in the shape of an actor's page: the name, six key numbers, then the
+  views. A country has *Overview*, *Reports*, *Named abroad*, *Events* and *Ratings and threat level*; a topic has
+  *Overview*, *Reports*, *Who writes about it* and *Keywords*.
+- **Standing** on a country's Overview: its coalitions with the year it joined, regime type, latest terrorism threat
+  level and the events held in it – each with the source that states it.
+- A country's **ratings and latest threat-level statement** (with its quote) are on the country's own page; its
+  **events** tab lists the heaviest events the event sources place in the state, and the Events number is what the
+  Events list counts.
+- A topic's **keywords**, language by language, on its page – the words that tag a report with it.
+
+### Changed
+- *Named abroad* lists every other state whose official reports name the country, not only the first 15.
+- A topic's agencies link to their entry on the Agencies page.
+
 ## [0.96.0] – 2026-11-11
 
 ### Added
@@ -2113,7 +2130,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.96.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.97.0...HEAD
+[0.97.0]: https://github.com/iiogurt/Rozvedka/compare/v0.96.0...v0.97.0
 [0.96.0]: https://github.com/iiogurt/Rozvedka/compare/v0.95.0...v0.96.0
 [0.95.0]: https://github.com/iiogurt/Rozvedka/compare/v0.94.1...v0.95.0
 [0.94.1]: https://github.com/iiogurt/Rozvedka/compare/v0.94.0...v0.94.1
