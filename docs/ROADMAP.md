@@ -268,7 +268,7 @@ Drafts of three screens are in `docs/design/` (an actor, the Reports list, a cou
 | # | Stage | State |
 |---|---|---|
 | I1 | Menu by the things the library holds (reports, agencies, countries, actors, network, topics, events), new monochrome look in both themes | **done 0.95.0** |
-| I2 | One page shape for every thing: identity, six key numbers, then its views as tabs (overview, reports, relations, timeline, map) | **actors and reports done 0.96.0** (`static/tabs.js`); countries, agencies, topics open |
+| I2 | One page shape for every thing: identity, six key numbers, then its views as tabs (overview, reports, relations, timeline, map) | **actors and reports done 0.96.0** (`static/tabs.js`); **countries and topics done 0.97.0**; agencies open (no page of their own yet: an anchor on `/sources`, a profile page only for think tanks) |
 | I3 | One "Connected to" block: every link by kind, with count and source – actor and entity pages merged | **on the actor's Overview 0.96.0**; entity pages and the merge open |
 | I4 | Preview pane: a selected row shows the report with its passages and pages without leaving the list; keyboard moves | open |
 | I5 | Trail of hops and a scope (publisher kind, years, countries) kept between pages; jump-to-anything box | open |

@@ -3,10 +3,25 @@
 {% from "_ties.html" import ent %}
 {% block title %}{{ d.name }} · Topics · Rozvedka{% endblock %}
 {% block main %}
-<h1 class="page-h">{{ d.name }} <span class="muted small">{{ d.category }}</span></h1>
-<p class="lede"><a href="{{ d.link }}"><b>{{ d.n|num }}</b> reports</a> on this topic –
-  {% for k in d.kinds if k.n %}<a href="{{ k.link }}">{{ k.n|num }} from {{ k.name }}</a>{{ ', ' if not loop.last }}{% endfor %}
-  · <a href="{{ d.trend_link }}">over time</a> · <a href="{{ d.compare_link }}">compare agencies</a></p>
+{% set nterms = d.terms.values()|map('length')|sum %}
+<header class="actor-head">
+  <h1><i class="gl gl-topics h-gl" aria-hidden="true"></i>{{ d.name }}</h1>
+  <span class="topic-chip on">Topic</span>{% if d.category %}<a class="topic-chip" href="/topics">{{ d.category }}</a>{% endif %}
+</header>
+
+<section class="kpis" aria-label="{{ d.name }} in numbers">
+  <a href="{{ d.link }}"><span>Reports</span><b>{{ d.n|num }}</b><em>{{ (100 * d.n / d.n_all)|round(1) if d.n_all else 0 }} % of {{ d.n_all|num }} classified</em></a>
+  {% for k in d.kinds %}<a href="{{ k.link }}"{% if k.key == 'think-tank' %} class="kpi-ind"{% elif k.key == 'commercial' %} class="kpi-com"{% endif %}><span>{{ {'official': 'Official', 'think-tank': 'Think tanks ◆', 'commercial': 'Commercial ■'}[k.key] }}</span><b>{{ k.n|num }}</b><em>from {{ k.name|replace(' ◆', '')|replace(' ■', '') }}</em></a>{% endfor %}
+  {% if d.peak %}<a href="{{ d.peak.link }}"><span>Most reports</span><b>{{ d.peak.year }}</b><em>{{ d.peak.official }} official reports</em></a>{% endif %}
+  <a href="#countries"><span>States</span><b>{{ d.n_countries }}</b><em>whose agencies write on it</em></a>
+</section>
+<nav class="lens" data-tabs aria-label="Views of {{ d.name }}">
+  <a href="#tab-overview">Overview</a>
+  <a href="#tab-reports">Reports <span class="lens-n">{{ d.n|num }}</span></a>
+  <a href="#tab-who">Who writes about it <span class="lens-n">{{ d.n_agencies|num }}</span></a>
+  <a href="#tab-words">Keywords <span class="lens-n">{{ nterms }}</span></a>
+  <span class="lens-out"><a href="{{ d.trend_link }}">Over time →</a> <a href="{{ d.compare_link }}">Compare agencies →</a> <a href="/topics/map">Map of topics →</a></span>
+</nav>
 <details class="how"><summary>How this is counted</summary>
 <p class="muted small">Listed reports, one file per report, whose text the topic index tagged with this topic (keywords in
   <code>sources/topics.yaml</code>); official agencies, think tanks and commercial analysts counted apart. <b>Countries</b> and their
@@ -15,27 +30,35 @@
   report mentions does not come first, and neither does one named in only a few; at least {{ d.min_docs }} reports, countries left out.
   Every number opens its reports.</p></details>
 
-<section class="viz-card"><h2 class="viz-title">Year by year</h2>{{ years(d.years, 'Reports on ' ~ d.name) }}</section>
+<section class="viz-card" data-tab="overview"><h2 class="viz-title">Year by year</h2>{{ years(d.years, 'Reports on ' ~ d.name) }}</section>
 
+{% macro ts(r) %}×{{ r.lift|round(1) }}{% endmacro %}
 <div class="bf-grid">
-<section class="viz-card"><h2 class="viz-title">Countries <span class="muted small">official reports, share of the state's own</span></h2>
+<section class="viz-card" id="actors" data-tab="overview"><h2 class="viz-title">Actors its reports emphasise</h2>
+  {% macro tl(r) %}{{ ent(r.label, r.kind, r.href) }}{% endmacro %}
+  {% if d.actors %}{{ ranked(d.actors, tl, ts) }}{% else %}<p class="muted small">No actor named in {{ d.min_docs }} or more of its reports more often than elsewhere.</p>{% endif %}</section>
+<section class="viz-card" id="related" data-tab="overview"><h2 class="viz-title">Related topics <span class="muted small">named in the same reports</span></h2>
+  {% macro rl(r) %}<a href="{{ r.href }}">{{ r.label }}</a>{% endmacro %}
+  {% if d.related %}{{ ranked(d.related, rl, ts) }}{% else %}<p class="muted small">No other topic shares its reports more often than elsewhere.</p>{% endif %}</section>
+<section class="viz-card" id="countries" data-tab="who"><h2 class="viz-title">Countries <span class="muted small">official reports, share of the state's own{% if d.n_countries > d.countries|length %} · the first {{ d.countries|length }} of {{ d.n_countries }}{% endif %}</span></h2>
   {% macro cl(r) %}<img class="flag-sm" src="{{ flag_url(r.country) }}" alt="" width="16" height="12"> <a href="/countries/{{ r.country }}">{{ r.name }}</a>{% endmacro %}
   {% macro cs(r) %}{{ (100 * r.n / r.of)|round(0)|int if r.of else 0 }} % of {{ r.of }}{% endmacro %}
   {{ ranked(d.countries, cl, cs) }}</section>
-<section class="viz-card"><h2 class="viz-title">Agencies</h2>
-  {% macro al(r) %}{{ r.agency }} <span class="muted">{{ r.country }}</span>{% if r.publisher == 'independent' %} <span class="pub-count">◆</span>{% elif r.publisher == 'commercial' %} <span class="pub-count-com">■</span>{% endif %}{% endmacro %}
+<section class="viz-card" id="agencies" data-tab="who"><h2 class="viz-title">Agencies{% if d.n_agencies > d.agencies|length %} <span class="muted small">the first {{ d.agencies|length }} of {{ d.n_agencies }} · <a href="{{ d.compare_link }}">compare them all</a></span>{% endif %}</h2>
+  {% macro al(r) %}<a href="/sources#s-{{ r.id }}">{{ r.agency }}</a> <span class="muted">{{ r.country }}</span>{% if r.publisher == 'independent' %} <span class="pub-count">◆</span>{% elif r.publisher == 'commercial' %} <span class="pub-count-com">■</span>{% endif %}{% endmacro %}
   {{ ranked(d.agencies, al) }}</section>
-<section class="viz-card"><h2 class="viz-title">Actors its reports emphasise</h2>
-  {% macro tl(r) %}{{ ent(r.label, r.kind, r.href) }}{% endmacro %}
-  {% macro ts(r) %}×{{ r.lift|round(1) }}{% endmacro %}
-  {% if d.actors %}{{ ranked(d.actors, tl, ts) }}{% else %}<p class="muted small">No actor named in {{ d.min_docs }} or more of its reports more often than elsewhere.</p>{% endif %}</section>
-<section class="viz-card"><h2 class="viz-title">Related topics <span class="muted small">named in the same reports</span></h2>
-  {% macro rl(r) %}<a href="{{ r.href }}">{{ r.label }}</a>{% endmacro %}
-  {{ ranked(d.related, rl, ts) }}</section>
 </div>
 
-<section class="viz-card"><h2 class="viz-title">Newest reports</h2>
+<section class="viz-card" id="newest" data-tab="reports"><h2 class="viz-title">Newest reports <span class="muted small"><a href="{{ d.link }}">all {{ d.n|num }} reports →</a></span></h2>
   <ul class="plain small rings-list">{% for r in d.newest %}<li><a href="/report/{{ r.id }}">{{ r.title }}</a>
     <span class="muted">· {{ r.agency }} ({{ r.country }}){% if r.publisher == 'independent' %} ◆{% elif r.publisher == 'commercial' %} ■{% endif %} · {{ r.year or 'undated' }}{% if r.terms %} · tagged by “{{ r.terms|join('”, “') }}”{% endif %}</span></li>{% endfor %}</ul>
-  <p class="small"><a href="{{ d.link }}">all {{ d.n|num }} reports →</a></p></section>
+  {% if not d.newest %}<p class="muted small">No report tagged with this topic yet.</p>{% endif %}</section>
+
+<section class="viz-card" id="words" data-tab="words"><h2 class="viz-title">Keywords <span class="muted small">{{ nterms }} in {{ d.terms|length }} language{{ 's' if d.terms|length != 1 }}</span></h2>
+  <p class="muted small">The words that tag a report with this topic, from <code>sources/topics.yaml</code>. A report gets the topic when
+    its title matches, or its text holds at least two different terms often enough for its length. <code>*</code> stands for any
+    ending; every language's terms are tried on every report.</p>
+  <table class="rp-topics small">
+    {% for lang, ws in d.terms.items() %}<tr><th>{{ lang or '–' }}</th><td class="kw-list">{% for w in ws %}<code>{{ w }}</code>{% endfor %}</td></tr>{% endfor %}
+  </table></section>
 {% endblock %}

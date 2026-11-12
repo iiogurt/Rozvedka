@@ -1,7 +1,7 @@
 """Briefing pages: one topic, one country (registered after /topics/map so that the map keeps its address)."""
 from fastapi import APIRouter, HTTPException, Request
 
-from .. import briefings, topics
+from .. import briefings, home, ratings
 from ..web import tpl
 
 router = APIRouter()
@@ -27,4 +27,7 @@ def country_page(request: Request, code: str):
     d = briefings.country(code)
     if not d:
         raise HTTPException(404, "no such country in the library")
-    return tpl.TemplateResponse(request, "briefing_country.html", {"d": d})
+    from .sources import rating_groups
+    groups = rating_groups(d["code"], d["profile"]) if d["profile"] else []
+    return tpl.TemplateResponse(request, "briefing_country.html", {"d": d, "groups": groups, "docs_url": home.docs_url,
+                                                                   "meta": ratings.load()})

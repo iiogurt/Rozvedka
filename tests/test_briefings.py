@@ -27,6 +27,8 @@ def test_topic_briefing(library, monkeypatch):
     assert [(r["country"], r["n"], r["of"]) for r in d["countries"]] == [("DE", 2, 3)]      # of 3: one is undated
     assert [r["key"] for r in d["actors"]] == ["Q1"]                     # Lockbit: in both ransomware reports, 2 of 5 overall
     assert d["actors"][0]["lift"] == 2.5 and "actor=Q1" in d["actors"][0]["link"]
+    assert d["n_countries"] == 1 and d["n_agencies"] == 1 and d["peak"]["year"] == 2024
+    assert "en" in d["terms"] and all(isinstance(w, str) for ws in d["terms"].values() for w in ws)   # keywords by language
     assert briefings.topic("nope") is None
 
 
@@ -42,6 +44,7 @@ def test_country_briefing_leaves_out_its_own_agencies(library, monkeypatch):
         con.execute("INSERT INTO sources(id,key,country,agency,type) VALUES(3,'RU/X','RU','X','other')")
     ru = briefings.country("RU")
     assert [(r["country"], r["n"]) for r in ru["about"]] == [("CZ", 2), ("DE", 1)]
+    assert ru["events"] == {"total": 0, "by_source": {}, "top": [], "lane": "country:RU", "link": "/events?country=RU"}
     assert briefings.country("XX") is None
 
 
@@ -53,6 +56,20 @@ def test_numbers_open_their_lists(library, monkeypatch):
         t = c.get(url).text
         assert f"<b>{n}</b> documents match" in t, (label, n, url)
     assert c.get("/topics/ransomware").status_code == 200 and c.get("/countries/CZ").status_code == 200
+    t = c.get("/countries/CZ").text                           # one page shape: key numbers, then the views as tabs
+    assert 'data-tabs' in t and all(f'href="#tab-{x}"' in t for x in ("overview", "reports", "abroad", "events", "ratings"))
+    assert all(f'id="{x}"' in t for x in ("agencies", "standing", "topics", "newest", "abroad", "events", "ratings"))
+    assert 'class="kpis"' in t and 'href="/events?country=CZ"' in t
+    t = c.get("/topics/ransomware").text
+    assert all(f'href="#tab-{x}"' in t for x in ("overview", "reports", "who", "words")) and 'id="words"' in t
+    assert "<code>ransomware</code>" in t and 'id="countries" data-tab="who"' in t
+    from rozvedka import events                                # the Events number is what the Events list counts
+    events.init()
+    with db.session() as con:
+        con.execute("INSERT INTO events(key,label,start,year,source,kind) VALUES('e1','Flood','2024-06-01',2024,'wikidata','disaster')")
+        con.execute("INSERT INTO event_countries(event_key,iso) VALUES('e1','CZ')")
+    assert events.of_country("CZ")["total"] == events.listing(0, 5, country="CZ")[0] == 1
+    assert "Flood" in c.get("/countries/CZ").text
     assert "Czech" in c.get("/countries").text or "CZ" in c.get("/countries").text
     assert c.get("/topics/map").status_code == 200            # the mind map keeps its address
     with db.session() as con:                                 # a state whose agencies have no reports yet

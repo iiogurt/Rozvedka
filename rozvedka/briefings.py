@@ -15,7 +15,7 @@ import datetime as dt
 import json
 import math
 
-from . import actors, countries, db, ratings, ties, topics, trends
+from . import actors, countries, db, events, ratings, threat_levels, topics, trends
 from .trends import CLASSIFIED, COMMERCIAL, LISTED, OFFICIAL, THINK_TANK, docs_url
 
 MIN_DOCS = 3            # an actor or topic needs this many reports in the briefing's set to be ranked by lift
@@ -49,6 +49,12 @@ def _years(con, where: str, args: list, params: dict) -> list[dict]:
                     "share": round(r.get("official", 0) / den[y], 4) if den.get(y) else None, "of": den.get(y, 0),
                     "link": docs_url(params, year=y, type="official"), "link_all": docs_url(params, year=y)})
     return out
+
+
+def _peak(years: list[dict]) -> dict | None:
+    """The year with most official reports (the earliest of equals) – for the key numbers."""
+    best = max(years, key=lambda y: (y["official"], -y["year"]), default=None)
+    return best if best and best["official"] else None
 
 
 def _lift(con, kind: str, where: str, args: list, n_set: int, where_all: str, args_all: list, n_all: int,
@@ -93,6 +99,10 @@ def topic(key: str) -> dict | None:
         by_country = [dict(r) for r in con.execute(
             f"""SELECT s.country, COUNT(*) n FROM documents d JOIN sources s ON s.id=d.source_id
                 WHERE {tw} AND {OFFICIAL} GROUP BY s.country ORDER BY n DESC LIMIT ?""", (*ta, TOP))]
+        n_countries = con.execute(f"""SELECT COUNT(DISTINCT s.country) FROM documents d JOIN sources s ON s.id=d.source_id
+                                      WHERE {tw} AND {OFFICIAL}""", ta).fetchone()[0]
+        n_agencies = con.execute(f"SELECT COUNT(DISTINCT s.id) FROM documents d JOIN sources s ON s.id=d.source_id WHERE {tw}",
+                                 ta).fetchone()[0]
         tot_country = dict(con.execute(f"""SELECT s.country, COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id
                                           WHERE {where} AND {CLASSIFIED} AND {OFFICIAL} GROUP BY s.country""", args).fetchall())
         for r in by_country:
@@ -124,7 +134,9 @@ def topic(key: str) -> dict | None:
             ts = []
         r["terms"] = [x[0] if isinstance(x, list) else x for x in ts][:5]
     cat = next((c for c in tax["categories"].values() if key in c["topics"]), {})
-    return {"key": key, "name": t["name"], "category": cat.get("name", ""), "terms": t.get("terms") or t.get("keywords") or [],
+    terms = t.get("by_lang") or {"": list(t.get("terms") or [])}
+    return {"key": key, "name": t["name"], "category": cat.get("name", ""), "terms": terms,
+            "n_countries": n_countries, "n_agencies": n_agencies, "peak": _peak(years),
             "n": n, "link": docs_url(p), "n_all": n_all, "official_all": official_all, "kinds": kinds, "years": years,
             "countries": by_country, "agencies": by_agency, "actors": acts, "related": rel, "newest": newest,
             "min_docs": MIN_DOCS, "trend_link": f"/trends?topic={key}", "compare_link": f"/compare?topic={key}"}
@@ -170,7 +182,7 @@ def country(code: str) -> dict | None:
                 f"""SELECT s.country, COUNT(DISTINCT d.id) n FROM doc_actors x JOIN documents d ON d.id=x.doc_id
                     JOIN sources s ON s.id=d.source_id
                     WHERE x.actor_key=? AND s.country != ? AND {LISTED} AND {CLASSIFIED} AND {OFFICIAL}
-                    GROUP BY s.country ORDER BY n DESC LIMIT ?""", (me["key"], code, TOP))]
+                    GROUP BY s.country ORDER BY n DESC, s.country""", (me["key"], code))]
             for r in about:
                 r.update(name=names.get(r["country"], r["country"]), link=docs_url({"type": "official"}, country=r["country"], actor=me["key"]))
         newest = [dict(r) for r in con.execute(
@@ -179,11 +191,13 @@ def country(code: str) -> dict | None:
             (*args, NEWEST))]
     prof = ratings.profile(code) or {}
     regime = (prof.get("measures") or {}).get("vdem_regime")
+    levels = next((c["systems"] for c in threat_levels.overview()["countries"] if c["country"] == code), [])
     return {"code": code, "name": names.get(code, code), "sources": srcs, "n": n, "link": docs_url(p), "n_all": n_all,
             "years": years, "topics": tps, "actors": acts, "about": about, "me": dict(me) if me else None,
             "about_link": f"/actors/{me['key']}" if me else "", "newest": newest, "regime": regime,
             "has_ratings": bool(prof), "coalitions": countries.memberships(code), "min_docs": MIN_DOCS, "own": len(own),
-            "events_link": f"/events?country={code}", "threat_link": f"/threat-levels#{code}"}
+            "events_link": f"/events?country={code}", "threat_link": f"/threat-levels#{code}", "peak": _peak(years),
+            "events": events.of_country(code), "levels": levels, "profile": prof}
 
 
 def index() -> list[dict]:

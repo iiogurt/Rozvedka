@@ -1,38 +1,112 @@
 {% extends "base.html" %}
 {% from "_briefing.html" import years, ranked %}
 {% from "_ties.html" import ent %}
+{% from "_ratings.html" import strip, measure_groups %}
 {% block title %}{{ d.name }} · Countries · Rozvedka{% endblock %}
 {% block main %}
-<h1 class="page-h"><img class="flag-sm" src="{{ flag_url(d.code) }}" alt="" width="28" height="21"> {{ d.name }}</h1>
-<p class="lede"><a href="{{ d.link }}"><b>{{ d.n|num }}</b> official reports</a> by {{ d.sources|length }} agenc{{ 'ies' if d.sources|length != 1 else 'y' }}{% if d.regime %}
-  · <a href="{{ d.regime.url }}" rel="noopener" title="V-Dem Regimes of the World">{{ d.regime.latest_label }} ({{ d.regime.latest[0] }})</a>{% endif %}
-  {% if d.has_ratings %}· <a href="/ratings/{{ d.code }}">ratings</a>{% endif %} · <a href="{{ d.events_link }}">events</a>
-  · <a href="{{ d.threat_link }}">threat levels</a>{% if d.me %} · <a href="{{ d.about_link }}">{{ d.name }} as an actor</a>{% endif %}</p>
+{% set co = COALITIONS %}
+<header class="actor-head">
+  <h1><img class="flag-sm" src="{{ flag_url(d.code) }}" alt="" width="28" height="21"> {{ d.name }}</h1>
+  <span class="topic-chip on">{{ d.code }}</span>
+  {% for k, y in d.coalitions.items() %}<a class="topic-chip" href="{{ docs_url(coalition=k) }}" title="{{ co[k].name if k in co else k }}{% if y is number and y > 1 %} since {{ y }}{% endif %} – reports of its members">{{ co[k].short if k in co and co[k].short else k }}</a>{% endfor %}
+  {% if d.me %}<a class="small" href="{{ d.about_link }}">{{ d.name }} as an actor in the reports →</a>{% endif %}
+</header>
+
+<section class="kpis" aria-label="{{ d.name }} in numbers">
+  <a href="{{ d.link }}"><span>Reports</span><b>{{ d.n|num }}</b><em>official, by its agencies</em></a>
+  <a href="#agencies"><span>Agencies</span><b>{{ d.sources|length }}</b><em>followed in the library</em></a>
+  {% if d.peak %}<a href="{{ d.peak.link }}"><span>Most reports</span><b>{{ d.peak.year }}</b><em>{{ d.peak.official }} official reports</em></a>{% endif %}
+  {% if d.me %}<a href="#abroad"><span>Named abroad</span><b>{{ d.about|length }}</b><em>other states whose reports name it</em></a>{% endif %}
+  <a href="{{ d.events.link }}"><span>Events</span><b>{{ d.events.total|num }}</b><em>held in the state</em></a>
+  {% if d.regime %}<a href="#tab-ratings"><span>Regime</span><b class="kpi-word">{{ d.regime.latest_label }}</b><em>V-Dem, {{ d.regime.latest[0] }}</em></a>{% endif %}
+</section>
+<nav class="lens" data-tabs aria-label="Views of {{ d.name }}">
+  <a href="#tab-overview">Overview</a>
+  <a href="#tab-reports">Reports <span class="lens-n">{{ d.n|num }}</span></a>
+  <a href="#tab-abroad">Named abroad <span class="lens-n">{{ d.about|length }}</span></a>
+  <a href="#tab-events">Events <span class="lens-n">{{ d.events.total|num }}</span></a>
+  <a href="#tab-ratings">Ratings{% if d.levels %} and threat level{% endif %}</a>
+  <span class="lens-out"><a href="/timeline?lane={{ d.events.lane }}">Timeline →</a> <a href="/trends?country={{ d.code }}">Topics over time →</a></span>
+</nav>
 <details class="how"><summary>How this is counted</summary>
 <p class="muted small">The state's agencies in the library and their listed reports, one file per report. <b>Topics</b> and <b>actors</b>
   are ranked by how much more often the state's official reports name them than all {{ d.n_all|num }} official reports do (lift), times
   how many reports – a state's own emphasis, not what every report says; at least {{ d.min_docs }} reports; countries and the state's
-  own agencies ({{ d.own }}) left out, since agencies name themselves. <b>Who reports about it</b>: other states' official reports naming
-  {{ d.name }}{% if not d.me %} – not available, {{ d.name }} is not an actor of the gazetteer{% endif %}. Every number opens its reports.</p></details>
+  own agencies ({{ d.own }}) left out, since agencies name themselves. <b>Named abroad</b>: other states' official reports naming
+  {{ d.name }}{% if not d.me %} – not available, {{ d.name }} is not an actor of the gazetteer{% endif %}. <b>Events</b>: those the event
+  sources place in the state. Every number opens its reports.</p></details>
 
-<section class="viz-card"><h2 class="viz-title">Year by year</h2>{{ years(d.years, 'Reports of ' ~ d.name) }}</section>
+<section class="viz-card" data-tab="overview"><h2 class="viz-title">Year by year</h2>{{ years(d.years, 'Reports of ' ~ d.name) }}</section>
 
 <div class="bf-grid">
-<section class="viz-card"><h2 class="viz-title">Agencies</h2>
+<section class="viz-card" id="agencies" data-tab="overview"><h2 class="viz-title">Agencies <span class="muted small">{{ d.sources|length }} · <a href="/sources#c-{{ d.code }}">on Agencies</a></span></h2>
   {% macro sl(r) %}<a href="/sources#s-{{ r.id }}">{{ r.agency }}</a> <span class="muted">{{ r.name_en if r.name_en and r.name_en != r.agency }}</span>{% if r.publisher == 'independent' %} <span class="pub-count">◆</span>{% elif r.publisher == 'commercial' %} <span class="pub-count-com">■</span>{% endif %}{% endmacro %}
-  {{ ranked(d.sources, sl) }}</section>
-<section class="viz-card"><h2 class="viz-title">Topics its reports emphasise</h2>
+  {% macro st(r) %}{{ r.type|replace('-', ' ') }}{% endmacro %}
+  {{ ranked(d.sources, sl, st, "bf-wide") }}</section>
+<section class="viz-card" id="standing" data-tab="overview"><h2 class="viz-title">Standing <span class="muted small">what outside sources state about it</span></h2>
+  <div class="conn">
+    {% if d.coalitions %}<div class="conn-row"><span class="conn-says">member of</span><span class="conn-n">{{ d.coalitions|length }}</span>
+      <div><p class="conn-who">{% for k, y in d.coalitions.items() %}<a href="{{ docs_url(coalition=k) }}">{{ co[k].short if k in co and co[k].short else k }}{% if y is number and y > 1 %} <span class="muted">{{ y }}</span>{% endif %}</a>{% endfor %}</p>
+        <p class="conn-by">the registry of states (<code>sources/countries.yaml</code>) · a name opens the members' reports</p></div></div>{% endif %}
+    {% if d.regime %}<div class="conn-row"><span class="conn-says">regime</span><a class="conn-n" href="#tab-ratings">{{ d.regime.latest[0] }}</a>
+      <div><p class="conn-who"><a href="{{ d.regime.url }}" rel="noopener">{{ d.regime.latest_label }}</a> {{ strip(d.profile, width=160, height=12) }}</p>
+        <p class="conn-by">V-Dem Regimes of the World · year by year since 1990, with the Liberal Democracy Index as a line</p></div></div>{% endif %}
+    {% for s in d.levels %}<div class="conn-row"><span class="conn-says">terrorism threat level</span><a class="conn-n" href="#levels">{{ s.latest.as_of[:4] }}</a>
+      <div><p class="conn-who"><a href="{{ d.threat_link }}">{{ s.latest.label }}</a>{% if s.latest.rank and s.max %} <span class="muted">step {{ s.latest.rank }} of {{ s.max }}</span>{% endif %}</p>
+        <p class="conn-by">{{ s.latest.agency }} · {{ 'official announcement' if s.latest.kind == 'announcement' else 'stated in a report' }} · {{ s.latest.as_of }}</p></div></div>{% endfor %}
+    <div class="conn-row"><span class="conn-says">events held in it</span><a class="conn-n" href="{{ d.events.link }}">{{ d.events.total|num }}</a>
+      <div><p class="conn-who">{% for e in d.events.top[:3] %}<a href="/timeline?lane={{ d.events.lane }}&amp;sel={{ e.key }}">{{ e.label|truncate(34) }}</a>{% endfor %}</p>
+        <p class="conn-by">{% for s, n in d.events.by_source.items() %}{{ {'wikidata': 'Wikidata', 'eurepoc': 'EuRepoC', 'ucdp': 'UCDP'}[s] }} {{ n|num }}{{ ' · ' if not loop.last }}{% endfor %}{% if not d.events.total %}no event source places one here{% endif %}</p></div></div>
+  </div></section>
+<section class="viz-card" id="topics" data-tab="overview"><h2 class="viz-title">Topics its reports emphasise</h2>
   {% macro tl(r) %}<a href="{{ r.href }}">{{ r.label }}</a>{% endmacro %}{% macro ts(r) %}×{{ r.lift|round(1) }}{% endmacro %}
   {% if d.topics %}{{ ranked(d.topics, tl, ts) }}{% else %}<p class="muted small">Too few classified reports.</p>{% endif %}</section>
-<section class="viz-card"><h2 class="viz-title">Actors its reports emphasise</h2>
+<section class="viz-card" id="actors" data-tab="overview"><h2 class="viz-title">Actors its reports emphasise</h2>
   {% macro al(r) %}{{ ent(r.label, r.kind, r.href) }}{% endmacro %}
   {% if d.actors %}{{ ranked(d.actors, al, ts) }}{% else %}<p class="muted small">Too few classified reports.</p>{% endif %}</section>
-<section class="viz-card"><h2 class="viz-title">Who reports about {{ d.name }} <span class="muted small">other states' official reports naming it</span></h2>
-  {% macro cl(r) %}<img class="flag-sm" src="{{ flag_url(r.country) }}" alt="" width="16" height="12"> <a href="/countries/{{ r.country }}">{{ r.name }}</a>{% endmacro %}
-  {% if d.about %}{{ ranked(d.about, cl) }}{% elif d.me %}<p class="muted small">No other state's reports name it.</p>{% else %}<p class="muted small">Not available: {{ d.name }} is not an actor of the gazetteer.</p>{% endif %}</section>
 </div>
 
-<section class="viz-card"><h2 class="viz-title">Newest reports</h2>
+<section class="viz-card" id="newest" data-tab="reports"><h2 class="viz-title">Newest reports <span class="muted small"><a href="{{ d.link }}">all {{ d.n|num }} official reports →</a></span></h2>
   <ul class="plain small rings-list">{% for r in d.newest %}<li><a href="/report/{{ r.id }}">{{ r.title }}</a> <span class="muted">· {{ r.agency }} · {{ r.year or 'undated' }}</span></li>{% endfor %}</ul>
-  <p class="small"><a href="{{ d.link }}">all {{ d.n|num }} official reports →</a></p></section>
+  {% if not d.newest %}<p class="muted small">No official report listed yet.</p>{% endif %}</section>
+<section class="viz-card" data-tab="reports"><h2 class="viz-title">By agency</h2>{{ ranked(d.sources, sl, st, "bf-wide") }}</section>
+
+<section class="viz-card" id="abroad" data-tab="abroad"><h2 class="viz-title">Who reports about {{ d.name }} <span class="muted small">other states' official reports naming it</span></h2>
+  {% macro cl(r) %}<img class="flag-sm" src="{{ flag_url(r.country) }}" alt="" width="16" height="12"> <a href="/countries/{{ r.country }}">{{ r.name }}</a>{% endmacro %}
+  {% if d.about %}{{ ranked(d.about, cl) }}{% elif d.me %}<p class="muted small">No other state's reports name it.</p>{% else %}<p class="muted small">Not available: {{ d.name }} is not an actor of the gazetteer.</p>{% endif %}</section>
+
+<section class="viz-card" id="events" data-tab="events">
+  <h2 class="viz-title">Events <span class="muted small">{{ d.events.total|num }}</span>
+    <span class="small"> · <a href="/timeline?lane={{ d.events.lane }}">on the timeline</a> · <a href="{{ d.events.link }}">all of them</a></span></h2>
+  {% if d.events.total %}<p class="muted small">Events the sources place in the state:
+    {% for s, n in d.events.by_source.items() %}{{ n|num }} from {{ {'wikidata': 'Wikidata', 'eurepoc': 'EuRepoC', 'ucdp': 'UCDP'}[s] }}{{ ', ' if not loop.last }}{% endfor %}.
+    The heaviest of them (compared within their own source), newest first:</p>
+  <table class="pc-table small">
+    {% for e in d.events.top %}<tr><td class="ev-date">{{ e.start }}</td><td><a href="/timeline?lane={{ d.events.lane }}&amp;sel={{ e.key }}">{{ e.label }}</a> <span class="muted">{{ e.kind }}</span></td>
+      <td class="n">{% if e.reports %}<a href="/documents?event={{ e.key }}" title="reports naming the event">{{ e.reports|num }} reports</a>{% endif %}</td></tr>{% endfor %}
+  </table>{% else %}<p class="muted small">No event source places an event in {{ d.name }}.</p>{% endif %}
+</section>
+
+{% if d.levels %}
+<section class="viz-card" id="levels" data-tab="ratings">
+  <h2 class="viz-title">Terrorism threat level <span class="muted small"><a href="{{ d.threat_link }}">every statement, with the other states →</a></span></h2>
+  <table class="pc-table small">
+    {% for s in d.levels %}{% set e = s.latest %}<tr>
+      <th class="nw">{{ e.as_of }}{% if e.kind == 'announcement' %}<br><span class="ctag">announcement</span>{% endif %}</th>
+      <td class="nw"><b>{{ e.label }}</b>{% if e.rank and s.max %} <span class="muted">{{ e.rank }}/{{ s.max }}</span>{% endif %}<br><span class="muted">{{ s.system }}</span></td>
+      <td>{{ e.says }}<blockquote class="snippet small">“{{ e.quote }}”</blockquote>
+        <span class="muted">{{ e.agency }} · {% if e.evidence.doc_id %}<a href="/report/{{ e.evidence.doc_id }}">{{ e.evidence.title }}</a>{% else %}<a href="{{ e.url }}" rel="noopener">{{ 'official page' if e.kind == 'announcement' else e.url|truncate(60) }}</a>{% endif %}
+          · {{ s.entries|length }} statement{{ 's' if s.entries|length != 1 }} in all</span></td></tr>{% endfor %}
+  </table>
+  <p class="muted small">The latest statement of each scale. Scales differ between states and are never ranked against each other.</p>
+</section>
+{% endif %}
+{% if groups %}
+<section class="viz-card" id="ratings" data-tab="ratings">
+  <h2 class="viz-title">Ratings <span class="muted small"><a href="/ratings/{{ d.code }}">on a page of their own</a> · <a href="/ratings">all states</a></span></h2>
+  <p class="muted small">Every measurement of the state since 1990, one small chart per measure on the measure's own scale – not combined
+    into a score. Ratings describe the state, not its agencies' work. Retrieved {{ meta.retrieved or '–' }}.</p>
+</section>
+{{ measure_groups(groups, d.code, docs_url, tab='ratings') }}
+{% else %}<section class="viz-card" id="ratings" data-tab="ratings"><p class="muted small">No ratings for {{ d.name }}: the measures cover states, not international bodies.</p></section>{% endif %}
 {% endblock %}
