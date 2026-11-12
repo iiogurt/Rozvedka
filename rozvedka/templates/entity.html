@@ -1,9 +1,18 @@
 {% extends "base.html" %}
 {% from "_network.html" import network %}
-{% from "_ties.html" import pin %}
+{% from "_ties.html" import pin, connected %}
 {% block title %}{{ e.label }} · Network · Rozvedka{% endblock %}
 {% block main %}
-<h1 class="page-h"><i class="kdot kind-{{ e.kind }}"></i>{{ e.label }}</h1>
+{% set origins = {'us': 'US sanctions list', 'uk': 'UK sanctions list', 'eu': 'EU sanctions list', 'un': 'UN sanctions list',
+                  'fbi': 'FBI wanted notice', 'eumw': 'Europe’s Most Wanted', 'wanted': 'wanted notice', 'ids': 'shared detail of list entries',
+                  'wikidata': 'Wikidata', 'attack': 'MITRE ATT&CK', 'misp': 'MISP galaxy', 'events': 'event',
+                  'gleif': 'GLEIF register', 'icij': 'ICIJ Offshore Leaks', 'publishers': 'publisher profiles'} %}
+<header class="actor-head">
+  <h1><i class="kdot kind-{{ e.kind }}"></i>{{ e.label }}</h1>
+  <span class="topic-chip on">{{ e.kind_name }}</span>
+  {% if e.data.members and e.data.members|length > 1 %}<span class="topic-chip">one target on {{ e.data.members|map(attribute='list')|unique|join(' · ') }}</span>
+  {% elif origins.get(e.origin) %}<span class="topic-chip">{{ origins[e.origin] }}</span>{% endif %}
+</header>
 {% set d = e.data %}
 {% if e.origin == 'ids' %}
 <p class="lede">{{ e.kind_name }} given by {{ d.given_by }} entries of the sanctions lists that describe different targets – a detail they
@@ -31,10 +40,29 @@
   not an actor the reports are searched for; it is here because a source links it to one.{% if d.wanted %} A wanted notice states an
   allegation, not a conviction.{% endif %}</p>
 {% endif %}
-<section class="viz-card facts">
-  <h2 class="viz-title">Reference</h2>
-  <table class="rp-topics small">
-    {% if d.members %}{% for m in d.members %}<tr><th>{{ 'Entries' if loop.first }}</th><td><a href="{{ m.url }}" rel="noopener">{{ m.list }}{% if m.list not in ('FBI', 'EUMW') %} {{ m.ref }}{% endif %}</a> · {{ m.name }}{% if m.date %} · {{ 'published' if m.list in ('FBI', 'EUMW') else 'listed' }} {{ m.date }}{% endif %}{% if m.programme %} <span class="muted">· {{ m.programme }}</span>{% endif %}</td></tr>{% endfor %}
+{% set entries = d.members|length if d.members else (1 if d.list else 0) %}
+<section class="kpis" aria-label="{{ e.label }} in numbers">
+  <a href="{{ p.link }}"><span>Links</span><b>{{ p.total|num }}</b><em>stated by {{ p.layers|length }} source{{ 's' if p.layers|length != 1 }}</em></a>
+  <a href="{{ p.link }}"><span>Linked to</span><b>{{ p.others|num }}</b><em>different people, bodies, things</em></a>
+  <a href="{{ p.groups.official.link }}"><span>Official lists</span><b>{{ p.groups.official.n|num }}</b><em>links in sanctions lists, wanted notices</em></a>
+  <a href="{{ p.groups.reference.link }}"><span>Reference data</span><b>{{ p.groups.reference.n|num }}</b><em>links in Wikidata, ATT&amp;CK, registers</em></a>
+  <a href="{{ p.groups.leaks.link }}"><span>Leaked records</span><b>{{ p.groups.leaks.n|num }}</b><em>links in ICIJ – not official</em></a>
+  <a href="{{ '#reference' if entries else '/actors/sanctions' }}"><span>List entries</span><b>{{ entries }}</b><em>{{ 'sanctions and wanted lists' if entries else 'on no sanctions or wanted list' }}</em></a>
+</section>
+<nav class="lens" data-tabs aria-label="Views of {{ e.label }}">
+  <a href="#tab-overview">Overview</a>
+  <a href="#tab-links">Links with evidence <span class="lens-n">{{ p.total|num }}</span></a>
+  <span class="lens-out"><a href="/graph/rings?e={{ e.id|urlencode }}">Rings →</a> <a href="/graph/path?a={{ e.id|urlencode }}">Find a connection →</a> {{ pin(e.id, request.url.path) }}</span>
+</nav>
+{% if groups %}
+<section class="viz-card" id="connected" data-tab="overview">
+  <h2 class="viz-title">Connected to <span class="muted small"><a href="#tab-links">every link with its evidence →</a></span></h2>
+  <p class="muted small viz-sub">Each kind of link that a source states about {{ e.label }}: how many, the first few, and who states it.
+    A number opens the full list.</p>
+  {{ connected(groups, e.label) }}
+</section>
+{% endif %}
+{% set ref_rows %}    {% if d.members %}{% for m in d.members %}<tr><th>{{ 'Entries' if loop.first }}</th><td><a href="{{ m.url }}" rel="noopener">{{ m.list }}{% if m.list not in ('FBI', 'EUMW') %} {{ m.ref }}{% endif %}</a> · {{ m.name }}{% if m.date %} · {{ 'published' if m.list in ('FBI', 'EUMW') else 'listed' }} {{ m.date }}{% endif %}{% if m.programme %} <span class="muted">· {{ m.programme }}</span>{% endif %}</td></tr>{% endfor %}
       <tr><th>One target because</th><td>{% for a, b, why in d.why %}{{ a }} = {{ b }}: {{ why }}{{ '; ' if not loop.last }}{% endfor %}
         <span class="muted small">– see <a href="/graph">how entries are recognised</a></span></td></tr>
     {% elif d.list in ('FBI', 'EUMW') %}{% if d.names|length > 1 %}<tr><th>Other names</th><td>{{ d.names[1:]|join(' · ') }}</td></tr>{% endif %}
@@ -56,13 +84,20 @@
     {% if d.description %}<tr><th>Description</th><td>{{ d.description }}</td></tr>{% endif %}
     {% if d.attack %}<tr><th>ATT&amp;CK</th><td><a href="{{ d.url }}" rel="noopener">{{ d.attack }}</a>{% if d.aliases %} · also {{ d.aliases|join(', ') }}{% endif %}{% if d.first %} · active {{ d.first }} – {{ d.last }}{% endif %}</td></tr>{% endif %}
     {% if d.publisher and d.url %}<tr><th>Wikidata</th><td><a href="{{ d.url }}" rel="noopener">{{ e.id }}</a></td></tr>{% endif %}
-    {% if e.origin == 'wikidata' %}<tr><th>Wikidata</th><td><a href="{{ d.url }}" rel="noopener">{{ e.id }}</a>{% if d.wikipedia %} · <a href="{{ d.wikipedia }}" rel="noopener">Wikipedia</a>{% endif %}</td></tr>{% endif %}
+    {% if e.origin == 'wikidata' %}<tr><th>Wikidata</th><td><a href="{{ d.url }}" rel="noopener">{{ e.id }}</a>{% if d.wikipedia %} · <a href="{{ d.wikipedia }}" rel="noopener">Wikipedia</a>{% endif %}</td></tr>{% endif %}{% endset %}
+{% if "<tr" in ref_rows %}
+<section class="viz-card facts" id="reference" data-tab="overview">
+  <h2 class="viz-title">Reference</h2>
+  <table class="rp-topics small">
+    {{ ref_rows }}
   </table>
 </section>
-<section class="viz-card" id="network">
-  <h2 class="viz-title">Links <span class="muted small"><a href="/graph/ties?entity={{ e.id }}">{{ groups|sum(attribute='n') }}</a></span></h2>
-  <p class="small"><a href="/graph/path?a={{ e.id }}"><b>Find a connection</b> from {{ e.label }} →</a>
-    · <a href="/graph/rings?e={{ e.id|urlencode }}"><b>Rings</b> around {{ e.label }} →</a> · {{ pin(e.id, request.url.path) }}</p>
+{% endif %}
+<section class="viz-card" id="network" data-tab="links">
+  <h2 class="viz-title">Links <span class="muted small"><a href="{{ p.link }}">all {{ p.total|num }} in one list →</a></span></h2>
+  <p class="muted small viz-sub">Source by source, each link with the sentence or entry that states it; the first {{ per_group }} of a kind, the
+    rest behind “all”. How it is built: <a href="/graph">Network</a>.</p>
   {{ network(groups, e.label) }}
+  {% if not groups %}<p class="muted small">No source links it to anything.</p>{% endif %}
 </section>
 {% endblock %}

@@ -614,7 +614,10 @@ as a name (“Rostec”, not “prosperity”), no names made only of generic wo
 
 - **Links** (`/graph/ties`): search any name across all layers, filter by layer and kind; every row with its evidence.
 - **Entity pages** (`/entity/…`) for what is not an actor: a sanctions entry with its programme and other names, a piece
-  of malware, a campaign, a Wikidata person – and its links.
+  of malware, a campaign, a Wikidata person. The page has the shape of an actor's: six key numbers (links, the different
+  things they lead to, how many of them official lists, reference data and leaked records state, list entries), then
+  *Overview* – the **Connected to** block (each kind of link, how many, the first few, who states it) and the reference
+  facts – and *Links with evidence*, source by source.
 - On the overview: the entities **most linked on the official lists** and those **where the layers meet** (links in three or
   more layers). Every number opens the list of links it counts (checked before each release).
 

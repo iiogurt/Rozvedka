@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.99.0] – 2026-11-12
+
+### Added
+- **Entity pages in the shape of an actor's page** (`/entity/…` – sanctions entries, wanted people, companies, vessels,
+  malware, shared addresses): six key numbers (links, the different things they lead to, the links stated by official
+  lists, by reference data and by leaked records, list entries), then two tabs. *Overview* has the **Connected to**
+  block known from actors – each kind of link, how many, the first few at the other end and who states it – and the
+  reference facts; *Links with evidence* lists them source by source. The head says which lists one target is on.
+- `tools/check_links.py` compares the key numbers of three sample entity pages with the lists they open.
+
+### Changed
+- An entity without reference facts (a shared address) no longer shows an empty Reference card.
+
 ## [0.98.0] – 2026-11-12
 
 ### Added
@@ -2142,7 +2155,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.98.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.99.0...HEAD
+[0.99.0]: https://github.com/iiogurt/Rozvedka/compare/v0.98.0...v0.99.0
 [0.98.0]: https://github.com/iiogurt/Rozvedka/compare/v0.97.0...v0.98.0
 [0.97.0]: https://github.com/iiogurt/Rozvedka/compare/v0.96.0...v0.97.0
 [0.96.0]: https://github.com/iiogurt/Rozvedka/compare/v0.95.0...v0.96.0
