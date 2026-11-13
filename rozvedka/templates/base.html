@@ -43,6 +43,7 @@
 {% include "_sectionnav.html" %}
 <main>{% if request.query_params.get("case") and request.url.path != "/case" %}<p class="h-problems case-toast" role="status">{{ request.query_params.get("case") }} · <a href="/case">open the case file</a></p>{% endif %}{% if request.query_params.get("nb") and not request.url.path.startswith("/notebooks") %}<p class="h-problems case-toast" role="status">{{ request.query_params.get("nb") }} · <a href="/notebooks">open the notebooks</a></p>{% endif %}
 <nav class="trail" id="trail" aria-label="The pages you came through" hidden></nav>
+<p class="kept" id="kept" aria-label="The scope kept between pages" hidden></p>
 {% if nav.crumbs %}<nav class="crumbs" aria-label="Breadcrumb">{% for c in nav.crumbs %}<a href="{{ c.href }}">{{ c.label }}</a><span aria-hidden="true">›</span>{% endfor %}{% block crumbs %}{% endblock %}</nav>{% endif %}
 {% block main %}{% endblock %}</main>
 <footer class="foot">Rozvedka <a href="/views">all views</a> · <a href="/changelog" title="What's new">v{{ VERSION }}</a>{% if BUILD != VERSION %}
@@ -57,5 +58,6 @@
 </dialog>
 <script src="{{ asset('tabs.js') }}"></script>
 <script src="{{ asset('jump.js') }}"></script>
+<script src="{{ asset('scope.js') }}"></script>
 </body>
 </html>

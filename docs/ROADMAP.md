@@ -271,7 +271,7 @@ Drafts of three screens are in `docs/design/` (an actor, the Reports list, a cou
 | I2 | One page shape for every thing: identity, six key numbers, then its views as tabs (overview, reports, relations, timeline, map) | **actors and reports done 0.96.0** (`static/tabs.js`); **countries and topics done 0.97.0**; **agencies done 0.98.0** (`/agency/<id>`; the credibility profile of a think tank stays on `/publisher/<id>`) |
 | I3 | One "Connected to" block: every link by kind, with count and source – actor and entity pages merged | **on the actor's Overview 0.96.0**; **entity pages done 0.99.0** – same head, key numbers, tabs and "Connected to" as an actor (an entity that is an actor opens the actor's page) |
 | I4 | Preview pane: a selected row shows the report with its passages and pages without leaving the list; keyboard moves | **done 0.100.0** on the Reports list (`static/preview.js`, `/report/<id>/preview`); other lists (actors, links) could use the same pane |
-| I5 | Trail of hops and a scope (publisher kind, years, countries) kept between pages; jump-to-anything box | **jump box and trail done 0.101.0** (`rozvedka/jump.py`, `static/jump.js`); the kept scope open |
+| I5 | Trail of hops and a scope (publisher kind, years, countries) kept between pages; jump-to-anything box | **jump box and trail done 0.101.0** (`rozvedka/jump.py`, `static/jump.js`); **kept scope done 0.102.0** (`static/scope.js`) – on the pages that already filter by kind, years or country; actor, country and topic pages have no such filters and say so |
 | I6 | Home page in the new look (the console banner goes) | **done 0.101.1** |
 
 ### E. Engineering and operations

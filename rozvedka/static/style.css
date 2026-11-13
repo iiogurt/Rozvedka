@@ -1769,6 +1769,15 @@ dialog.jump ul { list-style: none; margin: 0; padding: 4px 0; overflow-y: auto; 
 .trail-x { border: 0; background: none; color: var(--muted); font-size: 11px; padding: 0 2px; cursor: pointer; }
 .trail-x:hover { color: var(--ink); }
 
+/* the kept scope: what is carried from page to page, and whether this page uses it */
+.kept { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 0 0 8px; font-size: 12px; color: var(--muted); }
+.kept[hidden] { display: none; }
+.kept-l { font: 10px var(--mono); text-transform: uppercase; letter-spacing: .09em; margin-right: 4px; }
+.kept b { font-weight: 500; color: var(--ink); }
+.kept button { border: 1px solid var(--line); border-radius: 3px; background: none; color: var(--ink); font: inherit; font-size: 11px; padding: 0 6px; cursor: pointer; }
+.kept button:hover { border-color: var(--accent); color: var(--accent); }
+.kept .kept-x { border: 0; color: var(--muted); padding: 0 2px; }
+
 /* the home page's head: the name, what the library is, when it was last checked */
 .home-head { margin: 4px 0 16px; }
 .home-head h1 { margin: 0 0 8px; font: 500 15px var(--mono); letter-spacing: .32em; text-transform: uppercase; }
