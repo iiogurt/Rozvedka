@@ -51,6 +51,9 @@ SHOTS = {
     # the jump box over a page reached through two others, so the trail shows
     "jump": ("/countries/EE", 720, [("eval", "sessionStorage.setItem('rz-trail', JSON.stringify([{u: '/documents?q=sabotage', t: 'Documents'}, {u: '/agency/20', t: 'RIA'}])); location.reload(); 1"),
                                     ("sleep", 7), ("eval", "document.querySelector('.jump-open').click(); 1"), ("type", "sandw"), ("sleep", 3)], None),
+    # a scope kept on the Reports list, applied by "Named together" when it is opened from the menu
+    "scope": ("/network", 620, [("eval", "sessionStorage.setItem('rz-scope', JSON.stringify({v: {type: 'official', year_from: '2022', year_to: '2024', country: 'EE'}, l: {type: 'Official agencies only', country: 'Estonia'}})); location.href = '/network'; 1"),
+                                ("sleep", 9)], None),
     "years": ("/years?kind=stamp", 1000, [], None),
     "report": ("/report/2964", 1250, [], None),
     "sources-independent": ("/sources", 1000, [("eval", "document.querySelectorAll('section.country[id^=\"c-\"], "

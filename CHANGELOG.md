@@ -27,6 +27,17 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.102.0] – 2026-11-13
+
+### Added
+- **Kept scope** – a publisher kind, a range of years and a country or coalition chosen on one page can be kept for
+  the others (*keep on other pages* in the new *Scope* line above the page). The Reports list, Compare, Events and
+  Series get it through the menu's links; Named together, the topic charts, the mind map and "Who reports on which
+  country" take it when opened by their plain address. The line says on every page what is kept and what the page
+  does with it – applied, applied except the filters the page does not have, or not used – and offers to apply it,
+  to keep the page's own choice instead, or to drop it. Links behind numbers are never changed. Kept in the tab's
+  own storage, like the trail.
+
 ## [0.101.1] – 2026-11-12
 
 ### Changed
@@ -2181,7 +2192,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.101.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.102.0...HEAD
+[0.102.0]: https://github.com/iiogurt/Rozvedka/compare/v0.101.1...v0.102.0
 [0.101.1]: https://github.com/iiogurt/Rozvedka/compare/v0.101.0...v0.101.1
 [0.101.0]: https://github.com/iiogurt/Rozvedka/compare/v0.100.0...v0.101.0
 [0.100.0]: https://github.com/iiogurt/Rozvedka/compare/v0.99.0...v0.100.0
