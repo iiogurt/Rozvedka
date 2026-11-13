@@ -95,6 +95,7 @@ SHOTS = {
     "network": ("/network", 1100, [("sleep", 6)], None),
     "graph": ("/graph", 1250, [], None),                                # the network of stated links: layers, most linked
     "graph-actor": ("/actors/Q41053", 1100, [("sleep", 2)], "#network"),  # Hezbollah: what the sanctions lists tie to it
+    "links-preview": ("/graph/ties?entity=EU:EU.11824.28&layer=uk", 760, [("eval", "['j', ' '].forEach((k) => document.dispatchEvent(new KeyboardEvent('keydown', {key: k}))); scrollTo(0, 0); 1"), ("sleep", 5)], None),
     "graph-ties": ("/graph/ties?q=Rostec", 1000, [], None),             # links found by name, each with its evidence
     "graph-wikitext": ("/graph/ties?entity=Q4119382&layer=wikitext", 1100, [], None),   # links from Wikipedia article sentences
     "entity-wanted": ("/entity/US:26192", 1300, [], None),            # a GRU officer: OFAC entry and FBI notice merged, the links it states

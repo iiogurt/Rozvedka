@@ -15,14 +15,18 @@
   kind <select name="kind"><option value="">any</option>{% for k, n in kinds.items() %}<option value="{{ k }}" {{ 'selected' if f.kind == k }}>{{ n }}</option>{% endfor %}</select>
   <button>Filter</button>{% if f.entity %} <a href="/graph/ties">all entities</a>{% endif %}
 </form>
+{% if rows %}<p class="pv-hint muted small">Click a row or press <kbd>↑</kbd> <kbd>↓</kbd> to select · <kbd>space</kbd> preview of the first column's entity beside the list · <kbd>enter</kbd> open it</p>{% endif %}
 {{ pager(pg, "links") }}
 <table class="rp-topics small ties">
   <thead><tr><th>{{ 'Linked' if focus else 'From' }}</th><th>Says</th><th>{{ '' if focus else 'To' }}</th><th>Layer</th><th>Evidence</th></tr></thead>
-  {% for r in rows %}<tr>
+  <tbody>{% for r in rows %}{% set first = r.other if focus else r.a %}
+  <tr data-id="{{ r.id }}" data-pv="/graph/preview?e={{ first|urlencode }}" data-open="{{ r.other_href if focus else r.a_href }}">
     {% if focus %}<th>{{ ent(r.other_label, r.other_kind, r.other_href) }}</th><td>{{ focus.label }} <b>{{ r.says }}</b></td><td></td>
     {% else %}<th>{{ ent(r.a_label, r.a_kind, r.a_href) }}</th><td><b>{{ r.rel }}</b></td><td>{{ ent(r.b_label, r.b_kind, r.b_href) }}</td>{% endif %}
-    <td>{{ lay(r.layer, r.layer_group, r.layer_name) }}</td><td>{{ evidence(r) }}</td></tr>
-  {% else %}<tr><td class="muted" colspan="5">No link matches this filter.</td></tr>{% endfor %}
+    <td>{{ lay(r.layer, r.layer_group, r.layer_name) }}</td><td>{{ evidence(r) }} <button type="button" class="pv-btn a-pv" title="Preview beside the list (space)" aria-label="Preview" aria-pressed="false">◨</button></td></tr>
+  {% else %}<tr><td class="muted" colspan="5">No link matches this filter.</td></tr>{% endfor %}</tbody>
 </table>
 {{ pager(pg, "links") }}
+<aside class="pv" id="pv" data-what="entity" aria-label="Preview of the selected entity" aria-live="polite" hidden></aside>
+<script src="{{ asset('preview.js') }}" defer></script>
 {% endblock %}

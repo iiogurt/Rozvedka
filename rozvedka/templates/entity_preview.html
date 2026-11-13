@@ -1,0 +1,21 @@
+{# one network entity in the Links list's preview pane (static/preview.js) – a piece of a page, not a page #}
+{% set d = e.data %}
+<p class="pv-kicker"><span>Preview · entity</span><button type="button" class="pv-close" title="Close the preview (Esc)">esc ✕</button></p>
+<h2 class="pv-title"><a href="/entity/{{ e.id|urlencode }}">{{ e.label }}</a></h2>
+<p class="pv-by"><span class="ent"><i class="kdot kind-{{ e.kind }}"></i>{{ e.kind_name }}</span>
+  <span class="muted">· {% if d.members %}on {{ d.members|map(attribute='list')|unique|join(' · ') }}{% elif d.list %}on the {{ lists[d.list].name if d.list in lists else d.list }}{% elif e.origin == 'icij' %}ICIJ Offshore Leaks – leaked records, not official{% elif e.origin == 'gleif' %}GLEIF register{% elif e.origin == 'attack' %}MITRE ATT&amp;CK{% elif e.origin == 'ids' %}a detail shared by list entries{% else %}not an actor the reports are searched for{% endif %}</span></p>
+<p class="rp-actions"><a class="rp-btn rp-primary" href="/entity/{{ e.id|urlencode }}">Open entity</a>
+  <a class="rp-btn" href="{{ p.link }}">Links</a>
+  <a class="rp-btn" href="/graph/rings?e={{ e.id|urlencode }}">Rings</a>
+  <a class="rp-btn" href="/graph/path?a={{ e.id|urlencode }}">Find a connection</a></p>
+<table class="kv small pv-facts">
+  <tr><th>Links</th><td><a href="{{ p.link }}">{{ p.total|num }}</a> with {{ p.others|num }} other{{ 's' if p.others != 1 }}</td></tr>
+  {% for g, name in (('official', 'Official'), ('reference', 'Reference'), ('leaks', 'Leaked'), ('reports', 'Reports')) %}{% set ls = p.layers|selectattr('group', 'equalto', g)|list %}{% if ls %}
+  <tr><th>{{ name }}</th><td>{% for l in ls %}<a href="{{ l.link }}" title="{{ l.name }}">{{ l.n|num }} {{ l.name.split(' (')[0] }}</a>{{ ' · ' if not loop.last }}{% endfor %}</td></tr>{% endif %}{% endfor %}
+</table>
+{% for l in groups %}<h3 class="pv-h">{{ l.name.split(' (')[0] }} <span class="muted">· {% if l.group == 'official' %}official{% elif l.group == 'leaks' %}leaked records, not official{% elif l.layer in ('wikipedia', 'wikitext') %}not official{% else %}reference{% endif %}</span></h3>
+  <ul class="pv-list pv-rels">{% for r in l.rels %}<li><span class="pv-says">{{ r.says }}</span>
+    <span class="pv-who">{% for x in r.rows[:per_rel] %}<a href="{{ x.other_href }}">{{ x.other_label|truncate(30) }}</a>{{ ', ' if not loop.last }}{% endfor %}{% if r.n > per_rel %} <span class="muted">+{{ (r.n - per_rel)|num }}</span>{% endif %}</span>
+    <a class="pv-n" href="{{ l.link }}" title="All {{ l.name }} links of {{ e.label }}">{{ r.n|num }}</a></li>{% endfor %}</ul>
+{% endfor %}
+<p class="pv-keys">↑ ↓ or j k move · space preview · enter open · esc close</p>
