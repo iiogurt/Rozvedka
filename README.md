@@ -612,6 +612,14 @@ everything else is dimmed, and *part of* highlights the whole and its parts. An 
 
 <img src="docs/images/actor-precision.png" alt="Actors page: measured precision of the name matching above the list of actors" width="900">
 
+- **Preview beside the Actors list**: as on the Reports list, select a row (click, <kbd>↑</kbd> <kbd>↓</kbd>) and press
+  <kbd>space</kbd>: the pane shows the actor's kind and description, how many reports and agencies name it and in which
+  years, its links by source (official lists, reference data, named together), the latest passage with its page, the
+  agencies that name it most, the topics of its reports and the actors named in the same passage – every number opens
+  its list. <kbd>enter</kbd> opens the actor's page.
+
+  <img src="docs/images/actor-preview.png" alt="The Actors list filtered to cyber threat groups with one selected and the preview pane beside it: key numbers, links by source, the latest passage, the agencies naming it most and the topics of its reports" width="900">
+
 <img src="docs/images/review.png" alt="Review actor matches: names by impact with sample passages to mark right or wrong" width="900">
 
 ### 🔗 Network – stated links between groups, people, companies and tools

@@ -1,24 +1,27 @@
-// The Reports list: a row can be selected (click, ↑ ↓ or j k) and previewed in a pane beside the list (space, or its
-// button) without leaving the list; enter opens the report. The pane's content comes from /report/<id>/preview with the
-// list's own search, so it shows the passage that made the report match.
+// Lists with a preview pane (Reports, Actors): a row can be selected (click, ↑ ↓ or j k) and previewed in a pane
+// beside the list (space, or its button) without leaving the list; enter opens its page. A row says where its preview
+// (data-pv) and its page (data-open) are; a report's preview gets the list's own search, so it shows the passage
+// that made the report match.
 (() => {
-  const rows = [...document.querySelectorAll("table.docs tbody tr[data-doc]")];
+  const rows = [...document.querySelectorAll("tbody tr[data-pv]")];
   const pane = document.getElementById("pv");
   if (!rows.length || !pane) return;
   const cache = new Map();
   let sel = -1, open = false, timer = 0;
   const want = new URLSearchParams(location.search);
   const qs = new URLSearchParams();
-  for (const k of ["q", "exact", "indexed", "actor"]) if (want.get(k)) qs.set(k, want.get(k));
+  if (pane.dataset.search !== undefined) for (const k of ["q", "exact", "indexed", "actor"]) if (want.get(k)) qs.set(k, want.get(k));
+  const what = pane.dataset.what || "report";
+  const kicker = `<p class="pv-kicker"><span>Preview · ${what}</span></p>`;
 
   function show(i) {
-    const id = rows[i].dataset.doc;
-    const put = (html) => { if (rows[sel] && rows[sel].dataset.doc === id) { pane.innerHTML = html; pane.scrollTop = 0; } };
+    const id = rows[i].dataset.pv;
+    const put = (html) => { if (rows[sel] && rows[sel].dataset.pv === id) { pane.innerHTML = html; pane.scrollTop = 0; } };
     if (cache.has(id)) return put(cache.get(id));
-    pane.innerHTML = '<p class="pv-kicker"><span>Preview · report</span></p><p class="muted small">Loading…</p>';
-    fetch(`/report/${id}/preview?${qs}`).then((r) => r.ok ? r.text() : Promise.reject(r.status))
+    pane.innerHTML = kicker + '<p class="muted small">Loading…</p>';
+    fetch(`${id}?${qs}`).then((r) => r.ok ? r.text() : Promise.reject(r.status))
       .then((html) => { cache.set(id, html); put(html); })
-      .catch(() => put('<p class="pv-kicker"><span>Preview · report</span></p><p class="muted small">The preview could not be loaded.</p>'));
+      .catch(() => put(kicker + '<p class="muted small">The preview could not be loaded.</p>'));
   }
   function setOpen(on) {
     open = on && sel >= 0;
@@ -46,8 +49,8 @@
       setOpen(true);
     });
   });
-  const first = /^#pv-(\d+)$/.exec(location.hash);        // an address ending #pv-<report id> opens with that preview
-  const at = first ? rows.findIndex((r) => r.dataset.doc === first[1]) : -1;
+  const first = /^#pv-([\w.:-]+)$/.exec(location.hash);    // an address ending #pv-<row id> opens with that preview
+  const at = first ? rows.findIndex((r) => r.dataset.id === first[1]) : -1;
   if (at >= 0) { select(at, true); setOpen(true); }
   pane.addEventListener("click", (e) => { if (e.target.closest(".pv-close")) setOpen(false); });
   document.addEventListener("keydown", (e) => {
@@ -56,7 +59,7 @@
     if (k === "ArrowDown" || k === "j") select(sel < 0 ? 0 : sel + 1, true);
     else if (k === "ArrowUp" || k === "k") select(sel < 0 ? 0 : sel - 1, true);
     else if (k === " " && sel >= 0) setOpen(!open);
-    else if (k === "Enter" && sel >= 0) location.href = `/report/${rows[sel].dataset.doc}`;
+    else if (k === "Enter" && sel >= 0) location.href = rows[sel].dataset.open;
     else if (k === "Escape" && open) setOpen(false);
     else return;
     e.preventDefault();

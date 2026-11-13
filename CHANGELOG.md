@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.103.0] – 2026-11-13
+
+### Added
+- **Preview pane on the Actors list** – select a row (click, ↑ ↓ or j k) and press space: a pane beside the list shows
+  the actor's kind and description, the reports and agencies that name it and the years, its links by source, the
+  latest passage with its page, the agencies that name it most, the topics of its reports and the actors named in the
+  same passage. Every number opens its list; enter opens the actor's page, `#pv-<actor key>` in the address opens the
+  list with that preview.
+
+### Changed
+- The preview script serves any list whose rows say where their preview and page are, so further lists can use it.
+
 ## [0.102.0] – 2026-11-13
 
 ### Added
@@ -2192,7 +2204,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.102.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.103.0...HEAD
+[0.103.0]: https://github.com/iiogurt/Rozvedka/compare/v0.102.0...v0.103.0
 [0.102.0]: https://github.com/iiogurt/Rozvedka/compare/v0.101.1...v0.102.0
 [0.101.1]: https://github.com/iiogurt/Rozvedka/compare/v0.101.0...v0.101.1
 [0.101.0]: https://github.com/iiogurt/Rozvedka/compare/v0.100.0...v0.101.0

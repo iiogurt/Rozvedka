@@ -75,6 +75,7 @@ SHOTS = {
     "matrix-lift": ("/trends/matrix?mx=lift", 1000, [("sleep", 5)], None),   # over-emphasis against all reports
     "actor-search": ("/actors", 760, [("eval", "document.getElementById('ac-q').focus(); 1"), ("type", "prigozin"),
                                       ("sleep", 2)], None),
+    "actor-preview": ("/actors?kind=cyber", 900, [("eval", "['j', 'j', 'j', 'j', ' '].forEach((k) => document.dispatchEvent(new KeyboardEvent('keydown', {key: k}))); scrollTo(0, 0); 1"), ("sleep", 5)], None),
     "actor-precision": ("/actors", 470, [], None),                 # the measured precision above the list
     "actor": ("/actors/Q20757678", 1200, [("sleep", 3)], None),        # a profile with a photo and facts
     "connections": (f"/actors/{WAGNER}", 900, [("sleep", 3)], "#connections"),
