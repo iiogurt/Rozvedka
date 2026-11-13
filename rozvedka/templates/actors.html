@@ -44,13 +44,15 @@
   <code>python -m rozvedka index-actors</code>.</p>
 {% endif %}
 
+{% if rows %}<p class="pv-hint muted small">Click a row or press <kbd>↑</kbd> <kbd>↓</kbd> to select · <kbd>space</kbd> preview beside the list · <kbd>enter</kbd> open</p>{% endif %}
 {{ pager(pg, "actors") }}
 <table class="actors">
   <thead><tr><th>Actor</th><th>Kind</th><th>Reports</th><th class="num">Agencies</th><th class="num">Countries</th><th>Years</th></tr></thead>
   <tbody>
   {% for r in rows %}
-    <tr>
-      <td><a class="a-name" href="/actors/{{ r.key }}">{{ r.label }}</a>
+    <tr data-id="{{ r.key }}" data-pv="/actors/{{ r.key }}/preview" data-open="/actors/{{ r.key }}">
+      <td><button type="button" class="pv-btn a-pv" title="Preview beside the list (space)" aria-label="Preview" aria-pressed="false">◨</button>
+        <a class="a-name" href="/actors/{{ r.key }}">{{ r.label }}</a>
         {% if r.description %}<div class="muted small">{{ r.description }}</div>{% endif %}</td>
       <td class="small">{{ kinds.get(r.kind, r.kind) }}</td>
       <td class="a-docs"><a href="/documents?actor={{ r.key }}">{{ r.docs }}</a>
@@ -64,6 +66,8 @@
 </table>
 {{ pager(pg, "actors") }}
 {% if not rows and meta.get('names_hash') %}<p class="muted">No actor matches.</p>{% endif %}
+<aside class="pv" id="pv" data-what="actor" aria-label="Preview of the selected actor" aria-live="polite" hidden></aside>
+<script src="{{ asset('preview.js') }}" defer></script>
 
 <section class="viz-card provenance">
   <h2 class="viz-title">Where the actors come from</h2>

@@ -313,3 +313,19 @@ def test_cached_results_are_shared_inside_and_outside_a_session(library):
         con.execute("SELECT 1").fetchone()
         assert count() == 6
     assert count() == 6 and calls == [1]
+
+
+def test_actor_preview(library):
+    from fastapi.testclient import TestClient
+
+    from rozvedka.app import app
+    actors.index(workers=1)
+    client = TestClient(app)
+    t = client.get("/actors/Q3/preview").text
+    assert "<html" not in t and "Preview · actor" in t and 'href="/actors/Q3"' in t                 # a piece of a page
+    assert '<a href="/documents?actor=Q3">1</a> names it · 1 agency' in t                          # the number opens its list
+    assert "<mark>Federal Security Service</mark>" in t and "<td>2024 · most in" in t and 'href="/documents?actor=Q3&source=1"' in t and 'href="/actors/Q3/with/Q5"' in t
+    assert client.get("/actors/nope/preview").status_code == 404
+    lst = client.get("/actors?min_docs=1").text
+    assert 'data-id="Q3" data-pv="/actors/Q3/preview" data-open="/actors/Q3"' in lst and 'id="pv" data-what="actor"' in lst
+    assert "preview.js" in lst and "data-search" not in lst              # an actor's preview does not take the list's search

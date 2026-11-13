@@ -129,3 +129,4 @@ def test_preview_pane(library):
     assert "&lt;b&gt;" in client.get("/report/3/preview?q=<b>").text and client.get("/report/999/preview").status_code == 404
     lst = client.get("/documents").text
     assert 'data-doc="1"' in lst and 'id="pv"' in lst and "preview.js" in lst and 'class="pv-btn"' in lst
+    assert 'data-pv="/report/1/preview" data-open="/report/1"' in lst and "data-search" in lst     # what preview.js reads

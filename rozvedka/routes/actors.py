@@ -6,6 +6,9 @@ from ..web import _years_desc, local_url, tpl
 
 router = APIRouter()
 
+PREVIEW_ROWS = 6          # agencies, topics and co-named actors listed in an actor's preview
+PREVIEW_AROUND = 240      # characters of the passage shown on each side of the name
+
 
 @router.get("/actors")
 def actors_page(request: Request, kind: str = "", q: str = "", min_docs: int = 2, page: str = "1", per_page: str = ""):
@@ -118,6 +121,16 @@ def actor_timeline(request: Request, key: str):
             outside += 1
     return tpl.TemplateResponse(request, "actor_timeline.html", {**d, "events": events, "lane": lane, "lane_outside": outside,
                                                                 "marks": marks})
+
+
+@router.get("/actors/{key}/preview")
+def actor_preview(request: Request, key: str):
+    """The actor as the Actors list shows it beside a selected row: numbers, links by source, the latest passage."""
+    d = actors.actor_detail(key, 1, "1")
+    if d is None:
+        raise HTTPException(404, "unknown actor")
+    return tpl.TemplateResponse(request, "actor_preview.html", {**d, "links": ties.layer_counts(key), "shown": PREVIEW_ROWS,
+                                                               "around": PREVIEW_AROUND})
 
 
 @router.get("/actors/{key}")

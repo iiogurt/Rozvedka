@@ -1,0 +1,33 @@
+{# one actor in the Actors list's preview pane (static/preview.js) – a piece of a page, not a page #}
+{% from "_ties.html" import ent %}
+{% set a = actor %}
+<p class="pv-kicker"><span>Preview · actor</span><button type="button" class="pv-close" title="Close the preview (Esc)">esc ✕</button></p>
+<h2 class="pv-title"><a href="/actors/{{ a.key }}">{{ a.label }}</a></h2>
+<p class="pv-by"><span class="ent"><i class="kdot kind-{{ a.kind }}"></i>{{ kind_name }}</span>{% if a.description %} <span class="muted">· {{ a.description }}
+  – {% if a.wikidata %}<a href="{{ a.wikidata.url }}">Wikidata</a>{% elif a.attack %}<a href="{{ a.attack.url }}">MITRE ATT&amp;CK</a>{% endif %}</span>{% endif %}</p>
+<p class="rp-actions"><a class="rp-btn rp-primary" href="/actors/{{ a.key }}">Open actor</a>
+  <a class="rp-btn" href="/documents?actor={{ a.key }}">Reports</a>
+  <a class="rp-btn" href="/actors/{{ a.key }}/timeline">Timeline</a>
+  {% if links %}<a class="rp-btn" href="/graph/rings?e={{ a.key }}">Rings</a>{% endif %}</p>
+{% set dated = timeline|selectattr('docs')|list if timeline else [] %}
+<table class="kv small pv-facts">
+  <tr><th>Reports</th><td><a href="/documents?actor={{ a.key }}">{{ docs|num }}</a> name{{ 's' if docs == 1 }} it · {{ agencies|length }} agenc{{ 'y' if agencies|length == 1 else 'ies' }}</td></tr>
+  {% if dated %}{% set peak = dated|sort(attribute='docs')|last %}<tr><th>Years</th><td>{{ dated[0].year }}{% if dated[-1].year != dated[0].year %}–{{ dated[-1].year }}{% endif %} · most in <a href="{{ peak.link }}">{{ peak.year }}</a> <span class="muted">({{ peak.docs }} report{{ 's' if peak.docs != 1 }})</span></td></tr>{% endif %}
+  {% for g, name in (('official', 'Official'), ('reference', 'Reference'), ('leaks', 'Leaked'), ('reports', 'Named with')) %}{% set ls = links|selectattr('group', 'equalto', g)|list %}{% if ls %}
+  <tr><th>{{ name }}</th><td>{% for l in ls %}<a href="{{ l.link }}" title="{{ l.name }}">{{ l.n|num }} {{ l.name.split(' (')[0] }}</a>{{ ' · ' if not loop.last }}{% endfor %}</td></tr>{% endif %}{% endfor %}
+</table>
+{% if passages %}{% set p = passages[0] %}<h3 class="pv-h">Latest passage <span class="muted">· {{ p.agency }}{% if p.year %} {{ p.year }}{% endif %}</span></h3>
+  <blockquote class="snippet pv-pass">{{ '…' ~ p.before[-around:] if p.before|length > around else p.before }}<mark>{{ p.match }}</mark>{{ p.after[:around] ~ '…' if p.after|length > around else p.after }}
+    <a class="pv-pg" href="{{ p.open }}">{% if p.page %}p. {{ p.page }}{% else %}open{% endif %}</a></blockquote>
+  <p class="muted small pv-from"><a href="/report/{{ p.doc_id }}">{{ (p.title or 'Untitled report')|truncate(90) }}</a></p>{% endif %}
+{% if agencies %}<h3 class="pv-h">Named most by</h3>
+  <ul class="pv-list">{% for g in agencies[:shown] %}<li><img class="flag-sm" src="{{ flag_url(g.country) }}" alt="" width="16" height="12">
+    <a href="/agency/{{ g.source_id }}">{{ g.agency }}</a>{{ pub_mark(g.source_id) }}
+    <a class="pv-n" href="/documents?actor={{ a.key }}&source={{ g.source_id }}">{{ g.docs }}</a></li>{% endfor %}</ul>
+  {% if agencies|length > shown %}<p class="muted small"><a href="/actors/{{ a.key }}#reporting-agencies">and {{ agencies|length - shown }} more →</a></p>{% endif %}{% endif %}
+{% if topics %}<h3 class="pv-h">Topics of its reports</h3>
+  <p class="pv-chips">{% for t in topics[:shown] %}<a class="topic-chip" href="{{ t.link }}">{{ t.name }} <b>{{ t.docs }}</b></a>{% endfor %}</p>{% endif %}
+{% if related.actors %}<h3 class="pv-h">Named in the same passage <span class="muted">· not evidence of a connection</span></h3>
+  <ul class="pv-list">{% for r in related.actors[:shown] %}<li>{{ ent(r.label, r.kind, '/actors/' ~ r.key) }}
+    <a class="pv-n" href="/actors/{{ a.key }}/with/{{ r.key }}" title="Passages naming both">{{ r.docs }}</a></li>{% endfor %}</ul>{% endif %}
+<p class="pv-keys">↑ ↓ or j k move · space preview · enter open · esc close</p>

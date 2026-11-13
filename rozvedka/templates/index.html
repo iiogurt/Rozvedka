@@ -107,7 +107,7 @@
   <thead><tr><th>Year</th><th>Source</th><th>Title</th><th>Lang</th><th>Status</th><th></th></tr></thead>
   <tbody>
   {% for d in docs %}
-    <tr class="{{ 'hidden' if d.hidden }}" data-doc="{{ d.id }}">
+    <tr class="{{ 'hidden' if d.hidden }}" data-doc="{{ d.id }}" data-id="{{ d.id }}" data-pv="/report/{{ d.id }}/preview" data-open="/report/{{ d.id }}">
       <td class="num">{% if d.year and d.year_source %}<span class="yr-est" title="Year {{ 'set by hand' if d.year_source == 'set by hand' else 'from the report – ' ~ d.year_source }}">{{ '≈' if 'publication date' in d.year_source }}{{ d.year }}</span>{% else %}{{ d.year or '—' }}{% endif %}</td>
       <td class="src"><a href="/documents?{{ qs(source=d.source_id, page=1) }}" title="{{ d.name_en or '' }}">
         <img class="flag-sm" src="{{ flag_url(d.country) }}" alt="{{ d.country }}" width="20" height="15">
@@ -155,7 +155,7 @@
 </div>
 
 {{ pager(pg, "documents") }}
-<aside class="pv" id="pv" aria-label="Preview of the selected report" aria-live="polite" hidden></aside>
+<aside class="pv" id="pv" data-what="report" data-search aria-label="Preview of the selected report" aria-live="polite" hidden></aside>
 <script src="{{ asset('preview.js') }}" defer></script>
 {% if snippets_url %}
 <script>
