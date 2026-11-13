@@ -218,3 +218,20 @@ def test_wanted_notices(library):
         assert "Wanted" in page and "fbi.gov/wanted/cyber/jd" in page and "allegation, not a conviction" in page
         assert "several people at once" in client.get("/entity/case:FBI:c1").text
         assert "officer of Hezbollah" in client.get("/graph/ties?layer=wanted").text
+
+
+def test_preview_pane_on_the_links_list(library):
+    from rozvedka.app import app
+    with TestClient(app) as client:
+        p = ties.profile("S0002")
+        t = client.get("/graph/preview?e=S0002").text
+        assert "<html" not in t and "Preview · entity" in t and "Mimikatz" in t and 'href="/entity/S0002"' in t   # a piece of a page
+        assert f'<a href="/graph/ties?entity=S0002">{p["total"]}</a> with {p["others"]} other' in t              # the number opens its list
+        assert "MITRE ATT&amp;CK" in t and 'class="pv-says"' in t
+        r = client.get("/graph/preview?e=Q2", follow_redirects=False)                # an actor gets the actor's preview
+        assert r.status_code == 307 and r.headers["location"] == "/actors/Q2/preview"
+        assert client.get("/graph/preview?e=NOPE").status_code == 404 and client.get("/graph/preview").status_code == 404
+        lst = client.get("/graph/ties?entity=Q2").text
+        assert 'id="pv" data-what="entity"' in lst and "preview.js" in lst and 'data-pv="/graph/preview?e=' in lst
+        assert lst.count("data-pv=") == lst.count('class="pv-btn a-pv"') == 5        # one per link
+        assert "data-pv=" not in client.get("/graph/ties?q=zzzzzz").text

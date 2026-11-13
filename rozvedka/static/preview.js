@@ -1,4 +1,4 @@
-// Lists with a preview pane (Reports, Actors): a row can be selected (click, ↑ ↓ or j k) and previewed in a pane
+// Lists with a preview pane (Reports, Actors, Links): a row can be selected (click, ↑ ↓ or j k) and previewed in a pane
 // beside the list (space, or its button) without leaving the list; enter opens its page. A row says where its preview
 // (data-pv) and its page (data-open) are; a report's preview gets the list's own search, so it shows the passage
 // that made the report match.
@@ -19,7 +19,7 @@
     const put = (html) => { if (rows[sel] && rows[sel].dataset.pv === id) { pane.innerHTML = html; pane.scrollTop = 0; } };
     if (cache.has(id)) return put(cache.get(id));
     pane.innerHTML = kicker + '<p class="muted small">Loading…</p>';
-    fetch(`${id}?${qs}`).then((r) => r.ok ? r.text() : Promise.reject(r.status))
+    fetch(String(qs) ? id + (id.includes("?") ? "&" : "?") + qs : id).then((r) => r.ok ? r.text() : Promise.reject(r.status))
       .then((html) => { cache.set(id, html); put(html); })
       .catch(() => put(kicker + '<p class="muted small">The preview could not be loaded.</p>'));
   }

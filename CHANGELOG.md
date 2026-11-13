@@ -27,6 +27,18 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.104.0] – 2026-11-13
+
+### Added
+- **Preview pane on the network's Links list** – select a row (click, ↑ ↓ or j k) and press space: a pane beside the
+  list shows the entity in the first column – its kind and the lists it is on, how many links it has and with how many
+  others, the counts by source, and its links by relation with the first names of each. Every number opens its list;
+  enter opens the entity. An entity that is an actor of the reports shows the actor's preview.
+
+### Fixed
+- The selected row of a list with a preview pane is highlighted across the whole row, also where its first cell is a
+  header cell.
+
 ## [0.103.0] – 2026-11-13
 
 ### Added
@@ -2204,7 +2216,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.103.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.0...HEAD
+[0.104.0]: https://github.com/iiogurt/Rozvedka/compare/v0.103.0...v0.104.0
 [0.103.0]: https://github.com/iiogurt/Rozvedka/compare/v0.102.0...v0.103.0
 [0.102.0]: https://github.com/iiogurt/Rozvedka/compare/v0.101.1...v0.102.0
 [0.101.1]: https://github.com/iiogurt/Rozvedka/compare/v0.101.0...v0.101.1

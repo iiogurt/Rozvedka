@@ -31,6 +31,23 @@ def ties_page(request: Request, entity: str = "", layer: str = "", group: str = 
                                                              "kinds": ties.KINDS})
 
 
+PREVIEW_PER_REL = 4      # linked names shown per relation in an entity's preview
+
+
+@router.get("/graph/preview")
+def entity_preview(request: Request, e: str = ""):
+    """The entity as the Links list shows it beside a selected row: its links in numbers and by relation. An entity
+    that is an actor of the reports gets the actor's preview."""
+    ent = ties.entity(e)
+    if not ent:
+        raise HTTPException(404, "no such entity in the network")
+    if ent["actor"]:
+        return RedirectResponse("/actors/" + quote(ent["actor"], safe="") + "/preview", status_code=307)
+    return tpl.TemplateResponse(request, "entity_preview.html", {"e": ent, "groups": ties.neighbours(e), "p": ties.profile(e),
+                                                                 "per_rel": PREVIEW_PER_REL,
+                                                                 "lists": {**sanctions.LISTS, **wanted.SOURCES}})
+
+
 @router.get("/entity/{id_:path}")
 def entity_page(request: Request, id_: str):
     e = ties.entity(id_)

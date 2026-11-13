@@ -649,6 +649,11 @@ as a name (“Rostec”, not “prosperity”), no names made only of generic wo
 <img src="docs/images/graph-actor.png" alt="An actor's Network section: entries the US Treasury links to Hezbollah, UK listings whose reasons name it, with the quoted sentences" width="900">
 
 - **Links** (`/graph/ties`): search any name across all layers, filter by layer and kind; every row with its evidence.
+  Select a row and press <kbd>space</kbd> for a **preview beside the list** of the entity in the first column: how many
+  links it has and with how many others, the counts by source, and its links by relation with the first names of each –
+  an entity that is an actor of the reports shows the actor's preview.
+
+  <img src="docs/images/links-preview.png" alt="The links of a listed company with one linked entity selected and its preview beside the list: its links by source and by relation" width="900">
 - **Entity pages** (`/entity/…`) for what is not an actor: a sanctions entry with its programme and other names, a piece
   of malware, a campaign, a Wikidata person. The page has the shape of an actor's: six key numbers (links, the different
   things they lead to, how many of them official lists, reference data and leaked records state, list entries), then

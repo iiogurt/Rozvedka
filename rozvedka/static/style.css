@@ -1703,8 +1703,8 @@ span.conn-n { color: var(--muted); }
 
 /* the Reports list's preview pane (static/preview.js): beside the list on a wide screen, over it on a narrow one */
 .docs tbody tr[data-doc] { cursor: default; }
-tbody tr[data-pv].sel > td { background: var(--chip); }
-tbody tr[data-pv].sel > td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
+tbody tr[data-pv].sel > td, tbody tr[data-pv].sel > th { background: var(--chip); }
+tbody tr[data-pv].sel > :first-child { box-shadow: inset 2px 0 0 var(--accent); }
 .pv-btn { border: 0; background: none; color: var(--muted); padding: 2px 4px; font-size: 14px; line-height: 1; cursor: pointer; }
 .pv-btn:hover, .pv-btn[aria-pressed="true"] { color: var(--accent); }
 .pv-hint { margin: 0 0 6px; }
@@ -1735,6 +1735,9 @@ tbody tr[data-pv].sel > td:first-child { box-shadow: inset 2px 0 0 var(--accent)
 .pv-from { margin: 4px 0 0 12px; }
 .pv-chips .topic-chip b { font-weight: 500; margin-left: 4px; }
 .a-pv { float: right; }
+.pv-rels li { align-items: baseline; }
+.pv-says { flex: none; width: 34%; color: var(--muted); }
+.pv-who { min-width: 0; }
 @media (min-width: 1200px) { body.pv-open .actors th:nth-child(n+4), body.pv-open .actors td:nth-child(n+4) { display: none; } }
 .pv-keys { margin: 16px 0 0; padding-top: 10px; border-top: 1px solid var(--line); font: 11px var(--mono); color: var(--muted); }
 @media (min-width: 1200px) { /* beside the pane the list keeps year, publisher and title; the pane says the rest */
