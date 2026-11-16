@@ -58,6 +58,12 @@ def test_term_regex(term, text, hit):
     ("Οργανωμένο έγκλημα και ναρκωτικά: η κοκαΐνη και τα ναρκωτικά.", "", "drug-trafficking"),
     ("Polizeiliche Kriminalstatistik (PKS): Fallzahlen, Tatverdächtige und Aufklärungsquote.", "", "crime-statistics"),
     ("ISO 27001 information security management; encryption and intrusion detection; Locked Shields.", "", "cyber-security-practice"),
+    # Ukrainian (0.104.2) and Mexico's crime-incidence reports
+    ("Кількість облікованих кримінальних правопорушень зросла; розкрито злочинів більше, рівень злочинності знизився.", "", "crime-statistics"),
+    ("Наркотичні засоби та психотропні речовини: наркозлочини і незаконний обіг наркотиків.", "", "drug-trafficking"),
+    ("Incidencia delictiva: delitos del fuero común y presuntos delitos registrados.", "", "crime-statistics"),
+    ("Venemaa täiemahuline sõda Ukrainas; Ukraina küberruum ja sõda Ukrainas mõjutas ka Eestit.", "", "war-in-ukraine"),
+    ("보이스피싱 등 전기통신금융사기와 사이버범죄가 늘었다.", "", "cybercrime-fraud"),
 ])
 def test_classify_finds_topic(text, title, expected):
     assert expected in [f["key"] for f in classify(text, title)]
@@ -78,6 +84,10 @@ def test_fts_query_is_safe():
     ("Tasking orders and tasking cycles; tasking again. Storm troopers.", "floods-storms"),         # Turkish taşkın → taskin
     ("SUSE Linux and SUSE updates; Linux drought of patches.", "wildfires-heat-drought"),           # suše → suse
     ("Šiem gadījumiem un šiem dokumentiem; šiem nolūkiem šifrēšana.", "cyber-security-practice"),  # Latvian šiem → siem
+    # Crimea's stem crim-/krim- in Bulgarian, Finnish and Latvian is also the stem of 'criminal' in them and in German
+    ("Кримінальні правопорушення; кримінальне провадження; криминални деяния. Україна, Україна.", "war-in-ukraine"),
+    ("Kriminalität und Kriminalstatistik; kriminelle Netzwerke; Ukraine-Flüchtlinge.", "war-in-ukraine"),
+    ("Kriminālprocess un krimināllieta; kriminaalitapaus. Ukraina.", "war-in-ukraine"),
 ])
 def test_false_friends_from_accent_folding(text, not_expected):
     """Terms are folded (š → s, ş → s): a term from one language must not become a common word of another."""

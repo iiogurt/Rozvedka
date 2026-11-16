@@ -51,6 +51,7 @@ categories:
           hu: ["szélsőjobb*", "jobboldali szélsős*"]
           el: ["ακροδεξι*", "νεοναζ*"]
           ja: ["右翼", "極右", "右派系"]
+          uk: ["правий екстремізм", "ультраправ*", "неонацист*"]
 
       left-wing-extremism:
         name: "Left-wing extremism"
@@ -73,6 +74,7 @@ categories:
           hu: ["szélsőbal*"]
           el: ["ακροαριστερ*", "αναρχικ*"]
           ja: ["極左", "過激派"]
+          uk: ["лівий екстремізм", "ліворадикал*"]
 
       islamist-extremism:
         name: "Islamist extremism & jihadism"
@@ -98,6 +100,7 @@ categories:
           sl: ["islamist*", "džihad*"]
           hu: ["iszlamist*", "dzsihad*", "iszlám állam"]
           ja: ["イスラム過激", "ジハード", "ＩＳＩＬ", "ISIL", "アル・カーイダ"]
+          uk: ["ісламіст*", "джихад*", "ігіл"]
 
       terrorism:
         name: "Terrorism & counter-terrorism"
@@ -127,6 +130,8 @@ categories:
           hu: ["terroriz*", "terrortámad*", "terrorfenyeget*"]
           el: ["τρομοκρατ*"]
           ja: ["テロ", "テロリズム", "爆弾"]
+          uk: ["тероризм*", "терорист*", "теракт*", "терористичн*"]
+          ko: ["테러"]
 
       radicalisation:
         name: "Radicalisation & online extremism"
@@ -151,6 +156,7 @@ categories:
           hr: ["radikalizacij*"]
           sl: ["radikalizacij*"]
           hu: ["radikalizáló*"]
+          uk: ["радикалізац*"]
 
       anti-government-extremism:
         name: "Anti-government & conspiracy-driven extremism"
@@ -170,6 +176,7 @@ categories:
           ro: ["teori* conspira*", "antisistem"]
           bg: ["конспиратив*", "антисистемн*"]
           hu: ["összeesküvés-elmélet*"]
+          uk: ["теорі* змови"]
 
       antisemitism:
         name: "Antisemitism & hate crime"
@@ -191,6 +198,7 @@ categories:
           ro: ["antisemitism*", "discurs* instigator* la ură", "infracțiuni motivate de ură"]
           bg: ["антисемитиз*", "език на омразата", "престъпления от омраза"]
           hu: ["antiszemit*", "gyűlölet-bűncselekmény*"]
+          uk: ["антисеміт*", "злочин* на ґрунті ненависті"]
 
       terrorist-financing:
         name: "Terrorist financing"
@@ -207,6 +215,7 @@ categories:
           it: ["finanziamento del terrorismo"]
           ro: ["finanțarea terorismului"]
           bg: ["финансиране на тероризма"]
+          uk: ["фінансуванн* тероризму"]
 
   # ─────────────────────────────── STATE THREATS ───────────────────────────────
   state-threats:
@@ -242,6 +251,7 @@ categories:
           ja: ["ロシア"]
           ko: ["러시아"]
           zh: ["俄罗斯", "俄羅斯"]
+          uk: ["росія", "росії", "росією", "російськ*", "кремл*", "путін*"]
 
       china:
         name: "China – intelligence, influence & technology"
@@ -269,6 +279,7 @@ categories:
           ja: ["中国", "中華人民共和国", "中共"]
           ko: ["중국"]
           zh: ["中共", "中國", "解放軍", "統戰"]
+          uk: ["китай", "китаю", "китайськ*"]
 
       iran:
         name: "Iran"
@@ -291,6 +302,7 @@ categories:
           bg: ["иран*"]
           ru: ["иран*"]
           ja: ["イラン"]
+          uk: ["іран", "ірану", "іранськ*"]
 
       north-korea:
         name: "North Korea"
@@ -309,6 +321,7 @@ categories:
           bg: ["северна корея"]
           ja: ["北朝鮮"]
           ko: ["북한"]
+          uk: ["кндр", "північн* коре*"]
 
       belarus:
         name: "Belarus"
@@ -325,6 +338,7 @@ categories:
           lt: ["baltarusij*"]
           ro: ["belarus*"]
           ru: ["беларус*", "белорус*"]
+          uk: ["білорус*"]
 
       espionage:
         name: "Espionage & counter-intelligence"
@@ -352,6 +366,8 @@ categories:
           sl: ["vohunjenj*"]
           hu: ["kémked*", "kémtevékenység*"]
           ja: ["スパイ", "諜報"]
+          uk: ["шпигун*", "шпигунств*", "контррозвідув*"]
+          ko: ["간첩", "방첩"]
 
       foreign-interference:
         name: "Foreign interference & influence operations"
@@ -378,6 +394,7 @@ categories:
           hu: ["befolyásolási művelet*", "külföldi befolyás*"]
           ja: ["影響工作", "認知戦"]
           zh: ["認知作戰", "認知戰"]
+          uk: ["операці* впливу", "іноземн* втручанн*"]
 
       disinformation:
         name: "Disinformation & propaganda"
@@ -408,6 +425,8 @@ categories:
           el: ["παραπληροφόρησ*", "προπαγάνδα"]
           ja: ["偽情報", "誤情報", "プロパガンダ", "ディスインフォメーション"]
           zh: ["假訊息", "虛假信息", "認知作戰"]
+          uk: ["дезінформац*", "пропаганд*", "фейк*"]
+          ko: ["허위정보", "가짜뉴스"]
 
       election-interference:
         name: "Election interference & democratic processes"
@@ -432,6 +451,7 @@ categories:
           bg: ["избори*", "изборн*"]
           hu: ["választás*"]
           ja: ["選挙"]
+          uk: ["виборч* процес*", "втручанн* у вибори", "виборч* кампані*"]
 
       sabotage:
         name: "Sabotage & physical attacks on infrastructure"
@@ -457,6 +477,7 @@ categories:
           ru: ["саботаж*", "диверси*"]
           hu: ["szabotázs*"]
           ja: ["破壊工作", "海底ケーブル"]
+          uk: ["саботаж*", "диверсі*"]
 
       hybrid-threats:
         name: "Hybrid threats & grey-zone activity"
@@ -481,6 +502,7 @@ categories:
           bg: ["хибридни заплахи", "хибридна война", "хибридн*"]
           hu: ["hibrid fenyeget*", "hibrid hadvisel*"]
           ja: ["ハイブリッド戦", "グレーゾーン"]
+          uk: ["гібридн* загроз*", "гібридн* війн*", "гібридн* атак*"]
 
       transnational-repression:
         name: "Transnational repression & diaspora targeting"
@@ -517,6 +539,7 @@ categories:
           ro: ["proliferar*", "arme de distrugere în masă", "dublă utilizare"]
           bg: ["разпространение на оръжия за масово унищожение", "оръжия за масово унищожение"]
           ja: ["大量破壊兵器", "不拡散", "輸出管理"]
+          uk: ["нерозповсюдженн*", "зброї масового знищення", "зброя масового знищення", "подвійного призначення"]
 
       economic-security:
         name: "Economic security, investment screening & tech transfer"
@@ -538,6 +561,8 @@ categories:
           ro: ["securitate economică", "securitatea economică", "spionaj economic"]
           bg: ["икономическа сигурност", "икономически шпионаж"]
           ja: ["経済安全保障", "技術流出", "経済的威圧"]
+          uk: ["економічн* безпек*"]
+          ko: ["산업기술 유출", "기술유출", "경제안보"]
 
       insider-threat:
         name: "Insider threats & protective security"
@@ -558,6 +583,7 @@ categories:
           lt: ["įslaptint* informacij*"]
           ro: ["informații clasificate", "certificat de securitate"]
           bg: ["класифицирана информация"]
+          uk: ["допуск* до державної таємниці"]
 
   # ─────────────────────────────── MILITARY & GEOPOLITICS ───────────────────────────────
   geopolitics:
@@ -567,31 +593,32 @@ categories:
         name: "War in Ukraine"
         terms:
           en: ["ukrain*", "kyiv", "kiev", "donbas*", "crimea*", "zaporizhzhia", "kharkiv", "war of aggression", "full-scale invasion", "full scale invasion"]
-          de: ["ukraine*", "angriffskrieg", "krim"]
+          de: ["ukraine*", "angriffskrieg", "krim", "kiew", "krieg in der ukraine", "krieg gegen die ukraine", "invasion der ukraine"]
           fr: ["ukrain*", "guerre d'agression", "crimée"]
-          nl: ["oekraïn*", "oekrain*"]
-          cs: ["ukrajin*", "krym*", "válk* na ukrajině"]
-          sk: ["ukrajin*", "krym*"]
-          pl: ["ukrain*", "krym*"]
-          sv: ["ukraina*", "krim"]
-          da: ["ukraine*"]
-          nb: ["ukraina*"]
-          fi: ["ukrain*", "krim*"]
-          et: ["ukraina*", "krimm*"]
-          lv: ["ukrain*", "krim*"]
-          lt: ["ukrain*", "kryme"]
-          es: ["ucrania*", "crimea"]
-          it: ["ucrain*", "crimea"]
-          pt: ["ucrânia*"]
-          ro: ["ucrain*", "crimeea"]
-          bg: ["украйн*", "крим*"]
+          nl: ["oekraïn*", "oekrain*", "oorlog in oekraïne", "russische invasie", "krim", "kiev"]
+          cs: ["ukrajin*", "krym*", "válk* na ukrajině", "kyjev*"]
+          sk: ["ukrajin*", "krym*", "vojn* na ukrajine", "ruská agresia", "kyjev*"]
+          pl: ["ukrain*", "krym", "krymu", "krymie", "krymsk*", "wojn* w ukrainie", "wojn* na ukrainie", "rosyjsk* agresj*", "kijów"]
+          sv: ["ukraina*", "krim", "kriget i ukraina", "rysslands invasion", "fullskalig* invasion", "kiev"]
+          da: ["ukraine*", "krigen i ukraine", "ruslands invasion", "invasionen af ukraine", "krim"]
+          nb: ["ukraina*", "krigen i ukraina", "russlands invasjon", "fullskala invasjon", "krim"]
+          fi: ["ukrain*", "krim", "krimin", "krimillä", "krimille", "krimiltä", "krimiä", "venäjän hyökkäys*", "ukrainan sota*", "hyökkäyssota*"]
+          et: ["ukraina*", "krimm*", "ukraina sõda", "ukraina sõja", "sõda ukrainas", "sõjas ukrainas", "täiemahulis* sõda", "täiemahulis* sõja", "agressioonisõ*", "kiiev*"]
+          lv: ["ukrain*", "krima", "krimā", "krimas", "krimu", "karš ukrainā", "kara ukrainā", "krievijas agresij*", "pilna mēroga iebrukum*", "kijiv*"]
+          lt: ["ukrain*", "kryme", "karas ukrainoje", "rusijos agresij*", "kyjiv*"]
+          es: ["ucrania*", "crimea", "guerra en ucrania", "invasión rusa", "kiev"]
+          it: ["ucrain*", "crimea", "guerra in ucraina", "invasione russa", "kiev"]
+          pt: ["ucrânia*", "guerra na ucrânia", "invasão russa", "crimeia"]
+          ro: ["ucrain*", "crimeea", "războiul din ucraina", "invazi* rus*", "kiev"]
+          bg: ["украйн*", "крим", "крима", "кримск*"]
           ru: ["украин*", "крым*", "сво"]
-          hr: ["ukrajin*"]
-          sl: ["ukrajin*"]
-          hu: ["ukrajn*"]
-          el: ["ουκραν*"]
+          hr: ["ukrajin*", "rat u ukrajini", "ruska agresija", "agresij* na ukrajinu", "krim", "kijev*"]
+          sl: ["ukrajin*", "vojna v ukrajini", "ruska agresija", "krim"]
+          hu: ["ukrajn*", "ukrajnai háború", "orosz agresszió", "krím", "kijev*"]
+          el: ["ουκραν*", "κριμαία", "ρωσική εισβολή"]
           ja: ["ウクライナ"]
           ko: ["우크라이나"]
+          uk: ["збройн* агресі*", "повномасштабн* вторгненн*", "воєнн* стан*", "окупаці*", "окупован*", "крим", "криму", "кримськ*", "донбас*"]
 
       nato-deterrence:
         name: "NATO, collective defence & deterrence"
@@ -617,6 +644,7 @@ categories:
           ru: ["нато"]
           hu: ["nato", "elrettentés*"]
           ja: ["ＮＡＴＯ", "NATO", "抑止"]
+          uk: ["нато"]
 
       military-threat:
         name: "Military threat, armed forces & capabilities"
@@ -644,6 +672,7 @@ categories:
           ja: ["軍事", "ミサイル", "人民解放軍", "自衛隊"]
           ko: ["군사", "미사일"]
           zh: ["軍事", "解放軍", "飛彈"]
+          uk: ["збройн* сил*", "військов*", "ракет*"]
 
       nuclear:
         name: "Nuclear weapons & nuclear threats"
@@ -668,6 +697,7 @@ categories:
           bg: ["ядрени оръжия", "ядрено оръжие"]
           ru: ["ядерн* оружи*"]
           ja: ["核兵器", "核戦力", "核実験"]
+          uk: ["ядерн* зброї", "ядерн* зброя", "ядерн* загроз*"]
 
       arctic-high-north:
         name: "Arctic & High North"
@@ -681,6 +711,7 @@ categories:
           fi: ["arktis*", "arktinen", "kuolan"]
           is: ["norðurslóð*"]
           ru: ["арктик*", "северный флот"]
+          uk: ["арктик*"]
 
       baltic-sea:
         name: "Baltic Sea & Nordic-Baltic security"
@@ -699,6 +730,7 @@ categories:
           lv: ["baltijas jūr*", "baltijas valst*", "kaļiņingrad*"]
           lt: ["baltijos jūr*", "baltijos valstyb*", "karaliauč*", "kaliningrad*"]
           ru: ["балтийск*", "калининград*"]
+          uk: ["балтійськ*", "калінінград*"]
 
       middle-east:
         name: "Middle East & North Africa"
@@ -719,6 +751,7 @@ categories:
           ro: ["orientul mijlociu", "israel*", "gaza"]
           bg: ["близкия изток", "близкият изток", "израел*", "газа"]
           ja: ["中東", "イスラエル", "ガザ"]
+          uk: ["ізраїл*", "близьк* сход*"]
 
       indo-pacific:
         name: "Indo-Pacific, Taiwan Strait & Korean Peninsula"
@@ -737,6 +770,7 @@ categories:
           ja: ["台湾", "インド太平洋", "尖閣", "南シナ海", "東シナ海", "朝鮮半島"]
           ko: ["인도태평양", "대만", "한반도"]
           zh: ["台海", "臺灣", "台灣", "印太", "南海"]
+          uk: ["тайван*"]
 
       drones-and-new-warfare:
         name: "Drones, space & emerging military technology"
@@ -762,6 +796,7 @@ categories:
           ru: ["беспилотник*", "дрон*"]
           hu: ["drón*"]
           ja: ["ドローン", "無人機", "宇宙", "衛星", "極超音速"]
+          uk: ["безпілотн*", "дрон*"]
 
       defence-industry:
         name: "Defence industry & procurement"
@@ -780,6 +815,7 @@ categories:
           it: ["industria della difesa"]
           ro: ["industri* de apărare", "muniți*"]
           ja: ["防衛産業", "防衛装備"]
+          uk: ["оборонн* промисловост*", "оборонно-промислов*"]
 
   # ─────────────────────────────── CYBER ───────────────────────────────
   cyber:
@@ -806,6 +842,8 @@ categories:
           bg: ["рансъмуер", "ransomware", "откуп*"]
           ja: ["ランサムウェア", "身代金"]
           ru: ["вымогател*"]
+          uk: ["програм* вимагач*", "шифрувальник*"]
+          ko: ["랜섬웨어"]
 
       state-cyber:
         name: "State-sponsored cyber operations & APTs"
@@ -830,6 +868,7 @@ categories:
           hr: ["kibernetičk* špijunaž*"]
           sl: ["kibernetsk* vohunjenj*"]
           ru: ["кибершпионаж*"]
+          uk: ["кібершпигун*", "проурядов* хакер*"]
 
       ddos-hacktivism:
         name: "DDoS & hacktivism"
@@ -850,6 +889,7 @@ categories:
           lt: ["ddos", "haktyvist*"]
           ro: ["ddos", "hacktivis*"]
           bg: ["ddos", "хактивис*"]
+          uk: ["хактивіст*", "ddos-атак*"]
 
       cybercrime-fraud:
         name: "Cybercrime, fraud & phishing"
@@ -883,6 +923,8 @@ categories:
           mk: ["сајбер криминал", "измам*"]
           tr: ["siber suç*", "dolandırıcılık", "oltalama"]
           is: ["netglæp*", "netsvik*"]
+          uk: ["кіберзлочин*", "шахрайств*", "фішинг*", "шкідлив* програм*"]
+          ko: ["사이버범죄", "보이스피싱", "전기통신금융사기"]
 
       vulnerabilities:
         name: "Software vulnerabilities, supply chain & incident response"
@@ -913,6 +955,7 @@ categories:
           el: ["ευπάθει*"]
           tr: ["güvenlik açığ*", "zafiyet*"]
           sq: ["sulm* kibernetik*", "incident* kibernetik*", "siguri* kibernetik*"]
+          uk: ["вразливост*", "вразливість"]
 
       critical-infrastructure-cyber:
         name: "Cyber threats to critical infrastructure & OT"
@@ -943,6 +986,7 @@ categories:
           pt: ["infraestrutura* crítica*", "serviços essenciais"]
           el: ["κρίσιμ* υποδομ*"]
           tr: ["kritik altyapı*"]
+          uk: ["критичн* інформаційн* інфраструктур*"]
 
       ai-and-emerging-tech:
         name: "Artificial intelligence & emerging technology"
@@ -976,6 +1020,8 @@ categories:
           mk: ["вештачка интелигенција"]
           tr: ["yapay zeka", "yapay zekâ"]
           is: ["gervigreind*"]
+          uk: ["штучн* інтелект*"]
+          ko: ["인공지능"]
 
       cyber-security-practice:
         name: "Cyber security practice & standards"
@@ -1001,6 +1047,7 @@ categories:
           hr: ["informacijsk* sigurnost*", "kriptograf*"]
           sl: ["informacijsk* varnost*", "kriptograf*", "šifriranj*"]
           hu: ["információbiztonság*", "titkosítás*"]
+          uk: ["кіберзахист*", "інформаційн* безпек*"]
 
   # ─────────────────────────────── CRIME ───────────────────────────────
   crime:
@@ -1038,6 +1085,8 @@ categories:
           sq: ["krim* të organizuar"]
           mk: ["организиран криминал"]
           tr: ["organize suç*"]
+          uk: ["організован* злочин*", "організован* груп*", "злочинн* організаці*", "злочинн* угрупован*"]
+          ko: ["조직폭력", "조직범죄", "폭력조직"]
 
       drug-trafficking:
         name: "Drug trafficking"
@@ -1069,6 +1118,8 @@ categories:
           mk: ["дрога", "наркотици"]
           tr: ["uyuşturucu*", "kokain*"]
           is: ["fíkniefn*"]
+          uk: ["наркотик*", "наркотичн*", "наркозлочин*", "кокаїн*", "психотропн*"]
+          ko: ["마약"]
 
       human-trafficking-smuggling:
         name: "Human trafficking & migrant smuggling"
@@ -1099,6 +1150,8 @@ categories:
           sq: ["trafikim* të qenieve njerëzore"]
           mk: ["трговија со луѓе"]
           is: ["mansal*"]
+          uk: ["торгівл* людьми", "незаконн* переправленн*"]
+          ko: ["인신매매"]
 
       money-laundering-corruption:
         name: "Money laundering, corruption & illicit finance"
@@ -1132,6 +1185,8 @@ categories:
           sq: ["pastrim* të parave", "korrupsion*"]
           mk: ["перење пари", "корупциј*"]
           is: ["peningaþvætti*"]
+          uk: ["відмиванн* коштів", "легалізаці* доходів", "корупці*", "хабарництв*"]
+          ko: ["자금세탁", "부패"]
 
       firearms-explosives:
         name: "Firearms & explosives trafficking"
@@ -1157,6 +1212,8 @@ categories:
           hu: ["fegyvercsempész*", "robbanóanyag*"]
           el: ["λαθρεμπόριο όπλων", "εκρηκτικ*"]
           tr: ["silah kaçakçılığı", "patlayıcı*"]
+          uk: ["незаконн* поводженн* зі зброєю", "вогнепальн* зброї", "вибухов* речовин*", "боєприпас*"]
+          ko: ["총기", "폭발물"]
 
       child-exploitation:
         name: "Online child sexual exploitation"
@@ -1179,6 +1236,8 @@ categories:
           hu: ["gyermekek szexuális"]
           el: ["σεξουαλική κακοποίηση παιδιών"]
           tr: ["çocuk istismar*"]
+          uk: ["сексуальн* експлуатаці* дітей", "сексуальн* насильств* над дітьми", "дитяч* порнограф*"]
+          ko: ["디지털 성범죄", "아동 성착취", "아동성착취물"]
 
       crime-statistics:
         name: "Crime statistics"
@@ -1194,8 +1253,10 @@ categories:
           da: ["kriminalstatistik", "anmeldte forbrydelser"]
           nb: ["kriminalstatistikk", "anmeldte lovbrudd"]
           fi: ["rikostilasto*", "poliisin tietoon tullu*"]
-          es: ["estadística* de criminalidad", "balance de criminalidad", "tasa de esclarecimiento"]
+          es: ["estadística* de criminalidad", "balance de criminalidad", "tasa de esclarecimiento", "incidencia delictiva", "delitos del fuero común", "delitos del fuero federal", "presuntos delitos", "víctimas de delito*", "tasa de delitos", "homicidio doloso", "robo de vehículo*", "denuncias presentadas", "carpetas de investigación", "averiguaciones previas", "por cada 100 mil habitantes"]
           it: ["statistiche della delinquenza", "delitti denunciati"]
+          uk: ["кримінальн* правопорушен*", "облікован* правопорушен*", "облікован* злочин*", "розкрит* злочин*", "зареєстрован* злочин*", "злочинност*"]
+          ko: ["범죄발생", "발생건수", "검거율", "범죄통계", "검거 현황"]
 
   # ─────────────────────────────── MIGRATION & BORDERS ───────────────────────────────
   migration:
@@ -1228,6 +1289,8 @@ categories:
           hu: ["illegális migráció*", "illegális bevándorl*", "határvédelem*"]
           el: ["παράτυπη μετανάστευση", "μεταναστευτικ*"]
           ja: ["不法入国", "密入国"]
+          uk: ["нелегальн* мігрант*", "незаконн* міграці*", "незаконн* перетин*", "державн* кордон*"]
+          ko: ["불법체류", "밀입국"]
 
       instrumentalised-migration:
         name: "Instrumentalised migration"
@@ -1278,6 +1341,8 @@ categories:
           mk: ["климатски промени"]
           tr: ["iklim değişikliği", "küresel ısınma"]
           is: ["loftslagsbreyting*"]
+          uk: ["змін* клімату", "глобальн* потепління", "парников* газ*"]
+          ko: ["기후변화"]
 
       floods-storms:
         name: "Floods, storms & extreme weather"
@@ -1311,6 +1376,8 @@ categories:
           mk: ["поплав*"]
           tr: ["taşkın", "taşkınlar", "sel felaketi", "fırtına*"]
           is: ["óveður*", "aurskrið*"]
+          uk: ["повен*", "паводк*", "паводок", "підтопленн*", "ураган*", "шторм*"]
+          ko: ["홍수", "태풍", "집중호우"]
 
       wildfires-heat-drought:
         name: "Wildfires, heat & drought"
@@ -1342,6 +1409,7 @@ categories:
           mk: ["шумски пожар*", "суша"]
           tr: ["orman yangın*", "kuraklık*"]
           is: ["gróðureld*", "þurrkar"]
+          uk: ["лісов* пожеж*", "природн* пожеж*", "посух*"]
 
       earthquakes-volcanoes:
         name: "Earthquakes, tsunamis & volcanoes"
@@ -1370,6 +1438,8 @@ categories:
           mk: ["земјотрес*"]
           tr: ["deprem*", "tsunami"]
           is: ["jarðskjálft*", "eldgos*", "eldfjall*"]
+          uk: ["землетрус*", "цунамі", "вулкан*"]
+          ko: ["지진", "쓰나미"]
 
       pandemics-health:
         name: "Pandemics & health threats"
@@ -1403,6 +1473,8 @@ categories:
           mk: ["пандемиј*", "епидемиј*"]
           tr: ["pandemi*", "salgın hastalık*"]
           is: ["heimsfaraldur*", "farsótt*"]
+          uk: ["пандемі*", "епідемі*", "коронавірус*", "інфекційн* захворюван*"]
+          ko: ["감염병", "코로나19"]
 
       cbrn-nuclear-accident:
         name: "CBRN, nuclear & industrial accidents"
@@ -1429,6 +1501,7 @@ categories:
           tr: ["kbrn", "nükleer kaza*"]
           is: ["geislavirk*"]
           sq: ["radioaktiv*"]
+          uk: ["радіаційн* аварі*", "ядерн* аварі*", "хімічн* аварі*", "небезпечн* речовин*"]
 
       space-weather:
         name: "Space weather"
@@ -1477,6 +1550,8 @@ categories:
           mk: ["цивилна заштита", "заштита и спасување"]
           tr: ["sivil savunma"]
           is: ["almannavarn*"]
+          uk: ["цивільн* захист*", "цивільн* оборон*"]
+          ko: ["민방위"]
 
       public-preparedness:
         name: "Public & household preparedness"
@@ -1507,6 +1582,7 @@ categories:
           el: ["εκκένωσ*", "ετοιμότητ*"]
           tr: ["tahliye", "afete hazırlık"]
           is: ["viðbúnað*", "rýming*"]
+          uk: ["евакуаці*", "оповіщенн* населенн*", "укритт*"]
 
       critical-infrastructure:
         name: "Critical infrastructure protection & resilience"
@@ -1534,6 +1610,8 @@ categories:
           mk: ["критична инфраструктура"]
           tr: ["kritik altyapı*"]
           is: ["mikilvæg* innvið*"]
+          uk: ["критичн* інфраструктур*"]
+          ko: ["국가기반시설", "기반시설 보호"]
 
       energy-security:
         name: "Energy security & blackouts"
@@ -1565,6 +1643,7 @@ categories:
           el: ["ενεργειακ* ασφάλει*"]
           tr: ["enerji güvenliği"]
           is: ["orkuöryggi"]
+          uk: ["енергетичн* безпек*", "енергопостачанн*", "блекаут*", "відключенн* електроенерг*"]
 
       supply-security:
         name: "Food, water & supply security"
@@ -1587,6 +1666,7 @@ categories:
           hr: ["sigurnost* opskrbe", "pitk* vod*", "sigurnost* hrane"]
           sl: ["prehransk* varnost*", "pitn* vod*", "oskrb* s pitno vodo"]
           ru: ["продовольственн* безопасност*"]
+          uk: ["продовольч* безпек*"]
 
       crisis-management:
         name: "Crisis management & emergency response"
@@ -1619,6 +1699,8 @@ categories:
           mk: ["управување со кризи"]
           tr: ["acil durum yönetimi", "afet yönetimi"]
           is: ["hættustjórnun*", "neyðarstig*"]
+          uk: ["надзвичайн* ситуаці*", "ліквідаці* наслідків", "рятувальн*"]
+          ko: ["재난", "재해", "위기관리"]
 
       societal-resilience:
         name: "Societal resilience, cohesion & polarisation"
@@ -1644,6 +1726,7 @@ categories:
           hu: ["társadalmi ellenálló*", "polarizáció*"]
           hr: ["otpornost* društva", "društven* otpornost*"]
           sl: ["odpornost* družbe", "družben* odpornost*"]
+          uk: ["національн* стійкіст*", "стійкіст* суспільств*", "соціальн* згуртован*"]
 
   # ─────────────────────────────── GOVERNANCE ───────────────────────────────
   governance:
@@ -1667,6 +1750,7 @@ categories:
           hr: ["parlamentarn* nadzor*", "nadzor* nad sigurnosno-obavještajn*"]
           sl: ["parlamentarn* nadzor*", "nadzor* obveščevaln*"]
           es: ["control parlamentario", "control judicial"]
+          uk: ["парламентськ* контрол*", "демократичн* цивільн* контрол*"]
 
       annual-activity:
         name: "Agency activity, organisation & resources"
@@ -1695,3 +1779,5 @@ categories:
           sl: ["letn* poročil*", "poročil* o delu"]
           ru: ["секретариат*", "пленарн* сесси*"]
           sq: ["raport* vjetor*"]
+          uk: ["звіт* про діяльність", "звіт* про результати", "результати роботи"]
+          ko: ["백서", "연차보고서"]

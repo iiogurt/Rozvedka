@@ -32,7 +32,7 @@ PDFTOTEXT = shutil.which("pdftotext")
 # ── normalisation: case- and accent-insensitive, same for text and terms ──
 _FOLD = str.maketrans({"ß": "ss", "ø": "o", "æ": "ae", "œ": "oe", "ł": "l", "đ": "d", "ð": "d", "þ": "th",
                        "ı": "i", "’": "'", "‘": "'", "–": "-", "—": "-", "­": ""})
-_CJK = re.compile(r"[぀-ヿ㐀-鿿가-힯＀-￯]")
+_CJK = re.compile(r"[぀-ヿ㐀-鿿가-힯ᄀ-ᇿ＀-￯]")   # ᄀ-ᇿ: Hangul syllables after normalize() (NFKD splits them into jamo)
 
 
 def normalize(text: str) -> str:

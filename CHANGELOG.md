@@ -27,6 +27,25 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.104.2] – 2026-11-16
+
+### Fixed
+- **Ukrainian reports get topics.** The topic list had no Ukrainian terms, so 18 of the 20 Ukrainian reports (the National
+  Police's annual and cyber reports) had no topic at all. Every topic now has Ukrainian terms (crime statistics, drugs,
+  firearms, organised crime, fraud, the war …); terms of other Cyrillic languages already in the list now also find Bulgarian
+  reports they missed (the financial-intelligence unit's terrorist-financing reports).
+- **Mexico's crime-incidence reports** (SESNSP, 33 files) are tagged as crime statistics ("incidencia delictiva", "delitos del
+  fuero común", "presuntos delitos").
+- **Crimea no longer matches "criminal".** The Bulgarian, Finnish, Latvian and Polish terms for Crimea (крим*, krim*, krym*)
+  also matched криминален, Kriminalität, krimināls and kryminalny, since every language's terms are applied to every text;
+  they now list the forms of the name only. Reports that name the war with words of their own language ("krieg in der
+  ukraine", "oorlog in Oekraïne", "pilna mēroga iebrukums", "täiemahuline sõda" …) keep the War in Ukraine topic; reports that
+  only mention Ukraine in passing no longer get it.
+- **Korean terms work.** Text is folded before matching, which splits Hangul syllables into letters the matcher did not
+  recognise as Korean, so Korean terms only matched as whole words – never with a particle attached (사이버범죄가). Korean terms
+  were added for crime, cyber fraud, disasters and the police white paper; the Korean National Police white paper's chapters
+  now have topics.
+
 ## [0.104.1] – 2026-11-16
 
 ### Fixed
@@ -2226,7 +2245,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.2...HEAD
+[0.104.2]: https://github.com/iiogurt/Rozvedka/compare/v0.104.1...v0.104.2
 [0.104.1]: https://github.com/iiogurt/Rozvedka/compare/v0.104.0...v0.104.1
 [0.104.0]: https://github.com/iiogurt/Rozvedka/compare/v0.103.0...v0.104.0
 [0.103.0]: https://github.com/iiogurt/Rozvedka/compare/v0.102.0...v0.103.0
