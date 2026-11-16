@@ -1,0 +1,128 @@
+# Document types set by hand – corrections to the rules in rozvedka/doctypes.py. Each entry: the report (official
+# URL), the type and when it was set. Written by the portal (report page → type); editable by hand.
+- url: https://www.ipcc.ch/site/assets/uploads/2018/04/FS_select_authors_fr.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2018/04/FS_ipcc_approve_fr.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2018/04/FS_ipcc_deals_errors_fr.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2018/09/ipcc_principles_fr.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2018/09/ipcc_error_protocol_en.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2018/04/FS_select_authors_ru.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2018/04/FS_ipcc_assess_ru.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2018/04/FS_review_process_ru.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2018/04/FS_ipcc_approve_ru.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2018/09/ipcc_principles_ru.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2018/09/ipcc_decision_framework_ru.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2018/09/ipcc-conflict-of-interest-2016_ru.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2018/09/ipcc-principles-observer-org_ru.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2024/04/IPCCFactSheet_ApproveReports.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/2024/04/IPCCFactSheet_ErrorProtocol.pdf
+  type: guide
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/sites/3/2021/01/IPCC-SROCC-SPM-Errata-Text-2128_fr.pdf
+  type: statement
+  set: '2026-11-16 17:11:17'
+- url: https://www.ipcc.ch/site/assets/uploads/sites/3/2021/01/IPCC-SROCC-SPM-Errata-Text-2128_ru.pdf
+  type: statement
+  set: '2026-11-16 17:11:17'
+- url: https://eos-utvalget.no/wp-content/uploads/2026/03/Riksrevisjonens-beretning-for-arsregnskapet-for-2025.pdf
+  type: finance
+  set: '2026-11-16 17:11:17'
+- url: https://eos-utvalget.no/wp-content/uploads/2025/04/Revisjon-av-arsregnskapet-for-Stortingets-kontrollutvalg-for-etterretnings-overvakings-og-sikkerhetstjeneste-EOS-utvalget-2024.pdf
+  type: finance
+  set: '2026-11-16 17:11:17'
+- url: https://eos-utvalget.no/wp-content/uploads/2024/06/Revisjonsberetning-for-Stortingets-kontrollutvalg-for-etterretnings-overvakings-og-sikkerhetstjeneste-EOS-utvalget-2023.PDF.pdf
+  type: finance
+  set: '2026-11-16 17:11:17'
+- url: https://eos-utvalget.no/wp-content/uploads/2023/07/Revisjonsberetning-for-Stortingets-kontrollutvalg-for-etterretnings-overvakings-og-sikkerhetstjeneste-EOS-utvalget-2022.PDF.pdf
+  type: finance
+  set: '2026-11-16 17:11:17'
+- url: https://eos-utvalget.no/wp-content/uploads/2022/05/Revisjon-200422.pdf
+  type: finance
+  set: '2026-11-16 17:11:17'
+- url: https://eos-utvalget.no/wp-content/uploads/2021/04/Riksrevisjonens-revisjonsberetning-2020.pdf
+  type: finance
+  set: '2026-11-16 17:11:17'
+- url: https://eos-utvalget.no/wp-content/uploads/2020/04/RR-beretning-08042020.pdf
+  type: finance
+  set: '2026-11-16 17:11:18'
+- url: https://eos-utvalget.no/wp-content/uploads/2019/05/revisjonsberetning_fra_riksrevisjonen_for_2018.pdf
+  type: finance
+  set: '2026-11-16 17:11:18'
+- url: https://eos-utvalget.no/wp-content/uploads/2019/05/revisjonsberetning_fra_rr_2017.pdf
+  type: finance
+  set: '2026-11-16 17:11:18'
+- url: https://eos-utvalget.no/wp-content/uploads/2019/05/riksrevisjonens-beretning-2016.pdf
+  type: finance
+  set: '2026-11-16 17:11:18'
+- url: https://eos-utvalget.no/wp-content/uploads/2024/12/Avgradert-brev-Undersokelse-av-FSAs-behandling-av-klareringssaker-omfattet-av-rutinen-Sen-fordeling-EOS-utvalgets-uttalelse.pdf
+  type: statement
+  set: '2026-11-16 17:11:18'
+- url: https://eos-utvalget.no/wp-content/uploads/2023/02/Brev-fra-EOS-utvalget-til-PST-om-PSTs-hjemmelsgrunnlag-for-bruk-av-droner.pdf
+  type: statement
+  set: '2026-11-16 17:11:18'
+- url: https://eos-utvalget.no/wp-content/uploads/2021/04/Utvalgets-brev-til-kontroll-og-konstitusjonskomiteen-24.3.2021-Innspill-til-Stortingets-behandling-av-Dokument-21-2020-2021.pdf
+  type: statement
+  set: '2026-11-16 17:11:18'
+- url: https://eos-utvalget.no/wp-content/uploads/2020/05/Brev-til-Stortinget-12.mai-2020-innspill-til-Prop.-80-L.pdf
+  type: statement
+  set: '2026-11-16 17:11:18'
+- url: https://ipco-wpmedia-prod-s3.s3.eu-west-2.amazonaws.com/TAP-Register-of-Interest-July-2026.pdf
+  type: statement
+  set: '2026-11-16 17:11:18'
+- url: https://ipco-wpmedia-prod-s3.s3.eu-west-2.amazonaws.com/TAP-Members-Register-of-Interest-July-2025.pdf
+  type: statement
+  set: '2026-11-16 17:11:18'
+- url: https://ipco-wpmedia-prod-s3.s3.eu-west-2.amazonaws.com/1wDI2LxO-TAP-members-register-of-interests-January-2023.pdf
+  type: statement
+  set: '2026-11-16 17:11:18'
+- url: https://ipco-wpmedia-prod-s3.s3.eu-west-2.amazonaws.com/IPCO-Policy-on-Public-Consultations.pdf
+  type: guide
+  set: '2026-11-16 17:11:18'
+- url: https://nukib.gov.cz/download/publications_en/support_materials/PZS_tovarny_EN_final.pdf
+  type: guide
+  set: '2026-11-16 17:11:18'
+- url: https://nukib.gov.cz/download/publications_en/support_materials/VIS_rozhodovaci_schema_EN_final.pdf
+  type: guide
+  set: '2026-11-16 17:11:18'
+- url: https://nukib.gov.cz/download/publications_en/support_materials/KII_rozhodovaci_schema_EN_final.pdf
+  type: guide
+  set: '2026-11-16 17:11:18'
+- url: https://tet.dk/wp-content/uploads/2025/04/TETs_procesbeskrivelse_for_haandtering_af_indberetninger_fra_PET.pdf
+  type: guide
+  set: '2026-11-16 17:11:18'
+- url: https://www.nctv.nl/site/binaries/site-content/collections/documents/2026/09/11/bijlage-regeling-precursoren-voor-explosieven-2021-informatieplicht/bijlage-regeling-precursoren-voor-explosieven-2021-informatieplicht-marktdeelnemers.pdf
+  type: legal
+  set: '2026-11-16 17:14:35'
+- url: https://www.aivd.nl/site/binaries/site-content/collections/documents/2026/09/30/de-moderne-auto-als-mogelijke-spion/de-moderne-auto-als-mogelijke-spion.pdf
+  type: guide
+  set: '2026-11-16 17:14:35'
+- url: https://english.aivd.nl/site/binaries/site-content/collections/documents/2025/11/18/security-screening/Security+Screening+1125.pdf
+  type: form
+  set: '2026-11-16 17:16:41'
