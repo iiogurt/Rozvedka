@@ -29,7 +29,7 @@
   {% else %}<span class="top-fill"></span>{% endif %}
   <button type="button" class="jump-open" title="Jump to a country, agency, actor, topic, report or page by its name">Jump to… <kbd>Ctrl K</kbd></button>
   {% set hs = header_status() %}
-  <span class="top-age {{ 'old' if hs.days is not none and hs.days >= 7 }}" title="Every source checked since {{ (hs.last or 'never')[:16].replace('T', ' ') }}; latest check {{ (hs.latest or 'never')[:16].replace('T', ' ') }}"><i aria-hidden="true"></i>{% if hs.days is none %}never checked{% else %}data {{ 'today' if hs.days == 0 else hs.days ~ ' d old' }}{% endif %}</span>
+  <span class="top-age {{ 'old' if hs.days is not none and hs.days >= 7 }}" title="Every source checked since {{ (hs.last or 'never')[:16].replace('T', ' ') }}; latest check {{ (hs.latest or 'never')[:16].replace('T', ' ') }}{% if hs.never %}; {{ hs.never }} source{{ 's' if hs.never != 1 }} never checked (added since){% endif %}"><i aria-hidden="true"></i>{% if hs.days is none %}never checked{% else %}data {{ 'today' if hs.days == 0 else hs.days ~ ' d old' }}{% if hs.never %} · {{ hs.never }} new{% endif %}{% endif %}</span>
   <a class="upd-btn {{ 'on' if request.url.path == '/update' }} {{ 'busy' if hs.job }}" href="/update"
      title="{% if hs.job %}{{ hs.job }} running{% if hs.pct is not none %} – {{ hs.pct }} %{% endif %}{% else %}Check the agencies for new reports{% endif %}">
     <span class="upd-ico" aria-hidden="true">{{ ico("refresh") }}</span> Update{% if hs.job %}

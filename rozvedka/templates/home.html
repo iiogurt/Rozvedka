@@ -16,8 +16,11 @@
   <p class="home-what">An open-source intelligence library: the public reports of intelligence, security, cyber and
     civil-protection agencies, with <span class="home-ind">◆ independent think tanks</span> and
     <span class="home-com">■ commercial analysts</span> kept apart from the official ones.</p>
-  <p class="home-state"><i class="{{ 'old' if d.fresh.crawl_days is not none and d.fresh.crawl_days >= 7 }}" aria-hidden="true"></i>last check
-    {% if d.fresh.last_crawl %}<b>{{ d.fresh.last_crawl[:10] }}</b> · {{ d.fresh.crawl_days }} day{{ 's' if d.fresh.crawl_days != 1 }} ago{% else %}<b>never</b>{% endif %}
+  {% set hs = header_status() %}
+  <p class="home-state"><i class="{{ 'old' if hs.days is none or hs.days >= 7 }}" aria-hidden="true"></i>every source checked since
+    {% if hs.last %}<b>{{ hs.last[:10] }}</b> · {{ hs.days }} day{{ 's' if hs.days != 1 }} ago{% else %}<b>never</b>{% endif %}
+    · newest check {% if d.fresh.last_crawl %}<b>{{ d.fresh.last_crawl[:10] }}</b>{% else %}<b>never</b>{% endif %}
+    {%- if hs.never %} · {{ hs.never }} source{{ 's' if hs.never != 1 }} never checked{% endif %}
     · updates run by hand – <a href="/update">Update</a></p>
 </header>
 

@@ -14,7 +14,7 @@
 </details>
 
 <div class="h-counters dx-cards">
-  <a href="#sources"><b>{{ age(since) }}</b><span>every source checked since {{ (since or 'never')[:10] }}</span></a>
+  <a href="#sources"><b>{{ age(since) }}</b><span>every source checked since {{ (since or 'never')[:10] }}{% if never %} · {{ never }} never checked{% endif %}</span></a>
   <a href="#sources"><b>{{ age(fresh.last_crawl) }}</b><span>last check of any source</span></a>
   <a href="/new"><b>{{ (fresh.last_discovered or 'never')[:10] }}</b><span>last new report found</span></a>
   <a href="/documents?status=new"><b>{{ counts.get('new', 0)|num }}</b><span>waiting for download</span></a>

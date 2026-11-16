@@ -29,10 +29,18 @@ INDEX_STEPS = (("Extracting text and matching topics", "index-topics"), ("Recogn
 
 def all_checked_since(con) -> str | None:
     """How old the data is: the moment by which every source fetched automatically had been checked – the oldest of
-    the sources' latest checks (a single source checked today does not make the whole library fresh)."""
-    return con.execute("""SELECT MIN(latest) FROM (SELECT s.id, MAX(COALESCE(p.last_crawled, '')) latest FROM sources s
-                          JOIN pages p ON p.source_id=s.id AND p.active=1 WHERE s.active=1 AND s.access!='manual'
-                          GROUP BY s.id)""").fetchone()[0] or None
+    the sources' latest checks (a single source checked today does not make the whole library fresh). A source never
+    checked yet (just added) is left out and counted by `never_checked`, so it does not blank the age of all the rest."""
+    return con.execute(f"""SELECT MIN(latest) FROM ({_LATEST}) WHERE latest != ''""").fetchone()[0] or None
+
+
+def never_checked(con) -> int:
+    """How many sources fetched automatically have never been checked."""
+    return con.execute(f"SELECT COUNT(*) FROM ({_LATEST}) WHERE latest = ''").fetchone()[0]
+
+
+_LATEST = """SELECT s.id, MAX(COALESCE(p.last_crawled, '')) latest FROM sources s
+             JOIN pages p ON p.source_id=s.id AND p.active=1 WHERE s.active=1 AND s.access!='manual' GROUP BY s.id"""
 
 
 def seconds_per_page(con) -> float:
