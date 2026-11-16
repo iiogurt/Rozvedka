@@ -36,33 +36,37 @@ COUNTED = f"(d.doc_type IS NULL OR d.doc_type NOT IN ({','.join(repr(k) for k in
 
 # Rules in order; the first that matches the folded title + file name wins. Words are matched at a word start.
 RULES = [
-    ("form", r"\b(form(ular|ulaire|ulario|ulář|ularz)?|obrazac|lomake|blankett|application form|antrag)\b"),
+    ("form", r"\b(form(ular|ulaire|ulario|ulář|ularz)?|obrazac|lomake|blankett|application form|antrag|questionnaire)\b"),
     ("legal", r"^\d{1,3}/\d{2}[,.]? \||\b(zakon|zakona|zakonu|uredba|uredbe|pravilnik\w*|naredb\w*|odluk[aeu] o|nn ?\d{1,3} \d{2,4}|"
               r"narodne novine|uradni list|gesetz|umsetzungsgesetz|verordnung|richtlinie \(eu\)|directive \(eu\)|"
               r"regulation \(eu\)|act on the|decreto|real decreto|ley organica|zakon o|zakonik|ustawa|rozporzadzeni\w*|"
-              r"zakon c|vyhlask\w*|narizeni vlady|nariadeni\w* vlady|loi n|loi relative|arrete|wetsvoorstel|besluit)\b"),
+              r"zakon c|vyhlask\w*|narizeni vlady|nariadeni\w* vlady|loi n|loi relative|arrete|wetsvoorstel|besluit|"
+              r"decree|draft act\w*|disposicion \d+ del boe)\b"),
     ("finance", r"\b(budget|rozpocet|rozpoct\w*|zaverecn\w* uc\w*|vykaz\w*|ukazovatel\w*|tabulka|tab \d|financial statement|"
                 r"accounts|jahresrechnung|haushalt\w*|bilancio|presupuesto|begroting|talousarvio|zaverecny_ucet|"
                 r"audited annual report|poseur.\d+|poci.\d+|pt.20\d\d.fsi|ficha de projeto)\b"),
     ("statement", r"\b(press (release|notice|statement|conference)|statement|remarks|speech|"
                   r"tiskov\w* zprav\w*|pressemitteilung|communique|persbericht|comunicado|komunikat|"
                   r"verklaring|motie|stemming|kamerbrief|toespraak|discours|written ministerial statement|wms)\b"),
+    # a format word outranks the subject: "Security strategy for society – Leaflet" is a leaflet, not the strategy
+    ("guide", r"\b(leaflet|flyer|fact ?sheet|informatiebrochure|faktenblatt|faktablad|tietolehti\w*|esite|brochure|broschure|infographic|"
+              r"poster)\b"),
     ("assessment", r"\b(threat assessment|risk assessment|risk analysis|national risk|risk profile|threat landscape|"
                    r"lagebild|lagebericht|gefahrdungs\w*|risikoanalyse|risicoanalyse|risicobeeld|dreigingsbeeld|"
                    r"cybersecuritybeeld|dreigings\w*|trusselsvurdering|trusselvurdering|trusselbilde|hotbild|"
                    r"hotbedomning|uhkakuva|ohu\w* hinnang|evaluation de la menace|etat de la menace|panorama de la "
-                   r"(cyber)?menace|valutazione (del|della) (rischio|minaccia)|evaluacion de riesgo\w*|"
+                   r"(cyber)?menace|threat overview|valutazione (del|della) (rischio|minaccia)|evaluacion de riesgo\w*|"
                    r"analisis de riesgo\w*|ocena zagrozen|ocen\w* rizik\w*|hodnoceni hrozeb|analyza rizik|"
                    r"riskbedomning|risikovurdering|riskikuva|kockazat\w*|procjen\w* rizik\w*|ocena tveganj|"
                    r"te.sat|iocta|soc ta|horizon scan\w*|threat outlook|security outlook|global trends|"
                    r"annual threat|worldwide threat|homeland threat|threat report|risikobilde|nasjonalt risikobilde|situation report)\b"),
     ("annual", r"\b(annual report|annual review|year in review|yearbook|vyrocni zprav\w*|vyrocn\w*|jahresbericht|"
                r"verfassungsschutzbericht|rapport annuel|rapport d.activite\w*|informe anual|memoria anual|"
-               r"relazione annuale|relazione sulla politica|relatorio anual|relatorio de atividades|jaarverslag|"
+               r"relazione annuale|relazione sulla politica|relazione 20\d\d|relatorio anual|relatorio de atividades|jaarverslag|"
                r"raport roczny|raport vjetor|raport de activitate|sprawozdanie|vuosikertomus|arsrapport|arsberetning|"
                r"arsredovisning|aastaraamat|aastaulevaade|parskats|metine|godisnje izvjesce|letno porocilo|"
                r"annual|vyrocni|godisnj\w*|evkonyv|white paper on|hakusho|halbjahresbericht|semi.annual|polrocn\w*)\b|白書"),
-    ("strategy", r"\b(strateg(y|ies|ie|ia|ias|ija|ije|iji|iju|ii|i|iei)|white paper|white book|weissbuch|livre blanc|libro blanco|libro bianco|witboek|"
+    ("strategy", r"戦略|\b(strateg(y|ies|ie|ia|ias|ija|ije|iji|iju|ii|i|iei)|estrategias?|стратеги[яиюі]|стратегі[яїю]|white paper|white book|weissbuch|livre blanc|libro blanco|libro bianco|witboek|"
                  r"bialej ksiegi|biala ksiega|bila kniha|national security policy|defence policy|"
                  r"doctrine|konzeption|koncepc\w*)\b"),
     ("bulletin", r"\b(bulletin|warning|varovani|advisory|alert|newsletter|flash|sitrep|"

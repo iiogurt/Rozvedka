@@ -28,7 +28,7 @@ Written 2026-10-06 at version 0.29.0 (the previous assessment was made at 0.16.0
 | Open slots in the coverage grid | 0 country × agency-type slots open and no retry left (2026-11-09; 48 open on 2026-11-02, 63 on 2026-10-30): every slot is covered or checked as not published – 81 checked | `/sources/grid`; A3, A4 |
 | Failed downloads | 61: Türkiye 49 (robots.txt), Public Safety Canada 24, CCCS 5, IRSEM 4, IPCC 5, single ones elsewhere | dead addresses and robots.txt – re-check the listing pages |
 | Open in a browser only | 30 (E-tjenesten 20 behind a bot challenge, Canada 8, BSI 1, CCDCOE 1) | not circumvented |
-| Reports without any topic | 226 of 4,198 real reports (5.4 %, 2026-11-16; reports, annual reports, assessments, strategies, bulletins) – had grown to 289 (6.9 %); 0.104.2 added Ukrainian and Korean terms, Mexican crime-statistics terms and fixed Korean matching | B4 target (below 5 %) missed again; the rest are mostly non-reports to type (IPCC FAQ pages, decrees, letters) and Estonian IT studies outside the topics |
+| Reports without any topic | 186 of 4,149 real reports (4.5 %, 2026-11-16; reports, annual reports, assessments, strategies, bulletins) – had grown to 289 (6.9 %); 0.104.2 added Ukrainian and Korean terms and fixed Korean matching, 0.104.3 typed leaflets, decrees and the IPCC's FAQ pages as non-reports | B4 target (below 5 %) met again; the rest: short chapter pages (Japanese police overview), Estonian IT studies outside the topics, Arabic versions (no Arabic terms) |
 | Undated reports | 148 (0.93.0: 142) | grew with the library (90 at 0.29.0); 0.93.0 dates language versions from each other |
 | Reports with too little text | 23 under 100 words | image-only pages OCR could not read |
 | Matching precision | 91.6 % on 1,802 passages of the 456 most frequent names (0.46.1; 75 % of the links) | the ~1,700 rarer names are not measured |
@@ -90,7 +90,7 @@ Each item: why · what · done when · version step.
 3. ✅ (0.32.0) **Document types** (old B8) – annual report, threat assessment, risk assessment, strategy, guide/leaflet, form,
    statistics – from titles, series and size; filter and weight by type (a 200-page assessment is not a 2-page form). ·
    minor
-4. ✅ (0.32.1: 4.8 %; 0.104.2: 6.9 % → 5.4 %, Ukrainian and Korean terms) **Reports without a topic** (383) – sample them: add missing terms to `topics.yaml` (general rule first), mark
+4. ✅ (0.32.1: 4.8 %; 0.104.2: 6.9 % → 5.4 %, Ukrainian and Korean terms; 0.104.3: 4.5 %, format words and hand types) **Reports without a topic** (383) – sample them: add missing terms to `topics.yaml` (general rule first), mark
    non-reports with their document type (B3). *Done when* below 5 % of real reports. · patch
 5. ✅ (0.31.0) **Year conflicts** – list reports whose stored year contradicts strong evidence (file-name date stamp, folder,
    cover year) for review in the portal; never overwrite silently. · minor

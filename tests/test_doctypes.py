@@ -28,6 +28,20 @@ from rozvedka import collect, db, doclist, doctypes, series, topics, trends
     ("108/17", "https://civilna-zastita.gov.hr/Zakon%20o%20sustavu_NN108_2017.pdf", 6, None, "legal"),   # gazette number
     ("Act on the Processing of Passenger Name Record (PNR) Data", "https://bka.de/pnr.pdf", 20, None, "legal"),
     ("Report on the implementation of the strategy 2019/20", "https://x.org/r.pdf", 30, None, "strategy"),
+    ("Security strategy for society - Leaflet", "https://turvallisuuskomitea.fi/l.pdf", 6, None, "guide"),   # format first
+    ("Belgian National Risk Assessment: factsheet", "https://crisiscenter.be/f.pdf", 2, None, "guide"),
+    ("Yhteiskunnan turvallisuusstrategia - Esite", "https://turvallisuuskomitea.fi/e.pdf", 6, None, "guide"),
+    ("DECREE No. 315 2021", "https://nukib.cz/d.pdf", 5, None, "legal"),
+    ("draft actcybersecurity 130620 EN", "https://nukib.cz/draft_act.pdf", 19, None, "legal"),
+    ("Disposición 3482 del BOE núm. 41 de 2026", "https://dsn.gob.es/estrategia.pdf", 30, None, "legal"),   # gazette first
+    ("ESTRATEGIA NACIONAL CONTRA EL TERRORISMO 2023", "https://dsn.gob.es/e.pdf", 40, None, "strategy"),
+    ("Національна стратегія безпеки", "https://nationale-sicherheitsstrategie.de/uk.pdf", 12, None, "strategy"),
+    ("国家安全保障戦略 JP", "https://nationale-sicherheitsstrategie.de/jp.pdf", 12, None, "strategy"),
+    ("Informe de Evaluación del Plan Estratégico Institucional", "https://inei.gob.pe/p.pdf", 30, None, "report"),  # adjective
+    ("Cyber Threat Overview 2024", "https://cert.ssi.gouv.fr/c.pdf", 40, None, "assessment"),
+    ("RELAZIONE 2014", "https://sicurezzanazionale.gov.it/r", 120, None, "annual"),
+    ("Questionnaire security screening B", "https://nctv.nl/q.pdf", 1, None, "form"),
+    ("Informatiebrochure Cyberbeveiligingswet", "https://nctv.nl/i.pdf", 8, None, "guide"),
 ])
 def test_rules(title, url, pages, per_year, expected):
     t, why = doctypes.classify(title, url, pages, per_year)

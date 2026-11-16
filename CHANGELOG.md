@@ -27,6 +27,22 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.104.3] – 2026-11-16
+
+### Fixed
+- **Leaflets and fact sheets are guides, decrees are laws.** A format word in the title now outranks the subject: "Security
+  strategy for society – Leaflet", "National Risk Assessment: factsheet" or an IOCTA infographic is a guide, not the strategy
+  or assessment itself (leaflet, flyer, fact sheet, Faktenblatt, faktablad, esite, tietolehtinen, brochure, infographic,
+  poster). English decrees and draft acts (NÚKIB) and Spanish gazette dispositions (BOE) are laws.
+- **Titles rewritten since the last typing no longer lose their type**: Spanish, Portuguese, Ukrainian and Japanese strategies
+  ("estrategia", "стратегія", 戦略), CERT-FR's yearly Cyber Threat Overview (an assessment), the Italian "Relazione <year>"
+  (annual) and questionnaires (forms).
+- **Non-reports typed by hand** in `sources/doc_types.yaml` (42): the IPCC's pages on how it works (FAQ, principles,
+  policies) are guides and its errata statements; the Auditor General's statements on the Norwegian oversight committee's
+  accounts are accounts, its letters statements; IPCO's registers of interests are statements; one-page decision charts and
+  process descriptions are guides.
+- Reports without a topic (real reports, counted once per report): 5.4 % → **4.5 %**, under the 5 % target again.
+
 ## [0.104.2] – 2026-11-16
 
 ### Fixed
@@ -2245,7 +2261,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.2...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.3...HEAD
+[0.104.3]: https://github.com/iiogurt/Rozvedka/compare/v0.104.2...v0.104.3
 [0.104.2]: https://github.com/iiogurt/Rozvedka/compare/v0.104.1...v0.104.2
 [0.104.1]: https://github.com/iiogurt/Rozvedka/compare/v0.104.0...v0.104.1
 [0.104.0]: https://github.com/iiogurt/Rozvedka/compare/v0.103.0...v0.104.0
