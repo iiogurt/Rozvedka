@@ -190,13 +190,14 @@ def header_status() -> dict:
     if now - _age_cache.get("at", 0) > 30:
         with db.session() as con:
             since = updater.all_checked_since(con)
+            never = updater.never_checked(con)
             latest = con.execute("SELECT MAX(last_crawled) FROM pages").fetchone()[0]
-        _age_cache.update(at=now, last=since, latest=latest,
+        _age_cache.update(at=now, last=since, latest=latest, never=never,
                           days=(dt.datetime.now() - dt.datetime.fromisoformat(since[:19])).days if since else None)
     j = jobrunner.state()
     running = j if j and j["status"] == "running" else None
     pct = int(100 * running["progress"]["done"] / running["progress"]["total"]) if running and running["progress"]["total"] else None
-    return {"last": _age_cache["last"], "latest": _age_cache["latest"], "days": _age_cache["days"],
+    return {"last": _age_cache["last"], "latest": _age_cache["latest"], "days": _age_cache["days"], "never": _age_cache["never"],
             "job": running and running["title"], "pct": pct}
 
 

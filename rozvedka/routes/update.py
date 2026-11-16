@@ -27,13 +27,18 @@ def update_page(request: Request, country: str = "", state: str = "", q: str = "
         "states": Counter(r["state"] for r in allrows), "stale_n": sum(1 for r in allrows if r["stale"] and r["state"] != "manual"),
         "countries": sorted({r["country"] for r in allrows}, key=lambda k: COUNTRY_NAMES.get(k, k)),
         "fresh": fresh, "counts": counts, "history": updater.history(), "logs": [p.name for p in logs],
-        "since": _since(),
+        "since": _since(), "never": _never(),
         "actions": updater.ACTIONS, "plan": updater.plan()})
 
 
 def _since() -> str | None:
     with db.session() as con:
         return updater.all_checked_since(con)
+
+
+def _never() -> int:
+    with db.session() as con:
+        return updater.never_checked(con)
 
 
 def _update_form(action: str, scope: str, country: str, sources: str, stale_days: str, retry_failed: str) -> dict:

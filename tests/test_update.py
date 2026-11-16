@@ -148,3 +148,18 @@ def test_data_age_is_the_oldest_source_check(library):
     from rozvedka import app as app_module
     app_module._age_cache.clear()                                # the header caches the age for 30 s
     assert "data 20 d old" in TestClient(app_module.app).get("/").text   # the header's data age
+
+
+def test_a_source_never_checked_does_not_blank_the_data_age(library):
+    with db.session() as con:                                  # a source added since the last update: never crawled
+        con.execute("INSERT INTO sources(id,key,country,agency,type,access,active) VALUES(9,'US/New','US','New','think-tank','auto',1)")
+        con.execute("INSERT INTO pages(id,source_id,url,lang,verified,active) VALUES(9,9,'https://new/a','en',1,1)")
+        con.commit()
+        assert updater.all_checked_since(con) == con.execute("SELECT MAX(last_crawled) FROM pages WHERE source_id=1").fetchone()[0]
+        assert updater.never_checked(con) == 1                 # the new one – not Säpo (collected by hand)
+    from rozvedka import app as app_module
+    app_module._age_cache.clear()
+    client = TestClient(app_module.app)
+    home = client.get("/").text
+    assert "data 20 d old · 1 new" in home and "1 source never checked" in home
+    assert "1 never checked" in client.get("/update").text

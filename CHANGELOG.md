@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.104.1] – 2026-11-16
+
+### Fixed
+- The header said "never checked" as soon as one source fetched automatically had never been crawled (a source added since
+  the last update), though every other source had been checked. The data age now leaves such sources out and counts them
+  apart: "data 41 d old · 1 new", with the source count in the tooltip and on the Update page.
+- The home page's head line gave the newest check of any source ("last check … 13 days ago"), which made a library checked
+  41 days ago look fresh. It now gives both measures, labelled: every source checked since … and the newest check, plus any
+  source never checked – the same measure as the header.
+
 ## [0.104.0] – 2026-11-13
 
 ### Added
@@ -2216,7 +2226,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.1...HEAD
+[0.104.1]: https://github.com/iiogurt/Rozvedka/compare/v0.104.0...v0.104.1
 [0.104.0]: https://github.com/iiogurt/Rozvedka/compare/v0.103.0...v0.104.0
 [0.103.0]: https://github.com/iiogurt/Rozvedka/compare/v0.102.0...v0.103.0
 [0.102.0]: https://github.com/iiogurt/Rozvedka/compare/v0.101.1...v0.102.0
