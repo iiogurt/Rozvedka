@@ -108,6 +108,8 @@ def test_collect_pages_and_upload_form(library):
     with TestClient(app) as client:
         for tab in ("missing", "blocked", "manual", "inbox"):
             assert client.get(f"/collect?tab={tab}").status_code == 200, tab
+        # the oldest check is the age of the data, as in the header – not only the newest one
+        assert "Every source checked since" in client.get("/collect").text
         r = client.post("/collect/upload", data={"source_id": "1", "url": "https://www.sakerhetspolisen.se/lagesbild-2024.pdf"},
                         files={"file": ("l.pdf", io.BytesIO(PDF), "application/pdf")},
                         headers={"referer": "http://testserver/collect?tab=blocked"}, follow_redirects=False)
