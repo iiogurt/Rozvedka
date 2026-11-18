@@ -27,6 +27,13 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.104.4] – 2026-11-18
+
+### Fixed
+- **The To collect page gives the age of the data like the header and home page.** It said "Data last crawled" with the
+  newest check only, so one recently crawled source made the whole library look fresh. It now reads "every source checked
+  since <date> (N days ago) · newest check <date>", and names sources never checked.
+
 ## [0.104.3] – 2026-11-16
 
 ### Fixed
@@ -2261,7 +2268,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.3...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.4...HEAD
+[0.104.4]: https://github.com/iiogurt/Rozvedka/compare/v0.104.3...v0.104.4
 [0.104.3]: https://github.com/iiogurt/Rozvedka/compare/v0.104.2...v0.104.3
 [0.104.2]: https://github.com/iiogurt/Rozvedka/compare/v0.104.1...v0.104.2
 [0.104.1]: https://github.com/iiogurt/Rozvedka/compare/v0.104.0...v0.104.1
