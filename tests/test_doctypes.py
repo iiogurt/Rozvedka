@@ -38,6 +38,11 @@ from rozvedka import collect, db, doclist, doctypes, series, topics, trends
     ("Національна стратегія безпеки", "https://nationale-sicherheitsstrategie.de/uk.pdf", 12, None, "strategy"),
     ("国家安全保障戦略 JP", "https://nationale-sicherheitsstrategie.de/jp.pdf", 12, None, "strategy"),
     ("Informe de Evaluación del Plan Estratégico Institucional", "https://inei.gob.pe/p.pdf", 30, None, "report"),  # adjective
+    ("ISC Letter to the Prime Minister", "https://isc.independent.gov.uk/l.pdf", 2, None, "statement"),
+    ("final response to the Prime Minister", "https://ipco.org.uk/20190612-Letter-to-PM-.pdf", 3, None, "statement"),
+    ("Errata", "https://www.ipcc.ch/report/ar6/syr/IPCC_AR6_SYR_Errata.pdf", 4, None, "statement"),
+    ("2018 specific contracts - corrigendum", "https://eeas.europa.eu/c.pdf", 2, None, "statement"),
+    ("Themarapportage ongewenste inmenging, incl erratum 2022", "https://nctv.nl/t.pdf", 40, None, "report"),   # the report
     ("Cyber Threat Overview 2024", "https://cert.ssi.gouv.fr/c.pdf", 40, None, "assessment"),
     ("RELAZIONE 2014", "https://sicurezzanazionale.gov.it/r", 120, None, "annual"),
     ("Questionnaire security screening B", "https://nctv.nl/q.pdf", 1, None, "form"),

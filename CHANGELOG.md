@@ -27,6 +27,16 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.104.5] – 2026-11-18
+
+### Fixed
+- **Letters, errata, agendas and minutes are no longer counted as reports.** Titles or file names with "letter to / from",
+  "errata", "erratum" or "corrigendum" are statements (the ISC's letters to the Prime Minister, the IPCC's errata, EEAS
+  contract-list corrigenda) – but not a report "incl erratum". 21 more are typed by hand in `sources/doc_types.yaml`:
+  ENISA conference agendas, Europol board minutes, the Prague Proposals, NCA's response to an inspection (statements);
+  the Czech cyber-security act (law); the Danish oversight body's economic reports (finance); fact sheets, first-responder
+  notes and how-to pages (guides). Reports without a topic: 4.5 % → 4.1 %.
+
 ## [0.104.4] – 2026-11-18
 
 ### Fixed
@@ -2268,7 +2278,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.4...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.5...HEAD
+[0.104.5]: https://github.com/iiogurt/Rozvedka/compare/v0.104.4...v0.104.5
 [0.104.4]: https://github.com/iiogurt/Rozvedka/compare/v0.104.3...v0.104.4
 [0.104.3]: https://github.com/iiogurt/Rozvedka/compare/v0.104.2...v0.104.3
 [0.104.2]: https://github.com/iiogurt/Rozvedka/compare/v0.104.1...v0.104.2

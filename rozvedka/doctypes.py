@@ -47,7 +47,8 @@ RULES = [
                 r"audited annual report|poseur.\d+|poci.\d+|pt.20\d\d.fsi|ficha de projeto)\b"),
     ("statement", r"\b(press (release|notice|statement|conference)|statement|remarks|speech|"
                   r"tiskov\w* zprav\w*|pressemitteilung|communique|persbericht|comunicado|komunikat|"
-                  r"verklaring|motie|stemming|kamerbrief|toespraak|discours|written ministerial statement|wms)\b"),
+                  r"verklaring|motie|stemming|kamerbrief|toespraak|discours|written ministerial statement|wms|"
+                  r"letter (to|from)|(?<!incl )errat(a|um)|corrigend(a|um))\b"),   # not "report, incl erratum"
     # a format word outranks the subject: "Security strategy for society – Leaflet" is a leaflet, not the strategy
     ("guide", r"\b(leaflet|flyer|fact ?sheet|informatiebrochure|faktenblatt|faktablad|tietolehti\w*|esite|brochure|broschure|infographic|"
               r"poster)\b"),
