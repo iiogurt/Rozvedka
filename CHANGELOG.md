@@ -27,6 +27,19 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.104.6] – 2026-11-18
+
+### Fixed
+- **Arabic versions get topics.** 19 topics have Arabic terms (drugs, organised crime, terrorism, climate, floods, drought,
+  pandemics, NATO, Russia, Ukraine, crisis management and others). Arabic writes its prefixes onto the word (و, ب, لل, ال),
+  so Arabic terms are found inside words like Chinese, Japanese and Korean ones – "مخدرات" also finds "بالمخدرات"
+  and "والمخدرات". The Arabic editions of the IPCC climate report, UNODC's drug and crime reports and Germany's
+  national security strategy now carry their topics. One Arabic IPCC file whose PDF text comes out scrambled stays untagged.
+- **Malware analyses are tagged.** "Indicators of compromise", "YARA", "shellcode", "dropper", "web shell" and
+  "malware sample" are terms of *Software vulnerabilities, supply chain & incident response*: the NCSC's malware
+  analysis reports (Jolly Jellyfish, Line Dancer, Authentic Antics …), CERT Polska's APT29 analyses, Estonia's RIA case studies
+  and JPCERT/CC's incident reports now carry it (several had no topic at all: "malware" was their only term).
+
 ## [0.104.5] – 2026-11-18
 
 ### Fixed
@@ -2278,7 +2291,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.5...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.6...HEAD
+[0.104.6]: https://github.com/iiogurt/Rozvedka/compare/v0.104.5...v0.104.6
 [0.104.5]: https://github.com/iiogurt/Rozvedka/compare/v0.104.4...v0.104.5
 [0.104.4]: https://github.com/iiogurt/Rozvedka/compare/v0.104.3...v0.104.4
 [0.104.3]: https://github.com/iiogurt/Rozvedka/compare/v0.104.2...v0.104.3
