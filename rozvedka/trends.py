@@ -22,8 +22,8 @@ LOW_SAMPLE = 30      # years with fewer documents in scope are marked as unrelia
 MATRIX_MIN_DOCS = 5  # rows (agencies/countries) with fewer documents in the period are left out of the matrix
 
 # what every count and chart counts: listed reports – not hidden, not statements, finance tables or forms (doctypes)
-LISTED = (f"d.hidden=0 AND s.active=1 AND d.status NOT IN ('missing','duplicate','skipped') AND {doctypes.COUNTED} "
-          f"AND {works.PRIMARY}")    # … and one file per report: other languages and summaries are not counted again
+LISTED_FILES = f"d.hidden=0 AND s.active=1 AND d.status NOT IN ('missing','duplicate','skipped') AND {doctypes.COUNTED}"
+LISTED = f"{LISTED_FILES} AND {works.PRIMARY}"    # … and one file per report: other languages and summaries are not counted again
 OFFICIAL = "COALESCE(s.publisher, 'official') = 'official'"     # run by a state or states (not a think tank or company)
 THINK_TANK = "s.publisher = 'independent'"                      # independent publishers (think tanks), type think-tank
 COMMERCIAL = "s.publisher = 'commercial'"                       # companies selling analysis, type commercial

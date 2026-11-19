@@ -95,3 +95,14 @@ def test_links_that_connect_leave_out_rivalries(network):
     assert [_route(c) for c in paths.chains("Q1", "US:X")][0] == ["Q1", "US:X"]          # a rivalry is a link …
     assert paths.chains("Q1", "US:X", connecting=True) == []                            # … but no sign of a connection
     assert paths.chains("Q1", "Q2", connecting=True)                                    # other chains are unaffected
+
+
+def test_more_expensive_prefix_can_finish_within_six_steps():
+    edges = [('s', 'x'), ('x', 'y'), ('y', 'm'), ('s', 'a'), ('a', 'b'),
+             ('b', 'c'), ('c', 'm'), ('m', 'd'), ('d', 'e'), ('e', 't')]
+    adj = {}
+    for i, (a, b) in enumerate(edges):
+        adj.setdefault(a, {})[b] = adj.setdefault(b, {})[a] = [(i, 'us')]
+    graph = {'adj': adj, 'ents': {u: {'kind': 'tool' if u in ('x', 'y') else 'org'} for u in adj}}
+    _, path = paths._shortest(graph, 's', 't', {'us'}, False, set(), set())
+    assert path == ['s', 'x', 'y', 'm', 'd', 'e', 't']

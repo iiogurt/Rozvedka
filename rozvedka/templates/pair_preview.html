@@ -1,0 +1,6 @@
+<p><b>{{ anywhere }}</b> reports name both anywhere in the text. <b>{{ docs }}</b> name both in one passage.</p>
+{% for p in passages %}
+<blockquote class="snippet">{{ p.before }} <mark>{{ p.first }}</mark> {{ p.middle }}{% if p.second %} <mark>{{ p.second }}</mark>{% endif %} {{ p.after }}</blockquote>
+<p class="small"><a href="{{ p.open }}">{{ p.title or 'Open report' }}{% if p.page %}, p. {{ p.page }}{% endif %}</a>
+ · {{ p.agency }} · {{ p.year or 'undated' }}{% if p.ocr %} · OCR{% endif %}</p>
+{% endfor %}

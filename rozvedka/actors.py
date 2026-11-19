@@ -811,10 +811,13 @@ def _related(con, key: str, docs: list[dict], marks: str, doc_ids: list[int], li
 
 
 def pair_detail(a: str, b: str, year_from: int | None = None, year_to: int | None = None, coalition: str = "",
-                topic: str = "", type: str = "", passages: int = 40, page: int | str = 1) -> dict | None:
+                topic: str = "", type: str = "", passages: int = 40, page: int | str = 1,
+                indexed: bool = False, preview: bool = False) -> dict | None:
     """Reports in which actors a and b are named in the same passage, with those passages."""
     a, b = sorted((a, b))
     where, args, params = trends.scope("", coalition, type)
+    if indexed:
+        where += f" AND {trends.CLASSIFIED}"
     if year_from:
         where += " AND d.year >= ?"; args.append(year_from)
     if year_to:
@@ -831,7 +834,13 @@ def pair_detail(a: str, b: str, year_from: int | None = None, year_to: int | Non
                 FROM actor_pairs p JOIN documents d ON d.id=p.doc_id JOIN sources s ON s.id=d.source_id
                 JOIN doc_index i ON i.doc_id=d.id JOIN actors a1 ON a1.key=p.a JOIN actors a2 ON a2.key=p.b
                 WHERE p.a=? AND p.b=? AND {where} AND {PAIR_FOUNDED}
-                ORDER BY d.year DESC NULLS LAST, p.n DESC""", (a, b, *args))]
+                ORDER BY d.year DESC NULLS LAST, p.n DESC, d.id""", (a, b, *args))]
+        anywhere = None
+        if preview:
+            anywhere = con.execute(f"""SELECT count(*) FROM documents d JOIN sources s ON s.id=d.source_id
+                JOIN doc_actors da ON da.doc_id=d.id JOIN doc_actors db ON db.doc_id=d.id
+                JOIN actors a1 ON a1.key=da.actor_key JOIN actors a2 ON a2.key=db.actor_key
+                WHERE da.actor_key=? AND db.actor_key=? AND {where} AND {PAIR_FOUNDED}""", (a, b, *args)).fetchone()[0]
         shown = []
         offset = paging.page_offset(len(docs), page, passages)
         for d in docs[offset:offset + passages]:
@@ -854,7 +863,7 @@ def pair_detail(a: str, b: str, year_from: int | None = None, year_to: int | Non
         known = [{"a_says": r["a_says"], "b_says": r["b_says"], "from_a": r["a"] == a, "source": json.loads(r["source"]),
                   "start": r["start"], "end": r["until"], "role": r["role"], "note": r["note"]}
                  for r in con.execute("SELECT * FROM actor_links WHERE (a=? AND b=?) OR (a=? AND b=?)", (a, b, b, a))]
-    return {"a": actors_[a], "b": actors_[b], "docs": len(docs), "passages": shown, "window": WINDOW, "known": known,
+    return {"a": actors_[a], "b": actors_[b], "anywhere": anywhere, "docs": len(docs), "passages": shown, "window": WINDOW, "known": known,
             "filters": {k: v for k, v in {"year_from": year_from, "year_to": year_to, "coalition": coalition,
                                           "topic": topic, "type": type}.items() if v}}
 

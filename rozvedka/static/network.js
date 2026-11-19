@@ -12,15 +12,22 @@
   const flag = (c) => `/static/flags/${String(c || "other").toLowerCase()}.svg`;
 
   // ── state in the URL ──
-  const url = new URL(window.location);
-  for (const el of form.elements) { const v = url.searchParams.get(el.name); if (v != null) el.value = v; }
-  const kindsInUrl = url.searchParams.getAll("kind");
-  if (kindsInUrl.length) kindBox.querySelectorAll("input").forEach((i) => { i.checked = kindsInUrl.includes(i.value); });
+  function restoreFilters() {
+    const params = new URLSearchParams(location.search);
+    form.reset();
+    for (const el of form.elements) if (params.has(el.name)) el.value = params.get(el.name);
+    const kinds = params.getAll("kind");
+    for (const input of kindBox.querySelectorAll("input")) {
+      if (input.value === "country") input.checked = params.get("countries_too") === "1";
+      else input.checked = kinds.length ? kinds.includes(input.value) : input.defaultChecked;
+    }
+  }
   function query() {
     const q = new URLSearchParams();
     for (const el of form.elements) if (el.name && el.value) q.set(el.name, el.value);
     const kinds = [...kindBox.querySelectorAll("input:checked")].map((i) => i.value);
     kinds.filter((k) => k !== "country").forEach((k) => q.append("kind", k));
+    if (!q.has("kind")) q.append("kind", "none");
     if (kinds.includes("country")) q.set("countries_too", "1");
     return q;
   }
@@ -74,12 +81,15 @@
     const keys = data.actors.map((a) => a.key);
     const idx = Object.fromEntries(keys.map((k, i) => [k, i]));
     const strong = [], weak = [];
+    const selection = new URLSearchParams(location.search);
     for (const c of data.cells) {
       const i = idx[c.a], j = idx[c.b];
       if (i == null || j == null) continue;
       const target = c.docs >= data.min_pair ? strong : weak;
       const v = c.docs >= data.min_pair ? c.npmi : 0;
-      target.push({ value: [i, j, v], c }, { value: [j, i, v], c });
+      const selected = selection.get("actor") === c.a && selection.get("partner") === c.b;
+      const itemStyle = selected ? {borderColor: ink, borderWidth: 3} : undefined;
+      target.push({ value: [i, j, v], c, itemStyle }, { value: [j, i, v], c, itemStyle });
     }
     const starts = new Set(data.actors.map((a, i) => (i === 0 || a.cluster !== data.actors[i - 1].cluster ? i : -1)));
     const n = keys.length, cell = n > 70 ? 11 : 13, left = 210, top = 180;
@@ -118,9 +128,10 @@
   // ── details panel ──
   function egoPanel(key) {
     const a = byKey[key];
-    const mine = data.cells.filter((c) => c.a === key || c.b === key)
+    const candidates = new Map([...data.cells, ...data.ranked].map(c => [c.link, c]));
+    const mine = [...candidates.values()].filter((c) => c.a === key || c.b === key)
       .map((c) => ({ ...c, other: c.a === key ? c.b : c.a }));
-    const row = (c) => `<li><a href="#" data-key="${esc(c.other)}" class="cl-l">${esc(byKey[c.other].label)}</a>
+    const row = (c) => `<li><a href="#" data-a="${esc(c.a)}" data-b="${esc(c.b)}" class="cl-l">${esc(byKey[c.other].label)}</a>
       ${bar(c.npmi)}<a href="${esc(c.link)}" title="passages naming both">${c.docs}</a></li>`;
     const strongest = mine.filter((c) => c.docs >= data.min_pair).sort((x, y) => y.npmi - x.npmi).slice(0, 12);
     const frequent = [...mine].sort((x, y) => y.docs - x.docs).slice(0, 12);
@@ -138,20 +149,99 @@
       <table class="facts-t small"><tr><th>Named in one passage</th><td><a href="${esc(c.link)}"><b>${c.docs}</b> reports</a></td></tr>
       <tr><th>${esc(a.label)}</th><td><a href="${esc(a.docs_link)}">${a.docs} reports</a></td></tr>
       <tr><th>${esc(b.label)}</th><td><a href="${esc(b.docs_link)}">${b.docs} reports</a></td></tr>
-      <tr><th>Expected by chance</th><td>${expected.toFixed(1)} reports (of ${data.n_docs})</td></tr>
+      <tr><th>Expected reports mentioning both anywhere</th><td>${expected.toFixed(1)} reports (of ${data.n_docs}, assuming independence)</td></tr>
       <tr><th>Association</th><td>${c.npmi.toFixed(2)}${c.docs < data.min_pair ? " (below the tie threshold)" : ""}</td></tr>
       ${c.known ? `<tr><th>Known connection</th><td>↔ ${esc(c.known)} <span class="muted">(Wikipedia/Wikidata – sources on the passages page)</span></td></tr>` : ""}</table>
+      <div id="evidence" aria-live="polite">Loading passage…</div>
       <p class="small"><a href="${esc(c.link)}">Read the passages →</a></p>
       <p class="small"><a href="#" data-key="${esc(c.a)}">${esc(a.label)}'s ties</a> · <a href="#" data-key="${esc(c.b)}">${esc(b.label)}'s ties</a></p>`;
   }
-  $("#panel").addEventListener("click", (e) => {
-    const k = e.target.closest("[data-key]");
-    if (k) { e.preventDefault(); egoPanel(k.dataset.key); }
+  // All navigation, including Back, uses the same URL state.
+  function navigate(changes) {
+    const url = new URL(location.href);
+    for (const [key, value] of Object.entries(changes)) {
+      if (value) url.searchParams.set(key, value);
+      else url.searchParams.delete(key);
+    }
+    if (url.href !== location.href) history.pushState(null, "", url);
+    renderSelection();
+  }
+
+  function pick(a, b) {
+    const fromList = $("#pair-rows").contains(document.activeElement);
+    navigate({actor: a, partner: b});
+    if (matchMedia("(max-width: 1000px)").matches) {
+      $("#panel").focus({preventScroll: true});
+      $("#panel").scrollIntoView({block: "start"});
+    } else if (fromList) {
+      $('#pair-rows button[aria-pressed="true"]')?.focus({preventScroll: true});
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const pair = e.target.closest("[data-a][data-b]");
+    const actor = e.target.closest("#panel [data-key]");
+    if (pair) { e.preventDefault(); pick(pair.dataset.a, pair.dataset.b); }
+    else if (actor) { e.preventDefault(); pick(actor.dataset.key); }
   });
   chart.on("click", (p) => {
-    if (p.componentType === "xAxis" || p.componentType === "yAxis") egoPanel(p.value);
-    else if (p.data && p.data.c) pairPanel(p.data.c);
+    if (p.componentType === "xAxis" || p.componentType === "yAxis") pick(p.value);
+    else if (p.data?.c) pick(p.data.c.a, p.data.c.b);
   });
+
+  const pageSize = 12;
+  let pageIndex = 0, loadedQuery, loading, evidence;
+  function drawPairs(params) {
+    const sort = params.get("order");
+    const rows = [...data.ranked];
+    if (sort === "docs" || sort === "publishers") rows.sort((x, y) => y[sort] - x[sort]);
+    $("#pair-order").value = ["docs", "publishers"].includes(sort) ? sort : "association";
+    pageIndex = Math.max(0, Math.min(Math.ceil(rows.length / pageSize) - 1, (Number.parseInt(params.get("p"), 10) || 1) - 1));
+    const start = pageIndex * pageSize;
+    $("#pair-rows").innerHTML = rows.slice(start, start + pageSize).map(c => {
+      const years = [c.first_year, c.last_year].filter((v, i, all) => v && all.indexOf(v) === i).join("–");
+      const current = params.get("actor") === c.a && params.get("partner") === c.b;
+      return `<tr><th><button type="button" aria-pressed="${current}" data-a="${esc(c.a)}" data-b="${esc(c.b)}">${esc(byKey[c.a].label)} · ${esc(byKey[c.b].label)}</button></th>
+        <td><a href="${esc(c.link)}">${c.docs}</a></td><td>${c.publishers}</td><td>${years || "Undated"}</td><td>${c.npmi.toFixed(2)}</td></tr>`;
+    }).join("");
+    $("#pair-range").textContent = rows.length ? `${start + 1}–${Math.min(start + pageSize, rows.length)} of ${rows.length} pairs` : "No pairs meet this threshold.";
+    $("#prev-pairs").disabled = !pageIndex;
+    $("#next-pairs").disabled = start + pageSize >= rows.length;
+  }
+
+  function renderSelection() {
+    if (!data) return;
+    evidence?.abort();
+    const params = new URLSearchParams(location.search);
+    const matrix = params.get("view") === "matrix";
+    $("#presentation").value = matrix ? "matrix" : "pairs";
+    $("#matrix-view").hidden = !matrix;
+    $("#ranked").hidden = matrix;
+    $("#permalink").href = location.href;
+    drawPairs(params);
+    if (matrix) drawMatrix();
+    const a = params.get("actor"), b = params.get("partner");
+    const pair = b && (data.cells.find(matches) || data.ranked.find(matches));
+    function matches(c) { return (c.a === a && c.b === b) || (c.a === b && c.b === a); }
+    if (pair) {
+      pairPanel(pair);
+      const target = $("#evidence");
+      const source = new URL(pair.link, location.href);
+      source.searchParams.set("preview", "1");
+      evidence = new AbortController();
+      fetch(source, {signal: evidence.signal}).then(r => {
+        if (!r.ok) throw Error();
+        return r.text();
+      }).then(html => { target.innerHTML = html; }).catch(e => {
+        if (e.name !== "AbortError") target.textContent = "Passage preview unavailable. Open the passages below.";
+      });
+    } else if (a && !b && byKey[a]) egoPanel(a);
+    else $("#panel").textContent = a ? "This selection is outside the current filters." : "Select a pair or a matrix label to inspect the evidence.";
+  }
+
+  $("#presentation").onchange = e => navigate({view: e.target.value});
+  $("#pair-order").onchange = e => navigate({order: e.target.value, p: null});
+  $("#prev-pairs").onclick = () => navigate({p: pageIndex});
+  $("#next-pairs").onclick = () => navigate({p: pageIndex + 2});
 
   function drawProvenance() {
     const p = data.provenance;
@@ -164,17 +254,47 @@
   }
 
   async function load() {
-    const q = query();
-    const page = new URL(window.location); page.search = q.toString();
-    history.replaceState(null, "", page); $("#permalink").href = page.toString();
+    const q = query().toString();
+    loading?.abort();
+    evidence?.abort();
+    if (loadedQuery === q && data) {
+      document.body.classList.remove("loading");
+      renderSelection();
+      return;
+    }
+    const controller = new AbortController();
+    loading = controller;
+    data = null;
+    for (const id of ["clusters", "prov", "pair-rows", "panel", "pair-range"]) $("#" + id).replaceChildren();
+    chart.clear();
+    $("#summary").textContent = "Loading pairs…";
     document.body.classList.add("loading");
-    data = await (await fetch(`/api/network?${q}`)).json();
-    document.body.classList.remove("loading");
-    byKey = Object.fromEntries(data.actors.map((a) => [a.key, a]));
-    drawClusters(); drawMatrix(); drawProvenance();
-    if (data.actors.length) egoPanel(data.actors[0].key);
+    try {
+      const response = await fetch(`/api/network?${q}`, {signal: controller.signal});
+      if (!response.ok) throw Error();
+      const result = await response.json();
+      if (controller.signal.aborted) return;
+      data = result;
+      loadedQuery = q;
+      byKey = Object.fromEntries([...data.actors, ...data.other_actors].map(a => [a.key, a]));
+      drawClusters(); drawProvenance(); renderSelection();
+    } catch (error) {
+      if (!controller.signal.aborted) $("#summary").textContent = "Could not load this selection. Reload to try again.";
+    } finally {
+      if (!controller.signal.aborted) document.body.classList.remove("loading");
+    }
   }
-  form.addEventListener("change", load);
-  kindBox.addEventListener("change", load);
+  function changeScope() {
+    const page = new URL(location.href), previous = page.searchParams;
+    const q = query();
+    for (const key of ["actor", "partner", "view", "order"]) if (previous.has(key)) q.set(key, previous.get(key));
+    page.search = q.toString();
+    history.pushState(null, "", page);
+    load();
+  }
+  form.addEventListener("change", changeScope);
+  kindBox.addEventListener("change", changeScope);
+  window.addEventListener("popstate", () => { restoreFilters(); load(); });
+  restoreFilters();
   load();
 })();

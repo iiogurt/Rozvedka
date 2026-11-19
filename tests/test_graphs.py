@@ -77,7 +77,7 @@ def test_associations_cells_clusters_and_links(library):
     d = graphs.associations(min_pair=1, threshold=0.05)
     assert {a["key"]: a["docs"] for a in d["actors"]} == {"Q5": 2, "Q9": 3}   # countries left out by default
     cell = {(c["a"], c["b"]): c for c in d["cells"]}[("Q5", "Q9")]
-    assert cell["docs"] == 1 and cell["link"] == "/actors/Q5/with/Q9"     # doc 3: too far apart to count
+    assert cell["docs"] == 1 and cell["link"] == "/actors/Q5/with/Q9?indexed=1"     # doc 3: too far apart to count
     assert len(d["clusters"]) == 1
     cl = d["clusters"][0]
     assert cl["docs"] == 1 and {m["key"] for m in cl["members"]} == {"Q5", "Q9"}
@@ -128,3 +128,19 @@ def test_topic_tree_matches_main_topic_rule(library):
                     n = con.execute(f"""SELECT COUNT(DISTINCT d.id) FROM documents d JOIN doc_actors da ON da.doc_id=d.id
                                         WHERE da.actor_key=? AND {main_sql}""", (a["key"], *main_args, tp["key"])).fetchone()[0]
                     assert a["value"] == n, (tp["key"], a["key"])
+
+
+def test_ranked_pair_outside_matrix_and_evidence(library):
+    result = graphs.associations(max_actors=1, min_pair=1, year_from=2024)
+    assert result['cells'] == []
+    pair, = result['ranked']
+    assert (pair['docs'], pair['publishers'], pair['first_year'], pair['last_year']) == (1, 1, 2024, 2024)
+    detail = actors.pair_detail(pair['a'], pair['b'], year_from=2024, indexed=True, preview=True)
+    assert detail['anywhere'] == 2 and detail['docs'] == 1
+    assert detail['passages'][0]['open'] == '/doc/1#page=1'
+    assert not graphs.associations(min_pair=2)['ranked']
+    from fastapi.testclient import TestClient
+    from rozvedka.app import app
+    preview = TestClient(app).get(pair['link'] + '&preview=1')
+    assert preview.status_code == 200
+    assert 'href="/doc/1#page=1"' in preview.text and '<mark>Sandworm</mark>' in preview.text

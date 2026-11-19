@@ -102,3 +102,21 @@ def test_separate_by_hand(library):
     (library / "works.yaml").write_text(yaml.safe_dump({"separate": ["https://europol.europa.eu/tesat-2025-de.pdf"]}))
     works.group()
     assert _work(6) == (None, None) and _work(7)[0] == 5
+
+
+def test_search_selects_matching_edition_and_keeps_text_rank(library):
+    works.group()
+    with db.session() as con:
+        for doc_id, body, score in [(1, 'local edition', 1), (2, 'other edition', 3), (8, 'Výroční zpráva BIS 2023', 50)]:
+            con.execute("INSERT INTO doc_text(rowid,title,body) VALUES(?,'',?)", (doc_id, body))
+            con.execute("INSERT INTO doc_topics(doc_id,topic,score) VALUES(?,'russia',?)", (doc_id, score))
+    f = {'q': 'Výroční zpráva BIS 2023', 'topic': ['russia']}
+    assert doclist.count(**f) == 2
+    assert doclist.count(q='BIS', year=2023) == 1
+    assert doclist.count(q='BIS', year=2023, all_files=1) == 2
+    from rozvedka.app import app
+    page = TestClient(app).get('/documents', params=f)
+    assert page.status_code == 200
+    docs = page.context['docs']
+    assert [(d['id'], d['match_reason']) for d in docs] == [(1, 'Exact title'), (8, 'Indexed text')]
+    assert docs[0]['lang'] == 'cs'

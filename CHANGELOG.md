@@ -27,6 +27,12 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.105.0] – 2026-11-19
+
+- Report searches find matching language editions and summaries, group them by work and explain the match. Exact titles rank first, including in topic-filtered searches.
+- Named together ranks pairs across the filtered library and shows publisher counts, years and a cited passage. Links restore the selected pair or actor.
+- Find a connection retains shorter routes that can still reach the destination within six steps.
+
 ## [0.104.6] – 2026-11-18
 
 ### Fixed
@@ -2291,7 +2297,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.104.6...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.105.0...HEAD
+[0.105.0]: https://github.com/iiogurt/Rozvedka/compare/v0.104.6...v0.105.0
 [0.104.6]: https://github.com/iiogurt/Rozvedka/compare/v0.104.5...v0.104.6
 [0.104.5]: https://github.com/iiogurt/Rozvedka/compare/v0.104.4...v0.104.5
 [0.104.4]: https://github.com/iiogurt/Rozvedka/compare/v0.104.3...v0.104.4

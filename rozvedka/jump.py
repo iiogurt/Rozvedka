@@ -66,10 +66,15 @@ def find(q: str, limit: int = LIMIT) -> dict:
                    SELECT a.key, a.label, a.kind, m.alias, (SELECT COUNT(*) FROM doc_actors da WHERE da.actor_key=a.key) n
                    FROM m JOIN actors a ON a.key=m.key""", (like, like))]
         found["report"] = [
-            {"label": r["title"], "weight": r["year"] or 0, "sub": f"{r['agency']} · {r['country']} · {r['year'] or 'undated'}",
+            {"label": r["title"], "work": r["work_id"] or r["id"], "weight": r["year"] or 0, "sub": f"{r['agency']} · {r['country']} · {r['year'] or 'undated'}",
              "url": f"/report/{r['id']}", "country": r["country"]}
-            for r in con.execute(f"""SELECT d.id, d.title, d.year, s.agency, s.country FROM documents d JOIN sources s ON s.id=d.source_id
-                                     WHERE {trends.LISTED} AND d.title LIKE ? ESCAPE '\\' ORDER BY d.year DESC LIMIT 200""", (like,))]
+            for r in con.execute(f"""SELECT d.id, d.work_id, d.title, d.year, s.agency, s.country FROM documents d JOIN sources s ON s.id=d.source_id
+                                     WHERE {trends.LISTED_FILES} AND d.title LIKE ? ESCAPE '\\' ORDER BY d.year DESC""", (like,))]
+        matched = found["report"]
+        by_work = {}
+        for item in _best(fq, matched, len(matched)):
+            by_work.setdefault(item["work"], item)
+        found["report"] = list(by_work.values())
         try:
             rows = con.execute("""SELECT e.id, e.label, e.kind FROM entities e WHERE e.actor IS NULL AND e.label LIKE ? ESCAPE '\\'
                                   ORDER BY length(e.label) LIMIT 60""", (like,)).fetchall()

@@ -26,20 +26,26 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
                  indexed=indexed, actor=actor, main=main, cluster=cluster, series_id=series_id,
                  added_from=added_from, added_to=added_to, undated=undated, exact=exact, cve=cve, cve_near=cve_near, cite=cite, technique=technique, event=event)
     flt = doclist.build(**fargs, doc_type=doc_type, all_types=all_types, all_files=all_files)
-    every_type = doclist.build(**fargs, all_types=1)       # the same filters over every type: counts per type
+    every_type = doclist.build(**fargs, all_types=1, all_files=all_files)       # the same filters over every type: counts per type
     where, args, chosen, fts = flt["where"], flt["args"], flt["chosen"], flt["fts"]
     base_where, base_args = flt["base_where"], flt["base_args"]
     editions, series_row, actor_row = flt["editions"], flt["series_row"], flt["actor_row"]
     sql_where = " AND ".join(where)
     sort = sort or ("relevance" if chosen or q.strip() else "year")
-    if sort == "relevance" and chosen:
-        order = f"""(SELECT SUM(score) FROM doc_topics WHERE doc_id=d.id AND topic IN ({','.join('?' * len(chosen))})) DESC,
-                    d.year DESC NULLS LAST"""
-        order_args = list(chosen)
-    elif sort == "relevance" and fts:
+    rank_join, rank_args = "", []
+    if sort == "relevance" and q.strip() and not indexed:
+        rank_join = "JOIN json_each(?) search_order ON search_order.value=d.id"
+        rank_args = [flt["ranked_ids"]]
+        order = "search_order.key, d.id"
+        order_args = []
+    elif sort == "relevance" and indexed and fts:
         # relevance of every match computed once (temp.fts_rank, filled below) – a MATCH per row was seconds per page
         order = "(SELECT r FROM temp.fts_rank WHERE doc_id=d.id) ASC NULLS LAST, d.year DESC NULLS LAST"
         order_args = []
+    elif sort == "relevance" and chosen:
+        order = f"""(SELECT SUM(score) FROM doc_topics WHERE doc_id=d.id AND topic IN ({','.join('?' * len(chosen))})) DESC,
+                    d.year DESC NULLS LAST"""
+        order_args = list(chosen)
     elif sort == "added":
         order, order_args = "d.discovered_at DESC, d.id DESC", []
     else:
@@ -54,7 +60,7 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
                   per_page=size if size != paging.PER_PAGE_CHOICES[2] else "")
     with db.session() as con:
         topics.init()
-        if sort == "relevance" and fts and not chosen:
+        if sort == "relevance" and indexed and fts:
             con.execute("CREATE TEMP TABLE IF NOT EXISTS fts_rank (doc_id INTEGER PRIMARY KEY, r REAL)")
             con.execute("DELETE FROM temp.fts_rank")
             con.execute("INSERT INTO temp.fts_rank SELECT rowid, bm25(doc_text) FROM doc_text WHERE doc_text MATCH ?", (fts,))
@@ -76,9 +82,9 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
             f"""SELECT d.*, s.country, s.agency, s.type, s.name_en, s.logo_path,
                        u.added_at AS hand_added, u.official AS hand_official, ix.ocr AS ocr
                 FROM documents d JOIN sources s ON s.id=d.source_id LEFT JOIN uploads u ON u.doc_id=d.id
-                LEFT JOIN doc_index ix ON ix.doc_id=d.id
+                LEFT JOIN doc_index ix ON ix.doc_id=d.id {rank_join}
                 WHERE {sql_where} ORDER BY {order} LIMIT ? OFFSET ?""",
-            (*args, *order_args, size, pg["offset"]))]
+            (*rank_args, *args, *order_args, size, pg["offset"]))]
         ids = [d["id"] for d in docs]
         variants: dict[int, list] = {}          # the other files of each listed report
         works_ids = [d["work_id"] for d in docs if d.get("work_id")]
@@ -87,6 +93,7 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
                                      ORDER BY lang, id""", works_ids):
                 variants.setdefault(r["work_id"], []).append(dict(r))
         for d in docs:
+            d["match_reason"] = flt["hits"].get(d["id"])
             d["variants"] = [v for v in variants.get(d.get("work_id"), []) if v["id"] != d["id"]]
         by_doc: dict[int, list] = {}
         if ids:
@@ -108,10 +115,10 @@ def documents(request: Request, country: str = "", type: str = "", lang: str = "
         for d in docs:   # subject topics first (by score), meta topics such as "agency activity" last
             d["topics"] = sorted(by_doc.get(d["id"], []), key=lambda t: bool(tax.get(t, {}).get("meta")))
         # the reports first, then their topics: filtering each topic row by the full filter took ~0.5 s on the Pi
+        topic_unit = "coalesce(d.work_id,d.id)" if flt["group_search"] else "d.id"
         topic_counts = dict(con.execute(
-            f"""SELECT topic, COUNT(DISTINCT doc_id) FROM doc_topics WHERE doc_id IN
-                (SELECT d.id FROM documents d JOIN sources s ON s.id=d.source_id WHERE {base_where}) GROUP BY topic""",
-            base_args).fetchall())
+            f"""SELECT t.topic, COUNT(DISTINCT {topic_unit}) FROM documents d JOIN sources s ON s.id=d.source_id
+                JOIN doc_topics t ON t.doc_id=d.id WHERE {base_where} GROUP BY t.topic""", base_args))
         facets = {
             "country": con.execute("SELECT DISTINCT country FROM sources WHERE active=1 ORDER BY country").fetchall(),
             "type": con.execute("SELECT DISTINCT type FROM sources WHERE active=1 ORDER BY type").fetchall(),

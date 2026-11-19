@@ -63,12 +63,14 @@ def actor_names_page(request: Request, status: str = "used", page: str = "1", pe
 
 @router.get("/actors/{a}/with/{b}")
 def actor_pair_page(request: Request, a: str, b: str, year_from: int = 0, year_to: int = 0, coalition: str = "",
-                    topic: str = "", type: str = "", page: str = "1", per_page: str = ""):
+                    topic: str = "", type: str = "", page: str = "1", per_page: str = "", indexed: int = 0, preview: int = 0):
     size = paging.per_page_of(per_page, 25)
-    d = actors.pair_detail(a, b, year_from or None, year_to or None, coalition, topic, type, size, page)
+    d = actors.pair_detail(a, b, year_from or None, year_to or None, coalition, topic, type, 1 if preview else size, page, bool(indexed), bool(preview))
     if d is None:
         raise HTTPException(404, "unknown actor")
-    filters = {"year_from": year_from or "", "year_to": year_to or "", "coalition": coalition, "topic": topic,
+    if preview:
+        return tpl.TemplateResponse(request, "pair_preview.html", d)
+    filters = {"indexed": indexed or "", "year_from": year_from or "", "year_to": year_to or "", "coalition": coalition, "topic": topic,
                "type": type, "per_page": size if size != 25 else ""}
     pg = paging.paginate(d["docs"], page, size, f"/actors/{a}/with/{b}", filters, default=25)
     return tpl.TemplateResponse(request, "pair.html", {**d, "pg": pg, "TOPICS": topics.taxonomy()["topics"]})
