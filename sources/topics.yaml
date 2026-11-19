@@ -132,6 +132,7 @@ categories:
           ja: ["テロ", "テロリズム", "爆弾"]
           uk: ["тероризм*", "терорист*", "теракт*", "терористичн*"]
           ko: ["테러"]
+          ar: ["إرهاب", "داعش"]
 
       radicalisation:
         name: "Radicalisation & online extremism"
@@ -252,6 +253,7 @@ categories:
           ko: ["러시아"]
           zh: ["俄罗斯", "俄羅斯"]
           uk: ["росія", "росії", "росією", "російськ*", "кремл*", "путін*"]
+          ar: ["روسيا", "الروسي", "الكرملين"]
 
       china:
         name: "China – intelligence, influence & technology"
@@ -280,6 +282,7 @@ categories:
           ko: ["중국"]
           zh: ["中共", "中國", "解放軍", "統戰"]
           uk: ["китай", "китаю", "китайськ*"]
+          ar: ["الصين", "بكين"]
 
       iran:
         name: "Iran"
@@ -427,6 +430,7 @@ categories:
           zh: ["假訊息", "虛假信息", "認知作戰"]
           uk: ["дезінформац*", "пропаганд*", "фейк*"]
           ko: ["허위정보", "가짜뉴스"]
+          ar: ["تضليل", "مضللة"]
 
       election-interference:
         name: "Election interference & democratic processes"
@@ -619,6 +623,7 @@ categories:
           ja: ["ウクライナ"]
           ko: ["우크라이나"]
           uk: ["збройн* агресі*", "повномасштабн* вторгненн*", "воєнн* стан*", "окупаці*", "окупован*", "крим", "криму", "кримськ*", "донбас*"]
+          ar: ["أوكرانيا", "الغزو الروسي", "العدوان الروسي"]
 
       nato-deterrence:
         name: "NATO, collective defence & deterrence"
@@ -645,6 +650,7 @@ categories:
           hu: ["nato", "elrettentés*"]
           ja: ["ＮＡＴＯ", "NATO", "抑止"]
           uk: ["нато"]
+          ar: ["الناتو", "الردع", "حلف شمال"]
 
       military-threat:
         name: "Military threat, armed forces & capabilities"
@@ -673,6 +679,7 @@ categories:
           ko: ["군사", "미사일"]
           zh: ["軍事", "解放軍", "飛彈"]
           uk: ["збройн* сил*", "військов*", "ракет*"]
+          ar: ["عسكري", "القوات المسلحة"]
 
       nuclear:
         name: "Nuclear weapons & nuclear threats"
@@ -930,7 +937,7 @@ categories:
         name: "Software vulnerabilities, supply chain & incident response"
         # IT-specific terms only: "vulnerability" alone also means social or flood vulnerability
         terms:
-          en: ["zero-day", "zero day", "0-day", "cve", "exploited vulnerabilit*", "software vulnerabilit*", "security vulnerabilit*", "critical vulnerabilit*", "unpatched", "patching", "security patch*", "security update*", "exploit kit*", "proof-of-concept exploit", "supply chain attack*", "software supply chain", "incident response", "incident handling", "csirt", "cert-eu", "security advisory", "security advisories", "edge device*", "vpn appliance*", "remote code execution"]
+          en: ["zero-day", "zero day", "0-day", "cve", "exploited vulnerabilit*", "software vulnerabilit*", "security vulnerabilit*", "critical vulnerabilit*", "unpatched", "patching", "security patch*", "security update*", "exploit kit*", "proof-of-concept exploit", "supply chain attack*", "software supply chain", "incident response", "incident handling", "csirt", "cert-eu", "security advisory", "security advisories", "edge device*", "vpn appliance*", "remote code execution", "indicators of compromise", "yara", "shellcode", "dropper*", "webshell*", "web shell*", "malware sample*"]
           de: ["sicherheitslücke*", "schwachstellen in software", "zero-day", "sicherheitsupdate*", "patch-management", "softwarelieferkette", "vorfallsbearbeitung", "cert-bund"]
           fr: ["faille* de sécurité", "vulnérabilité* critique*", "correctif* de sécurité", "mise* à jour de sécurité", "réponse à incident*", "cert-fr"]
           nl: ["kwetsbaarheden in software", "beveiligingsupdate*", "beveiligingslek*"]
@@ -1048,6 +1055,7 @@ categories:
           sl: ["informacijsk* varnost*", "kriptograf*", "šifriranj*"]
           hu: ["információbiztonság*", "titkosítás*"]
           uk: ["кіберзахист*", "інформаційн* безпек*"]
+          ar: ["سيبراني", "أمن المعلومات"]
 
   # ─────────────────────────────── CRIME ───────────────────────────────
   crime:
@@ -1087,6 +1095,7 @@ categories:
           tr: ["organize suç*"]
           uk: ["організован* злочин*", "організован* груп*", "злочинн* організаці*", "злочинн* угрупован*"]
           ko: ["조직폭력", "조직범죄", "폭력조직"]
+          ar: ["الجريمة المنظمة", "إجرامية", "عصابات"]
 
       drug-trafficking:
         name: "Drug trafficking"
@@ -1120,6 +1129,7 @@ categories:
           is: ["fíkniefn*"]
           uk: ["наркотик*", "наркотичн*", "наркозлочин*", "кокаїн*", "психотропн*"]
           ko: ["마약"]
+          ar: ["مخدرات", "كوكايين", "هيروين", "أفيون", "القنب", "المؤثرات العقلية"]
 
       human-trafficking-smuggling:
         name: "Human trafficking & migrant smuggling"
@@ -1187,6 +1197,7 @@ categories:
           is: ["peningaþvætti*"]
           uk: ["відмиванн* коштів", "легалізаці* доходів", "корупці*", "хабарництв*"]
           ko: ["자금세탁", "부패"]
+          ar: ["الفساد", "رشوة"]
 
       firearms-explosives:
         name: "Firearms & explosives trafficking"
@@ -1291,6 +1302,7 @@ categories:
           ja: ["不法入国", "密入国"]
           uk: ["нелегальн* мігрант*", "незаконн* міграці*", "незаконн* перетин*", "державн* кордон*"]
           ko: ["불법체류", "밀입국"]
+          ar: ["الهجرة غير النظامية", "تهريب المهاجرين"]
 
       instrumentalised-migration:
         name: "Instrumentalised migration"
@@ -1343,6 +1355,7 @@ categories:
           is: ["loftslagsbreyting*"]
           uk: ["змін* клімату", "глобальн* потепління", "парников* газ*"]
           ko: ["기후변화"]
+          ar: ["مناخ", "احترار", "الدفيئة", "انبعاثات"]
 
       floods-storms:
         name: "Floods, storms & extreme weather"
@@ -1378,6 +1391,7 @@ categories:
           is: ["óveður*", "aurskrið*"]
           uk: ["повен*", "паводк*", "паводок", "підтопленн*", "ураган*", "шторм*"]
           ko: ["홍수", "태풍", "집중호우"]
+          ar: ["فيضان", "إعصار", "أعاصير", "عواصف"]
 
       wildfires-heat-drought:
         name: "Wildfires, heat & drought"
@@ -1410,6 +1424,7 @@ categories:
           tr: ["orman yangın*", "kuraklık*"]
           is: ["gróðureld*", "þurrkar"]
           uk: ["лісов* пожеж*", "природн* пожеж*", "посух*"]
+          ar: ["جفاف", "موجات الحر", "حرائق"]
 
       earthquakes-volcanoes:
         name: "Earthquakes, tsunamis & volcanoes"
@@ -1475,6 +1490,7 @@ categories:
           is: ["heimsfaraldur*", "farsótt*"]
           uk: ["пандемі*", "епідемі*", "коронавірус*", "інфекційн* захворюван*"]
           ko: ["감염병", "코로나19"]
+          ar: ["جائحة", "كوفيد", "فيروس كورونا", "وباء", "أوبئة"]
 
       cbrn-nuclear-accident:
         name: "CBRN, nuclear & industrial accidents"
@@ -1552,6 +1568,7 @@ categories:
           is: ["almannavarn*"]
           uk: ["цивільн* захист*", "цивільн* оборон*"]
           ko: ["민방위"]
+          ar: ["الدفاع المدني", "الحماية المدنية"]
 
       public-preparedness:
         name: "Public & household preparedness"
@@ -1644,6 +1661,7 @@ categories:
           tr: ["enerji güvenliği"]
           is: ["orkuöryggi"]
           uk: ["енергетичн* безпек*", "енергопостачанн*", "блекаут*", "відключенн* електроенерг*"]
+          ar: ["أمن الطاقة", "إمدادات الطاقة"]
 
       supply-security:
         name: "Food, water & supply security"
@@ -1701,6 +1719,7 @@ categories:
           is: ["hættustjórnun*", "neyðarstig*"]
           uk: ["надзвичайн* ситуаці*", "ліквідаці* наслідків", "рятувальн*"]
           ko: ["재난", "재해", "위기관리"]
+          ar: ["أزمات", "طوارئ", "الكوارث"]
 
       societal-resilience:
         name: "Societal resilience, cohesion & polarisation"
