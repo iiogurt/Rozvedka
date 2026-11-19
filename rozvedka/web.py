@@ -90,7 +90,10 @@ def independent_ids() -> frozenset:
             _independent["books"] = frozenset(r[0] for r in con.execute("SELECT id FROM sources WHERE publisher='book'"))
         _independent["ids"] = frozenset(r[0] for r in rows)
         _independent["kinds"] = {r[0]: r[2] if r[2] in publishers.KINDS else "independent" for r in rows}
-        _independent["levels"] = {r[0]: publishers.profile(r[1], _independent["kinds"][r[0]]) for r in rows}
+        profiles = publishers.load_profiles() if rows else {}
+        fetched = publishers.load() if rows else {}
+        _independent["levels"] = {r[0]: publishers.profile(r[1], _independent["kinds"][r[0]],
+                                                         profiles=profiles, fetched=fetched) for r in rows}
         _independent["at"] = time.monotonic()
     return _independent["ids"]
 

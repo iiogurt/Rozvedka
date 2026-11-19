@@ -6,6 +6,45 @@ import re
 from . import actors, citations, concepts, countries, cves, db, doctypes, series, techniques, topics, trends, works
 
 
+@db.cached
+def search_hits(q: str, fts: str, expanded: bool) -> dict[int, str]:
+    """Eligible text and metadata matches in relevance order, shared by lists and counts."""
+    with db.session() as con:
+        topics.init()
+        scores = dict(con.execute("SELECT rowid, rank FROM doc_text WHERE doc_text MATCH ?", (fts,))) if fts else {}
+        literal = set(scores)
+        if expanded:
+            literal = {r[0] for r in con.execute("SELECT rowid FROM doc_text WHERE doc_text MATCH ?", (trends.or_query(q),))}
+        rows = con.execute("""SELECT d.id, d.title, d.work_id, s.agency, s.name_local, s.name_en
+                              FROM documents d JOIN sources s ON s.id=d.source_id WHERE s.active=1""")
+        needle = q.strip().strip('"').casefold()
+        hits = []
+        for row in rows:
+            doc_id = row["id"]
+            title = (row["title"] or "").casefold()
+            if needle and needle == title:
+                priority, reason = 0, "Exact title"
+            elif needle and needle in title:
+                priority, reason = 1, "Title"
+            elif doc_id in scores:
+                priority = 2
+                reason = "Indexed text" if doc_id in literal else "Expanded search term"
+            elif needle and any(needle in (row[k] or "").casefold() for k in ("agency", "name_local", "name_en")):
+                priority, reason = 3, "Publisher name"
+            else:
+                continue
+            hits.append((priority, scores.get(doc_id, 0), row["work_id"] not in (None, doc_id), doc_id, reason))
+    return {doc_id: reason for _, _, _, doc_id, reason in sorted(hits)}
+
+
+def _best_editions(where, args, ranked_ids):
+    # Filter editions first. The first matching edition of each work supplies its title, snippet and links.
+    return [f"""d.id IN (SELECT id FROM (
+        SELECT d.id, row_number() OVER (PARTITION BY coalesce(d.work_id,d.id) ORDER BY hit.key) AS position
+        FROM json_each(?) hit JOIN documents d ON d.id=hit.value JOIN sources s ON s.id=d.source_id
+        WHERE {' AND '.join(where)}) WHERE position=1)"""], [ranked_ids, *args]
+
+
 def build(country: str = "", type: str = "", lang: str = "", year="", status: str = "", q: str = "", source: int = 0,
           show_hidden: int = 0, coalition: str = "", topic=(), year_from="", year_to="", indexed: int = 0,
           actor: str = "", main: int = 0, cluster: str = "", series_id: str = "", added_from: str = "",
@@ -26,7 +65,9 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
         where.append("d.doc_type=?"); args.append(doc_type)
     elif not all_types:                     # by default, as every count: statements, laws, finance tables and forms left out
         where.append(doctypes.COUNTED)
-    if not (all_files or lang or series_id):  # one file per report, as every count – unless a language or series is asked for
+    grouped = not (all_files or lang or series_id)
+    group_search = grouped and q.strip() != "" and not indexed
+    if grouped and not group_search:
         where.append(works.PRIMARY)
     if type == "official":                  # every source run by a state or states – no think tanks
         where.append(trends.OFFICIAL); type = ""
@@ -100,14 +141,15 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
     # a search word naming a concept also finds its names in other languages (Wikidata) – unless the search is
     # exact, or comes from a Trends chart, which counts terms literally as typed
     fts, expansions = full_text(q, exact, indexed)
+    hits = {}
+    ranked_ids = "[]"
     if q.strip() and indexed:
-        # link from a Trends chart: exactly the full-text match the chart counted
         where.append("d.id IN (SELECT rowid FROM doc_text WHERE doc_text MATCH ?)"); args.append(fts or '""')
     elif q.strip():
-        # metadata match OR full-text match inside the report ("a OR b" is handled by the full-text match)
-        where.append("""(d.title LIKE ? OR s.agency LIKE ? OR s.name_local LIKE ? OR s.name_en LIKE ?
-                         OR d.id IN (SELECT rowid FROM doc_text WHERE doc_text MATCH ?))""")
-        args += [f"%{q}%"] * 4 + [fts or '""']
+        hits = search_hits(q, fts, bool(expansions))
+        ranked_ids = json.dumps(list(hits))
+        if not group_search:
+            where.append("d.id IN (SELECT value FROM json_each(?))"); args.append(ranked_ids)
     base_where, base_args = " AND ".join(where), list(args)      # everything except the topic filter
     for t in chosen:                                              # several topics: a document must have all
         if main:   # link from the topic mind map: the topic must be one of the report's main topics
@@ -115,7 +157,11 @@ def build(country: str = "", type: str = "", lang: str = "", year="", status: st
             where.append(sql); args += [*margs, t]
         else:
             where.append("d.id IN (SELECT doc_id FROM doc_topics WHERE topic=?)"); args.append(t)
-    return {"where": where, "args": args, "chosen": chosen, "fts": fts, "expansions": expansions, "base_where": base_where,
+    if group_search:
+        base_where += " AND d.id IN (SELECT value FROM json_each(?))"
+        base_args.append(ranked_ids)
+        where, args = _best_editions(where, args, ranked_ids)
+    return {"hits": hits, "ranked_ids": ranked_ids, "group_search": group_search, "where": where, "args": args, "chosen": chosen, "fts": fts, "expansions": expansions, "base_where": base_where,
             "base_args": base_args, "editions": editions, "series_row": series_row, "actor_row": actor_row}
 
 

@@ -87,7 +87,8 @@
   <h3 class="viz-mini">Named in the same passage</h3>
   <p class="muted small">Actors and countries named within {{ window }} characters of {{ a.label }} – roughly the same
     paragraph – with the number of reports. The number opens those passages. Being named together is not evidence
-    of a connection; read the passages.</p>
+    of a connection; read the passages.
+    <a href="/network?actor={{ a.key }}{% if a.kind == 'country' %}&amp;countries_too=1{% endif %}">Explore these pairs</a></p>
   {% if related.actors %}<ul class="actor-list cols">
     {% for r in related.actors %}<li><a href="/actors/{{ r.key }}">{{ r.label }}</a>
       <a class="muted small" href="/actors/{{ a.key }}/with/{{ r.key }}" title="Passages naming both">{{ r.docs }}</a></li>{% endfor %}
@@ -221,7 +222,7 @@
   {% for w in wanted_notices %}<p class="small"><b>Wanted</b><span class="tag wanted-tag">official</span> <a href="{{ w.url }}" rel="noopener">{{ 'FBI' if w.source == 'FBI' else 'Europe’s Most Wanted' }}: {{ w.title }}</a>{% if w.charges %} – {{ w.charges }}{% endif %}{% if w.published %} <span class="muted">· published {{ w.published }}</span>{% endif %}</p>{% endfor %}
   <p class="muted small viz-sub">What official sanctions lists, wanted notices and MITRE ATT&amp;CK state about {{ a.label }}'s ties – each with the
     sentence or entry it comes from. Wikidata and Wikipedia ties are under Connections below; co-mentions in reports on the
-    <a href="/network">Named together</a> page. All layers: {% for l in net_layers %}<a href="{{ l.link }}">{{ l.name }} {{ l.n }}</a>{{ ' · ' if not loop.last }}{% endfor %}.
+    <a href="/network?actor={{ a.key }}{% if a.kind == 'country' %}&amp;countries_too=1{% endif %}">Named together</a> page. All layers: {% for l in net_layers %}<a href="{{ l.link }}">{{ l.name }} {{ l.n }}</a>{{ ' · ' if not loop.last }}{% endfor %}.
     How it is built: <a href="/graph">Network</a>. <a href="/graph/path?a={{ a.key }}"><b>Find a connection</b> from {{ a.label }} →</a>
     · <a href="/graph/rings?e={{ a.key }}"><b>Rings</b> around {{ a.label }} →</a>
     · {% from "_ties.html" import pin %}{{ pin(a.key, request.url.path ~ '#network') }}</p>

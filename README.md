@@ -170,7 +170,8 @@ The library itself (`/documents`): every report with its agency, country, langua
   `_de.pdf`, `/en/` / `/fr/`), or the same title with a language or "summary" ending ("TE-SAT 2025 – Zusammenfassung").
   The file with most text represents the report (English unless another version has 30 % more); each row lists the
   other files ("also de fr …"), and the report page shows them all with the rule that grouped them. Asking for a
-  language, a series or *all files* lists every file. Mistaken groups are split in `sources/works.yaml`.
+  language, a series or *all files* lists every file. Text search checks each eligible edition and shows the
+  best match per report with its language and match reason. Exact titles rank first even with a topic filter. Mistaken groups are split in `sources/works.yaml`.
 
   <img src="docs/images/doc-works.png" alt="Documents: a Swiss situation report listed once with its German version beside it" width="900">
 
@@ -854,10 +855,12 @@ Which actors the reports name **together more often than their frequency predict
 - **Clusters** of strongly associated actors (e.g. *Wagner Group · Prigozhin · Internet Research Agency*,
   *Fancy Bear · Cozy Bear · Turla · Ghostwriter*, *LockBit · Conti · Akira*), each as a card with its members,
   strongest ties, the main topics of its reports, a timeline and the agencies that report on it.
-- **Association matrix** of all actors, ordered by cluster: each cell is a pair named in the same passage, shaded
-  by association strength (normalised pointwise mutual information); clusters appear as blocks.
-- **Details panel**: an actor's most strongly associated and most frequent partners, or a pair's counts against
-  what chance would predict.
+- **Ranked pairs** cover all actors in the filtered reports. Sort by association, publisher count or report count
+  to discover pairs involving less frequently mentioned actors. Each row shows the years the pair appeared.
+- **Association matrix** shows the most frequently mentioned actors, ordered by cluster. Cell shading shows
+  association strength. Select a cell or a ranked pair to read a cited passage and open its PDF page.
+- **Details panel** shows how many reports name both actors anywhere and how many name them in one passage.
+  The expected count uses whole-report frequencies. Copy the permalink to reopen the selection and its filters.
 - Filter by period, reporting coalition, agency type, topic and kind of actor. Every number opens the passages or
   reports it counts.
 

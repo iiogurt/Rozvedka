@@ -550,6 +550,9 @@ ul.cl-list li > a:last-child { text-align: right; font-variant-numeric: tabular-
 .cl-ag { display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 12px; justify-content: flex-end; }
 .cl-ag a { display: inline-flex; align-items: center; gap: 4px; }
 .mx-grid { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 12px; align-items: start; }
+.mx-grid > div { min-width: 0; }
+#pair-rows button { text-align: left; }
+#pair-rows button[aria-pressed="true"] { outline: 2px solid currentColor; }
 .mx-scroll { overflow: auto; max-height: 1300px; }
 .mx-panel { position: sticky; top: 70px; }
 .mx-panel h3 { display: flex; align-items: center; }

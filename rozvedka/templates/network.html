@@ -16,7 +16,7 @@
     {% for ckey, cat in CATEGORIES.items() %}<optgroup label="{{ cat.name }}">
       {% for t in cat.topics %}<option value="{{ t }}">{{ TOPICS[t].name }}</option>{% endfor %}</optgroup>{% endfor %}
   </select>
-  <label class="chk" title="The actors named in most reports">actors
+  <label class="chk" title="Number of actors shown in the matrix and clusters">matrix actors
     <select name="actors_n">{% for n in [30, 45, 60, 80, 100] %}<option {{ 'selected' if n == 60 }}>{{ n }}</option>{% endfor %}</select></label>
   <label class="chk" title="How strongly actors must be associated to form a cluster">clusters
     <select name="threshold"><option value="0.2">loose</option><option value="0.25" selected>normal</option><option value="0.35">strict</option></select></label>
@@ -31,23 +31,36 @@
 </fieldset>
 
 <p id="summary" class="net-summary"></p>
-<section id="clusters" class="cluster-grid" aria-label="Clusters"></section>
+
 
 <section class="viz-card" aria-labelledby="mx-title">
   <div class="viz-head">
     <h2 id="mx-title" class="viz-title">Who is named with whom</h2>
     <span class="viz-actions"><a id="permalink" href="#">link</a></span>
   </div>
-  <p class="muted small viz-sub">Each cell: two actors named in the same passage. Darker = more strongly associated
+  <div class="filters">
+    <label>Explore <select id="presentation"><option value="pairs">Ranked pairs</option><option value="matrix">Matrix</option></select></label>
+  </div>
+  <div class="mx-grid">
+  <div>
+  <section id="ranked">
+    <p class="small muted">Pairs meeting the report threshold across all actors in scope.</p>
+    <label>Order by <select id="pair-order"><option value="association">Association</option><option value="publishers">Publishers</option><option value="docs">Reports</option></select></label>
+    <div class="mx-scroll"><table class="rp-topics small"><thead><tr><th>Pair</th><th>Reports</th><th>Publishers</th><th>Years</th><th>Association</th></tr></thead>
+    <tbody id="pair-rows"></tbody></table></div>
+    <button type="button" id="prev-pairs">Previous</button> <span id="pair-range" class="small"></span> <button type="button" id="next-pairs">Next</button>
+  </section>
+  <section id="matrix-view"><p class="muted small viz-sub">Each cell: two actors named in the same passage. Darker = more strongly associated
     (named together more often than their frequency predicts); grey = named together, but in fewer reports than the
     tie threshold. Actors are ordered by cluster; the bands mark the clusters. Click a name or a cell for details.
     ↔ marks a documented connection (Wikipedia infobox or Wikidata: member, leader, founder, parent organisation …).</p>
-  <div class="mx-grid">
-    <div class="mx-scroll"><div id="matrix" class="chart" role="img" aria-label="Actor association matrix"></div></div>
-    <aside id="panel" class="tree-panel mx-panel" aria-live="polite"><p class="muted small">Click an actor's name or a
+    <div class="mx-scroll"><div id="matrix" class="chart" role="img" aria-label="Actor association matrix"></div></div></section></div>
+    <aside id="panel" tabindex="-1" class="tree-panel mx-panel" aria-live="polite"><p class="muted small">Click an actor's name or a
       cell. The details and links to the passages appear here.</p></aside>
   </div>
 </section>
+
+<section id="clusters" class="cluster-grid" aria-label="Clusters"></section>
 
 <section class="viz-card provenance" aria-labelledby="prov-title">
   <h2 id="prov-title" class="viz-title">Where this comes from</h2>

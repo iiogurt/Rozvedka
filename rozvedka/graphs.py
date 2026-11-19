@@ -5,6 +5,7 @@ passages) it counts, and every result says how it was computed.
 """
 import datetime as dt
 import math
+from functools import lru_cache
 from urllib.parse import urlencode
 
 from . import actors, countries, db, topics, trends
@@ -59,6 +60,20 @@ def cluster(keys: list[str], sim: dict[tuple[str, str], float], threshold: float
     return groups
 
 
+@lru_cache(maxsize=4)
+def _pair_counts(version, where, args, kind_sql):
+    """Counts shared by the matrix and ranked list. Changing their display limits reuses the same scope."""
+    with db.session() as con:
+        return con.execute(
+            f"""SELECT p.a, p.b, COUNT(*) n, COUNT(DISTINCT s.id) publishers,
+                       min(d.year) first_year, max(d.year) last_year
+                FROM actor_pairs p JOIN documents d ON d.id=p.doc_id JOIN sources s ON s.id=d.source_id
+                JOIN actors a1 ON a1.key=p.a JOIN actors a2 ON a2.key=p.b
+                WHERE {where} AND {PAIR_FOUNDED}
+                    {kind_sql.replace('a.kind', 'a1.kind')} {kind_sql.replace('a.kind', 'a2.kind')}
+                GROUP BY p.a, p.b""", args).fetchall()
+
+
 def associations(year_from=None, year_to=None, coalition="", type="", topic="", include_countries=False,
                  max_actors=60, min_pair=3, threshold=0.25, kinds: list[str] | None = None) -> dict:
     """Which actors the reports name together more often than their frequency predicts – clusters, matrix, ties.
@@ -68,40 +83,53 @@ def associations(year_from=None, year_to=None, coalition="", type="", topic="", 
     counted only where n_ab >= min_pair. Clusters: average-linkage on association, stopped at `threshold`.
     """
     where, args, params = _scope(year_from, year_to, coalition, type, topic)
+    explicit_empty = kinds == ["none"]
     kinds = [k for k in (kinds or []) if k in actors.KINDS and k != "country"]
     if include_countries and kinds:
         kinds.append("country")
     kind_sql = (f" AND a.kind IN ({','.join(repr(k) for k in kinds)})" if kinds
                 else "" if include_countries else " AND a.kind != 'country'")
-    qs = _qs({k: params.get(k) for k in ("year_from", "year_to", "coalition", "type", "topic")})
+    if explicit_empty:
+        kind_sql = " AND a.kind='country'" if include_countries else " AND 0"
+    qs = _qs({**params, "indexed": 1})
     with db.session() as con:
         actors.init()
         n_docs = con.execute(f"SELECT COUNT(*) FROM documents d JOIN sources s ON s.id=d.source_id WHERE {where}",
                              args).fetchone()[0]
         nodes = [dict(r) for r in con.execute(
-            f"""SELECT a.key, a.label, a.kind, COUNT(DISTINCT da.doc_id) docs
+            f"""SELECT a.key, a.label, a.kind, COUNT(*) docs
                 FROM doc_actors da JOIN actors a ON a.key=da.actor_key JOIN documents d ON d.id=da.doc_id
                 JOIN sources s ON s.id=d.source_id
                 WHERE {where} AND {NOT_BEFORE_FOUNDED}{kind_sql}
-                GROUP BY a.key ORDER BY docs DESC, a.label LIMIT ?""", (*args, max_actors))]
+                GROUP BY a.key ORDER BY docs DESC, a.label, a.key""", args)]
         info = {n["key"]: n for n in nodes}
-        keys = list(info)
-        pairs = {}
-        if keys:
-            marks = ",".join("?" * len(keys))
-            for r in con.execute(
-                    f"""SELECT p.a, p.b, COUNT(DISTINCT p.doc_id) n FROM actor_pairs p
-                        JOIN documents d ON d.id=p.doc_id JOIN sources s ON s.id=d.source_id
-                        JOIN actors a1 ON a1.key=p.a JOIN actors a2 ON a2.key=p.b
-                        WHERE p.a IN ({marks}) AND p.b IN ({marks}) AND {where} AND {PAIR_FOUNDED}
-                        GROUP BY p.a, p.b""", (*keys, *keys, *args)):
-                pairs[(r["a"], r["b"])] = r["n"]
-        sim = {k: npmi(n, info[k[0]]["docs"], info[k[1]]["docs"], n_docs) for k, n in pairs.items() if n >= min_pair}
-        known = {}   # documented connections (Wikipedia infobox / Wikidata) between the shown actors
-        if keys:
-            for r in con.execute(f"SELECT a, b, a_says FROM actor_links WHERE a IN ({marks}) AND b IN ({marks})", (*keys, *keys)):
-                k = (r["a"], r["b"]) if r["a"] < r["b"] else (r["b"], r["a"])
+        keys = list(info)[:max_actors]
+        visible = set(keys)
+        pairs, sim, cells, ranked = {}, {}, [], []
+        known = {}
+        for r in con.execute("SELECT a, b, a_says FROM actor_links ORDER BY id"):
+            if r["a"] in info and r["b"] in info:
+                k = tuple(sorted((r["a"], r["b"])))
                 known.setdefault(k, f"{info[r['a']]['label']} – {r['a_says']} – {info[r['b']]['label']}")
+        for r in _pair_counts(db.version(), where, tuple(args), kind_sql):
+            a, b, n = r["a"], r["b"], r["n"]
+            if a not in info or b not in info:
+                continue
+            in_matrix = a in visible and b in visible
+            if not in_matrix and n < min_pair:
+                continue
+            score = npmi(n, info[a]["docs"], info[b]["docs"], n_docs) if n >= min_pair else 0
+            cell = {"a": a, "b": b, "docs": n, "npmi": round(score, 3), "known": known.get((a, b)),
+                    "link": f"/actors/{a}/with/{b}?{qs}", "publishers": r["publishers"],
+                    "first_year": r["first_year"], "last_year": r["last_year"]}
+            if in_matrix:
+                pairs[a, b] = n
+                cells.append(cell)
+                if n >= min_pair:
+                    sim[a, b] = score
+            if n >= min_pair:
+                ranked.append(cell)
+        ranked.sort(key=lambda c: (-c["npmi"], -c["publishers"], -c["docs"], c["a"], c["b"]))
         groups = cluster(keys, sim, threshold)
         multi = [g for g in groups if len(g) > 1]
         single = [g[0] for g in groups if len(g) == 1]
@@ -110,16 +138,14 @@ def associations(year_from=None, year_to=None, coalition="", type="", topic="", 
         order = [k for g in multi for k in sorted(g, key=lambda k: -info[k]["docs"])] + \
             sorted(single, key=lambda k: -info[k]["docs"])
         clusters = [_cluster_summary(con, g, info, pairs, sim, where, args, params, qs, n_docs, known) for g in multi]
-    cells = [{"a": a, "b": b, "docs": n, "npmi": round(sim.get((a, b), 0.0), 3), "known": known.get((a, b)),
-              "link": f"/actors/{a}/with/{b}" + (f"?{qs}" if qs else "")} for (a, b), n in pairs.items()]
     for n in nodes:
         n["link"] = f"/actors/{n['key']}"
         n["docs_link"] = trends.docs_url(params, actor=n["key"])
         n["cluster"] = next((i for i, g in enumerate(multi) if n["key"] in g), None)
-    return {"actors": [info[k] for k in order], "cells": cells, "clusters": clusters, "unclustered": len(single),
+    return {"ranked": ranked, "other_actors": nodes[max_actors:], "actors": [info[k] for k in order], "cells": cells, "clusters": clusters, "unclustered": len(single),
             "n_docs": n_docs, "filters": params, "kinds": actors.KINDS, "min_pair": min_pair, "threshold": threshold,
             "provenance": {
-                "how": (f"The {len(nodes)} actors named in most of the {n_docs} reports in scope. Two actors are 'named "
+                "how": (f"The matrix shows the {len(keys)} actors named in most of the {n_docs} reports in scope. Two actors are 'named "
                         f"together' in a report when they occur within {actors.WINDOW} characters of each other – "
                         "roughly one paragraph. Association is normalised pointwise mutual information (NPMI): 0 means "
                         "they are named together no more often than their frequency predicts, 1 that they are only "

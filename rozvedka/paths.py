@@ -65,17 +65,18 @@ def penalty(degree: int) -> float:
 
 def _shortest(g: dict, src: str, dst: str, layers: set, countries: bool, banned: set, banned_edges: set, skip=frozenset()):
     adj, ents = g["adj"], g["ents"]
-    best = {src: 0.0}
-    prev: dict[str, str] = {}
+    best = {(src, 0): 0.0}
+    prev = {}
     heap = [(0.0, 0, src)]
     while heap:
         cost, steps, u = heapq.heappop(heap)
         if u == dst:
             path = [u]
-            while path[-1] != src:
-                path.append(prev[path[-1]])
+            while steps:
+                path.append(prev[path[-1], steps])
+                steps -= 1
             return cost, path[::-1]
-        if cost > best.get(u, math.inf) or steps >= MAX_STEPS:
+        if cost > best[u, steps] or steps >= MAX_STEPS:
             continue
         extra = penalty(len(adj.get(u, ()))) + KIND_COST.get(ents.get(u, {}).get("kind"), 0.0) if u != src else 0.0
         for v, links in adj.get(u, {}).items():
@@ -87,8 +88,9 @@ def _shortest(g: dict, src: str, dst: str, layers: set, countries: bool, banned:
             if base is None:
                 continue
             c = cost + base + extra
-            if c < best.get(v, math.inf):
-                best[v], prev[v] = c, u
+            state = (v, steps + 1)
+            if c < best.get(state, math.inf):
+                best[state], prev[state] = c, u
                 heapq.heappush(heap, (c, steps + 1, v))
     return None
 

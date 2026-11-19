@@ -392,11 +392,11 @@ def _awards_check(a: dict, checked) -> dict:
             "checked": checked, "agencies": agencies}
 
 
-def profile(source_key: str, kind: str = "independent") -> dict:
+def profile(source_key: str, kind: str = "independent", *, profiles=None, fetched=None) -> dict:
     """Checks (each with status ok / partial / concern / redflag / unknown / info, text and evidence) and the rating.
     kind: the registry's `publisher` – "independent" (think tank) or "commercial" (company)."""
-    p = load_profiles().get(source_key) or {}
-    f = load()
+    p = (load_profiles() if profiles is None else profiles).get(source_key) or {}
+    f = load() if fetched is None else fetched
     commercial = kind == "commercial"
     levels = KINDS.get(kind, KINDS["independent"])["levels"]
     checks = []
@@ -470,7 +470,7 @@ def profile(source_key: str, kind: str = "independent") -> dict:
     reasons = [f"{c['name']}: {c['text']}" for c in checks if c["status"] in worst]
     return {"key": source_key, "kind": kind, "level": level, "label": levels[level][0], "about": levels[level][1],
             "levels": levels, "reasons": reasons, "checks": checks, "former": p.get("former_ratings") or [],
-            "identity": f["identity"].get(source_key), "retrieved": f["retrieved"], "ties": influence(source_key)}
+            "identity": f["identity"].get(source_key), "retrieved": f["retrieved"], "ties": _influence(source_key, p, f)}
 
 
 TIE_KINDS = {"person": "person", "org": "org", "company": "org", "foundation": "org", "government": "country", "country": "country"}
@@ -486,8 +486,10 @@ def influence(source_key: str) -> list[dict]:
       - "funding": the donor governments of a think tank's funding disclosure;
       - "usaspending": the US federal agencies that gave contracts or grants (USAspending.gov);
       - "wikidata": owner, parent, founder, funder and leaders on its Wikidata item (with the revision)."""
-    p = load_profiles().get(source_key) or {}
-    f = load()
+    return _influence(source_key, load_profiles().get(source_key) or {}, load())
+
+
+def _influence(source_key: str, p: dict, f: dict) -> list[dict]:
     out = []
     for t in p.get("ties") or []:
         out.append({"rel": t["rel"], "back": t.get("back") or BACK.get(t["rel"], "linked with"), "name": t["name"],
