@@ -73,7 +73,7 @@ def _passage(body: str, inside: list[tuple[int, int]]) -> list[dict]:
 def fts_spans(con, doc_id: int, terms: list[str]) -> list[tuple[int, int]]:
     """Where the topic's terms (the ones the index found in this report) occur, from the full-text index:
     highlight() marks every match in the stored text, so the positions are those of the original text."""
-    alts = [t for t in terms if not topics._CJK.search(topics.normalize(t))]
+    alts = [t for t in terms if not topics._SUBSTR.search(topics.normalize(t))]
     query = " OR ".join('"' + t.rstrip("*").replace('"', "") + '"' + ("*" if t.endswith("*") else "") for t in alts)
     return highlight_spans(con, doc_id, query) if query else []
 

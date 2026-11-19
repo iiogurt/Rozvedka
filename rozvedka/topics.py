@@ -33,6 +33,9 @@ PDFTOTEXT = shutil.which("pdftotext")
 _FOLD = str.maketrans({"ß": "ss", "ø": "o", "æ": "ae", "œ": "oe", "ł": "l", "đ": "d", "ð": "d", "þ": "th",
                        "ı": "i", "’": "'", "‘": "'", "–": "-", "—": "-", "­": ""})
 _CJK = re.compile(r"[぀-ヿ㐀-鿿가-힯ᄀ-ᇿ＀-￯]")   # ᄀ-ᇿ: Hangul syllables after normalize() (NFKD splits them into jamo)
+# topic terms matched as plain substrings: CJK (no spaces between words) and Arabic, whose prefixes (و, ب, ل, ال)
+# are written onto the word – "المخدرات", "بالمخدرات", "والمخدرات" all contain "مخدرات"
+_SUBSTR = re.compile(r"[぀-ヿ㐀-鿿가-힯ᄀ-ᇿ＀-￯\u0600-\u06ff]")
 
 
 def normalize(text: str) -> str:
@@ -42,9 +45,9 @@ def normalize(text: str) -> str:
 
 
 def term_regex(term: str) -> str:
-    """'pravicov* extremis*' → regex for the phrase; CJK terms match as plain substrings."""
+    """'pravicov* extremis*' → regex for the phrase; CJK and Arabic terms match as plain substrings."""
     t = normalize(term.strip())
-    if _CJK.search(t):
+    if _SUBSTR.search(t):
         return re.escape(t)
     parts = []
     for tok in t.split():
@@ -65,13 +68,13 @@ def term_tokens(term: str) -> list[tuple[str, bool]]:
     return [(tok.rstrip("*"), tok.endswith("*")) for tok in re.findall(r"\w+\*?", normalize(term))]
 
 
-RULES = "5"     # the matching rules' version, part of the taxonomy hash: changing a rule re-classifies every document
+RULES = "6"     # the matching rules' version, part of the taxonomy hash: changing a rule re-classifies every document
 
 
 def _compile(terms: list[str]) -> dict:
     exact, stems, phrases, cjk = {}, {}, [], []
     for t in terms:
-        if _CJK.search(normalize(t)):
+        if _SUBSTR.search(normalize(t)):
             cjk.append(normalize(t))
             continue
         toks = term_tokens(t)

@@ -64,9 +64,25 @@ def test_term_regex(term, text, hit):
     ("Incidencia delictiva: delitos del fuero común y presuntos delitos registrados.", "", "crime-statistics"),
     ("Venemaa täiemahuline sõda Ukrainas; Ukraina küberruum ja sõda Ukrainas mõjutas ka Eestit.", "", "war-in-ukraine"),
     ("보이스피싱 등 전기통신금융사기와 사이버범죄가 늘었다.", "", "cybercrime-fraud"),
+    # Arabic (0.104.6): prefixes written onto the word (و, ب, لل, ال) and hamza forms folded by normalize()
+    ("سوق الكوكايين والهيروين؛ الاتجار بالمخدرات ومكافحة المخدرات.", "", "drug-trafficking"),
+    ("تغيُّر المناخ والانبعاثات؛ للمناخ أثر على الاحترار العالمي.", "", "climate-change"),
+    ("مكافحة الإرهاب وتنظيم داعش؛ التمويل للإرهاب.", "", "terrorism"),
+    # malware analyses: indicators of compromise, YARA rules, shellcode
+    ("Indicators of compromise and YARA rules for the shellcode loader; the dropper writes a webshell.", "", "vulnerabilities"),
 ])
 def test_classify_finds_topic(text, title, expected):
     assert expected in [f["key"] for f in classify(text, title)]
+
+
+def test_arabic_terms_do_not_count_one_word_twice():
+    """Arabic terms are counted as substrings: a term inside another of its topic would count one word twice and make
+    one term look like two different ones."""
+    for key, tp in taxonomy()["topics"].items():
+        subs = [normalize(t) for t in tp["by_lang"].get("ar", [])]
+        for a in subs:
+            assert "لا" not in a, (key, a)   # PDF text extraction writes the lam-alif ligature as "ال"
+            assert not any(a != b and a in b for b in subs), (key, a)
 
 
 def test_single_passing_mention_is_not_enough():
