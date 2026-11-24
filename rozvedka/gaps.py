@@ -34,19 +34,21 @@ def checked() -> dict[tuple[str, str], dict]:
             if isinstance(r, dict) and r.get("type") in TYPES}
 
 
+@db.cached
 def grid() -> dict:
     names = countries.names()
     now = dt.date.today().year
     with db.session() as con:
         cells: dict[tuple[str, str], dict] = {}
+        # reports per state and agency type counted in one pass (a subquery per cell scanned every document twice: 5 s)
         for r in con.execute(
-                f"""SELECT s.country, s.type, COALESCE(s.publisher, 'official') pub, COUNT(DISTINCT s.id) agencies,
-                           SUM(s.access = 'manual') manual,
-                           (SELECT COUNT(*) FROM documents d JOIN sources s2 ON s2.id=d.source_id
-                             WHERE s2.country=s.country AND s2.type=s.type AND {trends.LISTED.replace('s.', 's2.')}) n,
-                           (SELECT MAX(d.year) FROM documents d JOIN sources s2 ON s2.id=d.source_id
-                             WHERE s2.country=s.country AND s2.type=s.type AND {trends.LISTED.replace('s.', 's2.')}) newest
-                    FROM sources s WHERE s.active=1 GROUP BY s.country, s.type"""):
+                f"""WITH listed AS (SELECT s.country, s.type, COUNT(*) n, MAX(d.year) newest
+                                    FROM documents d JOIN sources s ON s.id=d.source_id WHERE {trends.LISTED}
+                                    GROUP BY s.country, s.type)
+                    SELECT s.country, s.type, COALESCE(s.publisher, 'official') pub, COUNT(DISTINCT s.id) agencies,
+                           SUM(s.access = 'manual') manual, COALESCE(MAX(l.n), 0) n, MAX(l.newest) newest
+                    FROM sources s LEFT JOIN listed l ON l.country=s.country AND l.type=s.type
+                    WHERE s.active=1 GROUP BY s.country, s.type"""):
             cells[(r["country"], r["type"])] = dict(r)
     gaps = checked()
     rows = []
