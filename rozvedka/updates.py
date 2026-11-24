@@ -44,6 +44,7 @@ def _actors_of(con, ids: list[int], limit: int = 5) -> dict[int, list[dict]]:
     return out
 
 
+@db.cached
 def update(day: str | None = None) -> dict:
     """One update: its reports by agency, the actors first named in it, and the topics whose share jumped."""
     with db.session() as con:

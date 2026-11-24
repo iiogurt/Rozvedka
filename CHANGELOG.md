@@ -27,6 +27,14 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.105.1] – 2026-11-24
+
+### Fixed
+- **The coverage grid opens in a fifth of a second instead of five.** It counted each state's reports per agency type
+  with two lookups per cell, each reading every document; it now counts them in one pass (same numbers, checked cell by
+  cell). It is also kept until the data changes.
+- **What's new is kept until the data changes**: 1.5 s on every visit before, a few milliseconds after the first.
+
 ## [0.105.0] – 2026-11-19
 
 - Report searches find matching language editions and summaries, group them by work and explain the match. Exact titles rank first, including in topic-filtered searches.
@@ -2297,7 +2305,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.105.0...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.105.1...HEAD
+[0.105.1]: https://github.com/iiogurt/Rozvedka/compare/v0.105.0...v0.105.1
 [0.105.0]: https://github.com/iiogurt/Rozvedka/compare/v0.104.6...v0.105.0
 [0.104.6]: https://github.com/iiogurt/Rozvedka/compare/v0.104.5...v0.104.6
 [0.104.5]: https://github.com/iiogurt/Rozvedka/compare/v0.104.4...v0.104.5

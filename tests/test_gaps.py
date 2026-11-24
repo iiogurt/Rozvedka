@@ -32,3 +32,11 @@ def test_cells(library, monkeypatch, tmp_path):
             if x["state"] == "covered":
                 assert f"<b>{x['n']}</b> documents match" in c.get(x["link"]).text, x["link"]
     assert "∅" in c.get("/sources/grid").text
+    # a second agency of the same type: its reports are added once, the agencies counted once each (and the
+    # cached grid is recomputed after the write)
+    with db.session() as con:
+        con.execute("INSERT INTO sources(id,key,country,agency,type) VALUES(9,'CZ/UZSI','CZ','UZSI','intelligence-civil')")
+        con.execute("INSERT INTO documents(id,source_id,url,title,year,hidden,status) "
+                    "VALUES(90,9,'https://uzsi.cz/v.pdf','Výroční zpráva',2031,0,'downloaded')")
+    civil = next(c for c in next(r for r in gaps.grid()["rows"] if r["code"] == "CZ")["cells"] if c["type"] == "intelligence-civil")
+    assert (civil["n"], civil["agencies"], civil["newest"]) == (3, 2, 2031)
