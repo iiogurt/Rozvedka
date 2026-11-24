@@ -16,10 +16,8 @@ from collections import defaultdict
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
-import yaml
-
 from . import db, languages, topics
-from .config import ROOT
+from .config import ROOT, load_yaml
 
 log = logging.getLogger("rozvedka.works")
 
@@ -80,7 +78,7 @@ def load_separate(path: Path | None = None) -> set[str]:
     path = path or WORKS_FILE
     if not path.exists():
         return set()
-    return set((yaml.safe_load(path.read_text(encoding="utf-8")) or {}).get("separate") or [])
+    return set((load_yaml(path.read_text(encoding="utf-8")) or {}).get("separate") or [])
 
 
 def group() -> dict:

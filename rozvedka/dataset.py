@@ -35,6 +35,7 @@ from pathlib import Path
 import yaml
 
 from . import __version__, config, db, progress
+from .config import load_yaml
 
 log = logging.getLogger("rozvedka.dataset")
 FORMAT = "rozvedka-dataset"
@@ -838,13 +839,13 @@ def _extract(tar, plan: dict, m: dict) -> dict:
         elif name == "case/case_file.yaml":         # a personal backup's case file: its pins added to this one
             from . import casefile
             with tar.extractfile(member) as src:
-                theirs = (yaml.safe_load(src.read().decode("utf-8")) or {}).get("pins") or []
+                theirs = (load_yaml(src.read().decode("utf-8")) or {}).get("pins") or []
             n = casefile.merge(theirs)
             stats["case_file"] = f"{n} pin{'s' if n != 1 else ''} added"
         elif name == "case/notebooks.yaml":         # a personal backup's notebooks: their passages added to these
             from . import notebooks
             with tar.extractfile(member) as src:
-                theirs = yaml.safe_load(src.read().decode("utf-8")) or {}
+                theirs = load_yaml(src.read().decode("utf-8")) or {}
             r = notebooks.merge(theirs if isinstance(theirs, dict) else {})
             stats["notebooks"] = (f"{r['added']} passage{'s' if r['added'] != 1 else ''} added"
                                   + (f", {r['missing']} of reports not in this library left out" if r["missing"] else ""))
@@ -917,7 +918,7 @@ def _merge_lists(mpath: Path, m: dict) -> dict:
             theirs_p, ours_p = folder / name, _sources_dir() / name
             if not theirs_p.exists():
                 continue
-            theirs = yaml.safe_load(theirs_p.read_text(encoding="utf-8"))
+            theirs = load_yaml(theirs_p.read_text(encoding="utf-8"))
             if not ours_p.exists():
                 shutil.copy2(theirs_p, ours_p)
                 out[name] = "taken from the dataset"

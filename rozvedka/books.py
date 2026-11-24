@@ -27,10 +27,8 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-import yaml
-
 from . import db
-from .config import DATA, FILES
+from .config import DATA, FILES, load_yaml
 
 log = logging.getLogger("rozvedka.books")
 
@@ -241,7 +239,7 @@ def open_library(isbn: str) -> dict | None:
 # ── putting it together ──
 def hand_entries(folder: Path) -> dict[str, dict]:
     p = folder / HAND
-    rows = (yaml.safe_load(p.read_text(encoding="utf-8")) or []) if p.exists() else []
+    rows = (load_yaml(p.read_text(encoding="utf-8")) or []) if p.exists() else []
     return {r["file"]: r for r in rows if isinstance(r, dict) and r.get("file")}
 
 

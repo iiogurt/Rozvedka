@@ -1,12 +1,11 @@
 """Load sources/registry.yaml into the database (idempotent)."""
-import yaml
 
 from . import db
-from .config import REGISTRY
+from .config import REGISTRY, load_yaml
 
 
 def load(path=REGISTRY) -> list[dict]:
-    return yaml.safe_load(open(path, encoding="utf-8"))
+    return load_yaml(open(path, encoding="utf-8"))
 
 
 def source_key(src: dict) -> str:

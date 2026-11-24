@@ -27,6 +27,14 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 
 ## [Unreleased]
 
+## [0.105.2] – 2026-11-24
+
+### Fixed
+- **Faster start.** Every hand-written data file (registry, topics, series, publishers …) is read with the C YAML parser
+  where it is installed, as the actor-review file already was: the same data (checked file by file), read in a tenth
+  of the time – 6.7 s → 0.7 s for all of them. The first page after the portal starts opens about a second sooner,
+  and so does every command.
+
 ## [0.105.1] – 2026-11-24
 
 ### Fixed
@@ -2305,7 +2313,8 @@ From 0.9.1 on, the significance of a change decides which part of `MAJOR.MINOR.P
 - Crawler, polite downloader (robots.txt, per-host delay, PDF check, de-duplication) and FastAPI web portal.
 - systemd user units for the portal and a weekly update timer.
 
-[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.105.1...HEAD
+[Unreleased]: https://github.com/iiogurt/Rozvedka/compare/v0.105.2...HEAD
+[0.105.2]: https://github.com/iiogurt/Rozvedka/compare/v0.105.1...v0.105.2
 [0.105.1]: https://github.com/iiogurt/Rozvedka/compare/v0.105.0...v0.105.1
 [0.105.0]: https://github.com/iiogurt/Rozvedka/compare/v0.104.6...v0.105.0
 [0.104.6]: https://github.com/iiogurt/Rozvedka/compare/v0.104.5...v0.104.6

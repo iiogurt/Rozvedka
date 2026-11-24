@@ -15,7 +15,7 @@ from pathlib import Path
 import yaml
 
 from . import actors, db, topics
-from .config import ROOT
+from .config import ROOT, load_yaml
 
 SERIES_FILE = ROOT / "sources" / "series.yaml"
 MIN_YEARS = 3          # a title recurring in at least this many years is proposed as a series
@@ -54,7 +54,7 @@ def load(path: Path | None = None) -> dict:
     path = path or SERIES_FILE
     if not path.exists():
         return {"series": [], "rejected": []}
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    data = load_yaml(path.read_text(encoding="utf-8")) or {}
     return {"series": data.get("series") or [], "rejected": data.get("rejected") or []}
 
 

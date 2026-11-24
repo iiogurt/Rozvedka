@@ -25,7 +25,7 @@ import zipfile
 from functools import lru_cache
 
 from . import fetch, gleif, sanctions
-from .config import DATA
+from .config import DATA, load_yaml
 
 log = logging.getLogger("rozvedka.icij")
 DIR = DATA / "icij"
@@ -184,7 +184,7 @@ def reviews(path=None) -> dict[str, dict]:
     path = path or REVIEWS
     if not path.exists():
         return {}
-    return {r["entry"]: r for r in (yaml.safe_load(path.read_text(encoding="utf-8")) or []) if isinstance(r, dict) and r.get("entry")}
+    return {r["entry"]: r for r in (load_yaml(path.read_text(encoding="utf-8")) or []) if isinstance(r, dict) and r.get("entry")}
 
 
 def record(entry: str, verdict: str, note: str = "", path=None) -> dict:

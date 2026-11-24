@@ -12,10 +12,8 @@ import re
 import unicodedata
 from functools import lru_cache
 
-import yaml
-
 from . import actors, db, fetch
-from .config import DATA, ROOT
+from .config import DATA, ROOT, load_yaml
 
 log = logging.getLogger(__name__)
 FILE = ROOT / "sources" / "attributions.yaml"
@@ -39,7 +37,7 @@ def page_text(body: str) -> str:
 
 def load(path=None) -> list[dict]:
     path = path or FILE
-    rows = (yaml.safe_load(path.read_text(encoding="utf-8")) or {}).get("attributions", []) if path.exists() else []
+    rows = (load_yaml(path.read_text(encoding="utf-8")) or {}).get("attributions", []) if path.exists() else []
     return sorted((r for r in rows if isinstance(r, dict)), key=lambda r: str(r["date"]), reverse=True)
 
 

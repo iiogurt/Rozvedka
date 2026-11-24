@@ -12,10 +12,8 @@ import re
 from functools import lru_cache
 from pathlib import Path
 
-import yaml
-
 from . import topics
-from .config import DATA, ROOT
+from .config import DATA, ROOT, load_yaml
 
 log = logging.getLogger("rozvedka.concepts")
 
@@ -28,7 +26,7 @@ EXACT_UP_TO = 4       # names this short match as whole words ("dron", not "dron
 
 def titles(path: Path | None = None) -> dict[str, str]:
     """English Wikipedia title → topic category key."""
-    data = yaml.safe_load((path or CONCEPTS).read_text(encoding="utf-8")) or {}
+    data = load_yaml((path or CONCEPTS).read_text(encoding="utf-8")) or {}
     return {t: cat for cat, ts in data.items() for t in ts or []}
 
 

@@ -69,3 +69,15 @@ def test_publisher_is_official_independent_or_commercial():
         for p in s.get("pages", []):
             if p.get("follow"):
                 re.compile(p["follow"])
+
+
+def test_load_yaml_reads_like_safe_load():
+    """The C parser (when installed) gives the same data as yaml.safe_load – YAML 1.1 booleans, dates, scripts, anchors."""
+    import yaml
+
+    from rozvedka.config import load_yaml
+    text = ('- {country: NO, ok: yes, code: "NO", checked: 2026-10-06, n: 012, ratio: 1e3}\n'
+            '- &a {name: "Служба безпеки", ar: "مخدرات", ko: 사이버범죄, note: null}\n- *a\n'
+            '- terms: ["right-wing extrem*", \'it\'\'s\']\n')
+    assert load_yaml(text) == yaml.safe_load(text)
+    assert load_yaml(text)[0]["country"] is False          # unquoted NO is a boolean: why CLAUDE.md says quote "NO"

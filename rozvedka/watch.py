@@ -13,7 +13,7 @@ from urllib.parse import urlencode
 import yaml
 
 from . import actors, compare, db, doclist, home, topics
-from .config import ROOT
+from .config import ROOT, load_yaml
 
 WATCHLIST = ROOT / "sources" / "watchlist.yaml"
 HEADER = """# Watchlist – searches followed update by update on the portal's Watchlist page (/watch).
@@ -27,7 +27,7 @@ def load(path: Path | None = None) -> list[dict]:
     path = path or WATCHLIST
     if not path.exists():
         return []
-    return [i for i in (yaml.safe_load(path.read_text(encoding="utf-8")) or []) if isinstance(i, dict) and i.get("query")]
+    return [i for i in (load_yaml(path.read_text(encoding="utf-8")) or []) if isinstance(i, dict) and i.get("query")]
 
 
 def save(items: list[dict], path: Path | None = None) -> None:

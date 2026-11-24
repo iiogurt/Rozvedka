@@ -32,10 +32,8 @@ from functools import lru_cache
 from pathlib import Path
 from urllib.parse import urlsplit
 
-import yaml
-
 from . import ratings, topics
-from .config import DATA, ROOT
+from .config import DATA, ROOT, load_yaml
 
 log = logging.getLogger("rozvedka.publishers")
 
@@ -121,7 +119,7 @@ def _domain(url: str) -> str:
 
 
 def load_profiles(path: Path | None = None) -> dict:
-    return yaml.safe_load((path or PROFILES).read_text(encoding="utf-8")) or {}
+    return load_yaml((path or PROFILES).read_text(encoding="utf-8")) or {}
 
 
 # ── fetched checks ──

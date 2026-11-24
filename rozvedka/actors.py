@@ -40,9 +40,8 @@ import time
 import unicodedata
 from functools import lru_cache
 
-import yaml
-
 from . import db, paging, topics, trends
+from .config import load_yaml
 from .actor_sources import CONFIG, GAZETTEER
 
 log = logging.getLogger("rozvedka.actors")
@@ -159,7 +158,7 @@ def is_weak(tokens: tuple[str, ...]) -> bool:
 
 
 def load_config() -> dict:
-    return yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
+    return load_yaml(CONFIG.read_text(encoding="utf-8"))
 
 
 def load_gazetteer() -> dict:

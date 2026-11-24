@@ -13,7 +13,7 @@ from pathlib import Path
 import yaml
 
 from . import db, topics
-from .config import ROOT
+from .config import ROOT, load_yaml
 
 log = logging.getLogger("rozvedka.doctypes")
 
@@ -116,7 +116,7 @@ def load_hand(path: Path | None = None) -> dict[str, dict]:
     path = path or TYPES_FILE
     if not path.exists():
         return {}
-    return {r["url"]: r for r in (yaml.safe_load(path.read_text(encoding="utf-8")) or []) if isinstance(r, dict) and r.get("url")}
+    return {r["url"]: r for r in (load_yaml(path.read_text(encoding="utf-8")) or []) if isinstance(r, dict) and r.get("url")}
 
 
 def save_hand(rows: dict[str, dict], path: Path | None = None) -> None:
