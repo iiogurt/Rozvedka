@@ -26,10 +26,8 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-import yaml
-
 from . import db
-from .config import DATA
+from .config import DATA, load_yaml
 
 log = logging.getLogger("rozvedka.events")
 
@@ -109,7 +107,7 @@ _hand = {"mtime": None}
 
 def hand_relations(path: Path | None = None) -> list[dict]:
     """[{from, rel, to, evidence, note?}] – each with the evidence URL that states it; the others are ignored."""
-    rows = (yaml.safe_load((path or CLASSES).read_text(encoding="utf-8")) or {}).get("relations") or []
+    rows = (load_yaml((path or CLASSES).read_text(encoding="utf-8")) or {}).get("relations") or []
     return [r for r in rows if r.get("rel") in HAND_RELS and r.get("from") and r.get("to")
             and str(r.get("evidence", "")).startswith("http")]
 
@@ -135,7 +133,7 @@ def sync_hand(path: Path | None = None) -> int:
 
 
 def classes(path: Path | None = None) -> list[dict]:
-    return (yaml.safe_load((path or CLASSES).read_text(encoding="utf-8")) or {}).get("classes") or []
+    return (load_yaml((path or CLASSES).read_text(encoding="utf-8")) or {}).get("classes") or []
 
 
 def _download(url: str, name: str) -> Path:
@@ -745,7 +743,7 @@ def name_rule(name: str, actor_names: set[str], ignored: dict[str, str] | None =
 def ignored_names(path: Path | None = None) -> dict[str, str]:
     """Names excluded by hand (sources/events.yaml `ignore_names`): normalised name → reason."""
     from .sanctions import normalise
-    rows = (yaml.safe_load((path or CLASSES).read_text(encoding="utf-8")) or {}).get("ignore_names") or []
+    rows = (load_yaml((path or CLASSES).read_text(encoding="utf-8")) or {}).get("ignore_names") or []
     return {normalise(r["name"]): r.get("reason", "") for r in rows if r.get("name")}
 
 

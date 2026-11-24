@@ -16,6 +16,7 @@ import unicodedata
 import yaml
 
 from . import config, db, topics
+from .config import load_yaml
 
 HEADER = """# Research notebooks – passages marked on the portal (/notebooks), with notes. Written by the portal; editable by hand.
 # Kept for personal use: never committed, carried only by personal backups.
@@ -32,7 +33,7 @@ def path():
 
 def load(p=None) -> dict:
     p = p or path()
-    raw = (yaml.safe_load(p.read_text(encoding="utf-8")) or {}) if p.exists() else {}
+    raw = (load_yaml(p.read_text(encoding="utf-8")) or {}) if p.exists() else {}
     books = [b for b in (raw.get("notebooks") or []) if isinstance(b, dict) and b.get("slug") and b.get("name")]
     for b in books:
         b["notes"] = [n for n in (b.get("notes") or []) if isinstance(n, dict) and n.get("id") and n.get("doc")]

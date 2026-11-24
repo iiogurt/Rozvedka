@@ -3,14 +3,14 @@ from functools import lru_cache
 
 import yaml
 
-from .config import ROOT
+from .config import ROOT, load_yaml
 
 COUNTRIES_FILE = ROOT / "sources" / "countries.yaml"
 
 
 @lru_cache(maxsize=1)
 def _data() -> dict:
-    data = yaml.safe_load(open(COUNTRIES_FILE, encoding="utf-8"))
+    data = load_yaml(open(COUNTRIES_FILE, encoding="utf-8"))
     # guard against the YAML "Norway problem": a bare NO key becomes boolean False
     assert all(isinstance(k, str) for k in data["countries"]), "quote country codes such as \"NO\" in countries.yaml"
     return data

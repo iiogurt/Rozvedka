@@ -12,10 +12,8 @@ import logging
 import re
 from functools import lru_cache
 
-import yaml
-
 from . import actors, attributions, db, fetch, topics
-from .config import DATA, ROOT
+from .config import DATA, ROOT, load_yaml
 
 log = logging.getLogger(__name__)
 FILE = ROOT / "sources" / "threat_levels.yaml"
@@ -25,7 +23,7 @@ normalise = attributions.normalise
 
 @lru_cache(maxsize=2)
 def _load(mtime: float) -> tuple:
-    return tuple(yaml.safe_load(FILE.read_text(encoding="utf-8")).get("threat_levels", []))
+    return tuple(load_yaml(FILE.read_text(encoding="utf-8")).get("threat_levels", []))
 
 
 def load() -> list[dict]:

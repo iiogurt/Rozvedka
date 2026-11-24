@@ -11,10 +11,8 @@ excluded, not silently dropped.
 import datetime as dt
 from urllib.parse import urlencode
 
-import yaml
-
 from . import countries, db, doctypes, topics, works
-from .config import ROOT
+from .config import ROOT, load_yaml
 
 EVENTS = ROOT / "sources" / "events.yaml"
 MIN_YEAR = 2000
@@ -282,7 +280,7 @@ def matrix(year_from: int, year_to: int, by: str = "country", coalition: str = "
 def events(years: list[int] | None = None) -> list[dict]:
     """Reference events with their Wikidata/Wikipedia source (see tools/build_events.py)."""
     try:
-        data = yaml.safe_load(EVENTS.read_text(encoding="utf-8")) or {}
+        data = load_yaml(EVENTS.read_text(encoding="utf-8")) or {}
     except FileNotFoundError:
         return []
     out = []

@@ -25,7 +25,7 @@ from pathlib import Path
 import yaml
 
 from . import connections
-from .config import DATA, ROOT
+from .config import DATA, ROOT, load_yaml
 
 log = logging.getLogger("rozvedka.actors")
 CONFIG = ROOT / "sources" / "actors.yaml"
@@ -435,7 +435,7 @@ def connect(actors: list[dict], ents: dict, today: str, refresh: bool = False) -
 
 
 def fetch(config: Path = CONFIG, out: Path = GAZETTEER, refresh: bool = False) -> dict:
-    cfg = yaml.safe_load(config.read_text(encoding="utf-8"))
+    cfg = load_yaml(config.read_text(encoding="utf-8"))
     today = dt.date.today().isoformat()
     found, attack_qids = candidates(cfg)
     seeds = {s["wikipedia"]: s for s in cfg.get("seeds", [])}

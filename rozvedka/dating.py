@@ -22,7 +22,7 @@ from pathlib import Path
 import yaml
 
 from . import db, topics
-from .config import FILES, ROOT
+from .config import FILES, ROOT, load_yaml
 
 log = logging.getLogger("rozvedka.dating")
 
@@ -325,7 +325,7 @@ def load_reviews(path: Path | None = None) -> list[dict]:
     path = path or YEAR_REVIEWS
     if not path.exists():
         return []
-    return [r for r in (yaml.safe_load(path.read_text(encoding="utf-8")) or []) if isinstance(r, dict)]
+    return [r for r in (load_yaml(path.read_text(encoding="utf-8")) or []) if isinstance(r, dict)]
 
 
 def save_reviews(rows: list[dict], path: Path | None = None) -> None:

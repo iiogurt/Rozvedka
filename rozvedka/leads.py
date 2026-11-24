@@ -19,7 +19,7 @@ from pathlib import Path
 import yaml
 
 from . import actors, db, paths, ties
-from .config import ROOT
+from .config import ROOT, load_yaml
 
 HUB = 200
 TOOLKIT = {"malware", "tool", "campaign"}   # shared software is Toolkit twins' business (rozvedka/twins.py), not a lead
@@ -135,7 +135,7 @@ def _load(path: Path | None = None) -> list[dict]:
     path = path or REVIEWS
     if not path.exists():
         return []
-    return [r for r in (yaml.safe_load(path.read_text(encoding="utf-8")) or []) if isinstance(r, dict)]
+    return [r for r in (load_yaml(path.read_text(encoding="utf-8")) or []) if isinstance(r, dict)]
 
 
 def reviews(path: Path | None = None) -> dict[tuple, dict]:

@@ -13,6 +13,7 @@ from urllib.parse import quote
 import yaml
 
 from . import config, db, paths, ties
+from .config import load_yaml
 
 MAX_PINS = 12            # 66 pairs at most: the chains stay quick enough on a Raspberry Pi
 HEADER = """# Case file – entities pinned on the portal's Case file page (/case), with notes. Written by the portal; editable by hand.
@@ -29,7 +30,7 @@ def load(p=None) -> list[dict]:
     p = p or path()
     if not p.exists():
         return []
-    raw = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    raw = load_yaml(p.read_text(encoding="utf-8")) or {}
     return [x for x in (raw.get("pins") or []) if isinstance(x, dict) and x.get("id")]
 
 

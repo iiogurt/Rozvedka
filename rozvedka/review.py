@@ -15,7 +15,7 @@ from pathlib import Path
 import yaml
 
 from . import actors, db, paging, topics
-from .config import ROOT
+from .config import ROOT, load_yaml
 
 REVIEWS = ROOT / "sources" / "actor_reviews.yaml"
 HEADER = """# Actor match reviews – passages checked in the portal (Actors → Review). Each entry: the actor (Wikidata item or
@@ -28,12 +28,11 @@ SAMPLE = 3          # passages per name in the queue
 ENOUGH = 5          # a name with this many verdicts has left the queue
 
 
-_LOADER = getattr(yaml, "CSafeLoader", yaml.SafeLoader)      # the C parser is ~10× faster where libyaml is installed
 
 
 @lru_cache(maxsize=4)
 def _parsed(path: Path, mtime: float, size: int) -> tuple:
-    return tuple(r for r in (yaml.load(path.read_text(encoding="utf-8"), Loader=_LOADER) or []) if isinstance(r, dict))
+    return tuple(r for r in (load_yaml(path.read_text(encoding="utf-8")) or []) if isinstance(r, dict))
 
 
 def load(path: Path | None = None) -> list[dict]:

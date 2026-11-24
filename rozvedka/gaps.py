@@ -13,10 +13,8 @@ never mixed with the agency types.
 import datetime as dt
 from functools import lru_cache
 
-import yaml
-
 from . import countries, db, trends
-from .config import ROOT
+from .config import ROOT, load_yaml
 
 FILE = ROOT / "sources" / "coverage_gaps.yaml"
 TYPES = {"intelligence-civil": "Civil intelligence", "intelligence-military": "Military / foreign intelligence",
@@ -29,7 +27,7 @@ BODIES = ("EU", "NATO", "OTHER")
 def checked() -> dict[tuple[str, str], dict]:
     if not FILE.exists():
         return {}
-    rows = yaml.safe_load(FILE.read_text(encoding="utf-8")) or []
+    rows = load_yaml(FILE.read_text(encoding="utf-8")) or []
     return {(r["country"], r["type"]): {**r, "checked": str(r.get("checked") or "")} for r in rows
             if isinstance(r, dict) and r.get("type") in TYPES}
 

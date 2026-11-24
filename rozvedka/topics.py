@@ -18,10 +18,8 @@ from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 
-import yaml
-
 from . import db
-from .config import FILES, ROOT
+from .config import FILES, ROOT, load_yaml
 
 log = logging.getLogger("rozvedka.topics")
 TAXONOMY = ROOT / "sources" / "topics.yaml"
@@ -136,7 +134,7 @@ def taxonomy() -> dict:
     'regex' is kept for short strings such as titles.
     """
     raw = TAXONOMY.read_bytes()
-    data = yaml.safe_load(raw)
+    data = load_yaml(raw)
     topics = {}
     for ckey, cat in data["categories"].items():
         for tkey, tp in cat["topics"].items():
